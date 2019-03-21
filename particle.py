@@ -52,6 +52,13 @@ class Particle(object):
         lgth = np.sqrt(lgth2)
         return lgth
 
+    
+    def scale_to_versor(self):
+        len = np.sqrt(self.e*self.e - self.x * self.x - self.y * self.y - self.z * self.z)
+
+        return Particle([
+            self.x/len, self.y/len, self.z/len, self.e/len])
+
     def set(self, other):
         if isinstance(other, Particle):
             self.vec = other.vec
@@ -89,6 +96,15 @@ class Particle(object):
         ret = self.rotate_xy(-phi).rotate_xz(-theta)
         ret = ret.boost_along_z(-p_len, p.e)
         return ret.rotate_xz(theta).rotate_xy(phi)
+
+
+    def scale_vec(self, scale):
+        mass2 = self.e*self.e - self.x*self.x - self.y*self.y - self.z*self.z
+        energy = np.sqrt(  self.x*self.x*scale*scale + self.y*self.y*scale*scale
+                         + self.z*self.z*scale*scale + mass2)
+        
+        return Particle([self.x*scale, self.y*scale, self.z*scale,  energy])
+    
 
     def sum(self, dim):
         return np.sum(self.vec, dim)

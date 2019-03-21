@@ -2,7 +2,7 @@
 # Uncomment the lines below and fill with appropriate values. Then rename the file to "setup" and then type in the command ine 'source setup'.
 
 export ANACONDA_PYTHON_PATH=/home/erichter/anaconda2/envs/tensorflow/bin/
-# export WORKDIR=
+export WORKDIR=/home/erichter/Athena19/HiggsCP/HiggsCP/slurm_scripts
 export A1A1_DATA=/home/erichter/Athena19/HiggsCP/HiggsCP_data
 export A1RHO_DATA=/home/erichter/Athena19/HiggsCP/HiggsCP_data
 export RHORHO_DATA=/home/erichter/Athena19/HiggsCP/HiggsCP_data

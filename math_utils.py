@@ -89,6 +89,10 @@ def smear_exp(x, lambd):
     sign = np.random.choice(np.array([-1,1]), size=x.shape)
     return x + sign*noise
 
+def smear_log(x):
+    rn = np.random.random()
+    return x * (- np.log(rn))
+
 def polynomial_density(x, beta, b, c): return np.exp(-(1/beta)*x) * (1 + (b**2)*(x**2) + (c**2)*(x**4))
 
 def smear_polynomial(x, beta, b, c):

@@ -19,7 +19,7 @@ parser.add_argument("-i", "--input", dest="IN", required=True)
 parser.add_argument("-d", "--dropout", dest="DROPOUT", type=float, default=0.2)
 parser.add_argument("-e", "--epochs", dest="EPOCHS", type=int, default=25)
 parser.add_argument("-f", "--features", dest="FEAT", help="Features",
-	choices= ["Variant-All", "Variant-1.0", "Variant-1.1", "Variant-2.0", "Variant-2.1", "Variant-2.2", "Variant-3.0", "Variant-3.1"])
+	choices= ["Variant-All", "Variant-1.0", "Variant-1.1", "Variant-2.0", "Variant-2.1", "Variant-2.2", "Variant-3.0", "Variant-3.1", "Variant-4.0", "Variant-4.1"])
 parser.add_argument("--treedepth", dest="TREEDEPTH", type=int, default=5)
 parser.add_argument("--miniset", dest="MINISET", type=lambda s: s.lower() in ['true', 't', 'yes', '1'], default=False)
 parser.add_argument("--svm_c", dest="SVM_C", type=float)
