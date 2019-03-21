@@ -1,45 +1,112 @@
-**Edit a file, create a new file, and clone from Bitbucket in under 2 minutes**
+# ML Higgs
+## Multiclass classification
+Modified files:
+- `train_rhorho.py`
+- `tf_model.py`
+- `data_utils.py`
 
-When you're done, you can delete the content in this README and update the file with details for others getting started with your repository.
+Modification made:
+1. Modifications of `Dataset` and `EventDatasets` classes in `data_utils.py`.
+    - Changed `wa`, `wb` weights of class scalar and pseudoscalar to array of weights
+    - Added `max_args` array which stores `phi` value which corresponds to maximum weight for each event
+    - Added `popts` array which stores `a`, `b`, `c` parameters of weights function fitting
+    ```
+    self.train = Dataset(data[train_ids], weights[train_ids, :], arg_maxs[train_ids], popts[train_ids])
+    self.valid = Dataset(data[valid_ids], weights[valid_ids, :], arg_maxs[valid_ids], popts[valid_ids])
+    self.test = Dataset(data[test_ids], weights[test_ids, :], arg_maxs[test_ids], popts[test_ids])
+    ```
+2. Changes in data loading (`train_rhorho.py` file):
+    - There are three data files loaded
+    ```
+    data = read_np(os.path.join(data_path, "rhorho_raw.data.npy"))
+    w = read_np(os.path.join(data_path, "rhorho_raw.w.npy"))
+    perm = read_np(os.path.join(data_path, "rhorho_raw.perm.npy"))
+    ```
+    - `rhorho_raw.data.npy` is numpy file with event data (particle kinematics data) (not changed, from previous version),
+    - `rhorho_raw.w.npy` is numpy file with weights for each event (0, 0.1, 0.2, ..., 0.9, 1)
+    - `rhorho_raw.perm.npy` is numpy permutation file (not changed, from previous version)
 
-*We recommend that you open this README in another tab as you perform the tasks below. You can [watch our video](https://youtu.be/0ocf7u76WSo) for a full demo of all the steps in this tutorial. Open the video in a new tab to avoid leaving Bitbucket.*
+3. Changes in data preprocessing (`train_rhorho.py` file):
+    - If file with calculated fitting parameters does not exist (`popt.npy`), we run fitting process to weights and save the results
+    ```angular2
+    if not os.path.exists(os.path.join(data_path, 'popts.npy')):
+        popts = np.zeros((data_len, 3))
+        for i in range(data_len ):
+            popt, pcov = optimize.curve_fit(weight_fun, x, w[i, :], p0=[1, 1, 1])
+            popts[i] = popt
+        np.save(os.path.join(data_path, 'popts.npy'), popts)
+    ```
+    - if flag `reuse_weigths` is not set we run process of calculating weights for each class (based on number of classes). For example if `NUM_CLASSES` parameters is set to 50, it will be calulated 50 weights for each event (for different phi)
+    - Simultaneusly there is found argument (phi) which corresponds to maximum weight
+    - Results are saved to file. It saves time if parameter `NUM_CLASSESS` is not changed
+    ```
+    if not reuse_weigths:
+        for i in range(data_len):
+            weights[i] = weight_fun(classes, *popts[i])
+            arg_max = 0
+            if weight_fun(np.pi, *popts[i]) > weight_fun(arg_max, *popts[i]):
+                arg_max = np.pi
+            phi = np.arctan(popts[i][2] / popts[i][1])
 
----
+            if 0 < phi < np.pi and weight_fun(phi, *popts[i]) > weight_fun(arg_max, *popts[i]):
+                arg_max = phi
+            if 0 < phi + np.pi < np.pi and weight_fun(phi + np.pi, *popts[i]) > weight_fun(arg_max, *popts[i]):
+                arg_max = phi + np.pi
 
-## Edit a file
+            arg_maxs[i] = arg_max
+        np.save(os.path.join(data_path, 'weigths.npy'), weights)
+        np.save(os.path.join(data_path, 'arg_maxs.npy'), arg_maxs)
+    ```
 
-You’ll start by editing this README file to learn how to edit a file in Bitbucket.
+3. Neural network modifications (`tf_model.py` file)
+    - There are three available loss function options. Option is chosen by setting parameter `tloss` of `NeuralNetwork` class. Default is `soft` which corresponds to softmax. Other options are `regr` and `popts` which corresponds to regression to maximum weight value and regression to fitting parameters respectively.
+    - Softmax is generalization of previous method on more than two classes. Instead of two classes weights `wa` `wb` , there is passesed array of weights. Loss functions is softmax cross entropy which is common for classification tasks.
+    ```angular2
+    sx = linear(x, "regression", num_classes)
+    self.preds = tf.nn.softmax(sx)
+    self.p = self.preds
 
-1. Click **Source** on the left side.
-2. Click the README.md link from the list of files.
-3. Click the **Edit** button.
-4. Delete the following text: *Delete this line to make a change to the README from Bitbucket.*
-5. After making your change, click **Commit** and then **Commit** again in the dialog. The commit page will open and you’ll see the change you just made.
-6. Go back to the **Source** page.
+    labels = weights / tf.tile(tf.reshape(tf.reduce_sum(weights, axis=1), (-1, 1)), (1,num_classes))
+    self.loss = loss = tf.nn.softmax_cross_entropy_with_logits(logits=sx, labels=labels)
+    ```
+    - Regr is regression to argument for maximum weight. Only this value is returned by neural network. Loss function is set to l2 metric (MSE)
+    ```
+    sx = linear(x, "regr", 1)
+    self.sx = sx
+    self.loss = loss = tf.losses.mean_squared_error(self.arg_maxs, sx[:, 0])
+    ```
+    - Popts is modification of regr method. In this case neural network retuns three values, which corresponds to three parameters of weights function fitting. Loss function is set to l2 metric (MSE)
+    ```
+    sx = linear(x, "regr", 3)
+    self.sx = sx
+    self.p = sx
+    self.loss = loss = tf.losses.mean_squared_error(self.popts, sx)
+    ```
+4. Evaluation (Work in progress) (`tf_model.py` file)
+    - Function `predictions` is modifed to return more predictions (based on chosen loss function option). It also return real data weights, popts, and max_args from train, valid or test dataset.
+    ```angular2
+    def predictions(model, dataset, at_most=None, filtered=False):
+        sess = tf.get_default_session()
+        x = dataset.x
+        weights = dataset.weights
+        filt = dataset.filt
+        arg_maxs = dataset.arg_maxs
+        popts = dataset.popts
 
----
+        if at_most is not None:
+          filt = filt[:at_most]
+          x = x[:at_most]
+          weights = weights[:at_most]
+          arg_maxs = arg_maxs[:at_most]
 
-## Create a file
+        p = sess.run(model.p, {model.x: x})
 
-Next, you’ll add a new file to this repository.
+        if filtered:
+          p = p[filt == 1]
+          x = x[filt == 1]
+          weights = weights[filt == 1]
+          arg_maxs = arg_maxs[filt == 1]
 
-1. Click the **New file** button at the top of the **Source** page.
-2. Give the file a filename of **contributors.txt**.
-3. Enter your name in the empty file space.
-4. Click **Commit** and then **Commit** again in the dialog.
-5. Go back to the **Source** page.
-
-Before you move on, go ahead and explore the repository. You've already seen the **Source** page, but check out the **Commits**, **Branches**, and **Settings** pages.
-
----
-
-## Clone a repository
-
-Use these steps to clone from SourceTree, our client for using the repository command-line free. Cloning allows you to work on your files locally. If you don't yet have SourceTree, [download and install first](https://www.sourcetreeapp.com/). If you prefer to clone from the command line, see [Clone a repository](https://confluence.atlassian.com/x/4whODQ).
-
-1. You’ll see the clone button under the **Source** heading. Click that button.
-2. Now click **Check out in SourceTree**. You may need to create a SourceTree account or log in.
-3. When you see the **Clone New** dialog in SourceTree, update the destination path and name if you’d like to and then click **Clone**.
-4. Open the directory you just created to see your repository’s files.
-
-Now that you're more familiar with your Bitbucket repository, go ahead and add a new file locally. You can [push your change back to Bitbucket with SourceTree](https://confluence.atlassian.com/x/iqyBMg), or you can [add, commit,](https://confluence.atlassian.com/x/8QhODQ) and [push from the command line](https://confluence.atlassian.com/x/NQ0zDQ).
+        return x, p, weights, arg_maxs, popts
+    ```
+    - Function `evaluate` is used to calulate scores or save values returned by neural network. Currently it is not generic, when I run experiments for different options I modify this function to save specific values and scores. It will be fixed soon.  
