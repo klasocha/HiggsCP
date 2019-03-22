@@ -54,10 +54,10 @@ class Particle(object):
 
     
     def scale_to_versor(self):
-        len = np.sqrt(self.e*self.e - self.x * self.x - self.y * self.y - self.z * self.z)
+        p_len = np.sqrt(self.e*self.e - self.x * self.x - self.y * self.y - self.z * self.z)
 
         return Particle([
-            self.x/len, self.y/len, self.z/len, self.e/len])
+            self.x/p_len, self.y/p_len, self.z/p_len, self.e/p_len])
 
     def set(self, other):
         if isinstance(other, Particle):
