@@ -9,6 +9,7 @@ class RhoRhoEvent(object):
 
         p = [Particle(data[:, 5 * i:5 * i + 4]) for i in range(6)]
         cols = []
+        labels = []
 
         def get_tau1(p):
             tau1_nu = p[0]
@@ -40,9 +41,12 @@ class RhoRhoEvent(object):
             if args.FEAT in ["Variant-1.0", "Variant-1.1", "Variant-2.0", "Variant-2.1", "Variant-2.2", "Variant-3.0", "Variant-3.1", "Variant-4.0", "Variant-4.1"]:
                 if idx not in [0, 3]:
                     cols.append(part.vec)
+                    labels.extend(particle_labels[i])
             if args.FEAT == "Variant-All":
                 cols.append(part.vec)
-                
+                labels.extend(particle_labels[i])
+        
+        
         if args.FEAT == "Variant-4.0":
             part   = boost_and_rotate(p_tau1, PHI, THETA, rho_rho)
             cols.append(part.vec)
@@ -225,4 +229,25 @@ class RhoRhoEvent(object):
 		tau2_cos_phi = np.cos(vn_tau2_nu_phi)
 
 	self.valid_cols = [va_tau1_nu_trans * tau1_sin_phi, va_tau2_nu_trans * tau2_sin_phi, va_tau1_nu_trans * tau1_cos_phi, va_tau2_nu_trans * tau2_cos_phi]
+
+	if args.FEAT == "Variant-1.0":
+            self.labels = ["pi- x", "pi- y", "pi- z", "pi- en", "first pi0 x", "first pi0 y", "first pi0 z", "first pi0 en", "pi+ x", "pi+ y", "pi+ z", "pi+ en", "second pi0 x", "second pi0 y", "second pi0 z", "second pi0 en"]
+        elif args.FEAT == "Variant-1.1":
+            self.labels = ["pi- x", "pi- y", "pi- z", "pi- en", "first pi0 x", "first pi0 y", "first pi0 z", "first pi0 en", "pi+ x", "pi+ y", "pi+ z", "pi+ en", "second pi0 x", "second pi0 y", "second pi0 z", "second pi0 en", "rho1 x", "rho1 y", "rho1 z", "rho1 en", "rho1 mass", "rho2 x", "rho2 y", "rho2 z", "rho2 en", "rho2 mass", "aco_angle", "y1", "y2"]
+        elif args.FEAT ==  "Variant-2.0":
+            self.labels = ["pi- x", "pi- y", "pi- z", "pi- en", "first pi0 x", "first pi0 y", "first pi0 z", "first pi0 en", "pi+ x", "pi+ y", "pi+ z", "pi+ en", "second pi0 x", "second pi0 y", "second pi0 z", "second pi0 en", "ve_tau1_nu_long", "ve_tau2_nu_long", "ve_tau1_nu_E", "ve_tau2_nu_E", "ve_tau1_nu_trans", "ve_tau2_nu_trans"]
+        elif args.FEAT ==  "Variant-2.1":
+            self.labels = ["pi- x", "pi- y", "pi- z", "pi- en", "first pi0 x", "first pi0 y", "first pi0 z", "first pi0 en", "pi+ x", "pi+ y", "pi+ z", "pi+ en", "second pi0 x", "second pi0 y", "second pi0 z", "second pi0 en", "va_tau1_nu_long", "va_tau2_nu_long", "va_tau1_nu_E", "va_tau2_nu_E", "va_tau1_nu_trans", "va_tau2_nu_trans"]
+        elif args.FEAT ==  "Variant-2.2":
+            self.labels = ["pi- x", "pi- y", "pi- z", "pi- en", "first pi0 x", "first pi0 y", "first pi0 z", "first pi0 en", "pi+ x", "pi+ y", "pi+ z", "pi+ en", "second pi0 x", "second pi0 y", "second pi0 z", "second pi0 en", "v_ETmiss_x", "v_ETmiss_y", "va_tau1_nu_long", "va_tau2_nu_long", "va_tau1_nu_E", "va_tau2_nu_E", "va_tau1_nu_trans", "va_tau2_nu_trans"]
+        elif args.FEAT ==  "Variant-3.0":
+            self.labels = ["pi- x", "pi- y", "pi- z", "pi- en", "first pi0 x", "first pi0 y", "first pi0 z", "first pi0 en", "pi+ x", "pi+ y", "pi+ z", "pi+ en", "second pi0 x", "second pi0 y", "second pi0 z", "second pi0 en", "va_tau1_nu_long", "va_tau2_nu_long", "va_tau1_nu_E", "va_tau2_nu_E", "va_tau1_nu_trans * tau1_sin_phi", "va_tau2_nu_trans * tau2_sin_phi", "va_tau1_nu_trans * tau1_cos_phi", "va_tau2_nu_trans * tau2_cos_phi"]
+        elif args.FEAT ==  "Variant-3.1":
+            self.labels = ["pi- x", "pi- y", "pi- z", "pi- en", "first pi0 x", "first pi0 y", "first pi0 z", "first pi0 en", "pi+ x", "pi+ y", "pi+ z", "pi+ en", "second pi0 x", "second pi0 y", "second pi0 z", "second pi0 en", "va_tau1_nu_long", "va_tau2_nu_long", "va_tau1_nu_E", "va_tau2_nu_E", "va_tau1_nu_trans * tau1_sin_phi", "va_tau2_nu_trans * tau2_sin_phi", "va_tau1_nu_trans * tau1_cos_phi", "va_tau2_nu_trans * tau2_cos_phi"]
+        elif args.FEAT ==  "Variant-4.0":
+            self.labels = ["pi- x", "pi- y", "pi- z", "pi- en", "first pi0 x", "first pi0 y", "first pi0 z", "first pi0 en", "pi+ x", "pi+ y", "pi+ z", "pi+ en", "second pi0 x", "second pi0 y", "second pi0 z", "second pi0 en", "tau1 x", "tau1 y", "tau1 z", "tau1 en", "tau2 x", "tau2 y", "tau2 z", "tau2 en"]
+        elif args.FEAT ==  "Variant-4.1":
+            self.labels = ["pi- x", "pi- y", "pi- z", "pi- en", "first pi0 x", "first pi0 y", "first pi0 z", "first pi0 en", "pi+ x", "pi+ y", "pi+ z", "pi+ en", "second pi0 x", "second pi0 y", "second pi0 z", "second pi0 en", "approx tau1 x", "approx tau1 y", "approx tau1 z", "approx tau1 en", "approx tau2 x", "approx tau2 y", "approx tau2 z", "approx tau2 en"]
+        elif args.FEAT == "Variant-All":
+            self.labels = ["n x", "n y", "n z", "n en", "pi- x", "pi- y", "pi- z", "pi- en", "first pi0 x", "first pi0 y", "first pi0 z", "first pi0 en", "an x", "an y", "an z", "an en", "pi+ x", "pi+ y", "pi+ z", "pi+ en", "second pi0 x", "second pi0 y", "second pi0 z", "second pi0 en"]
 

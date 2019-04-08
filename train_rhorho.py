@@ -1,8 +1,10 @@
 import tensorflow as tf
 from rhorho import RhoRhoEvent
 from data_utils import read_np, EventDatasets
+from plot_utils import feature_plot
 from tf_model import total_train, NeuralNetwork
 import os
+import numpy as np
 
 
 def run(args):
@@ -21,6 +23,12 @@ def run(args):
 
     num_features = points.train.x.shape[1]
     print "Generated %d features" % num_features
+
+    if args.PLOT_FEATURES:
+        for i in range(num_features):
+            feature_plot(np.hstack((points.train.x[:,i],points.valid.x[:,i], points.test.x[:,i])), directory = "../debug_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED)  + "/", filename = event.labels[i], w_a = np.hstack((points.train.wa,points.valid.wa, points.test.wa)), w_b = np.hstack((points.train.wb,points.valid.wb, points.test.wb)))
+
+
 
     print "Initializing model"
     with tf.variable_scope("model1") as vs:
