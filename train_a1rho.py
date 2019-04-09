@@ -19,16 +19,20 @@ def run(args):
 
     print "Processing data"
     event = A1RhoEvent(data, args)
+
     points = EventDatasets(event, w_a, w_b, perm, miniset=args.MINISET, unweighted=args.UNWEIGHTED, smear_polynomial=(args.BETA>0), filtered = True)
 
     num_features = points.train.x.shape[1]
     print "Generated %d features" % num_features
 
-    if args.PLOT_FEATURES:
+    if args.PLOT_FEATURES == "FILTER":
         for i in range(num_features):
-            feature_plot(np.hstack((points.train.x[:,i],points.valid.x[:,i], points.test.x[:,i])), directory = "../debug_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED)  + "/", filename = event.labels[i], w_a = np.hstack((points.train.wa,points.valid.wa, points.test.wa)), w_b = np.hstack((points.train.wb,points.valid.wb, points.test.wb)))
+            feature_plot(event.cols[:,i], directory = "../debug_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/", filename = event.labels[i], w_a = w_a, w_b = w_b, filt = event.cols[:,-1])
+    elif args.PLOT_FEATURES == "NO-FILTER":
+        for i in range(num_features):
+            feature_plot(event.cols[:,i], directory = "../debug_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/", filename = event.labels[i], w_a = w_a, w_b = w_b)
 
-
+    
     print "Initializing model"
     with tf.variable_scope("model1") as vs:
         model = NeuralNetwork(num_features, num_layers=args.LAYERS, size=args.SIZE, keep_prob=(1-args.DROPOUT))#, optimizer=args.OPT)

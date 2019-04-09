@@ -1,10 +1,26 @@
 import matplotlib.pyplot as plt
 import os, errno
+import numpy as np
+
+def is_nan(x):
+    return (x is np.nan or x != x)
 
 DIRECTORY = "../debug_plots/"
 
-def feature_plot(data, step=0.05, directory = None, filename=None, title=None, Xlabel=None, Ylabel=None, w_a = None, w_b = None):
-	
+def feature_plot(data, step=0.05, directory = None, filename=None, title=None, Xlabel=None, Ylabel=None, w_a = None, w_b = None, filt = None):
+
+        
+        if filt is not None:
+            filt = [x==1 for x in filt]
+            data = data[filt]
+            w_a = w_a[filt]
+            w_b = w_b[filt]
+	else:
+            filt = [not is_nan(x) for x in data]
+            data = data[filt]
+            w_a = w_a[filt]
+            w_b = w_b[filt]
+
 	bins = int(1/step) + 1
 
 	plt.hist([data, data], bins, weights=[w_a, w_b], label=['scalar', 'pseudoscalar'], ls='dashed')

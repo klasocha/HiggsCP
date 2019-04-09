@@ -37,7 +37,7 @@ parser.add_argument("--pol_c", type=float, dest="pol_c", help="value of c parame
 parser.add_argument("--w1", dest="W1")
 parser.add_argument("--w2", dest="W2")
 
-parser.add_argument("--plot_features", dest="PLOT_FEATURES", default=False)
+parser.add_argument("--plot_features", dest="PLOT_FEATURES", choices=["NO", "FILTER", "NO-FILTER"], default="NO")
 
 args = parser.parse_args()
 
