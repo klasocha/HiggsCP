@@ -35,7 +35,7 @@ class Particle(object):
     @property
     def recalculated_mass(self):
         mass = np.sum(np.square(self.vec) * [1, 1, 1, -1], 1)
-        return np.sqrt(np.abs(mass)) * np.sign(mass)
+        return np.sqrt(np.abs(mass)) #* np.sign(mass)
 
     @property
     def angle_phi(self):
