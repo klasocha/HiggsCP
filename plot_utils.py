@@ -5,7 +5,7 @@ import numpy as np
 def is_nan(x):
     return (x is np.nan or x != x)
 
-DIRECTORY = "../debug_plots/"
+DIRECTORY = "../monit_plots/"
 
 def feature_plot(data, step=0.05, directory = None, filename=None, title=None, Xlabel=None, Ylabel=None, w_a = None, w_b = None, filt = None):
 

@@ -30,17 +30,11 @@ def run(args):
         for i in range(num_features):
             feature_plot(event.cols[:,i], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = event.labels[i], w_a = w_a, w_b = w_b, filt = event.cols[:,-1])
-            #FIXME
-            #feature_plot(event.cols_suppl[:,i], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
-            #             filename = event.labels_suppl[i], w_a = w_a, w_b = w_b, filt = event.cols_suppl[:,-1])
+
     elif args.PLOT_FEATURES == "NO-FILTER":
         for i in range(num_features):
             feature_plot(event.cols[:,i], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = event.labels[i], w_a = w_a, w_b = w_b)
-            #FIXME
-            #feature_plot(event.cols_suppl[:,i], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
-            #             filename = event.labels_suppl[i], w_a = w_a, w_b = w_b)
-
 
     print "Initializing model"
     with tf.variable_scope("model1") as vs:

@@ -27,10 +27,10 @@ def run(args):
 
     if args.PLOT_FEATURES == "FILTER":
         for i in range(num_features):
-            feature_plot(event.cols[:,i], directory = "../debug_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/", filename = event.labels[i], w_a = w_a, w_b = w_b, filt = event.cols[:,-1])
+            feature_plot(event.cols[:,i], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/", filename = event.labels[i], w_a = w_a, w_b = w_b, filt = event.cols[:,-1])
     elif args.PLOT_FEATURES == "NO-FILTER":
         for i in range(num_features):
-            feature_plot(event.cols[:,i], directory = "../debug_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/", filename = event.labels[i], w_a = w_a, w_b = w_b)
+            feature_plot(event.cols[:,i], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/", filename = event.labels[i], w_a = w_a, w_b = w_b)
 
     
     print "Initializing model"

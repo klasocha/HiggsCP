@@ -61,12 +61,12 @@ class A1RhoEvent(object):
         if args.FEAT == "Variant-4.1":
             lifetime = .08711
             scale  = smear_log(lifetime)/lifetime
-            p_tau1.scale_vec(scale)
-            part   = boost_and_rotate(p_tau1, PHI, THETA, p_a1_rho)
+            p_tau1_approx = p_tau1.scale_vec(scale)
+            part   = boost_and_rotate(p_tau1_approx, PHI, THETA, p_a1_rho)
             cols.append(part.vec)
             scale  = smear_log(lifetime)/lifetime
-            p_tau2.scale_vec(scale)
-            part   = boost_and_rotate(p_tau2, PHI, THETA, p_a1_rho)
+            p_tau2_approx = p_tau2.scale_vec(scale)
+            part   = boost_and_rotate(p_tau2_approx, PHI, THETA, p_a1_rho)
             cols.append(part.vec)
 	
         # rho particles
