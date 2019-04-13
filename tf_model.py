@@ -161,7 +161,7 @@ class NeuralNetwork(object):
             sx = tf.nn.tanh(sx)
             self.sx = sx
             self.p = sx
-            self.loss = loss = tf.losses.huber_loss(tf.stack([tf.sin(self.arg_maxs), tf.cos(self.arg_maxs)],axis=1), sx, delta=0.3)
+            self.loss = loss = tf.losses.huber_loss(tf.stack([tf.sin(self.arg_maxs), tf.cos(self.arg_maxs)], axis=1), sx, delta=0.3)
 
         else:
             raise ValueError("tloss unrecognized: %s" % tloss)
