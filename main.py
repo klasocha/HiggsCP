@@ -17,7 +17,7 @@ parser.add_argument("-o", "--optimizer", dest="OPT",
 	 "ProximalGradientDescentOptimizer", "RMSPropOptimizer"], default="AdamOptimizer")
 parser.add_argument("-i", "--input", dest="IN", default=os.environ["RHORHO_DATA"])
 parser.add_argument("-d", "--dropout", dest="DROPOUT", type=float, default=0.2)
-parser.add_argument("-e", "--epochs", dest="EPOCHS", type=int, default=10)
+parser.add_argument("-e", "--epochs", dest="EPOCHS", type=int, default=3)
 parser.add_argument("-f", "--features", dest="FEAT", help="Features",
 	choices=["Model-Oracle", "Model-OnlyHad", "Model-Benchmark", "Model-1", "Model-2", "Model-3"], default="Model-Oracle")
 parser.add_argument("--treedepth", dest="TREEDEPTH", type=int, default=5)
@@ -28,7 +28,7 @@ parser.add_argument("--forest_max_feat", dest="FOREST_MAX_FEAT", choices=["log2"
 parser.add_argument("--forest_max_depth", dest="FOREST_MAX_DEPTH", default=10, type=int)
 parser.add_argument("--forest_estimators", dest="FOREST_ESTIMATORS", default=10, type=int)
 parser.add_argument("--z_noise_fraction", dest="Z_NOISE_FRACTION", type=float, default=0.5)
-parser.add_argument("--num_classes", dest="NUM_CLASSES", type=int, default=50)
+parser.add_argument("--num_classes", dest="NUM_CLASSES", type=int, default=11)
 parser.add_argument("--unweighted", dest="UNWEIGHTED", type=lambda s: s.lower() in ['true', 't', 'yes', '1'], default=False)
 
 args = parser.parse_args()

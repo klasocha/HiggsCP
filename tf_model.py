@@ -30,10 +30,21 @@ def total_train(model, data, emodel=None, batch_size=128, epochs=25):
     for i in range(epochs):
         sys.stdout.write("\nEPOCH: %d " % (i + 1))
         loss = train(model, data.train, batch_size)
-        if model.tloss=='popts':
-            x, p, weights, arg_maxs, popts = predictions(emodel, data.valid, filtered=True)
-            np.save('res_opts.npy', p)
-            np.save('res_opts_labels.npy', popts)
+        if model.tloss=='huber':
+            print('TEST')
+            print('WEIGHTED')
+            data.unweightedtest.weight(None)
+            x, p, weights, arg_maxs, popts = predictions(emodel, data.unweightedtest)
+            np.save('res_vec_pred.npy', p)
+            np.save('res_vec_labels.npy', arg_maxs)
+            data.unweightedtest.weight(10)
+            x, p, weights, arg_maxs, popts = predictions(emodel, data.unweightedtest)
+            np.save('res_vec_pred10.npy', p)
+            np.save('res_vec_labels10.npy', arg_maxs)
+            data.unweightedtest.weight(1)
+            x, p, weights, arg_maxs, popts = predictions(emodel, data.unweightedtest)
+            np.save('res_vec_pred3.npy', p)
+            np.save('res_vec_labels3.npy', arg_maxs)
         if model.tloss == 'soft':
             train_auc, train_mse = evaluate(emodel, data.train, 100000, filtered=True)
             valid_auc, valid_mse = evaluate(emodel, data.valid, filtered=True)
@@ -47,11 +58,11 @@ def total_train(model, data, emodel=None, batch_size=128, epochs=25):
 
 def predictions(model, dataset, at_most=None, filtered=False):
     sess = tf.get_default_session()
-    x = dataset.x
-    weights = dataset.weights
-    filt = dataset.filt
-    arg_maxs = dataset.arg_maxs
-    popts = dataset.popts
+    x = dataset.x[dataset.mask]
+    weights = dataset.weights[dataset.mask]
+    filt = dataset.filt[dataset.mask]
+    arg_maxs = dataset.arg_maxs[dataset.mask]
+    popts = dataset.popts[dataset.mask]
 
     if at_most is not None:
       filt = filt[:at_most]
@@ -71,7 +82,7 @@ def predictions(model, dataset, at_most=None, filtered=False):
 
 
 def evaluate(model, dataset, at_most=None, filtered=False):
-    _, ps, weights, arg_maxs = predictions(model, dataset, at_most, filtered)
+    _, ps, weights, arg_maxs, popts = predictions(model, dataset, at_most, filtered)
 
 
     labels = weights  # / (wa + wb + 1) # + 1 should be here
@@ -111,7 +122,7 @@ def batch_norm(x, name):
 class NeuralNetwork(object):
 
     def __init__(self, num_features, num_classes, num_layers=1, size=100, lr=1e-3, keep_prob=1.0,
-                 tloss="soft", input_noise=0.0, optimizer="AdamOptimizer"):
+                 tloss="huber", input_noise=0.0, optimizer="AdamOptimizer"):
         batch_size = None
         self.x = x = tf.placeholder(tf.float32, [batch_size, num_features])
         self.weights = weights = tf.placeholder(tf.float32, [batch_size, num_classes])
@@ -148,6 +159,12 @@ class NeuralNetwork(object):
             self.sx = sx
             self.p = sx
             self.loss = loss = tf.losses.mean_squared_error(self.popts, sx)
+        elif tloss == "huber":
+            sx = linear(x, "regr", 2)
+            sx = tf.nn.tanh(sx)
+            self.sx = sx
+            self.p = sx
+            self.loss = loss = tf.losses.huber_loss(tf.stack([tf.sin(self.arg_maxs), tf.cos(self.arg_maxs)],axis=1), sx, delta=0.3)
 
         else:
             raise ValueError("tloss unrecognized: %s" % tloss)
