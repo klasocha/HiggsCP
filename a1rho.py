@@ -46,7 +46,8 @@ class A1RhoEvent(object):
         # all particles boosted & rotated
         for i, idx in enumerate([0, 1, 2, 3, 4, 5, 6]):
             part = boost_and_rotate(p[idx], PHI, THETA, p_a1_rho)
-            if args.FEAT in ["Variant-1.0", "Variant-1.1", "Variant-2.0", "Variant-2.1", "Variant-2.2", "Variant-3.0", "Variant-3.1", "Variant-4.0", "Variant-4.1"]:
+            if args.FEAT in ["Variant-1.0", "Variant-1.1", "Variant-2.0", "Variant-2.1", "Variant-2.2",
+                             "Variant-3.0", "Variant-3.1", "Variant-4.0", "Variant-4.1"]:
                 if idx not in [0, 4]:
                     cols.append(part.vec)
             if args.FEAT == "Variant-All":
@@ -69,18 +70,16 @@ class A1RhoEvent(object):
             part   = boost_and_rotate(p_tau2_approx, PHI, THETA, p_a1_rho)
             cols.append(part.vec)
 	
-        # rho particles
+
         if args.FEAT == "Variant-1.1":
+            # rho particles
             for i, rho in enumerate(l_tau1_rho + l_tau2_rho):
                 rho = boost_and_rotate(rho, PHI, THETA, p_a1_rho)
                 cols.append(rho.vec)
-
-        # recalculated masses
-        if args.FEAT == "Variant-1.1":
+            # recalculated masses
             for i, part in enumerate(l_tau1_rho + l_tau2_rho + [p_tau1_a1]):
                 cols.append(part.recalculated_mass)
-
-        if args.FEAT == "Variant-1.1":
+            # acoplanarity angles and ys
             for i in [1, 2]:
                 rho = p[i] + p[3]
                 other_pi = p[2 if i == 1 else 1]
@@ -93,21 +92,16 @@ class A1RhoEvent(object):
                 cols += [get_y(p[i], p[3], rho_rho), get_y(p[5], p[6], rho_rho),
                          get_y2(p_tau1_a1, rho, other_pi, p_a1_rho)]
 
-        #------------------------------------------------------------
-
+        # preparing feautures with approximated neutrinos momenta
         pb_tau1_h = boost_and_rotate(p_tau1_rho, PHI, THETA, p_a1_rho)
         pb_tau2_h = boost_and_rotate(p_tau2_rho, PHI, THETA, p_a1_rho)
         pb_tau1_nu = boost_and_rotate(p_tau1_nu, PHI, THETA, p_a1_rho)
         pb_tau2_nu = boost_and_rotate(p_tau2_nu, PHI, THETA, p_a1_rho)
 
-        #------------------------------------------------------------
-
         v_ETmiss_x = p_tau1_nu.x + p_tau2_nu.x
         v_ETmiss_y = p_tau1_nu.y + p_tau2_nu.y
         if args.FEAT == "Variant-2.2":
             cols += [v_ETmiss_x, v_ETmiss_y]
-
-        #------------------------------------------------------------
 
         if args.METHOD == "A":
             va_alpha1, va_alpha2 = approx_alpha_A(v_ETmiss_x, v_ETmiss_y, p_tau1_rho, p_tau2_rho)
@@ -116,24 +110,15 @@ class A1RhoEvent(object):
         elif args.METHOD == "C":
             va_alpha1, va_alpha2 = approx_alpha_C(v_ETmiss_x, v_ETmiss_y, p_tau1_rho, p_tau2_rho)
 
-        #------------------------------------------------------------
-
         va_tau1_nu_long = va_alpha1 * pb_tau1_h.z
         va_tau2_nu_long = va_alpha2 * pb_tau2_h.z
-
-        #------------------------------------------------------------
 
         va_tau1_nu_E = approx_E_nu(pb_tau1_h, va_tau1_nu_long)
         va_tau2_nu_E = approx_E_nu(pb_tau2_h, va_tau2_nu_long)
 
-        #------------------------------------------------------------
-
         va_tau1_nu_trans = np.sqrt(np.square(va_tau1_nu_E) - np.square(va_tau1_nu_long))
         va_tau2_nu_trans = np.sqrt(np.square(va_tau2_nu_E) - np.square(va_tau2_nu_long))
-
-        #------------------------------------------------------------
                 
-
         v_tau1_nu_phi = np.arctan2(pb_tau1_nu.x, pb_tau1_nu.y) #boosted
         v_tau2_nu_phi = np.arctan2(pb_tau2_nu.x, pb_tau2_nu.y)
         vn_tau1_nu_phi = smear_exp(v_tau1_nu_phi, beta_noise)
@@ -156,14 +141,17 @@ class A1RhoEvent(object):
         ve_tau1_nu_E = approx_E_nu(pb_tau1_h, ve_tau1_nu_long)
         ve_tau2_nu_E = approx_E_nu(pb_tau2_h, ve_tau2_nu_long)
 
-
         ve_tau1_nu_trans = np.sqrt(np.square(ve_tau1_nu_E) - np.square(ve_tau1_nu_long))
         ve_tau2_nu_trans = np.sqrt(np.square(ve_tau2_nu_E) - np.square(ve_tau2_nu_long))
 
         if args.FEAT in ["Variant-2.1", "Variant-2.2"]:
             cols += [va_tau1_nu_long, va_tau2_nu_long, va_tau1_nu_E, va_tau2_nu_E, va_tau1_nu_trans, va_tau2_nu_trans]
+            
         elif args.FEAT in ["Variant-3.0", "Variant-3.1"]:
-            cols += [va_tau1_nu_long, va_tau2_nu_long, va_tau1_nu_E, va_tau2_nu_E, va_tau1_nu_trans * tau1_sin_phi, va_tau2_nu_trans * tau2_sin_phi, va_tau1_nu_trans * tau1_cos_phi, va_tau2_nu_trans * tau2_cos_phi]
+            cols += [va_tau1_nu_long, va_tau2_nu_long, va_tau1_nu_E, va_tau2_nu_E,
+                     va_tau1_nu_trans * tau1_sin_phi, va_tau2_nu_trans * tau2_sin_phi,
+                     va_tau1_nu_trans * tau1_cos_phi, va_tau2_nu_trans * tau2_cos_phi]
+            
         elif args.FEAT == "Variant-2.0":
             cols += [ve_tau1_nu_long, ve_tau2_nu_long, ve_tau1_nu_E, ve_tau2_nu_E, ve_tau1_nu_trans, ve_tau2_nu_trans]
 
@@ -174,10 +162,10 @@ class A1RhoEvent(object):
             filt = filt & (part.pt >= 1)    
         filt = filt.astype(np.float32)
 
-        if args.FEAT in ["Variant-1.0", "Variant-1.1", "Variant-All"]:
+        if args.FEAT in ["Variant-1.0", "Variant-1.1", "Variant-All", "Variant-4.0","Variant-4.1"]:
             cols += [filt]
 
-        elif args.FEAT in ["Variant-2.1", "Variant-2.2", "Variant-3.0", "Variant-3.1", "Variant-4.0","Variant-4.1"]:
+        elif args.FEAT in ["Variant-2.1", "Variant-2.2", "Variant-3.0", "Variant-3.1"]:
             isFilter = np.full(p_a1_rho.e.shape, True, dtype=bool)
             
             va_alpha1_A, va_alpha2_A = approx_alpha_A(v_ETmiss_x, v_ETmiss_y, p_tau1_rho, p_tau2_rho)
@@ -191,7 +179,6 @@ class A1RhoEvent(object):
             va_tau2_nu_long_A = va_alpha2_A * pb_tau2_h.z
             va_tau2_nu_long_B = va_alpha2_B * pb_tau2_h.z 
             va_tau2_nu_long_C = va_alpha2_C * pb_tau2_h.z
-
 		
             va_tau1_nu_E_A = approx_E_nu(pb_tau1_h, va_tau1_nu_long_A)
             va_tau1_nu_E_B = approx_E_nu(pb_tau1_h, va_tau1_nu_long_B)
@@ -234,6 +221,7 @@ class A1RhoEvent(object):
 
         self.cols = np.concatenate(cols, 1)
 
+        # this part is for smeared in Variant-3.1
 	if args.BETA > 0:
 		vn_tau1_nu_phi = smear_polynomial(v_tau1_nu_phi, args.BETA, args.pol_b, args.pol_c)
 		vn_tau2_nu_phi = smear_polynomial(v_tau2_nu_phi, args.BETA, args.pol_b, args.pol_c)
@@ -243,29 +231,95 @@ class A1RhoEvent(object):
 		tau2_sin_phi = np.sin(vn_tau2_nu_phi)
 		tau2_cos_phi = np.cos(vn_tau2_nu_phi)
 
-	self.valid_cols = [va_tau1_nu_trans * tau1_sin_phi, va_tau2_nu_trans * tau2_sin_phi, va_tau1_nu_trans * tau1_cos_phi, va_tau2_nu_trans * tau2_cos_phi]
+	self.valid_cols = [va_tau1_nu_trans * tau1_sin_phi, va_tau2_nu_trans * tau2_sin_phi,
+                           va_tau1_nu_trans * tau1_cos_phi, va_tau2_nu_trans * tau2_cos_phi]
 
 
-
+        # now comes the list of labels for monitoring feautures
         if args.FEAT == "Variant-1.0":
-            self.labels = ["first pi- x", "first pi- y", "first pi- z", "first pi- en", "second pi- x", "second pi- y", "second pi- z", "second pi- en", "first pi+ x", "first pi+ y", "first pi+ z", "first pi+ en", "second pi+ x", "second pi+ y", "second pi+ z", "second pi+ en", "pi0 x", "pi0 y", "pi0 z", "pi0 en"]
-        elif args.FEAT == "Variant-1.1": #TODO
-            self.labels = ["first pi- x", "first pi- y", "first pi- z", "first pi- en", "second pi- x", "second pi- y", "second pi- z", "second pi- en", "first pi+ x", "first pi+ y", "first pi+ z", "first pi+ en", "second pi+ x", "second pi+ y", "second pi+ z", "second pi+ en", "pi0 x", "pi0 y", "pi0 z", "pi0 en", "rho1 x", "rho1 y", "rho1 z", "rho1 en", "rho1 mass", "rho2 x", "rho2 y", "rho2 z", "rho2 en", "rho2 mass", "aco_angle", "y1", "y2"]
+            self.labels = ["tau1_pi_1_px", "tau1_pi_1_py", "tau1_pi_1_pz", "tau1_pi_1_e",
+                           "tau1_pi_2_px", "tau1_pi_2_py", "tau1_pi_2_pz", "tau1_pi_2_e",
+                           "tau1_pi_3_px", "tau1_pi_3_py", "tau1_pi_3_pz", "tau1_pi_3_e",
+                           "tau2_pi_px",   "tau2_pi_py",   "tau2_pi_pz",   "tau2_pi_e",
+                           "tau2_pi0_px",  "tau2_pi0_py",  "tau2_pi0_pz",  "tau2_pi0_e"]            
+        elif args.FEAT == "Variant-1.1":
+            self.labels = ["tau1_pi_1_px", "tau1_pi_1_py", "tau1_pi_1_pz", "tau1_pi_1_e",
+                           "tau1_pi_2_px", "tau1_pi_2_py", "tau1_pi_2_pz", "tau1_pi_2_e",
+                           "tau1_pi_3_px", "tau1_pi_3_py", "tau1_pi_3_pz", "tau1_pi_3_e",
+                           "tau2_pi_px",   "tau2_pi_py",   "tau2_pi_pz",   "tau2_pi_e",
+                           "tau2_pi0_px",  "tau2_pi0_py",  "tau2_pi0_pz",  "tau2_pi0_e",
+                           "tau1_rho1_px", "tau1_rho1_py", "tau1_rho1_pz", "tau1_rho1_e",
+                           "tau1_rho2_px", "tau1_rho2_py", "tau1_rho2_pz", "tau1_rho2_e",
+                           "tau2_rho_px",  "tau2_rho_py",  "tau2_rho_pz",  "tau2_rho_e",
+                           "tau1_rho1_mass", "tau1_rho2_mass", "tau2_rho_mass", "tau1_a1_mass",
+                           "aco_angle_1", "aco_angle_2", "aco_angle_3", "aco_angle_4",
+                           "tau1_y1", "tau2_y", "tau1_y2", "tau1_y3", "tau2_y", "tau1_y4"]
+
         elif args.FEAT ==  "Variant-2.0":
-            self.labels = ["first pi- x", "first pi- y", "first pi- z", "first pi- en", "second pi- x", "second pi- y", "second pi- z", "second pi- en", "first pi+ x", "first pi+ y", "first pi+ z", "first pi+ en", "second pi+ x", "second pi+ y", "second pi+ z", "second pi+ en", "pi0 x", "pi0 y", "pi0 z", "pi0 en", "ve_tau1_nu_long", "ve_tau2_nu_long", "ve_tau1_nu_E", "ve_tau2_nu_E", "ve_tau1_nu_trans", "ve_tau2_nu_trans"]
+            self.labels = ["tau1_pi_1_px", "tau1_pi_1_py", "tau1_pi_1_pz", "tau1_pi_1_e",
+                           "tau1_pi_2_px", "tau1_pi_2_py", "tau1_pi_2_pz", "tau1_pi_2_e",
+                           "tau1_pi_3_px", "tau1_pi_3_py", "tau1_pi_3_pz", "tau1_pi_3_e",
+                           "tau2_pi_px", "tau2_pi_py", "tau2_pi_pz", "tau2_pi_e",
+                           "tau2_pi0_px", "tau2_pi0_py", "tau2_pi0_pz", "tau2_pi0_e",
+                           "tau1_nu_pL", "tau2_nu_pL", "tau1_nu_e", "tau2_nu_e", "tau1_nu_pT", "tau2_nu_pT"]            
         elif args.FEAT ==  "Variant-2.1":
-            self.labels = ["first pi- x", "first pi- y", "first pi- z", "first pi- en", "second pi- x", "second pi- y", "second pi- z", "second pi- en", "first pi+ x", "first pi+ y", "first pi+ z", "first pi+ en", "second pi+ x", "second pi+ y", "second pi+ z", "second pi+ en", "pi0 x", "pi0 y", "pi0 z", "pi0 en", "va_tau1_nu_long", "va_tau2_nu_long", "va_tau1_nu_E", "va_tau2_nu_E", "va_tau1_nu_trans", "va_tau2_nu_trans"]
+            self.labels = ["tau1_pi_1_px", "tau1_pi_1_py", "tau1_pi_1_pz", "tau1_pi_1_e",
+                           "tau1_pi_2_px", "tau1_pi_2_py", "tau1_pi_2_pz", "tau1_pi_2_e",
+                           "tau1_pi_3_px", "tau1_pi_3_py", "tau1_pi_3_pz", "tau1_pi_3_e",
+                           "tau2_pi_px", "tau2_pi_py", "tau2_pi_pz", "tau2_pi_e",
+                           "tau2_pi0_px", "tau2_pi0_py", "tau2_pi0_pz", "tau2_pi0_e",
+                           "tau1_nu_approx_pL", "tau2_nu_approx_pL", "tau1_nu_approx_e", "tau2_nu_approx_e",
+                           "tau1_nu_approx_pT", "tau2_nu_approx_pT"]
         elif args.FEAT ==  "Variant-2.2":
-            self.labels = ["first pi- x", "first pi- y", "first pi- z", "first pi- en", "second pi- x", "second pi- y", "second pi- z", "second pi- en", "first pi+ x", "first pi+ y", "first pi+ z", "first pi+ en", "second pi+ x", "second pi+ y", "second pi+ z", "second pi+ en", "pi0 x", "pi0 y", "pi0 z", "pi0 en", "v_ETmiss_x", "v_ETmiss_y", "va_tau1_nu_long", "va_tau2_nu_long", "va_tau1_nu_E", "va_tau2_nu_E", "va_tau1_nu_trans", "va_tau2_nu_trans"]
+            self.labels = ["tau1_pi_1_px", "tau1_pi_1_py", "tau1_pi_1_pz", "tau1_pi_1_e",
+                           "tau1_pi_2_px", "tau1_pi_2_py", "tau1_pi_2_pz", "tau1_pi_2_e",
+                           "tau1_pi_3_px", "tau1_pi_3_py", "tau1_pi_3_pz", "tau1_pi_3_e",
+                           "tau2_pi_px",   "tau2_pi_py",   "tau2_pi_pz",   "tau2_pi_e",
+                           "tau2_pi0_px",  "tau2_pi0_py",  "tau2_pi0_pz",  "tau2_pi0_e",
+                           "ETmiss_px", "ETmiss_py",
+                           "tau1_nu_approx_pL", "tau2_nu_approx_pL", "tau1_nu_approx_e", "tau2_nu_approx_e",
+                           "tau1_nu_approx_pT", "tau2_nu_approx_pT"]
+
         elif args.FEAT ==  "Variant-3.0":
-            self.labels = ["first pi- x", "first pi- y", "first pi- z", "first pi- en", "second pi- x", "second pi- y", "second pi- z", "second pi- en", "first pi+ x", "first pi+ y", "first pi+ z", "first pi+ en", "second pi+ x", "second pi+ y", "second pi+ z", "second pi+ en", "pi0 x", "pi0 y", "pi0 z", "pi0 en", "va_tau1_nu_long", "va_tau2_nu_long", "va_tau1_nu_E", "va_tau2_nu_E", "va_tau1_nu_trans * tau1_sin_phi", "va_tau2_nu_trans * tau2_sin_phi", "va_tau1_nu_trans * tau1_cos_phi", "va_tau2_nu_trans * tau2_cos_phi"]
+            self.labels = ["tau1_pi_1_px", "tau1_pi_1_py", "tau1_pi_1_pz", "tau1_pi_1_e",
+                           "tau1_pi_2_px", "tau1_pi_2_py", "tau1_pi_2_pz", "tau1_pi_2_e",
+                           "tau1_pi_3_px", "tau1_pi_3_py", "tau1_pi_3_pz", "tau1_pi_3_e",
+                           "tau2_pi_px", "tau2_pi_py", "tau2_pi_pz", "tau2_pi_e",
+                           "tau2_pi0_px", "tau2_pi0_py", "tau2_pi0_pz", "tau2_pi0_e",
+                           "tau1_nu_approx_px", "tau1_nu_approx_py", "tau2_nu_approx_px", "tau1_nu_approx_py"]
         elif args.FEAT ==  "Variant-3.1":
-            self.labels = ["first pi- x", "first pi- y", "first pi- z", "first pi- en", "second pi- x", "second pi- y", "second pi- z", "second pi- en", "first pi+ x", "first pi+ y", "first pi+ z", "first pi+ en", "second pi+ x", "second pi+ y", "second pi+ z", "second pi+ en", "pi0 x", "pi0 y", "pi0 z", "pi0 en", "va_tau1_nu_long", "va_tau2_nu_long", "va_tau1_nu_E", "va_tau2_nu_E", "va_tau1_nu_trans * tau1_sin_phi", "va_tau2_nu_trans * tau2_sin_phi", "va_tau1_nu_trans * tau1_cos_phi", "va_tau2_nu_trans * tau2_cos_phi"]
+            self.labels = ["tau1_pi_1_px", "tau1_pi_1_py", "tau1_pi_1_pz", "tau1_pi_1_e",
+                           "tau1_pi_2_px", "tau1_pi_2_py", "tau1_pi_2_pz", "tau1_pi_2_e",
+                           "tau1_pi_3_px", "tau1_pi_3_py", "tau1_pi_3_pz", "tau1_pi_3_e",
+                           "tau2_pi_px", "tau2_pi_py", "tau2_pi_pz", "tau2_pi_e",
+                           "tau2_pi0_px", "tau2_pi0_py", "tau2_pi0_pz", "tau2_pi0_e",
+                           "tau1_nu_approx_px", "tau1_nu_approx_py", "tau2_nu_approx_px", "tau1_nu_approx_py"]
+
         elif args.FEAT ==  "Variant-4.0":
-            self.labels = ["first pi- x", "first pi- y", "first pi- z", "first pi- en", "second pi- x", "second pi- y", "second pi- z", "second pi- en", "first pi+ x", "first pi+ y", "first pi+ z", "first pi+ en", "second pi+ x", "second pi+ y", "second pi+ z", "second pi+ en", "pi0 x", "pi0 y", "pi0 z", "pi0 en", "tau1 x", "tau1 y", "tau1 z", "tau1 en", "tau2 x", "tau2 y", "tau2 z", "tau2 en"]
+            self.labels = ["tau1_pi_1_px", "tau1_pi_1_py", "tau1_pi_1_pz", "tau1_pi_1_e",
+                           "tau1_pi_2_px", "tau1_pi_2_py", "tau1_pi_2_pz", "tau1_pi_2_e",
+                           "tau1_pi_3_px", "tau1_pi_3_py", "tau1_pi_3_pz", "tau1_pi_3_e",
+                           "tau2_pi_px",   "tau2_pi_py",   "tau2_pi_pz",   "tau2_pi_e",
+                           "tau2_pi0_px",  "tau2_pi0_py",  "tau2_pi0_pz",  "tau2_pi0_e",
+                           "tau1_px",      "tau1_py",      "tau1_pz",      "tau1_e",
+                           "tau2_px",      "tau2_py",      "tau2_pz",      "tau2_e"]
         elif args.FEAT ==  "Variant-4.1":
-            self.labels = ["first pi- x", "first pi- y", "first pi- z", "first pi- en", "second pi- x", "second pi- y", "second pi- z", "second pi- en", "first pi+ x", "first pi+ y", "first pi+ z", "first pi+ en", "second pi+ x", "second pi+ y", "second pi+ z", "second pi+ en", "pi0 x", "pi0 y", "pi0 z", "pi0 en", "approx tau1 x", "approx tau1 y", "approx tau1 z", "approx tau1 en", "approx tau2 x", "approx tau2 y", "approx tau2 z", "approx tau2 en"]
+            self.labels = ["tau1_pi_1_px", "tau1_pi_1_py", "tau1_pi_1_pz", "tau1_pi_1_e",
+                           "tau1_pi_2_px", "tau1_pi_2_py", "tau1_pi_2_pz", "tau1_pi_2_e",
+                           "tau1_pi_3_px", "tau1_pi_3_py", "tau1_pi_3_pz", "tau1_pi_3_e",
+                           "tau2_pi_px",   "tau2_pi_py",   "tau2_pi_pz",   "tau2_pi_e",
+                           "tau2_pi0_px",  "tau2_pi0_py",  "tau2_pi0_pz",  "tau2_pi0_e",
+                           "tau1_approx_px", "tau1_approx_py", "tau1_approx_pz", "tau1_approx_e",
+                           "tau2_approx_px", "tau2_approx_py", "tau2_approx_pz", "tau2_approx_e"]
+
         elif args.FEAT == "Variant-All":
-            self.labels = ["n x", "n y", "n z", "n en", "first pi- x", "first pi- y", "first pi- z", "first pi- en", "second pi- x", "second pi- y", "second pi- z", "second pi- en", "first pi+ x", "first pi+ y", "first pi+ z", "first pi+ en", "an x", "an y", "an z", "an en", "second pi+ x", "second pi+ y", "second pi+ z", "second pi+ en", "pi0 x", "pi0 y", "pi0 z", "pi0 en"]
+            self.labels = ["tau1_nu_px",   "tau1_nu_py", "tau1_nu_pz", "tau1_nu_e",
+                           "tau1_pi_1_px", "tau1_pi_1_py", "tau1_pi_1_pz", "tau1_pi_1_e"
+                           "tau1_pi_2_px", "tau1_pi_2_py", "tau1_pi_2_pz", "tau1_pi_2_e",
+                           "tau1_pi_3_px", "tau1_pi_3_py", "tau1_pi_3_pz", "tau1_pi_3_e",
+                           "tau2_nu_px",   "tau2_nu_py",   "tau2_nu_pz",   "tau2_nu_e",
+                           "tau2_pi_px",   "tau2_pi_py",   "tau2_pi_pz",   "tau2_pi_e",
+                           "tau2_pi0_px",  "tau2_pi0_py",  "tau2_pi0_pz",  "tau2_pi0_e"]
+
 
 
