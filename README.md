@@ -1,5 +1,23 @@
 # ML Higgs
 ## Multiclass classification
+### Running training
+1.Set `RHORHO_DATA` env variable
+
+2.Download `rhorho_raw.data.npy`, `rhorho_raw.w.npy`, `rhorho_raw.perm.npy` from `https://ujchmura-my.sharepoint.com/:f:/g/personal/m_sadowski_student_uj_edu_pl/Ev9uTEm_-SZHpnoglCc4NeIBl4SCMkc3M2wd8CBebl90Dg?e=9gMNvdz`
+
+3. Run `main.py`
+
+### Changelog
+
+### Version 2
+Modifications made
+
+- Prepered model for new weights e.g. change range from 2pi to 1pi to prevent from ambiguous mixing angle
+- Preperad unweighted datasets
+- Implemented huber loss with sin-cos parametrization (`tloss==parametrized_sincos`) which is now default
+- Prepared jupyter notebooks with test in `notebooks` directory
+
+### Version 1
 Modified files:
 - `train_rhorho.py`
 - `tf_model.py`

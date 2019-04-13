@@ -30,21 +30,18 @@ def total_train(model, data, emodel=None, batch_size=128, epochs=25):
     for i in range(epochs):
         sys.stdout.write("\nEPOCH: %d " % (i + 1))
         loss = train(model, data.train, batch_size)
-        if model.tloss=='huber':
+        if model.tloss=='parametrized_sincos':
             print('TEST')
-            print('WEIGHTED')
             data.unweightedtest.weight(None)
             x, p, weights, arg_maxs, popts = predictions(emodel, data.unweightedtest)
-            np.save('res_vec_pred.npy', p)
-            np.save('res_vec_labels.npy', arg_maxs)
-            data.unweightedtest.weight(10)
-            x, p, weights, arg_maxs, popts = predictions(emodel, data.unweightedtest)
-            np.save('res_vec_pred10.npy', p)
-            np.save('res_vec_labels10.npy', arg_maxs)
-            data.unweightedtest.weight(1)
-            x, p, weights, arg_maxs, popts = predictions(emodel, data.unweightedtest)
-            np.save('res_vec_pred3.npy', p)
-            np.save('res_vec_labels3.npy', arg_maxs)
+            np.save('results/res_vec_pred.npy', p)
+            np.save('results/res_vec_labels.npy', arg_maxs)
+            weights_to_test = [3, 10]
+            for w in weights_to_test:
+                data.unweightedtest.weight(w)
+                x, p, weights, arg_maxs, popts = predictions(emodel, data.unweightedtest)
+                np.save('results/res_vec_pred'+str(w)+'.npy', p)
+                np.save('results/res_vec_labels'+str(w)+'.npy', arg_maxs)
         if model.tloss == 'soft':
             train_auc, train_mse = evaluate(emodel, data.train, 100000, filtered=True)
             valid_auc, valid_mse = evaluate(emodel, data.valid, filtered=True)
@@ -88,7 +85,7 @@ def evaluate(model, dataset, at_most=None, filtered=False):
     labels = weights  # / (wa + wb + 1) # + 1 should be here
     num_classes = weights.shape[1]
     np.save('ps.npy', ps)
-    np.save('ps2.npy', labels)
+    np.save('ps_orig.npy', labels)
     pred = np.argmax(ps, axis=1)/(num_classes-1)*np.pi
     mse = np.mean((pred-arg_maxs)**2)
     return (np.argmax(labels,axis=1) == np.argmax(ps, axis=1)).mean(), mse
@@ -122,7 +119,7 @@ def batch_norm(x, name):
 class NeuralNetwork(object):
 
     def __init__(self, num_features, num_classes, num_layers=1, size=100, lr=1e-3, keep_prob=1.0,
-                 tloss="huber", input_noise=0.0, optimizer="AdamOptimizer"):
+                 tloss="parametrized_sincos", input_noise=0.0, optimizer="AdamOptimizer"):
         batch_size = None
         self.x = x = tf.placeholder(tf.float32, [batch_size, num_features])
         self.weights = weights = tf.placeholder(tf.float32, [batch_size, num_classes])
@@ -159,7 +156,7 @@ class NeuralNetwork(object):
             self.sx = sx
             self.p = sx
             self.loss = loss = tf.losses.mean_squared_error(self.popts, sx)
-        elif tloss == "huber":
+        elif tloss == "parametrized_sincos":
             sx = linear(x, "regr", 2)
             sx = tf.nn.tanh(sx)
             self.sx = sx

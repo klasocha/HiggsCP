@@ -48,9 +48,12 @@ class RhoRhoEvent(object):
                 cols.append(rho.vec)
                 cols.append(rho.recalculated_mass)
 
-        if True or args.FEAT == "Model-OnlyHad":
+        if args.FEAT == "Model-OnlyHad":
             acoplanar_angle = get_acoplanar_angle(p[1], p[2], p[4], p[5], rho_rho)
             y1, y2 = get_y(p[1], p[2], rho_rho), get_y(p[4], p[5], rho_rho)
+            np.save('results/acoplanar.npy', acoplanar_angle)
+            np.save('results/y1.npy', y1)
+            np.save('results/y2.npy', y2)
             cols += [get_acoplanar_angle(p[1], p[2], p[4], p[5], rho_rho)]
             cols += [get_y(p[1], p[2], rho_rho), get_y(p[4], p[5], rho_rho)]
 

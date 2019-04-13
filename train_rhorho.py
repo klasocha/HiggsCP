@@ -33,14 +33,12 @@ def run(args):
         for i in range(data_len ):
             popt, pcov = optimize.curve_fit(weight_fun, x, w[i, :], p0=[1, 1, 1])
             popts[i] = popt
-            if i % 100 ==0:
-                print 'a',i
+
         np.save(os.path.join(data_path, 'popts.npy'), popts)
     popts = np.load(os.path.join(data_path, 'popts.npy'))
-    if not reuse_weigths:
+    if not reuse_weigths or not os.path.exists(os.path.join(data_path, 'weigths.npy'))\
+            or not os.path.exists(os.path.join(data_path, 'arg_maxs.npy')):
         for i in range(data_len):
-            if i % 100 ==0:
-                print 'b',i
             weights[i] = weight_fun(classes, *popts[i])
             arg_max = 0
             if weight_fun(2 * np.pi, *popts[i]) > weight_fun(arg_max, *popts[i]):
