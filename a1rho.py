@@ -9,6 +9,8 @@ class A1RhoEvent(object):
         p = [Particle(data[:, 5 * i:5 * i + 4]) for i in range(7)]
         cols = []
         labels = []
+        self.labels_suppl = []
+        self.cols_suppl = []
 
         def get_tau1(p):
             p_tau1_nu = p[0]
@@ -69,6 +71,10 @@ class A1RhoEvent(object):
             p_tau2_approx = p_tau2.scale_vec(scale)
             part   = boost_and_rotate(p_tau2_approx, PHI, THETA, p_a1_rho)
             cols.append(part.vec)
+            self.cols_suppl = [boost_and_rotate(p_tau1, PHI, THETA, p_a1_rho).vec - boost_and_rotate(p_tau1_approx, PHI, THETA, p_a1_rho).vec]
+            self.cols_suppl.append(boost_and_rotate(p_tau2, PHI, THETA, p_a1_rho).vec - boost_and_rotate(p_tau2_approx, PHI, THETA, p_a1_rho).vec)
+
+
 	
 
         if args.FEAT == "Variant-1.1":
@@ -215,11 +221,19 @@ class A1RhoEvent(object):
                 isFilter *= np.logical_not(np.isnan(trans_comp))
             cols += [filt * isFilter]
 
+
+        
+        
         for i in range(len(cols)):
             if len(cols[i].shape) == 1:
                 cols[i] = cols[i].reshape([-1, 1])
-
+        for i in range(len(self.cols_suppl)):
+            if len(self.cols_suppl[i].shape) == 1:
+                self.cols_suppl[i] = self.cols_suppl[i].reshape([-1, 1])
         self.cols = np.concatenate(cols, 1)
+        if len(self.cols_suppl) >0 :
+        	self.cols_suppl = np.concatenate(self.cols_suppl, 1)
+
 
         # this part is for smeared in Variant-3.1
 	if args.BETA > 0:
@@ -311,6 +325,7 @@ class A1RhoEvent(object):
                            "tau2_pi0_px",  "tau2_pi0_py",  "tau2_pi0_pz",  "tau2_pi0_e",
                            "tau1_approx_px", "tau1_approx_py", "tau1_approx_pz", "tau1_approx_e",
                            "tau2_approx_px", "tau2_approx_py", "tau2_approx_pz", "tau2_approx_e"]
+            self.labels_suppl = ["approx error tau1 x", "approx error tau1 y", "approx error tau1 z", "approx error tau1 en", "approx error tau2 x", "approx error tau2 y", "approx error tau2 z", "approx error tau2 en"]
 
         elif args.FEAT == "Variant-All":
             self.labels = ["tau1_nu_px",   "tau1_nu_py", "tau1_nu_pz", "tau1_nu_e",
@@ -320,6 +335,5 @@ class A1RhoEvent(object):
                            "tau2_nu_px",   "tau2_nu_py",   "tau2_nu_pz",   "tau2_nu_e",
                            "tau2_pi_px",   "tau2_pi_py",   "tau2_pi_pz",   "tau2_pi_e",
                            "tau2_pi0_px",  "tau2_pi0_py",  "tau2_pi0_pz",  "tau2_pi0_e"]
-
 
 

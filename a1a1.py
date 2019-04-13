@@ -8,6 +8,8 @@ class A1A1Event(object):
         p = [Particle(data[:, 5 * i:5 * i + 4]) for i in range(8)]
         cols = []
         labels = []
+        self.labels_suppl = []
+        self.cols_suppl = []
 
         def get_tau1(p):
             p_tau1_nu = p[0]
@@ -70,7 +72,9 @@ class A1A1Event(object):
             p_tau2_approx = p_tau2.scale_vec(scale)
             part   = boost_and_rotate(p_tau2_approx, PHI, THETA, p_a1_a1)
             cols.append(part.vec)
-
+            self.cols_suppl = [boost_and_rotate(p_tau1, PHI, THETA, p_a1_a1).vec - boost_and_rotate(p_tau1_approx, PHI, THETA, p_a1_a1).vec]
+            self.cols_suppl.append(boost_and_rotate(p_tau2, PHI, THETA, p_a1_a1).vec - boost_and_rotate(p_tau2_approx, PHI, THETA, p_a1_a1).vec)
+        print(self.cols_suppl)
         # rho particles
         if args.FEAT == "Variant-1.1":
             for i, rho in enumerate(l_tau1_rho + l_tau2_rho):
@@ -246,8 +250,13 @@ class A1A1Event(object):
         for i in range(len(cols)):
             if len(cols[i].shape) == 1:
                 cols[i] = cols[i].reshape([-1, 1])
-
+        for i in range(len(self.cols_suppl)):
+            if len(self.cols_suppl[i].shape) == 1:
+                self.cols_suppl[i] = self.cols_suppl[i].reshape([-1, 1])
+       
         self.cols = np.concatenate(cols, 1)
+        if len(self.cols_suppl) >0 :
+        	self.cols_suppl = np.concatenate(self.cols_suppl, 1)
 	if args.BETA > 0:
 		vn_tau1_nu_phi = smear_polynomial(v_tau1_nu_phi, args.BETA, args.pol_b, args.pol_c)
 		vn_tau2_nu_phi = smear_polynomial(v_tau2_nu_phi, args.BETA, args.pol_b, args.pol_c)
@@ -300,8 +309,10 @@ class A1A1Event(object):
             self.labels = ["first pi- x", "first pi- y", "first pi- z", "first pi- en", "second pi- x", "second pi- y", "second pi- z", "second pi- en", "first pi+ x", "first pi+ y", "first pi+ z", "first pi+ en", "third pi- x", "third pi- y", "third pi- z", "third pi- en", "fourth pi- x", "fourth pi- y", "fourth pi- z", "fourth pi- en", "second pi+ x", "second pi+ y", "second pi+ z", "second pi+ en", "tau1 x", "tau1 y", "tau1 z", "tau1 en", "tau2 x", "tau2 y", "tau2 z", "tau2 en"]
         elif args.FEAT ==  "Variant-4.1":
             self.labels = ["first pi- x", "first pi- y", "first pi- z", "first pi- en", "second pi- x", "second pi- y", "second pi- z", "second pi- en", "first pi+ x", "first pi+ y", "first pi+ z", "first pi+ en", "third pi- x", "third pi- y", "third pi- z", "third pi- en", "fourth pi- x", "fourth pi- y", "fourth pi- z", "fourth pi- en", "second pi+ x", "second pi+ y", "second pi+ z", "second pi+ en", "approx tau1 x", "approx tau1 y", "approx tau1 z", "approx tau1 en", "approx tau2 x", "approx tau2 y", "approx tau2 z", "approx tau2 en"]
+            self.labels_suppl = ["approx error tau1 x", "approx error tau1 y", "approx error tau1 z", "approx error tau1 en", "approx error tau2 x", "approx error tau2 y", "approx error tau2 z", "approx error tau2 en"]
         elif args.FEAT == "Variant-All":
             self.labels = ["n x", "n y", "n z", "n en", "first pi- x", "first pi- y", "first pi- z", "first pi- en", "second pi- x", "second pi- y", "second pi- z", "second pi- en", "first pi+ x", "first pi+ y", "first pi+ z", "first pi+ en", "an x", "an y", "an z", "an en", "third pi- x", "third pi- y", "third pi- z", "third pi- en", "fourth pi- x", "fourth pi- y", "fourth pi- z", "fourth pi- en", "second pi+ x", "second pi+ y", "second pi+ z", "second pi+ en"]
 
 
+        
 

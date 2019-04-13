@@ -1,7 +1,7 @@
 import tensorflow as tf
 from a1rho import A1RhoEvent
 from data_utils import read_np, EventDatasets
-from plot_utils import feature_plot
+from plot_utils import monit_plots
 from tf_model import total_train, NeuralNetwork
 import os
 import numpy as np
@@ -25,12 +25,8 @@ def run(args):
     num_features = points.train.x.shape[1]
     print "Generated %d features" % num_features
 
-    if args.PLOT_FEATURES == "FILTER":
-        for i in range(num_features):
-            feature_plot(event.cols[:,i], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/", filename = event.labels[i], w_a = w_a, w_b = w_b, filt = event.cols[:,-1])
-    elif args.PLOT_FEATURES == "NO-FILTER":
-        for i in range(num_features):
-            feature_plot(event.cols[:,i], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/", filename = event.labels[i], w_a = w_a, w_b = w_b)
+    if args.PLOT_FEATURES is not "NO":
+        monit_plots(args, event, w_a, w_b)
 
     
     print "Initializing model"
