@@ -15,7 +15,9 @@ Modifications made
 - Prepered model for new weights e.g. change range from 2pi to 1pi to prevent from ambiguous mixing angle
 - Preperad unweighted datasets
 - Implemented huber loss with sin-cos parametrization (`tloss==parametrized_sincos`) which is now default
-- Prepared jupyter notebooks with test in `notebooks` directory
+- Prepared `MixingAngleAnalysis` notebook with tests on unweighted data in `notebooks` directory
+- Added `InitialModelTests` notebook with initial analysis 
+- Added `Sin-cos training_test` notebook with benchmark to test training on simple data
 
 ### Version 1
 Modified files:
