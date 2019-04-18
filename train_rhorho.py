@@ -58,7 +58,7 @@ def run(args):
         np.save(os.path.join(data_path, 'arg_maxs.npy'), arg_maxs)
     weights = np.load(os.path.join(data_path, 'weigths.npy'))
     arg_maxs = np.load(os.path.join(data_path, 'arg_maxs.npy'))
-    arg_maxs[arg_maxs>np.pi] = arg_maxs[arg_maxs>np.pi] - np.pi
+    arg_maxs[arg_maxs>np.pi] = -1 * arg_maxs[arg_maxs>np.pi] + 2*np.pi
 
 
     print "Processing data"

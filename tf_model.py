@@ -119,7 +119,7 @@ def batch_norm(x, name):
 class NeuralNetwork(object):
 
     def __init__(self, num_features, num_classes, num_layers=1, size=100, lr=1e-3, keep_prob=1.0,
-                 tloss="parametrized_sincos", input_noise=0.0, optimizer="AdamOptimizer"):
+                 tloss="parametrized_sincos", activation='mixed_clip', input_noise=0.0, optimizer="AdamOptimizer"):
         batch_size = None
         self.x = x = tf.placeholder(tf.float32, [batch_size, num_features])
         self.weights = weights = tf.placeholder(tf.float32, [batch_size, num_classes])
@@ -158,7 +158,18 @@ class NeuralNetwork(object):
             self.loss = loss = tf.losses.mean_squared_error(self.popts, sx)
         elif tloss == "parametrized_sincos":
             sx = linear(x, "regr", 2)
-            sx = tf.nn.tanh(sx)
+
+            if activation == 'tanh':
+                sx = tf.nn.tanh(sx)
+            elif activation == 'clip':
+                sx = tf.clip_by_value(sx, -1., 1.)
+            elif activation == 'mixed_clip':
+                a = tf.clip_by_value(sx[:, 0], 0., 1.)
+                b = tf.clip_by_value(sx[:, 1], -1., 1.)
+                sx = tf.stack((a, b), axis=1)
+            elif activation == 'None':
+                pass
+
             self.sx = sx
             self.p = sx
             self.loss = loss = tf.losses.huber_loss(tf.stack([tf.sin(self.arg_maxs), tf.cos(self.arg_maxs)], axis=1), sx, delta=0.3)

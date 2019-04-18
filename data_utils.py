@@ -127,4 +127,3 @@ class EventDatasets(object):
         self.valid = Dataset(data[valid_ids], weights[valid_ids, :], arg_maxs[valid_ids], popts[valid_ids])
         self.test = Dataset(data[test_ids], weights[test_ids, :], arg_maxs[test_ids], popts[test_ids])
         self.unweightedtest = UnweightedDataset(data[test_ids], weights[test_ids, :], arg_maxs[test_ids], popts[test_ids])
-        pass
