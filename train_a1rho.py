@@ -28,7 +28,7 @@ def run(args):
     if args.PLOT_FEATURES is not "NO":
         monit_plots(args, event, w_a, w_b)
 
-    
+   
     print "Initializing model"
     with tf.variable_scope("model1") as vs:
         model = NeuralNetwork(num_features, num_layers=args.LAYERS, size=args.SIZE, keep_prob=(1-args.DROPOUT))#, optimizer=args.OPT)

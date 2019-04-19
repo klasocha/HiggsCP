@@ -14,8 +14,8 @@ class RhoRhoEvent(object):
         self.cols_suppl = []
 
         def get_tau1(p):
-            tau1_nu = p[0]
-            tau1_pi = p[1:3]
+            tau1_nu  = p[0]
+            tau1_pi  = p[1:3]
             tau1_rho = tau1_pi[0] + tau1_pi[1]
             tau1     = tau1_rho+tau1_nu
 
@@ -54,19 +54,18 @@ class RhoRhoEvent(object):
             cols.append(part.vec)
 
         if args.FEAT == "Variant-4.1":
-            print(p_tau1[1])
-            lifetime = .08711
-            scale  = smear_log(lifetime)/lifetime
-            p_tau1_approx = p_tau1.scale_vec(scale)
+            p_tau1_approx = p_tau1.scalelifetime()
             part   = boost_and_rotate(p_tau1_approx, PHI, THETA, rho_rho)
             cols.append(part.vec)
-            scale  = smear_log(lifetime)/lifetime
-            p_tau2_approx = p_tau2.scale_vec(scale)
+            p_tau2_approx = p_tau2.scalelifetime()
             part   = boost_and_rotate(p_tau2_approx, PHI, THETA, rho_rho)
             cols.append(part.vec)
-            self.cols_suppl = [boost_and_rotate(p_tau1, PHI, THETA, rho_rho).vec - boost_and_rotate(p_tau1_approx, PHI, THETA, rho_rho).vec]
-            self.cols_suppl.append(boost_and_rotate(p_tau2, PHI, THETA, rho_rho).vec - boost_and_rotate(p_tau2_approx, PHI, THETA, rho_rho).vec)
-
+            self.cols_suppl.append(boost_and_rotate(p_tau1, PHI, THETA, rho_rho).vec)
+            self.cols_suppl.append(boost_and_rotate(p_tau2, PHI, THETA, rho_rho).vec)
+            self.cols_suppl.append(boost_and_rotate(p_tau1, PHI, THETA, rho_rho).vec
+                                 - boost_and_rotate(p_tau1_approx, PHI, THETA, rho_rho).vec)
+            self.cols_suppl.append(boost_and_rotate(p_tau2, PHI, THETA, rho_rho).vec
+                                 - boost_and_rotate(p_tau2_approx, PHI, THETA, rho_rho).vec)
 
         # rho particles & recalculated mass 
         if args.FEAT == "Variant-1.1":
@@ -220,10 +219,10 @@ class RhoRhoEvent(object):
         for i in range(len(self.cols_suppl)):
             if len(self.cols_suppl[i].shape) == 1:
                 self.cols_suppl[i] = self.cols_suppl[i].reshape([-1, 1])
-
+             
         self.cols = np.concatenate(cols, 1)
         if len(self.cols_suppl) >0 :
-        	self.cols_suppl = np.concatenate(self.cols_suppl, 1)
+            self.cols_suppl = np.concatenate(self.cols_suppl, 1)
 
         # this part is for smeared in Variant-3.1
 	if args.BETA > 0:
@@ -281,7 +280,10 @@ class RhoRhoEvent(object):
                            "tau2_pi_px", "tau2_pi_py", "tau2_pi_pz", "tau2_pi_e", "tau2_pi0_px", "tau2_pi0_py", "tau2_pi0_pz", "tau2_pi0_e",                    
                            "tau1_approx_px", "tau1_approx_py", "tau1_approx_pz", "tau1_approx_e",
                            "tau2_approx_px", "tau2_approx_py", "tau2_approx_pz", "tau2_approx_e"]
-            self.labels_suppl = ["approx error tau1 x", "approx error tau1 y", "approx error tau1 z", "approx error tau1 en", "approx error tau2 x", "approx error tau2 y", "approx error tau2 z", "approx error tau2 en"]
+            self.labels_suppl = ["tau1_px", "tau1_py", "tau1_pz", "tau1_e",
+                                 "tau2_px", "tau2_py", "tau2_pz", "tau2_e",
+                                 "tau1_approx_error_px", "tau1_approx_error_py", "tau1_approx_error_pz", "tau1_approx_error_e",
+                                 "tau2_approx_error_px", "tau2_approx_error_py", "tau2_approx_error_pz", "tau2_approx_error_e"]
 
         elif args.FEAT == "Variant-All":
             self.labels = ["tau1_nu_px", "tau1_nu_py", "tau1_nu_pz", "tau1_nu_e",

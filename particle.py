@@ -98,12 +98,11 @@ class Particle(object):
         return ret.rotate_xz(theta).rotate_xy(phi)
 
 
-    def scale_vec(self, scale):
-        mass2 = self.e*self.e - self.x*self.x - self.y*self.y - self.z*self.z
-        energy = np.sqrt(  self.x*self.x*scale*scale + self.y*self.y*scale*scale
-                         + self.z*self.z*scale*scale + mass2)
+    def scalelifetime(self):
+        rn = np.random.random()
+        scale = (- np.log(rn))
         
-        return Particle([self.x*scale, self.y*scale, self.z*scale,  energy])
+        return Particle([self.x*scale, self.y*scale, self.z*scale,  self.e*scale])
     
 
     def sum(self, dim):

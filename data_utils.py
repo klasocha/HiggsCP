@@ -77,7 +77,7 @@ class EventDatasets(object):
 
         self.train = Dataset(data[train_ids], w_a[train_ids], w_b[train_ids])
         self.valid = Dataset(data[valid_ids], w_a[valid_ids], w_b[valid_ids])
-        self.test = Dataset(data[test_ids], w_a[test_ids], w_b[test_ids])
+        self.test  = Dataset(data[test_ids], w_a[test_ids], w_b[test_ids])
 
 	if smear_polynomial:
 

@@ -28,7 +28,7 @@ def run(args):
 
     if args.PLOT_FEATURES is not "NO":
         monit_plots(args, event, w_a, w_b)
-        
+
 
     print "Initializing model"
     with tf.variable_scope("model1") as vs:
