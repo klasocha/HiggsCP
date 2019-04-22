@@ -36,7 +36,7 @@ def total_train(model, data, emodel=None, batch_size=128, epochs=25):
             x, p, weights, arg_maxs, popts = predictions(emodel, data.unweightedtest)
             np.save('results/res_vec_pred.npy', p)
             np.save('results/res_vec_labels.npy', arg_maxs)
-            weights_to_test = [3, 10]
+            weights_to_test = [1, 3, 5, 7, 9]
             for w in weights_to_test:
                 data.unweightedtest.weight(w)
                 x, p, weights, arg_maxs, popts = predictions(emodel, data.unweightedtest)
@@ -119,7 +119,7 @@ def batch_norm(x, name):
 class NeuralNetwork(object):
 
     def __init__(self, num_features, num_classes, num_layers=1, size=100, lr=1e-3, keep_prob=1.0,
-                 tloss="parametrized_sincos", activation='mixed_clip', input_noise=0.0, optimizer="AdamOptimizer"):
+                 tloss="parametrized_sincos", activation='clip', input_noise=0.0, optimizer="AdamOptimizer"):
         batch_size = None
         self.x = x = tf.placeholder(tf.float32, [batch_size, num_features])
         self.weights = weights = tf.placeholder(tf.float32, [batch_size, num_classes])
@@ -167,12 +167,12 @@ class NeuralNetwork(object):
                 a = tf.clip_by_value(sx[:, 0], 0., 1.)
                 b = tf.clip_by_value(sx[:, 1], -1., 1.)
                 sx = tf.stack((a, b), axis=1)
-            elif activation == 'None':
+            elif activation == 'linear':
                 pass
 
             self.sx = sx
             self.p = sx
-            self.loss = loss = tf.losses.huber_loss(tf.stack([tf.sin(self.arg_maxs), tf.cos(self.arg_maxs)], axis=1), sx, delta=0.3)
+            self.loss = loss = tf.losses.huber_loss(tf.stack([tf.cos(self.arg_maxs), tf.cos(self.arg_maxs)], axis=1), sx, delta=0.3)
 
         else:
             raise ValueError("tloss unrecognized: %s" % tloss)
