@@ -120,6 +120,12 @@ class Particle(object):
     def __rmul__(self, other):
         return Particle(self.vec * other)
 
+    def __divide__(self, other):
+        return Particle(self.vec / other.vec)
+
+    def __rdivide__(self, other):
+        return Particle(self.vec / other)
+
     def __sub__(self, other):
         return Particle(self.vec - other.vec)
 
