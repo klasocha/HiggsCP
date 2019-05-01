@@ -167,3 +167,10 @@ def approx_E_nu(p_tau_h, v_tau_nu_z):
     d = 2*p_tau_h.e
     v_tau_nu_E = (c1 + c2) / d
     return v_tau_nu_E
+
+
+def scale_lifetime(particle):
+    scale = np.random.random(size = len(particle.x))
+    part = particle.scale_lifetime(scale)
+    return part
+

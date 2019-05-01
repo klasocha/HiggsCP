@@ -62,10 +62,10 @@ class A1RhoEvent(object):
             cols.append(part.vec)
 
         if args.FEAT == "Variant-4.1":
-            p_tau1_approx = p_tau1.scalelifetime()
+            p_tau1_approx = scale_lifetime(p_tau1)
             part   = boost_and_rotate(p_tau1_approx, PHI, THETA, p_a1_rho)
             cols.append(part.vec)
-            p_tau2_approx = p_tau2.scalelifetime()
+            p_tau2_approx = scale_lifetime(p_tau2)
             part   = boost_and_rotate(p_tau2_approx, PHI, THETA, p_a1_rho)
             cols.append(part.vec)
             self.cols_suppl.append(boost_and_rotate(p_tau1, PHI, THETA, p_a1_rho).vec)
@@ -222,8 +222,13 @@ class A1RhoEvent(object):
         for i in range(len(cols)):
             if len(cols[i].shape) == 1:
                 cols[i] = cols[i].reshape([-1, 1])
-
+        for i in range(len(self.cols_suppl)):
+            if len(self.cols_suppl[i].shape) == 1:
+                self.cols_suppl[i] = self.cols_suppl[i].reshape([-1, 1])
+             
         self.cols = np.concatenate(cols, 1)
+        if len(self.cols_suppl) >0 :
+            self.cols_suppl = np.concatenate(self.cols_suppl, 1)
 
         # this part is for smeared in Variant-3.1
 	if args.BETA > 0:

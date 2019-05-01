@@ -1,3 +1,4 @@
+
 import numpy as np
 from particle import Particle
 from math_utils import * 
@@ -52,12 +53,13 @@ class RhoRhoEvent(object):
             cols.append(part.vec)
             part   = boost_and_rotate(p_tau2, PHI, THETA, rho_rho)
             cols.append(part.vec)
+            
 
-        if args.FEAT == "Variant-4.1":
-            p_tau1_approx = p_tau1.scalelifetime()
+        if args.FEAT == "Variant-4.1":           
+            p_tau1_approx = scale_lifetime(p_tau1)
             part   = boost_and_rotate(p_tau1_approx, PHI, THETA, rho_rho)
             cols.append(part.vec)
-            p_tau2_approx = p_tau2.scalelifetime()
+            p_tau2_approx = scale_lifetime(p_tau2)
             part   = boost_and_rotate(p_tau2_approx, PHI, THETA, rho_rho)
             cols.append(part.vec)
             self.cols_suppl.append(boost_and_rotate(p_tau1, PHI, THETA, rho_rho).vec)
