@@ -7,7 +7,7 @@ def is_nan(x):
 
 DIRECTORY = "../monit_plots/"
 
-def feature_plot(data, directory, filename, w_a, w_b , filt,step=0.05):
+def plot_two_TH1D(data, directory, filename, w_a, w_b , filt,step=0.05):
 
     data = data[filt]
 
@@ -30,13 +30,13 @@ def feature_plot(data, directory, filename, w_a, w_b , filt,step=0.05):
 	plt.show()
     plt.clf()
 
-def error_plot(data, directory, filename, filt, step=0.05):
+def plot_one_TH1D(data, directory, filename, filt, step=0.05):
 	
 	bins = int(1/step) + 1
-	plt.hist(data, bins)
+	plt.hist(data, bins, ls='dashed')
 	
 	ax = plt.gca()
-        ax.annotate("Relative RMS = {:0.3f} \nRelative mean = {:1.3f}".format(np.sqrt(np.mean((data)**2)), np.mean(data)), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+        ax.annotate("Relative RMS = {:0.3f} \nRelative mean = {:1.3f}".format(np.std((data)**2), np.mean(data)), xy=(0.6, 0.85), xycoords='axes fraction', fontsize=12)
 
 	plt.tight_layout()
 
@@ -60,42 +60,42 @@ def monit_plots(args, event, w_a, w_b):
         w_b = w_b[filt]
 
     for i in range(len(event.cols[0,:])-1):
-        feature_plot(event.cols[:,i], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,i], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = event.labels[i], w_a = w_a, w_b = w_b, filt = filt)
 
         
     if args.FEAT == "Variant-1.1" and args.TYPE == "nn_rhorho": #acoangle depending on y1y2 sign
         y1y2_pos = np.array(event.cols[:,-3][filt]*event.cols[:,-2][filt] >= 0)
         y1y2_neg = np.array([not i for i in y1y2_pos])
-        feature_plot(event.cols[:,-4], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-4], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_y1y2_pos", w_a = w_a*y1y2_pos, w_b = w_b*y1y2_pos, filt = filt)
-        feature_plot(event.cols[:,-4], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-4], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
         
     if args.FEAT == "Variant-1.1" and args.TYPE == "nn_a1rho": #acoangle depending on y1y2 sign
         y1y2_pos = np.array(event.cols[:,-9][filt]*event.cols[:,-8][filt] >= 0)
         y1y2_neg = np.array([not i for i in y1y2_pos])
-        feature_plot(event.cols[:,-11], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-11], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_1_y1y2_pos", w_a = w_a*y1y2_pos, w_b = w_b*y1y2_pos, filt = filt)
-        feature_plot(event.cols[:,-11], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-11], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_1_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
         y1y2_pos = np.array(event.cols[:,-8][filt]*event.cols[:,-7][filt] >= 0)
         y1y2_neg = np.array([not i for i in y1y2_pos])
-        feature_plot(event.cols[:,-10], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-10], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_2_y1y2_pos", w_a = w_a*y1y2_pos, w_b = w_b*y1y2_pos, filt = filt)
-        feature_plot(event.cols[:,-10], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-10], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_2_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
         y1y2_pos = np.array(event.cols[:,-4][filt]*event.cols[:,-3][filt] >= 0)
         y1y2_neg = np.array([not i for i in y1y2_pos])
-        feature_plot(event.cols[:,-6], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-6], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_3_y1y2_pos", w_a = w_a*y1y2_pos, w_b = w_b*y1y2_pos, filt = filt)
-        feature_plot(event.cols[:,-6], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-6], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_3_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
         y1y2_pos = np.array(event.cols[:,-3][filt]*event.cols[:,-2][filt] >= 0)
         y1y2_neg = np.array([not i for i in y1y2_pos])
-        feature_plot(event.cols[:,-5], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-5], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_4_y1y2_pos", w_a = w_a*y1y2_pos, w_b = w_b*y1y2_pos, filt = filt)
-        feature_plot(event.cols[:,-5], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-5], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_4_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
 
 
@@ -103,108 +103,108 @@ def monit_plots(args, event, w_a, w_b):
     if args.FEAT == "Variant-1.1" and args.TYPE == "nn_a1a1": #acoangle depending on y1y2 sign
         y1y2_pos = np.array(event.cols[:,-45][filt]*event.cols[:,-44][filt] >= 0)
         y1y2_neg = np.array([not i for i in y1y2_pos])
-        feature_plot(event.cols[:,-49], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-49], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_1_y1y2_pos", w_a = w_a*y1y2_pos, w_b = w_b*y1y2_pos, filt = filt)
-        feature_plot(event.cols[:,-49], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-49], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_1_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
         y1y2_pos = np.array(event.cols[:,-43][filt]*event.cols[:,-42][filt] >= 0)
         y1y2_neg = np.array([not i for i in y1y2_pos])
-        feature_plot(event.cols[:,-48], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-48], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_2_y1y2_pos", w_a = w_a*y1y2_pos, w_b = w_b*y1y2_pos, filt = filt)
-        feature_plot(event.cols[:,-48], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-48], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_2_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
         y1y2_pos = np.array(event.cols[:,-41][filt]*event.cols[:,-40][filt] >= 0)
         y1y2_neg = np.array([not i for i in y1y2_pos])
-        feature_plot(event.cols[:,-47], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-47], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_3_y1y2_pos", w_a = w_a*y1y2_pos, w_b = w_b*y1y2_pos, filt = filt)
-        feature_plot(event.cols[:,-47], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-47], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_3_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
         y1y2_pos = np.array(event.cols[:,-39][filt]*event.cols[:,-38][filt] >= 0)
         y1y2_neg = np.array([not i for i in y1y2_pos])
-        feature_plot(event.cols[:,-46], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-46], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_4_y1y2_pos", w_a = w_a*y1y2_pos, w_b = w_b*y1y2_pos, filt = filt)
-        feature_plot(event.cols[:,-46], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-46], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_4_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
  
         y1y2_pos = np.array(event.cols[:,-33][filt]*event.cols[:,-32][filt] >= 0)
         y1y2_neg = np.array([not i for i in y1y2_pos])
-        feature_plot(event.cols[:,-37], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-37], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_5_y1y2_pos", w_a = w_a*y1y2_pos, w_b = w_b*y1y2_pos, filt = filt)
-        feature_plot(event.cols[:,-37], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-37], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_5_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
         y1y2_pos = np.array(event.cols[:,-31][filt]*event.cols[:,-30][filt] >= 0)
         y1y2_neg = np.array([not i for i in y1y2_pos])
-        feature_plot(event.cols[:,-36], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-36], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_6_y1y2_pos", w_a = w_a*y1y2_pos, w_b = w_b*y1y2_pos, filt = filt)
-        feature_plot(event.cols[:,-36], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-36], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_6_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
         y1y2_pos = np.array(event.cols[:,-29][filt]*event.cols[:,-28][filt] >= 0)
         y1y2_neg = np.array([not i for i in y1y2_pos])
-        feature_plot(event.cols[:,-35], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-35], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_7_y1y2_pos", w_a = w_a*y1y2_pos, w_b = w_b*y1y2_pos, filt = filt)
-        feature_plot(event.cols[:,-35], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-35], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_7_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
         y1y2_pos = np.array(event.cols[:,-27][filt]*event.cols[:,-26][filt] >= 0)
         y1y2_neg = np.array([not i for i in y1y2_pos])
-        feature_plot(event.cols[:,-34], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-34], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_8_y1y2_pos", w_a = w_a*y1y2_pos, w_b = w_b*y1y2_pos, filt = filt)
-        feature_plot(event.cols[:,-34], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-34], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_8_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
 
         y1y2_pos = np.array(event.cols[:,-21][filt]*event.cols[:,-20][filt] >= 0)
         y1y2_neg = np.array([not i for i in y1y2_pos])
-        feature_plot(event.cols[:,-25], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-25], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_9_y1y2_pos", w_a = w_a*y1y2_pos, w_b = w_b*y1y2_pos, filt = filt)
-        feature_plot(event.cols[:,-25], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-25], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_9_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
         y1y2_pos = np.array(event.cols[:,-19][filt]*event.cols[:,-18][filt] >= 0)
         y1y2_neg = np.array([not i for i in y1y2_pos])
-        feature_plot(event.cols[:,-24], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-24], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_10_y1y2_pos", w_a = w_a*y1y2_pos, w_b = w_b*y1y2_pos, filt = filt)
-        feature_plot(event.cols[:,-24], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-24], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_10_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
         y1y2_pos = np.array(event.cols[:,-17][filt]*event.cols[:,-16][filt] >= 0)
         y1y2_neg = np.array([not i for i in y1y2_pos])
-        feature_plot(event.cols[:,-23], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-23], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_11_y1y2_pos", w_a = w_a*y1y2_pos, w_b = w_b*y1y2_pos, filt = filt)
-        feature_plot(event.cols[:,-23], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-23], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_11_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
         y1y2_pos = np.array(event.cols[:,-15][filt]*event.cols[:,-14][filt] >= 0)
         y1y2_neg = np.array([not i for i in y1y2_pos])
-        feature_plot(event.cols[:,-22], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-22], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_12_y1y2_pos", w_a = w_a*y1y2_pos, w_b = w_b*y1y2_pos, filt = filt)
-        feature_plot(event.cols[:,-22], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-22], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_12_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
 
         y1y2_pos = np.array(event.cols[:,-9][filt]*event.cols[:,-8][filt] >= 0)
         y1y2_neg = np.array([not i for i in y1y2_pos])
-        feature_plot(event.cols[:,-13], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-13], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_13_y1y2_pos", w_a = w_a*y1y2_pos, w_b = w_b*y1y2_pos, filt = filt)
-        feature_plot(event.cols[:,-13], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-13], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_13_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
         y1y2_pos = np.array(event.cols[:,-7][filt]*event.cols[:,-6][filt] >= 0)
         y1y2_neg = np.array([not i for i in y1y2_pos])
-        feature_plot(event.cols[:,-12], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-12], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_14_y1y2_pos", w_a = w_a*y1y2_pos, w_b = w_b*y1y2_pos, filt = filt)
-        feature_plot(event.cols[:,-12], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-12], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_14_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
         y1y2_pos = np.array(event.cols[:,-5][filt]*event.cols[:,-4][filt] >= 0)
         y1y2_neg = np.array([not i for i in y1y2_pos])
-        feature_plot(event.cols[:,-11], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-11], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_15_y1y2_pos", w_a = w_a*y1y2_pos, w_b = w_b*y1y2_pos, filt = filt)
-        feature_plot(event.cols[:,-11], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-11], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_15_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
         y1y2_pos = np.array(event.cols[:,-3][filt]*event.cols[:,-2][filt] >= 0)
         y1y2_neg = np.array([not i for i in y1y2_pos])
-        feature_plot(event.cols[:,-10], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-10], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_16_y1y2_pos", w_a = w_a*y1y2_pos, w_b = w_b*y1y2_pos, filt = filt)
-        feature_plot(event.cols[:,-10], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+        plot_two_TH1D(event.cols[:,-10], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_16_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
 
     if args.FEAT == "Variant-4.1":
 	for i in range(8):
-	    error_plot(event.cols_suppl[:,i], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+	    plot_one_TH1D(event.cols_suppl[:,i], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
 		                 filename = event.labels_suppl[i], filt = filt)
 	for i in range(8,len(event.labels_suppl)):
-	    feature_plot(event.cols_suppl[:,i], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
+	    plot_two_TH1D(event.cols_suppl[:,i], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
 		                 filename = event.labels_suppl[i], w_a = w_a, w_b = w_b, filt = filt)
