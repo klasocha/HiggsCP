@@ -31,22 +31,25 @@ def plot_two_TH1D(data, directory, filename, w_a, w_b , filt,step=0.05):
     plt.clf()
 
 def plot_one_TH1D(data, directory, filename, filt, step=0.05):
-	
-	bins = int(1/step) + 1
-	plt.hist(data, bins, ls='dashed')
-	
-	ax = plt.gca()
-        ax.annotate("Relative RMS = {:0.3f} \nRelative mean = {:1.3f}".format(np.std((data)**2), np.mean(data)), xy=(0.6, 0.85), xycoords='axes fraction', fontsize=12)
 
-	plt.tight_layout()
+    data = data[filt]
+	
+    bins = int(1/step) + 1
+    plt.hist(data, bins, ls='dashed')
+	
+    ax = plt.gca()
+    ax.annotate("Mean = {:0.3f} \nRMS = {:1.3f}".format(np.mean(data), np.std(data)), xy=(0.6, 0.85), xycoords='axes fraction', fontsize=12)
 
-	if filename:
-		plt.savefig(directory + filename+".eps")
+    plt.tight_layout()
+
+    if filename:
+	plt.savefig(directory + filename+".eps")
 		
-	else:
-		plt.show()
-	plt.clf()
+    else:
+	plt.show()
 
+    plt.clf()
+ 
 
 def monit_plots(args, event, w_a, w_b):
 
