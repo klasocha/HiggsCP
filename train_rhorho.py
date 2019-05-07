@@ -1,7 +1,8 @@
 import tensorflow as tf
 from rhorho import RhoRhoEvent
 from data_utils import read_np, EventDatasets
-from plot_utils import monit_plots
+from monit_utils import monit_plots
+from plot_utils import plot_one_TH1D, plot_two_TH1D
 from tf_model import total_train, NeuralNetwork
 import os
 import numpy as np
