@@ -77,10 +77,10 @@ class A1A1Event(object):
             self.cols_suppl.append(p_tau2_approx.y/p_tau2.y)
             self.cols_suppl.append(p_tau2_approx.z/p_tau2.z)
             self.cols_suppl.append(p_tau2_approx.e/p_tau2.e)
-            part   = boost_and_rotate(p_tau1, PHI, THETA, p_a1_a1)
-            self.cols_suppl.append(part.vec)
-            part   = boost_and_rotate(p_tau2, PHI, THETA, p_a1_a1)
-            self.cols_suppl.append(part.vec)
+            self.cols_suppl.append(p_tau1.vec)
+            self.cols_suppl.append(p_tau2.vec)
+            self.cols_suppl.append(p_tau1.pt)
+            self.cols_suppl.append(p_tau2.pt)
 
         # rho particles
         if args.FEAT == "Variant-1.1":
@@ -373,11 +373,12 @@ class A1A1Event(object):
                            "tau2_pi_3_px", "tau2_pi_3_py", "tau2_pi_3_pz", "tau2_pi_3_e",
                            "tau1_approx_px", "tau1_approx_py", "tau1_approx_pz", "tau1_approx_e",
                            "tau2_approx_px", "tau2_approx_py", "tau2_approx_pz", "tau2_approx_e"]
-            self.labels_suppl = ["tau1_px_div_LAB","tau1_py_div_LAB","tau1_pz_div_LAB","tau1_e_div_LAB",
-                                 "tau2_px_div_LAB","tau2_py_div_LAB","tau2_pz_div_LAB","tau2_e_div_LAB",
-                                 "tau1_px", "tau1_py", "tau1_pz", "tau1_e",
-                                 "tau2_px", "tau2_py", "tau2_pz", "tau2_e"]
-
+            self.labels_suppl = ["tau1_px_ratio_LAB","tau1_py_ratio_LAB","tau1_pz_ratio_LAB","tau1_e_ratio_LAB",
+                                 "tau2_px_ratio_LAB","tau2_py_ratio_LAB","tau2_pz_ratio_LAB","tau2_e_ratio_LAB",
+                                 "tau1_px_LAB", "tau1_py_LAB", "tau1_pz_LAB", "tau1_e_LAB",
+                                 "tau2_px_LAB", "tau2_py_LAB", "tau2_pz_LAB", "tau2_e_LAB",
+                                 "tau1_pT_LAB", "tau2_pT_LAB"]
+ 
         elif args.FEAT == "Variant-All":
             self.labels = ["tau1_nu_px",   "tau1_nu_py",   "tau1_nu_pz",   "tau1_nu_e",
                            "tau1_pi_1_px", "tau1_pi_1_py", "tau1_pi_1_pz", "tau1_pi_1_e"

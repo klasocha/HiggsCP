@@ -160,18 +160,7 @@ def monit_plots(args, event, w_a, w_b):
         plot_two_TH1D(event.cols[:,-10], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
                          filename = "aco_angle_16_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
 
-    if args.FEAT == "Variant-4.1" and args.TYPE == "nn_rhorho": 
+    if args.FEAT == "Variant-4.1": 
 	for i in range(len(event.labels_suppl)):
 	    plot_one_TH1D(event.cols_suppl[:,i], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
 		                 filename = event.labels_suppl[i], filt = filt)
-#	for i in range(8,len(event.labels_suppl)):
-#	    plot_two_TH1D(event.cols_suppl[:,i], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
-#		                 filename = event.labels_suppl[i], w_a = w_a, w_b = w_b, filt = filt)
-
-    if args.FEAT == "Variant-4.1" and (args.TYPE == "nn_a1rho" or args.TYPE == "nn_a1a1"): 
-	for i in range(8):
-	    plot_one_TH1D(event.cols_suppl[:,i], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
-		                 filename = event.labels_suppl[i], filt = filt)
-	for i in range(8,len(event.labels_suppl)):
-	    plot_two_TH1D(event.cols_suppl[:,i], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
-		                 filename = event.labels_suppl[i], w_a = w_a, w_b = w_b, filt = filt)
