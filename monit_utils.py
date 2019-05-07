@@ -163,4 +163,4 @@ def monit_plots(args, event, w_a, w_b):
     if args.FEAT == "Variant-4.1": 
 	for i in range(len(event.labels_suppl)):
 	    plot_one_TH1D(event.cols_suppl[:,i], directory = "../monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/",
-		                 filename = event.labels_suppl[i], filt = filt)
+		                 filename = event.labels_suppl[i], w = w_a, filt = filt)
