@@ -31,7 +31,6 @@ def total_train(model, data, emodel=None, batch_size=128, epochs=25):
         sys.stdout.write("\nEPOCH: %d " % (i + 1))
         loss = train(model, data.train, batch_size)
         if model.tloss=='parametrized_sincos':
-            print('TEST')
             data.unweightedtest.weight(None)
             x, p, weights, arg_maxs, popts = predictions(emodel, data.unweightedtest)
             np.save('results/res_vec_pred.npy', p)
@@ -46,6 +45,10 @@ def total_train(model, data, emodel=None, batch_size=128, epochs=25):
             train_auc, train_mse = evaluate(emodel, data.train, 100000, filtered=True)
             valid_auc, valid_mse = evaluate(emodel, data.valid, filtered=True)
             msg_str = "TRAIN LOSS: %.3f ACCURACY: %.3f MSE %.3f VALID ACCURACY: %.3f MSE %.3f" % (loss, train_auc, train_mse, valid_auc, valid_mse)
+            labels_w, preds_w = softmax_predictions(emodel, data.valid)
+            np.save('results/softmax_labels_w.npy', labels_w)
+            np.save('results/softmax_preds_w.npy', preds_w)
+
             print msg_str
             tf.logging.info(msg_str)
             train_aucs += [train_auc]
@@ -76,6 +79,18 @@ def predictions(model, dataset, at_most=None, filtered=False):
       arg_maxs = arg_maxs[filt == 1]
 
     return x, p, weights, arg_maxs, popts
+
+def softmax_predictions(model, dataset, at_most=None):
+    sess = tf.get_default_session()
+    x = dataset.x[dataset.mask]
+    weights = dataset.weights[dataset.mask]
+
+    if at_most is not None:
+      weights = weights[:at_most]
+
+    preds = sess.run(model.preds, {model.x: x})
+
+    return weights, preds
 
 
 def evaluate(model, dataset, at_most=None, filtered=False):
@@ -119,7 +134,7 @@ def batch_norm(x, name):
 class NeuralNetwork(object):
 
     def __init__(self, num_features, num_classes, num_layers=1, size=100, lr=1e-3, keep_prob=1.0,
-                 tloss="parametrized_sincos", activation='clip', input_noise=0.0, optimizer="AdamOptimizer"):
+                 tloss="soft", activation='linear', input_noise=0.0, optimizer="AdamOptimizer"):
         batch_size = None
         self.x = x = tf.placeholder(tf.float32, [batch_size, num_features])
         self.weights = weights = tf.placeholder(tf.float32, [batch_size, num_classes])
@@ -172,7 +187,7 @@ class NeuralNetwork(object):
 
             self.sx = sx
             self.p = sx
-            self.loss = loss = tf.losses.huber_loss(tf.stack([tf.cos(self.arg_maxs), tf.cos(self.arg_maxs)], axis=1), sx, delta=0.3)
+            self.loss = loss = tf.losses.huber_loss(tf.stack([self.arg_maxs, self.arg_maxs], axis=1), sx, delta=0.3)
 
         else:
             raise ValueError("tloss unrecognized: %s" % tloss)

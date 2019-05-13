@@ -11,6 +11,7 @@ class Dataset(object):
 
         self.n = x.shape[0]
         self._next_id = 0
+        self.mask = np.ones(self.n) == 1
         self.shuffle()
 
     def shuffle(self):
