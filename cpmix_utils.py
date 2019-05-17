@@ -33,6 +33,7 @@ def find_weights(classes, popts, data_len, num_classes):
 def preprocess_data(args):
     data_path = args.IN
     num_classes = args.NUM_CLASSES
+    reuse_weigths = args.REUSE_WEIGTHS  # Set this flag to true if you want reuse calculated weights
 
     print "Loading data"
     data = read_np(os.path.join(data_path, "rhorho_raw.data.npy"))
@@ -43,7 +44,6 @@ def preprocess_data(args):
 
     data_len = data.shape[0]
     classes = np.linspace(0, 2, num_classes) * np.pi
-    reuse_weigths = True  # Set this flag to true if you want reuse calculated weights
 
     if not os.path.exists(os.path.join(data_path, 'popts.npy')):
         popts = np.zeros((data_len, 3))
@@ -56,12 +56,15 @@ def preprocess_data(args):
         np.save(os.path.join(data_path, 'popts.npy'), popts)
         np.save(os.path.join(data_path, 'pcovs.npy'), pcovs)
     popts = np.load(os.path.join(data_path, 'popts.npy'))
+
     if not reuse_weigths or not os.path.exists(os.path.join(data_path, 'weigths.npy')) \
-            or not os.path.exists(os.path.join(data_path, 'arg_maxs.npy')):
+            or not os.path.exists(os.path.join(data_path, 'arg_maxs.npy')) \
+            or np.load(os.path.join(data_path, 'weigths.npy')).shape[1] != num_classes:
         weights, arg_maxs = find_weights(classes, popts, data_len, num_classes)
         np.save(os.path.join(data_path, 'weigths.npy'), weights)
         np.save(os.path.join(data_path, 'arg_maxs.npy'), arg_maxs)
     weights = np.load(os.path.join(data_path, 'weigths.npy'))
     arg_maxs = np.load(os.path.join(data_path, 'arg_maxs.npy'))
-    arg_maxs[arg_maxs > np.pi] = -1 * arg_maxs[arg_maxs > np.pi] + 2 * np.pi
+    if args.RESTRICT_MOST_PROBABLE_ANGLE:
+        arg_maxs[arg_maxs > np.pi] = -1 * arg_maxs[arg_maxs > np.pi] + 2 * np.pi
     return data, weights, arg_maxs, perm, popts
