@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 
 from cpmix_utils import preprocess_data
+from download_data import download_data
 from rhorho import RhoRhoEvent
 from data_utils import read_np, EventDatasets
 from tf_model import total_train, NeuralNetwork
@@ -11,6 +12,7 @@ from tf_model import total_train, NeuralNetwork
 def run(args):
     num_classes = args.NUM_CLASSES
 
+    download_data(args)
     data, weights, arg_maxs, perm, popts = preprocess_data(args)
 
     print "Processing data"

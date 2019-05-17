@@ -32,6 +32,7 @@ parser.add_argument("--num_classes", dest="NUM_CLASSES", type=int, default=11)
 parser.add_argument("--unweighted", dest="UNWEIGHTED", type=lambda s: s.lower() in ['true', 't', 'yes', '1'], default=False)
 parser.add_argument("--reuse_weights", dest="REUSE_WEIGTHS", type=bool, default=False)
 parser.add_argument("--restrict_most_probable_angle", dest="RESTRICT_MOST_PROBABLE_ANGLE", type=bool, default=False)
+parser.add_argument("--force_download", dest="FORCE_DOWNLOAD", type=bool, default=False)
 
 args = parser.parse_args()
 
