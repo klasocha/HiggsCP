@@ -1,12 +1,19 @@
 # ML Higgs
 ## Multiclass classification
+### Full experiments report
+```https://www.overleaf.com/read/jtgybrwhkvst```
 ### Running training
 1.Set `RHORHO_DATA` env variable
+2. Set python 2 environment with Tensorflow 1.10 library
+3. Run `python main.py`. You can change default behavior by using command line options.
 
-2.Download `rhorho_raw.data.npy`, `rhorho_raw.w.npy`, `rhorho_raw.perm.npy` from `https://ujchmura-my.sharepoint.com/:f:/g/personal/m_sadowski_student_uj_edu_pl/Ev9uTEm_-SZHpnoglCc4NeIBl4SCMkc3M2wd8CBebl90Dg?e=9gMNvdz`
+`--restrict_most_probable_angle True/False` restricts range of most probable mixing angle from (0,2pi) to (0,pi)
 
-3. Run `main.py`
+`--force_download True/False` when set, it forces to download data from server
 
+`--data_url <URL>` set url to data location (with files `rhorho_raw.data.npy`, `rhorho_raw.perm.npy`, `rhorho_raw.w_<i>.npy`)
+
+`--reuse_weights True/False` forces to reuse calculated weights (when available)
 ### Changelog
 
 ### Version 2

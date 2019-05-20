@@ -3,8 +3,6 @@ import urllib
 
 import numpy as np
 
-DATA_URL = 'http://th-www.if.uj.edu.pl/~erichter/forMichal/HiggsCP_data_CPmix/'
-
 
 def download_data(args):
     data_path = args.IN
@@ -27,7 +25,7 @@ def download_weights(args):
         filename = 'rhorho_raw.w_' + angle + '.npy'
         print 'Donwloading ' + filename
         filepath = os.path.join(data_path, filename)
-        urllib.urlretrieve(DATA_URL + filename, filepath)
+        urllib.urlretrieve(args.DATA_URL + filename, filepath)
         weights.append(np.load(filepath))
     weights = np.stack(weights)
     np.save(output_weight_file, weights)
@@ -43,4 +41,4 @@ def download_data_files(args):
                   'If you want to force download use --force_download option'
         else:
             print 'Donwloading ' + file
-            urllib.urlretrieve(DATA_URL + file, file_path)
+            urllib.urlretrieve(args.DATA_URL + file, file_path)

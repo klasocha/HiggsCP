@@ -24,8 +24,8 @@ def total_train(model, data, emodel=None, batch_size=128, epochs=25):
     sess = tf.get_default_session()
     if emodel is None:
         emodel = model
-    train_aucs = []
-    valid_aucs = []
+    train_accs = []
+    valid_accs = []
 
     for i in range(epochs):
         sys.stdout.write("\nEPOCH: %d " % (i + 1))
@@ -42,18 +42,18 @@ def total_train(model, data, emodel=None, batch_size=128, epochs=25):
                 np.save('results/res_vec_pred'+str(w)+'.npy', p)
                 np.save('results/res_vec_labels'+str(w)+'.npy', arg_maxs)
         if model.tloss == 'soft':
-            train_auc, train_mse = evaluate(emodel, data.train, 100000, filtered=True)
-            valid_auc, valid_mse = evaluate(emodel, data.valid, filtered=True)
-            msg_str = "TRAIN LOSS: %.3f ACCURACY: %.3f MSE %.3f VALID ACCURACY: %.3f MSE %.3f" % (loss, train_auc, train_mse, valid_auc, valid_mse)
+            train_acc, train_mse = evaluate(emodel, data.train, 100000, filtered=True)
+            valid_acc, valid_mse = evaluate(emodel, data.valid, filtered=True)
+            msg_str = "TRAIN LOSS: %.3f ACCURACY: %.3f MSE %.3f VALID ACCURACY: %.3f MSE %.3f" % (loss, train_acc, train_mse, valid_acc, valid_mse)
             labels_w, preds_w = softmax_predictions(emodel, data.valid)
             np.save('results/softmax_labels_w.npy', labels_w)
             np.save('results/softmax_preds_w.npy', preds_w)
 
             print msg_str
             tf.logging.info(msg_str)
-            train_aucs += [train_auc]
-            valid_aucs += [valid_auc]
-    return train_aucs, valid_aucs
+            train_accs += [train_acc]
+            valid_accs += [valid_acc]
+    return train_accs, valid_accs
 
 
 def predictions(model, dataset, at_most=None, filtered=False):
