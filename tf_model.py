@@ -42,10 +42,10 @@ def total_train(model, data, emodel=None, batch_size=128, epochs=25):
                 np.save('results/res_vec_pred'+str(w)+'.npy', p)
                 np.save('results/res_vec_labels'+str(w)+'.npy', arg_maxs)
         if model.tloss == 'soft':
-            train_acc, train_mse, l1_distance, l2_distance = evaluate(emodel, data.train, 100000, filtered=True)
-            valid_acc, valid_mse, l1_distance, l2_distance = evaluate(emodel, data.valid, filtered=True)
-            msg_str = "TRAIN LOSS: %.3f ACCURACY: %.3f MSE %.3f VALID ACCURACY: %.3f MSE %.3f" \
-                      % (loss, train_acc, train_mse, valid_acc, valid_mse)
+            train_acc, train_mse, train_l1_distance, train_l2_distance = evaluate(emodel, data.train, 100000, filtered=True)
+            valid_acc, valid_mse, valid_l1_distance, valid_l2_distance = evaluate(emodel, data.valid, filtered=True)
+            msg_str = "TRAIN LOSS: %.3f ACCURACY: %.3f MSE %.3f VALID ACCURACY: %.3f MSE %.3f TRAIN L1: %.3f, VALID L1: %.3f" \
+                      % (loss, train_acc, train_mse, valid_acc, valid_mse, train_l1_distance, valid_l1_distance)
             labels_w, preds_w = softmax_predictions(emodel, data.valid)
             np.save('results/softmax_labels_w.npy', labels_w)
             np.save('results/softmax_preds_w.npy', preds_w)
@@ -106,11 +106,11 @@ def evaluate(model, dataset, at_most=None, filtered=False):
         ), axis=0)
     mse = np.mean(distances)
     # Accuracy if most probable predictions match most probable label
-    accuracy = (np.argmax(labels_weights, axis=1) == np.argmax(predicted_weights, axis=1)).mean()
-    l1_distance = np.abs(labels_weights - predicted_weights)
+    num_range = 0
+    accuracy = (np.abs(np.argmax(labels_weights, axis=1) - np.argmax(predicted_weights, axis=1)) <= num_range).mean()
+    l1_distance = np.mean(np.abs(labels_weights - predicted_weights))
     l2_distance = np.mean((labels_weights - predicted_weights)**2)
     return accuracy, mse, l1_distance, l2_distance
-
 
 
 def evaluate_preds(preds, wa, wb):
