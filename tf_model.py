@@ -98,11 +98,11 @@ def evaluate(model, dataset, at_most=None, filtered=False):
     _, predicted_weights, labels_weights, arg_maxs, popts = predictions(model, dataset, at_most, filtered)
 
     num_classes = labels_weights.shape[1]
-    predicted_most_probable = np.argmax(predicted_weights, axis=1)/(num_classes-1) * 2 * np.pi
-    label_most_probable = np.argmax(labels_weights, axis=1)/(num_classes-1) * 2 * np.pi
+    predicted_most_probable = np.argmax(predicted_weights, axis=1)
+    label_most_probable = np.argmax(labels_weights, axis=1)
     distances = np.min(
         np.stack(
-            [(predicted_most_probable-label_most_probable)**2, (2*np.pi - np.abs(predicted_most_probable-label_most_probable))**2]
+            [(predicted_most_probable-label_most_probable)**2, (num_classes - np.abs(predicted_most_probable-label_most_probable))**2]
         ), axis=0)
     mse = np.mean(distances)
     # Accuracy if most probable predictions match most probable label
@@ -126,7 +126,7 @@ def linear(x, name, size, bias=True):
     w = tf.get_variable(name + "/W", [x.get_shape()[1], size])
     b = tf.get_variable(name + "/b", [1, size],
                         initializer=tf.zeros_initializer())
-    return tf.matmul(x, w) # + b vanishes in batch normalization
+    return tf.matmul(x, w)  # + b vanishes in batch normalization
 
 
 def batch_norm(x, name):
