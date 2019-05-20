@@ -42,9 +42,10 @@ def total_train(model, data, emodel=None, batch_size=128, epochs=25):
                 np.save('results/res_vec_pred'+str(w)+'.npy', p)
                 np.save('results/res_vec_labels'+str(w)+'.npy', arg_maxs)
         if model.tloss == 'soft':
-            train_acc, train_mse = evaluate(emodel, data.train, 100000, filtered=True)
-            valid_acc, valid_mse = evaluate(emodel, data.valid, filtered=True)
-            msg_str = "TRAIN LOSS: %.3f ACCURACY: %.3f MSE %.3f VALID ACCURACY: %.3f MSE %.3f" % (loss, train_acc, train_mse, valid_acc, valid_mse)
+            train_acc, train_mse, l1_distance, l2_distance = evaluate(emodel, data.train, 100000, filtered=True)
+            valid_acc, valid_mse, l1_distance, l2_distance = evaluate(emodel, data.valid, filtered=True)
+            msg_str = "TRAIN LOSS: %.3f ACCURACY: %.3f MSE %.3f VALID ACCURACY: %.3f MSE %.3f" \
+                      % (loss, train_acc, train_mse, valid_acc, valid_mse)
             labels_w, preds_w = softmax_predictions(emodel, data.valid)
             np.save('results/softmax_labels_w.npy', labels_w)
             np.save('results/softmax_preds_w.npy', preds_w)
@@ -94,16 +95,21 @@ def softmax_predictions(model, dataset, at_most=None):
 
 
 def evaluate(model, dataset, at_most=None, filtered=False):
-    _, ps, weights, arg_maxs, popts = predictions(model, dataset, at_most, filtered)
+    _, predicted_weights, labels_weights, arg_maxs, popts = predictions(model, dataset, at_most, filtered)
 
-
-    labels = weights  # / (wa + wb + 1) # + 1 should be here
-    num_classes = weights.shape[1]
-    np.save('ps.npy', ps)
-    np.save('ps_orig.npy', labels)
-    pred = np.argmax(ps, axis=1)/(num_classes-1)*np.pi
-    mse = np.mean((pred-arg_maxs)**2)
-    return (np.argmax(labels,axis=1) == np.argmax(ps, axis=1)).mean(), mse
+    num_classes = labels_weights.shape[1]
+    predicted_most_probable = np.argmax(predicted_weights, axis=1)/(num_classes-1) * 2 * np.pi
+    label_most_probable = np.argmax(labels_weights, axis=1)/(num_classes-1) * 2 * np.pi
+    distances = np.min(
+        np.stack(
+            [(predicted_most_probable-label_most_probable)**2, (2*np.pi - np.abs(predicted_most_probable-label_most_probable))**2]
+        ), axis=0)
+    mse = np.mean(distances)
+    # Accuracy if most probable predictions match most probable label
+    accuracy = (np.argmax(labels_weights, axis=1) == np.argmax(predicted_weights, axis=1)).mean()
+    l1_distance = np.abs(labels_weights - predicted_weights)
+    l2_distance = np.mean((labels_weights - predicted_weights)**2)
+    return accuracy, mse, l1_distance, l2_distance
 
 
 
