@@ -14,6 +14,8 @@
 `--data_url <URL>` set url to data location (with files `rhorho_raw.data.npy`, `rhorho_raw.perm.npy`, `rhorho_raw.w_<i>.npy`)
 
 `--reuse_weights True/False` forces to reuse calculated weights (when available)
+
+`----normalize_weights True/False` normalize weights to make constant term equal one
 ### Changelog
 
 ### Version 2

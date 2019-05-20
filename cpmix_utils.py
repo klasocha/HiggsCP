@@ -67,4 +67,6 @@ def preprocess_data(args):
     arg_maxs = np.load(os.path.join(data_path, 'arg_maxs.npy'))
     if args.RESTRICT_MOST_PROBABLE_ANGLE:
         arg_maxs[arg_maxs > np.pi] = -1 * arg_maxs[arg_maxs > np.pi] + 2 * np.pi
+    if args.NORMALIZE_WEIGHTS:
+        weights = weights/popts[:, 0]
     return data, weights, arg_maxs, perm, popts

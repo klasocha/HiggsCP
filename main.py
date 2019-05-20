@@ -34,6 +34,7 @@ parser.add_argument("--reuse_weights", dest="REUSE_WEIGTHS", type=bool, default=
 parser.add_argument("--restrict_most_probable_angle", dest="RESTRICT_MOST_PROBABLE_ANGLE", type=bool, default=False)
 parser.add_argument("--force_download", dest="FORCE_DOWNLOAD", type=bool, default=False)
 parser.add_argument("--data_url", dest="DATA_URL", default='http://th-www.if.uj.edu.pl/~erichter/forMichal/HiggsCP_data_CPmix/', type=str)
+parser.add_argument("--normalize_weights", dest="NORMALIZE_WEIGHTS", default=False, type=bool)
 
 args = parser.parse_args()
 
