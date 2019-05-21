@@ -11,7 +11,7 @@ def read_raw_all(kind, args):
 
     all_data = []
     all_weights = []
-    for letter in ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k"][:args.DATASETS]:
+    for letter in ["a"][:args.DATASETS]:
         name = os.path.join(data_path, "pythia.H.rhorho.1M.%s.%s.outTUPLE_labFrame" % (letter, kind))
         print letter, name
         data, weights = read_raw_root(name, num_particles=7)
@@ -40,7 +40,7 @@ if __name__ == "__main__":
     data_18, weights_18 = read_raw_all("CPmix_18", args)
     data_20, weights_20 = read_raw_all("CPmix_20", args)
 
-    print "In total: %d examples." % len(weights_00)
+    print "In total: prepared %d events." % len(weights_00)
     np.testing.assert_array_almost_equal(data_00, data_02)
     np.testing.assert_array_almost_equal(data_00, data_04)
     np.testing.assert_array_almost_equal(data_00, data_06)

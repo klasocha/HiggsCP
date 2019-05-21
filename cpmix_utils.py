@@ -7,8 +7,8 @@ from scipy import optimize
 def weight_fun(x, a, b, c):
     return a + b * np.cos(x) + c * np.sin(x)
 
-
-def find_weights(classes, popts, data_len, num_classes):
+# here weights and arg_maxs are calculated from continuum distributions
+def calc_weights_and_arg_maxs(classes, popts, data_len, num_classes):
     arg_maxs = np.zeros(data_len)
     weights = np.zeros((data_len, num_classes))
     for i in range(data_len):
@@ -40,14 +40,16 @@ def preprocess_data(args):
     w = read_np(os.path.join(data_path, "rhorho_raw.w.npy")).swapaxes(0, 1)
     perm = read_np(os.path.join(data_path, "rhorho_raw.perm.npy"))
     print "Read %d events" % data.shape[0]
-    x = np.array([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2]) * np.pi
 
     data_len = data.shape[0]
     classes = np.linspace(0, 2, num_classes) * np.pi
 
+
     if not os.path.exists(os.path.join(data_path, 'popts.npy')):
         popts = np.zeros((data_len, 3))
         pcovs = np.zeros((data_len, 3, 3))
+        # here x correspond to values of CPmix at thich data were generated
+        x = np.array([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0]) * np.pi
         for i in range(data_len):
             popt, pcov = optimize.curve_fit(weight_fun, x, w[i, :], p0=[1, 1, 1])
             popts[i] = popt
@@ -60,11 +62,14 @@ def preprocess_data(args):
     if not reuse_weigths or not os.path.exists(os.path.join(data_path, 'weigths.npy')) \
             or not os.path.exists(os.path.join(data_path, 'arg_maxs.npy')) \
             or np.load(os.path.join(data_path, 'weigths.npy')).shape[1] != num_classes:
-        weights, arg_maxs = find_weights(classes, popts, data_len, num_classes)
+        weights, arg_maxs = calc_weights_and_arg_maxs(classes, popts, data_len, num_classes)
         np.save(os.path.join(data_path, 'weigths.npy'), weights)
         np.save(os.path.join(data_path, 'arg_maxs.npy'), arg_maxs)
     weights = np.load(os.path.join(data_path, 'weigths.npy'))
     arg_maxs = np.load(os.path.join(data_path, 'arg_maxs.npy'))
     if args.RESTRICT_MOST_PROBABLE_ANGLE:
         arg_maxs[arg_maxs > np.pi] = -1 * arg_maxs[arg_maxs > np.pi] + 2 * np.pi
+    if args.NORMALIZE_WEIGHTS:
+        weights = weights/np.reshape(popts[:, 0], (-1, 1))
+    # here weights and arg_maxs are calculated at value of CPmix representing given class
     return data, weights, arg_maxs, perm, popts

@@ -8,6 +8,7 @@ def train(model, dataset, batch_size=128):
     epoch_size = dataset.n / batch_size
     losses = []
 
+    sys.stdout.write("np.mean(losses):")
     for i in range(epoch_size):
         x, weights, arg_maxs, popts, filt,  = dataset.next_batch(batch_size)
         loss, _ = sess.run([model.loss, model.train_op],
@@ -17,6 +18,7 @@ def train(model, dataset, batch_size=128):
           sys.stdout.write(". %.3f " % np.mean(losses))
           losses =[]
           sys.stdout.flush()
+    sys.stdout.write("\n")
     return np.mean(losses)
 
 
@@ -24,11 +26,17 @@ def total_train(model, data, emodel=None, batch_size=128, epochs=25):
     sess = tf.get_default_session()
     if emodel is None:
         emodel = model
-    train_aucs = []
-    valid_aucs = []
+    train_accs = []
+    valid_accs = []
+
+    # ERW
+    # maximal sensitivity not defined in  multi-class case?
+    # please reintroduce this option
+    # max_perf = evaluate2(emodel, data.valid, filtered=True)
+    # print max_perf
 
     for i in range(epochs):
-        sys.stdout.write("\nEPOCH: %d " % (i + 1))
+        sys.stdout.write("\nEPOCH: %d \n" % (i + 1))
         loss = train(model, data.train, batch_size)
         if model.tloss=='parametrized_sincos':
             data.unweightedtest.weight(None)
@@ -42,18 +50,22 @@ def total_train(model, data, emodel=None, batch_size=128, epochs=25):
                 np.save('results/res_vec_pred'+str(w)+'.npy', p)
                 np.save('results/res_vec_labels'+str(w)+'.npy', arg_maxs)
         if model.tloss == 'soft':
-            train_auc, train_mse = evaluate(emodel, data.train, 100000, filtered=True)
-            valid_auc, valid_mse = evaluate(emodel, data.valid, filtered=True)
-            msg_str = "TRAIN LOSS: %.3f ACCURACY: %.3f MSE %.3f VALID ACCURACY: %.3f MSE %.3f" % (loss, train_auc, train_mse, valid_auc, valid_mse)
-            labels_w, preds_w = softmax_predictions(emodel, data.valid)
-            np.save('results/softmax_labels_w.npy', labels_w)
+            train_acc, train_mse, train_l1_delta_weights, train_l2_delta_weights = evaluate(emodel, data.train, 100000, filtered=True)
+            valid_acc, valid_mse, valid_l1_delta_weights, valid_l2_delta_weights = evaluate(emodel, data.valid, filtered=True)
+            msg_str = "TRAINING: LOSS: %.3f ACCURACY: %.3f MSE: %.3f L1_delta_weights: %.3f L2_delta_weights: %.3f \n" % (loss, train_acc, train_mse, train_l1_delta_weights, train_l2_delta_weights)
+            # msg_str = "VALIDATION:          ACCURACY: %.3f MSE %.3f L1_delta_weights: %.3f, L2_delta_weights: %.3f"    % (      valid_acc, valid_mse, valid_l1_delta_weights, valid_l2_delta_weights)
+
+            # ERW: they are not "labels" but calculated values of weights for a given class
+            #      class is indexed by its phiCPmix value or range.
+            calc_w, preds_w = softmax_predictions(emodel, data.valid)
+            np.save('results/softmax_calc_w.npy', calc_w)
             np.save('results/softmax_preds_w.npy', preds_w)
 
             print msg_str
             tf.logging.info(msg_str)
-            train_aucs += [train_auc]
-            valid_aucs += [valid_auc]
-    return train_aucs, valid_aucs
+            train_accs += [train_acc]
+            valid_accs += [valid_acc]
+    return train_accs, valid_accs
 
 
 def predictions(model, dataset, at_most=None, filtered=False):
@@ -80,6 +92,10 @@ def predictions(model, dataset, at_most=None, filtered=False):
 
     return x, p, weights, arg_maxs, popts
 
+# ERW
+# why this class is not using filter?
+# why called with prefix softmax??
+# is it used? obsolete?
 def softmax_predictions(model, dataset, at_most=None):
     sess = tf.get_default_session()
     x = dataset.x[dataset.mask]
@@ -93,18 +109,37 @@ def softmax_predictions(model, dataset, at_most=None):
     return weights, preds
 
 
+# ERW
+# extended input objects of original class
+# added functionality of storing output information, hard-coded filenames which should be avoided
+# roc_auc_score is not calculated as it is multi-class classification
 def evaluate(model, dataset, at_most=None, filtered=False):
-    _, ps, weights, arg_maxs, popts = predictions(model, dataset, at_most, filtered)
+    _, pred_weights, calc_weights, arg_maxs, popts = predictions(model, dataset, at_most, filtered)
 
+    num_classes = calc_weights.shape[1]
+    pred_arg_maxs = np.argmax(pred_weights, axis=1)
+    calc_arg_maxs = np.argmax(calc_weights, axis=1)
 
-    labels = weights  # / (wa + wb + 1) # + 1 should be here
-    num_classes = weights.shape[1]
-    np.save('ps.npy', ps)
-    np.save('ps_orig.npy', labels)
-    pred = np.argmax(ps, axis=1)/(num_classes-1)*np.pi
-    mse = np.mean((pred-arg_maxs)**2)
-    return (np.argmax(labels,axis=1) == np.argmax(ps, axis=1)).mean(), mse
+    # ERW bez sensu, nie mozna porownywac roznicy wag i roznicy phi !!!
+    # distances = np.min(
+    #    np.stack(
+    #        [(pred_weights_argmax-calc_weights_argmax)**2, (num_classes - np.abs(pred_weights_argmax-calc_weights_argmax)**2)]
+    #    ), axis=0)
 
+    print np.abs(pred_arg_maxs - calc_arg_maxs)
+    #ERW: correct that if abs(pred_arg_maxs - calc_arg_maxs) = num_class -1, abs(pred_arg_maxs - calc_arg_maxs) = 0
+    mse = np.sqrt(np.mean((pred_arg_maxs - calc_arg_maxs)**2))
+
+    # Accuracy: average that most probable predicted class match most probable class
+    # delta_class should be a variable in args
+    delta_class = 2
+    accuracy = (np.abs(np.argmax(calc_weights, axis=1) - np.argmax(pred_weights, axis=1)) <= delta_class).mean()
+    l1_delta_weights = np.mean(np.abs(calc_weights - pred_weights))
+    l2_delta_weights = np.sqrt(np.mean((calc_weights - pred_weights)**2))
+    return accuracy, mse, l1_delta_weights, l2_delta_weights
+
+# ERW
+# removed class evaluate2. Why??
 
 
 def evaluate_preds(preds, wa, wb):
@@ -120,7 +155,7 @@ def linear(x, name, size, bias=True):
     w = tf.get_variable(name + "/W", [x.get_shape()[1], size])
     b = tf.get_variable(name + "/b", [1, size],
                         initializer=tf.zeros_initializer())
-    return tf.matmul(x, w) # + b vanishes in batch normalization
+    return tf.matmul(x, w)  # + b vanishes in batch normalization
 
 
 def batch_norm(x, name):

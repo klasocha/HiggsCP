@@ -20,7 +20,7 @@ def run(args):
     points = EventDatasets(event, weights, arg_maxs, perm, popts=popts, miniset=args.MINISET, unweighted=args.UNWEIGHTED)
 
     num_features = points.train.x.shape[1]
-    print "Generated %d features" % num_features
+    print "Prepared %d features" % num_features
 
     print "Initializing model"
     with tf.variable_scope("model1") as vs:

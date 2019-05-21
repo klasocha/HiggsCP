@@ -33,6 +33,7 @@ parser.add_argument("--unweighted", dest="UNWEIGHTED", type=lambda s: s.lower() 
 parser.add_argument("--reuse_weights", dest="REUSE_WEIGTHS", type=bool, default=False)
 parser.add_argument("--restrict_most_probable_angle", dest="RESTRICT_MOST_PROBABLE_ANGLE", type=bool, default=False)
 parser.add_argument("--force_download", dest="FORCE_DOWNLOAD", type=bool, default=False)
+parser.add_argument("--normalize_weights", dest="NORMALIZE_WEIGHTS", default=True, type=bool)
 
 args = parser.parse_args()
 
