@@ -16,15 +16,16 @@ def download_data(args):
 
 def download_weights(args):
     data_path = args.IN
-    angles = ['00', '02', '04', '06', '08', '10', '12', '14', '16', '18', '20']
+    # CPmix_index = 0 (scalar), 10 (pseudoscalar), 20 (scalar)
+    CPmix_index = ['00', '02', '04', '06', '08', '10', '12', '14', '16', '18', '20']
     weights = []
     output_weight_file = os.path.join(data_path, 'rhorho_raw.w.npy')
     if os.path.exists(output_weight_file) and not args.FORCE_DOWNLOAD:
         print 'Output weights file exists. Downloading data cancelled. ' \
               'If you want to force download use --force_download option'
         return
-    for angle in angles:
-        filename = 'rhorho_raw.w_' + angle + '.npy'
+    for index in CPmix_index:
+        filename = 'rhorho_raw.w_' + index + '.npy'
         print 'Donwloading ' + filename
         filepath = os.path.join(data_path, filename)
         urllib.urlretrieve(DATA_URL + filename, filepath)
