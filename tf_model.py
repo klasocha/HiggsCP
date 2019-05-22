@@ -22,7 +22,7 @@ def train(model, dataset, batch_size=128):
     return np.mean(losses)
 
 
-def total_train(model, data, emodel=None, batch_size=128, epochs=25):
+def total_train(pathOUT, model, data, emodel=None, batch_size=128, epochs=25):
     sess = tf.get_default_session()
     if emodel is None:
         emodel = model
@@ -42,14 +42,14 @@ def total_train(model, data, emodel=None, batch_size=128, epochs=25):
         if model.tloss=='parametrized_sincos':
             data.unweightedtest.weight(None)
             x, p, weights, arg_maxs, popts = predictions(emodel, data.unweightedtest)
-            np.save('results/res_vec_pred.npy', p)
-            np.save('results/res_vec_labels.npy', arg_maxs)
+            np.save(pathOUT+'res_vec_pred.npy', p)
+            np.save(pathOUT+'res_vec_labels.npy', arg_maxs)
             weights_to_test = [1, 3, 5, 7, 9]
             for w in weights_to_test:
                 data.unweightedtest.weight(w)
                 x, p, weights, arg_maxs, popts = predictions(emodel, data.unweightedtest)
-                np.save('results/res_vec_pred'+str(w)+'.npy', p)
-                np.save('results/res_vec_labels'+str(w)+'.npy', arg_maxs)
+                np.save(pathOUT+'res_vec_pred'+str(w)+'.npy', p)
+                np.save(pathOUT+'res_vec_labels'+str(w)+'.npy', arg_maxs)
                 
         if model.tloss == 'soft':
             train_acc, train_mse, train_l1_delta_w, train_l2_delta_w = evaluate(emodel, data.train, 100000, filtered=True)
@@ -69,8 +69,8 @@ def total_train(model, data, emodel=None, batch_size=128, epochs=25):
             # why filtering is not applied?
             
             calc_w, preds_w = softmax_predictions(emodel, data.valid)
-            np.save('results/softmax_calc_w.npy', calc_w)
-            np.save('results/softmax_preds_w.npy', preds_w)
+            np.save(pathOUT+'softmax_calc_w.npy', calc_w)
+            np.save(pathOUT+'softmax_preds_w.npy', preds_w)
 
             train_accs += [train_acc]
             valid_accs += [valid_acc]
@@ -192,7 +192,9 @@ class NeuralNetwork(object):
             x = tf.nn.relu(batch_norm(linear(x, "linear_%d" % i, size), "bn_%d" % i)) 
             if keep_prob < 1.0:
               x = tf.nn.dropout(x, keep_prob)
-
+        #ERW
+        # explain if option "soft" is a simple extension of what was implemented
+        # previously for binary classification
         if tloss == "soft":
             sx = linear(x, "regression", num_classes)
             self.preds = tf.nn.softmax(sx)
@@ -203,6 +205,8 @@ class NeuralNetwork(object):
             # wb = p_b / p_c
             # wa + wb + 1 = (p_a + p_b + p_c) / p_c
             # wa / (wa + wb + 1) = p_a / (p_a + p_b + p_c)
+            #ERW
+            # explain the line below
             labels = weights / tf.tile(tf.reshape(tf.reduce_sum(weights, axis=1), (-1, 1)), (1,num_classes))
             self.loss = loss = tf.nn.softmax_cross_entropy_with_logits(logits=sx, labels=labels)
         elif tloss == "regr":
