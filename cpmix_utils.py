@@ -44,7 +44,6 @@ def preprocess_data(args):
     data_len = data.shape[0]
     classes = np.linspace(0, 2, num_classes) * np.pi
 
-
     if not os.path.exists(os.path.join(data_path, 'popts.npy')):
         popts = np.zeros((data_len, 3))
         pcovs = np.zeros((data_len, 3, 3))
@@ -65,11 +64,26 @@ def preprocess_data(args):
         weights, arg_maxs = calc_weights_and_arg_maxs(classes, popts, data_len, num_classes)
         np.save(os.path.join(data_path, 'weigths.npy'), weights)
         np.save(os.path.join(data_path, 'arg_maxs.npy'), arg_maxs)
-    weights = np.load(os.path.join(data_path, 'weigths.npy'))
+    weights  = np.load(os.path.join(data_path, 'weigths.npy'))
     arg_maxs = np.load(os.path.join(data_path, 'arg_maxs.npy'))
+
+    #ERW
+    # here arg_maxs are in fraction of pi, not in the class index
+    # how we go then from fraction of pi to class index??
+    # print "preprocess: weights", weights
+    # print "preprocess: arg_maxs", arg_maxs
+
+    #ERW
+    # I am not sure what the purpose is and if it make sens.
     if args.RESTRICT_MOST_PROBABLE_ANGLE:
         arg_maxs[arg_maxs > np.pi] = -1 * arg_maxs[arg_maxs > np.pi] + 2 * np.pi
+
+    #ERW
+    # this optimisation does not help, revisit, maybe not correctly implemented?
     if args.NORMALIZE_WEIGHTS:
         weights = weights/np.reshape(popts[:, 0], (-1, 1))
+        
+    # ERW    
     # here weights and arg_maxs are calculated at value of CPmix representing given class
+    # in training, class is expressed as integer, not fraction pf pi.
     return data, weights, arg_maxs, perm, popts

@@ -18,7 +18,7 @@ def monit_plots(args, event, w_a, w_b):
         w_a = w_a[filt]
         w_b = w_b[filt]
 
-    filedir =  "monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "/"    
+    filedir =  "monit_plots/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "_NUM_CLASSES_" + str(args.NUM_CLASSES) + "/"    
 
     for i in range(len(event.cols[0,:])-1):
         plot_two_TH1D(event.cols[:,i], filedir, filename = event.labels[i], w_a = w_a, w_b = w_b, filt = filt)

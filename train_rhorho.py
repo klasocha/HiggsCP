@@ -1,12 +1,13 @@
 import numpy as np
 import tensorflow as tf
+import os, errno
 
 from cpmix_utils import preprocess_data
 from download_data import download_data
 from rhorho import RhoRhoEvent
 from data_utils import read_np, EventDatasets
 from tf_model import total_train, NeuralNetwork
-
+from monit_utils import monit_plots
 
 
 def run(args):
@@ -21,6 +22,11 @@ def run(args):
 
     num_features = points.train.x.shape[1]
     print "Prepared %d features" % num_features
+    
+    if args.PLOT_FEATURES is not "NO":
+        w_a = weights[:,0]
+        w_b = weights[:,num_classes/2]
+        monit_plots(args, event, w_a, w_b)
 
     print "Initializing model"
     with tf.variable_scope("model1") as vs:
@@ -32,7 +38,15 @@ def run(args):
     tf.global_variables_initializer().run()
 
     print "Training"
-    total_train(model, points, emodel=emodel, batch_size=128, epochs=args.EPOCHS)
+    pathOUT = "monit_npy/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "_NUM_CLASSES_" + str(args.NUM_CLASSES) + "/"
+    if pathOUT:
+        try:
+            os.makedirs(pathOUT)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
+    
+    total_train(pathOUT, model, points, emodel=emodel, batch_size=128, epochs=args.EPOCHS)
 
 
 def start(args):

@@ -21,7 +21,9 @@ def train(model, dataset, batch_size=128):
     sys.stdout.write("\n")
     return np.mean(losses)
 
-
+#ERW
+# tf_model knows nothing about classes <-->angle relations
+# operates on arrays which has dimention of num_classes
 def total_train(pathOUT, model, data, emodel=None, batch_size=128, epochs=25):
     sess = tf.get_default_session()
     if emodel is None:
@@ -69,6 +71,12 @@ def total_train(pathOUT, model, data, emodel=None, batch_size=128, epochs=25):
             # why filtering is not applied?
             
             calc_w, preds_w = softmax_predictions(emodel, data.valid)
+
+            #ERW
+            # control print
+            # print "softmax: calc_w", calc_w
+            # print "softmax: preds_w", preds_w
+            
             np.save(pathOUT+'softmax_calc_w.npy', calc_w)
             np.save(pathOUT+'softmax_preds_w.npy', preds_w)
 
@@ -124,9 +132,20 @@ def softmax_predictions(model, dataset, at_most=None):
 def evaluate(model, dataset, at_most=None, filtered=False):
     _, pred_w, calc_w, arg_maxs, popts = predictions(model, dataset, at_most, filtered)
 
+    #ERW
+    # control print
+    # print "evaluate: calc_w", calc_w
+    # print "evaluate: pred_w", pred_w
+    
     num_classes = calc_w.shape[1]
     pred_arg_maxs = np.argmax(pred_w, axis=1)
     calc_arg_maxs = np.argmax(calc_w, axis=1)
+
+    #ERW
+    # control print
+    # print "evaluate: calc_arg_maxs", calc_arg_maxs
+    # print "evaluate: pred_arg_maxs", pred_arg_maxs
+    
 
     # ERW bez sensu, nie mozna porownywac roznicy wag i roznicy phi !!!
     # distances = np.min(
