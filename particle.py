@@ -35,7 +35,7 @@ class Particle(object):
     @property
     def recalculated_mass(self):
         mass = np.sum(np.square(self.vec) * [1, 1, 1, -1], 1)
-        return np.sqrt(np.abs(mass)) * np.sign(mass)
+        return np.sqrt(np.abs(mass)) #* np.sign(mass)
 
     @property
     def angle_phi(self):
@@ -51,6 +51,13 @@ class Particle(object):
         lgth2 = np.sum(lgth2, 1)
         lgth = np.sqrt(lgth2)
         return lgth
+
+    
+    def scale_to_versor(self):
+        p_len = np.sqrt(self.e*self.e - self.x * self.x - self.y * self.y - self.z * self.z)
+
+        return Particle([
+            self.x/p_len, self.y/p_len, self.z/p_len, self.e/p_len])
 
     def set(self, other):
         if isinstance(other, Particle):
@@ -90,6 +97,14 @@ class Particle(object):
         ret = ret.boost_along_z(-p_len, p.e)
         return ret.rotate_xz(theta).rotate_xy(phi)
 
+
+    def scale_lifetime(self, scale):
+
+        mass2 = self.e*self.e - self.x*self.x - self.y*self.y - self.z*self.z
+        energy = np.sqrt(  self.x*self.x*scale*scale + self.y*self.y*scale*scale + self.z*self.z*scale*scale + mass2)
+        return Particle([self.x*scale, self.y*scale, self.z*scale,  energy])     
+    
+
     def sum(self, dim):
         return np.sum(self.vec, dim)
 
@@ -104,3 +119,20 @@ class Particle(object):
 
     def __rmul__(self, other):
         return Particle(self.vec * other)
+
+    def __divide__(self, other):
+        return Particle(self.vec / other.vec)
+
+    def __rdivide__(self, other):
+        return Particle(self.vec / other)
+
+    def __sub__(self, other):
+        return Particle(self.vec - other.vec)
+
+    def __rsub__(self, other):
+        return Particle(self.vec - other)
+
+    def __neg__(self, other):
+        return Particle(-self.vec)
+
+
