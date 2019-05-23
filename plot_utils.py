@@ -5,8 +5,6 @@ import numpy as np
 def is_nan(x):
     return (x is np.nan or x != x)
 
-DIRECTORY = "../monit_plots/"
-
 def plot_two_TH1D(data, directory, filename, w_a, w_b , filt, step=0.05):
 
     data = data[filt]
