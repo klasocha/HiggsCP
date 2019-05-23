@@ -17,8 +17,10 @@ preds_w = np.load('../slurm_results/monit_npy/nn_rhorho_Variant-All_Unweighted_F
 
 i = 1
 filename = "preds_w_event_1"
-plt.plot(calc_w[i]/np.sum(calc_w[i]), 'o', label=['calc_w'])
-plt.plot(preds_w[i], 'o', label=['preds_w'])
+plt.plot(calc_w[i], 'o', label='calc_w')
+plt.plot(preds_w[i], 'o', label='preds_w')
+plt.xlabel('phiCP class')
+plt.ylabel('w')
 plt.legend()
     
 if filename:
@@ -39,7 +41,8 @@ print  np.argmax(calc_w[:], axis=0)
 delta_argmax = np.argmax(calc_w[:], axis=1) - np.argmax(preds_w[:], axis=1)
 
 filename = "delta_argmax"
-plt.hist(delta_argmax, label=['delta_argmax'], histtype='step', bins=100)
+plt.hist(delta_argmax, histtype='step', bins=100)
+plt.xlabel('delta phiCP class')
 plt.legend()
 
 ax = plt.gca()
