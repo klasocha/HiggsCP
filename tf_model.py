@@ -157,22 +157,22 @@ def evaluate(model, dataset, args, at_most=None, filtered=False):
 
 
     # ERW bez sensu, nie mozna porownywac roznicy wag i roznicy phi !!!
-    # MS: I don't agree. It's difference between calc and pred arg_maxs calculated in two different directions
-    # difference between last and first class is 1.
-    calc_pred_argmaxs_squared_distances = np.min(
+    # MS: I don't agree. It's difference between calc and pred arg_maxs calculated in two different directions (and taken minimum)
+    # For example difference between last and first class is 1 (not num_class-1)
+    calc_pred_argmaxs_distances = np.min(
        np.stack(
-           [(pred_arg_maxs-calc_arg_maxs)**2, (num_classes - np.abs(pred_arg_maxs-calc_arg_maxs))**2]
+           [np.abs(pred_arg_maxs-calc_arg_maxs), (num_classes - np.abs(pred_arg_maxs-calc_arg_maxs))]
        ), axis=0)
 
     # print np.abs(pred_arg_maxs - calc_arg_maxs)
     #ERW: correct that if abs(pred_arg_maxs - calc_arg_maxs) = num_class -1, abs(pred_arg_maxs - calc_arg_maxs) = 0
     # MS: If I understand correctly it works correctly before. Fixed.
-    mse = np.sqrt(np.mean(calc_pred_argmaxs_squared_distances))
+    mse = np.mean(np.sqrt(np.sum(calc_pred_argmaxs_distances**2, axis=1)))
 
     # Accuracy: average that most probable predicted class match most probable class
     # delta_class should be a variable in args
     delta_class = args.DATA_CLASS_DISTANCE
-    accuracy = (np.abs(np.argmax(calc_w, axis=1) - np.argmax(pred_w, axis=1)) <= delta_class).mean()
+    accuracy = (calc_pred_argmaxs_distances <= delta_class).mean()
     l1_delta_w = np.mean(np.abs(calc_w - pred_w))
     l2_delta_w = np.sqrt(np.mean((calc_w - pred_w)**2))
     return accuracy, mse, l1_delta_w, l2_delta_w
