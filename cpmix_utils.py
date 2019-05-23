@@ -70,11 +70,16 @@ def preprocess_data(args):
     #ERW
     # here arg_maxs are in fraction of pi, not in the class index
     # how we go then from fraction of pi to class index??
+    # MS: There is not always direct way to go from fraction of pi to class index.
+    # MS: arg_max is exact value of most probable CPmix, used in regression type of training.
+    # MS: When we want to find class that corresponds to most probable angle
+    # MS: we can calculate e.g. np.argmax(weights, axis=1)/(num_class-1)*2*np.pi, which is not equal to exact value
     # print "preprocess: weights", weights
     # print "preprocess: arg_maxs", arg_maxs
 
     #ERW
-    # I am not sure what the purpose is and if it make sens.
+    # I am not sure what the purpose is and if it make sense.
+    # It makes sense when we choose regression type of training. In classificator it is not used.
     if args.RESTRICT_MOST_PROBABLE_ANGLE:
         arg_maxs[arg_maxs > np.pi] = -1 * arg_maxs[arg_maxs > np.pi] + 2 * np.pi
     if args.NORMALIZE_WEIGHTS:
