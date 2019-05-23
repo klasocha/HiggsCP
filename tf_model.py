@@ -73,7 +73,7 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             # "Label: is vector of valid probality distribution. But calc_w name is also good.
             # Filtering fixed
 
-            calc_w, preds_w = softmax_predictions(emodel, data.valid, filtered=True)
+            calc_w, preds_w = softmax_predictions(emodel, data.valid, filtered=False)
 
             #ERW
             # control print
@@ -125,9 +125,11 @@ def softmax_predictions(model, dataset, at_most=None, filtered=False):
     if at_most is not None:
         filt = filt[:at_most]
         weights = weights[:at_most]
+        x = x[:at_most]
 
     if filtered:
         weights = weights[filt == 1]
+        x = x[filt == 1]
 
     preds = sess.run(model.preds, {model.x: x})
 
@@ -167,7 +169,7 @@ def evaluate(model, dataset, args, at_most=None, filtered=False):
     # print np.abs(pred_arg_maxs - calc_arg_maxs)
     #ERW: correct that if abs(pred_arg_maxs - calc_arg_maxs) = num_class -1, abs(pred_arg_maxs - calc_arg_maxs) = 0
     # MS: If I understand correctly it works correctly before. Fixed.
-    mse = np.mean(np.sqrt(np.sum(calc_pred_argmaxs_distances**2, axis=1)))
+    mse = np.mean(calc_pred_argmaxs_distances)
 
     # Accuracy: average that most probable predicted class match most probable class
     # delta_class should be a variable in args
