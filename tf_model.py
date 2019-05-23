@@ -23,8 +23,8 @@ def train(model, dataset, batch_size=128):
 
 #ERW
 # tf_model knows nothing about classes <-->angle relations
-# operates on arrays which has dimention of num_classes
-def total_train(pathOUT, model, data, emodel=None, batch_size=128, epochs=25):
+# operates on arrays which has dimension of num_classes
+def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=25):
     sess = tf.get_default_session()
     if emodel is None:
         emodel = model
@@ -41,7 +41,7 @@ def total_train(pathOUT, model, data, emodel=None, batch_size=128, epochs=25):
         sys.stdout.write("\nEPOCH: %d \n" % (i + 1))
         loss = train(model, data.train, batch_size)
 
-        if model.tloss=='parametrized_sincos':
+        if model.tloss == 'parametrized_sincos':
             data.unweightedtest.weight(None)
             x, p, weights, arg_maxs, popts = predictions(emodel, data.unweightedtest)
             np.save(pathOUT+'res_vec_pred.npy', p)
@@ -54,8 +54,8 @@ def total_train(pathOUT, model, data, emodel=None, batch_size=128, epochs=25):
                 np.save(pathOUT+'res_vec_labels'+str(w)+'.npy', arg_maxs)
 
         if model.tloss == 'soft':
-            train_acc, train_mse, train_l1_delta_w, train_l2_delta_w = evaluate(emodel, data.train, 100000, filtered=True)
-            valid_acc, valid_mse, valid_l1_delta_w, valid_l2_delta_w = evaluate(emodel, data.valid, filtered=True)
+            train_acc, train_mse, train_l1_delta_w, train_l2_delta_w = evaluate(emodel, data.train, args, 100000, filtered=True)
+            valid_acc, valid_mse, valid_l1_delta_w, valid_l2_delta_w = evaluate(emodel, data.valid, args, filtered=True)
             msg_str_0 = "TRAINING:     LOSS: %.3f \n" % (loss)
             msg_str_1 = "TRAINING:     ACCURACY: %.3f MSE: %.3f L1_delta_w: %.3f  L2_delta_w: %.3f \n" % (train_acc, train_mse, train_l1_delta_w, train_l2_delta_w)
             msg_str_2 = "VALIDATION:   ACCURACY: %.3f MSE  %.3f L1_delta_w: %.3f, L2_delta_w: %.3f \n" % (valid_acc, valid_mse, valid_l1_delta_w, valid_l2_delta_w)
@@ -69,8 +69,11 @@ def total_train(pathOUT, model, data, emodel=None, batch_size=128, epochs=25):
             # ERW: they are not "labels" but calculated values of weights for a given class
             #      class is indexed by its phiCPmix value or range.
             # why filtering is not applied?
+            # MS: Name "labels" corresponds to nomenclature used in classification task.
+            # "Label: is vector of valid probality distribution. But calc_w name is also good.
+            # Filtering fixed
 
-            calc_w, preds_w = softmax_predictions(emodel, data.valid)
+            calc_w, preds_w = softmax_predictions(emodel, data.valid, filtered=True)
 
             #ERW
             # control print
@@ -95,30 +98,36 @@ def predictions(model, dataset, at_most=None, filtered=False):
     popts = dataset.popts[dataset.mask]
 
     if at_most is not None:
-      filt = filt[:at_most]
-      x = x[:at_most]
-      weights = weights[:at_most]
-      arg_maxs = arg_maxs[:at_most]
+        filt = filt[:at_most]
+        x = x[:at_most]
+        weights = weights[:at_most]
+        arg_maxs = arg_maxs[:at_most]
 
     p = sess.run(model.p, {model.x: x})
 
     if filtered:
-      p = p[filt == 1]
-      x = x[filt == 1]
-      weights = weights[filt == 1]
-      arg_maxs = arg_maxs[filt == 1]
+        p = p[filt == 1]
+        x = x[filt == 1]
+        weights = weights[filt == 1]
+        arg_maxs = arg_maxs[filt == 1]
 
     return x, p, weights, arg_maxs, popts
 
 # ERW
 # why this class is not using filter?
-def softmax_predictions(model, dataset, at_most=None):
+# MS: Fixed
+def softmax_predictions(model, dataset, at_most=None, filtered=False):
     sess = tf.get_default_session()
     x = dataset.x[dataset.mask]
     weights = dataset.weights[dataset.mask]
+    filt = dataset.filt[dataset.mask]
 
     if at_most is not None:
-      weights = weights[:at_most]
+        filt = filt[:at_most]
+        weights = weights[:at_most]
+
+    if filtered:
+        weights = weights[filt == 1]
 
     preds = sess.run(model.preds, {model.x: x})
 
@@ -129,7 +138,7 @@ def softmax_predictions(model, dataset, at_most=None):
 # extended input objects of original class
 # added functionality of storing output information, hard-coded filenames which should be avoided
 # roc_auc_score is not calculated as it is multi-class classification
-def evaluate(model, dataset, at_most=None, filtered=False):
+def evaluate(model, dataset, args, at_most=None, filtered=False):
     _, pred_w, calc_w, arg_maxs, popts = predictions(model, dataset, at_most, filtered)
 
     #ERW
@@ -148,18 +157,21 @@ def evaluate(model, dataset, at_most=None, filtered=False):
 
 
     # ERW bez sensu, nie mozna porownywac roznicy wag i roznicy phi !!!
-    # distances = np.min(
-    #    np.stack(
-    #        [(pred_w_argmax-calc_w_argmax)**2, (num_classes - np.abs(pred_w_argmax-calc_w_argmax)**2)]
-    #    ), axis=0)
+    # MS: I don't agree. It's difference between calc and pred arg_maxs calculated in two different directions
+    # difference between last and first class is 1.
+    calc_pred_argmaxs_squared_distances = np.min(
+       np.stack(
+           [(pred_arg_maxs-calc_arg_maxs)**2, (num_classes - np.abs(pred_arg_maxs-calc_arg_maxs))**2]
+       ), axis=0)
 
     # print np.abs(pred_arg_maxs - calc_arg_maxs)
     #ERW: correct that if abs(pred_arg_maxs - calc_arg_maxs) = num_class -1, abs(pred_arg_maxs - calc_arg_maxs) = 0
-    mse = np.sqrt(np.mean((pred_arg_maxs - calc_arg_maxs)**2))
+    # MS: If I understand correctly it works correctly before. Fixed.
+    mse = np.sqrt(np.mean(calc_pred_argmaxs_squared_distances))
 
     # Accuracy: average that most probable predicted class match most probable class
     # delta_class should be a variable in args
-    delta_class = 2
+    delta_class = args.DATA_CLASS_DISTANCE
     accuracy = (np.abs(np.argmax(calc_w, axis=1) - np.argmax(pred_w, axis=1)) <= delta_class).mean()
     l1_delta_w = np.mean(np.abs(calc_w - pred_w))
     l2_delta_w = np.sqrt(np.mean((calc_w - pred_w)**2))
@@ -214,6 +226,7 @@ class NeuralNetwork(object):
         #ERW
         # explain if option "soft" is a simple extension of what was implemented
         # previously for binary classification
+        # MS Yes, it is
         if tloss == "soft":
             sx = linear(x, "regression", num_classes)
             self.preds = tf.nn.softmax(sx)
@@ -226,7 +239,8 @@ class NeuralNetwork(object):
             # wa / (wa + wb + 1) = p_a / (p_a + p_b + p_c)
             #ERW
             # explain the line below
-            labels = weights / tf.tile(tf.reshape(tf.reduce_sum(weights, axis=1), (-1, 1)), (1,num_classes))
+            # MS Sum of labels has to be equal one. So weights of each event are divided by their sum
+            labels = weights / tf.tile(tf.reshape(tf.reduce_sum(weights, axis=1), (-1, 1)), (1, num_classes))
             self.loss = loss = tf.nn.softmax_cross_entropy_with_logits(logits=sx, labels=labels)
         elif tloss == "regr":
             sx = linear(x, "regr", 1)

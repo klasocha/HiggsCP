@@ -30,6 +30,9 @@ parser.add_argument("--restrict_most_probable_angle", dest="RESTRICT_MOST_PROBAB
 parser.add_argument("--force_download", dest="FORCE_DOWNLOAD", type=bool, default=False)
 parser.add_argument("--normalize_weights", dest="NORMALIZE_WEIGHTS", type=bool, default=False)
 
+parser.add_argument("--data_class_distance", dest="DATA_CLASS_DISTANCE", type=int, default=0,
+					help='Maximal distance between predicted and valid class when event is found as correctly classified')
+
 parser.add_argument("--data_url", dest="DATA_URL", default='http://th-www.if.uj.edu.pl/~erichter/forMichal/HiggsCP_data_CPmix/', type=str)
 
 parser.add_argument("--beta",  type=float, dest="BETA", help="value of beta parameter for polynomial smearing", default=0.0)

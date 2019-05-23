@@ -24,8 +24,8 @@ def run(args):
     print "Prepared %d features" % num_features
     
     if args.PLOT_FEATURES is not "NO":
-        w_a = weights[:,0]
-        w_b = weights[:,num_classes/2]
+        w_a = weights[:, 0]
+        w_b = weights[:, num_classes/2]
         monit_plots(args, event, w_a, w_b)
 
     print "Initializing model"
@@ -46,7 +46,7 @@ def run(args):
             if e.errno != errno.EEXIST:
                 raise
     
-    total_train(pathOUT, model, points, emodel=emodel, batch_size=128, epochs=args.EPOCHS)
+    total_train(pathOUT, model, points, args, emodel=emodel, batch_size=128, epochs=args.EPOCHS)
 
 
 def start(args):
