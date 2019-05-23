@@ -1,0 +1,16 @@
+
+23.11.2019
+==========
+
+1) harmonise standards for control printouts
+    -- introduce sterring arg.DEBUG (?)
+    -- used "print" "write", "msg service"
+
+2) plotting scripts better configurable
+   for directotries of input/output
+
+3) undrstand code+formulas for loos function in case of "soft"
+
+4) multi-class --> two class
+   can we quantify better differences/similarities of performance
+   which approach does what?
