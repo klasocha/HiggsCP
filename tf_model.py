@@ -8,6 +8,7 @@ def train(model, dataset, batch_size=128):
     epoch_size = dataset.n / batch_size
     losses = []
 
+    sys.stdout.write("np.mean(losses):")
     for i in range(epoch_size):
         x, weights, arg_maxs, popts, filt,  = dataset.next_batch(batch_size)
         loss, _ = sess.run([model.loss, model.train_op],
@@ -17,43 +18,71 @@ def train(model, dataset, batch_size=128):
           sys.stdout.write(". %.3f " % np.mean(losses))
           losses =[]
           sys.stdout.flush()
+    sys.stdout.write("\n")
     return np.mean(losses)
 
-
-def total_train(model, data, emodel=None, batch_size=128, epochs=25):
+#ERW
+# tf_model knows nothing about classes <-->angle relations
+# operates on arrays which has dimention of num_classes
+def total_train(pathOUT, model, data, emodel=None, batch_size=128, epochs=25):
     sess = tf.get_default_session()
     if emodel is None:
         emodel = model
     train_accs = []
     valid_accs = []
 
+    # ERW
+    # maximal sensitivity not defined in  multi-class case?
+    # please reintroduce this option
+    # max_perf = evaluate2(emodel, data.valid, filtered=True)
+    # print max_perf
+
     for i in range(epochs):
-        sys.stdout.write("\nEPOCH: %d " % (i + 1))
+        sys.stdout.write("\nEPOCH: %d \n" % (i + 1))
         loss = train(model, data.train, batch_size)
+
         if model.tloss=='parametrized_sincos':
             data.unweightedtest.weight(None)
             x, p, weights, arg_maxs, popts = predictions(emodel, data.unweightedtest)
-            np.save('results/res_vec_pred.npy', p)
-            np.save('results/res_vec_labels.npy', arg_maxs)
+            np.save(pathOUT+'res_vec_pred.npy', p)
+            np.save(pathOUT+'res_vec_labels.npy', arg_maxs)
             weights_to_test = [1, 3, 5, 7, 9]
             for w in weights_to_test:
                 data.unweightedtest.weight(w)
                 x, p, weights, arg_maxs, popts = predictions(emodel, data.unweightedtest)
-                np.save('results/res_vec_pred'+str(w)+'.npy', p)
-                np.save('results/res_vec_labels'+str(w)+'.npy', arg_maxs)
-        if model.tloss == 'soft':
-            train_acc, train_mse, train_l1_distance, train_l2_distance = evaluate(emodel, data.train, 100000, filtered=True)
-            valid_acc, valid_mse, valid_l1_distance, valid_l2_distance = evaluate(emodel, data.valid, filtered=True)
-            msg_str = "TRAIN LOSS: %.3f ACCURACY: %.3f MSE %.3f VALID ACCURACY: %.3f MSE %.3f TRAIN L1: %.3f, VALID L1: %.3f" \
-                      % (loss, train_acc, train_mse, valid_acc, valid_mse, train_l1_distance, valid_l1_distance)
-            labels_w, preds_w = softmax_predictions(emodel, data.valid)
-            np.save('results/softmax_labels_w.npy', labels_w)
-            np.save('results/softmax_preds_w.npy', preds_w)
+                np.save(pathOUT+'res_vec_pred'+str(w)+'.npy', p)
+                np.save(pathOUT+'res_vec_labels'+str(w)+'.npy', arg_maxs)
 
-            print msg_str
-            tf.logging.info(msg_str)
+        if model.tloss == 'soft':
+            train_acc, train_mse, train_l1_delta_w, train_l2_delta_w = evaluate(emodel, data.train, 100000, filtered=True)
+            valid_acc, valid_mse, valid_l1_delta_w, valid_l2_delta_w = evaluate(emodel, data.valid, filtered=True)
+            msg_str_0 = "TRAINING:     LOSS: %.3f \n" % (loss)
+            msg_str_1 = "TRAINING:     ACCURACY: %.3f MSE: %.3f L1_delta_w: %.3f  L2_delta_w: %.3f \n" % (train_acc, train_mse, train_l1_delta_w, train_l2_delta_w)
+            msg_str_2 = "VALIDATION:   ACCURACY: %.3f MSE  %.3f L1_delta_w: %.3f, L2_delta_w: %.3f \n" % (valid_acc, valid_mse, valid_l1_delta_w, valid_l2_delta_w)
+            print msg_str_0
+            print msg_str_1
+            print msg_str_2
+            tf.logging.info(msg_str_0)
+            tf.logging.info(msg_str_1)
+            tf.logging.info(msg_str_2)
+
+            # ERW: they are not "labels" but calculated values of weights for a given class
+            #      class is indexed by its phiCPmix value or range.
+            # why filtering is not applied?
+
+            calc_w, preds_w = softmax_predictions(emodel, data.valid)
+
+            #ERW
+            # control print
+            # print "softmax: calc_w", calc_w
+            # print "softmax: preds_w", preds_w
+
+            np.save(pathOUT+'softmax_calc_w.npy', calc_w)
+            np.save(pathOUT+'softmax_preds_w.npy', preds_w)
+
             train_accs += [train_acc]
             valid_accs += [valid_acc]
+
     return train_accs, valid_accs
 
 
@@ -81,6 +110,8 @@ def predictions(model, dataset, at_most=None, filtered=False):
 
     return x, p, weights, arg_maxs, popts
 
+# ERW
+# why this class is not using filter?
 def softmax_predictions(model, dataset, at_most=None):
     sess = tf.get_default_session()
     x = dataset.x[dataset.mask]
@@ -94,23 +125,48 @@ def softmax_predictions(model, dataset, at_most=None):
     return weights, preds
 
 
+# ERW
+# extended input objects of original class
+# added functionality of storing output information, hard-coded filenames which should be avoided
+# roc_auc_score is not calculated as it is multi-class classification
 def evaluate(model, dataset, at_most=None, filtered=False):
-    _, predicted_weights, labels_weights, arg_maxs, popts = predictions(model, dataset, at_most, filtered)
+    _, pred_w, calc_w, arg_maxs, popts = predictions(model, dataset, at_most, filtered)
 
-    num_classes = labels_weights.shape[1]
-    predicted_most_probable = np.argmax(predicted_weights, axis=1)
-    label_most_probable = np.argmax(labels_weights, axis=1)
-    distances = np.min(
-        np.stack(
-            [(predicted_most_probable-label_most_probable)**2, (num_classes - np.abs(predicted_most_probable-label_most_probable))**2]
-        ), axis=0)
-    mse = np.mean(distances)
-    # Accuracy if most probable predictions match most probable label
-    num_range = 0
-    accuracy = (np.abs(np.argmax(labels_weights, axis=1) - np.argmax(predicted_weights, axis=1)) <= num_range).mean()
-    l1_distance = np.mean(np.abs(labels_weights - predicted_weights))
-    l2_distance = np.mean((labels_weights - predicted_weights)**2)
-    return accuracy, mse, l1_distance, l2_distance
+    #ERW
+    # control print
+    # print "evaluate: calc_w", calc_w
+    # print "evaluate: pred_w", pred_w
+
+    num_classes = calc_w.shape[1]
+    pred_arg_maxs = np.argmax(pred_w, axis=1)
+    calc_arg_maxs = np.argmax(calc_w, axis=1)
+
+    #ERW
+    # control print
+    # print "evaluate: calc_arg_maxs", calc_arg_maxs
+    # print "evaluate: pred_arg_maxs", pred_arg_maxs
+
+
+    # ERW bez sensu, nie mozna porownywac roznicy wag i roznicy phi !!!
+    # distances = np.min(
+    #    np.stack(
+    #        [(pred_w_argmax-calc_w_argmax)**2, (num_classes - np.abs(pred_w_argmax-calc_w_argmax)**2)]
+    #    ), axis=0)
+
+    # print np.abs(pred_arg_maxs - calc_arg_maxs)
+    #ERW: correct that if abs(pred_arg_maxs - calc_arg_maxs) = num_class -1, abs(pred_arg_maxs - calc_arg_maxs) = 0
+    mse = np.sqrt(np.mean((pred_arg_maxs - calc_arg_maxs)**2))
+
+    # Accuracy: average that most probable predicted class match most probable class
+    # delta_class should be a variable in args
+    delta_class = 2
+    accuracy = (np.abs(np.argmax(calc_w, axis=1) - np.argmax(pred_w, axis=1)) <= delta_class).mean()
+    l1_delta_w = np.mean(np.abs(calc_w - pred_w))
+    l2_delta_w = np.sqrt(np.mean((calc_w - pred_w)**2))
+    return accuracy, mse, l1_delta_w, l2_delta_w
+
+# ERW
+# removed class evaluate2. Why??
 
 
 def evaluate_preds(preds, wa, wb):
@@ -155,7 +211,9 @@ class NeuralNetwork(object):
             x = tf.nn.relu(batch_norm(linear(x, "linear_%d" % i, size), "bn_%d" % i)) 
             if keep_prob < 1.0:
               x = tf.nn.dropout(x, keep_prob)
-
+        #ERW
+        # explain if option "soft" is a simple extension of what was implemented
+        # previously for binary classification
         if tloss == "soft":
             sx = linear(x, "regression", num_classes)
             self.preds = tf.nn.softmax(sx)
@@ -166,6 +224,8 @@ class NeuralNetwork(object):
             # wb = p_b / p_c
             # wa + wb + 1 = (p_a + p_b + p_c) / p_c
             # wa / (wa + wb + 1) = p_a / (p_a + p_b + p_c)
+            #ERW
+            # explain the line below
             labels = weights / tf.tile(tf.reshape(tf.reduce_sum(weights, axis=1), (-1, 1)), (1,num_classes))
             self.loss = loss = tf.nn.softmax_cross_entropy_with_logits(logits=sx, labels=labels)
         elif tloss == "regr":

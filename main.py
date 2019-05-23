@@ -19,22 +19,27 @@ parser.add_argument("-i", "--input", dest="IN", default=os.environ["RHORHO_DATA"
 parser.add_argument("-d", "--dropout", dest="DROPOUT", type=float, default=0.2)
 parser.add_argument("-e", "--epochs", dest="EPOCHS", type=int, default=3)
 parser.add_argument("-f", "--features", dest="FEAT", help="Features",
-	choices=["Model-Oracle", "Model-OnlyHad", "Model-Benchmark", "Model-1", "Model-2", "Model-3"], default="Model-Oracle")
-parser.add_argument("--treedepth", dest="TREEDEPTH", type=int, default=5)
+        choices= ["Variant-All", "Variant-1.0", "Variant-1.1", "Variant-2.0", "Variant-2.1",
+                  "Variant-2.2", "Variant-3.0", "Variant-3.1", "Variant-4.0", "Variant-4.1"], default="Variant-All")
 parser.add_argument("--miniset", dest="MINISET", type=lambda s: s.lower() in ['true', 't', 'yes', '1'], default=False)
-parser.add_argument("--svm_c", dest="SVM_C", type=float)
-parser.add_argument("--svm_gamma", dest="SVM_GAMMA", type=float)
-parser.add_argument("--forest_max_feat", dest="FOREST_MAX_FEAT", choices=["log2", "sqrt"], default="sqrt")
-parser.add_argument("--forest_max_depth", dest="FOREST_MAX_DEPTH", default=10, type=int)
-parser.add_argument("--forest_estimators", dest="FOREST_ESTIMATORS", default=10, type=int)
 parser.add_argument("--z_noise_fraction", dest="Z_NOISE_FRACTION", type=float, default=0.5)
 parser.add_argument("--num_classes", dest="NUM_CLASSES", type=int, default=11)
 parser.add_argument("--unweighted", dest="UNWEIGHTED", type=lambda s: s.lower() in ['true', 't', 'yes', '1'], default=False)
 parser.add_argument("--reuse_weights", dest="REUSE_WEIGTHS", type=bool, default=False)
 parser.add_argument("--restrict_most_probable_angle", dest="RESTRICT_MOST_PROBABLE_ANGLE", type=bool, default=False)
 parser.add_argument("--force_download", dest="FORCE_DOWNLOAD", type=bool, default=False)
+parser.add_argument("--normalize_weights", dest="NORMALIZE_WEIGHTS", type=bool, default=False)
+
 parser.add_argument("--data_url", dest="DATA_URL", default='http://th-www.if.uj.edu.pl/~erichter/forMichal/HiggsCP_data_CPmix/', type=str)
-parser.add_argument("--normalize_weights", dest="NORMALIZE_WEIGHTS", default=True, type=bool)
+
+parser.add_argument("--beta",  type=float, dest="BETA", help="value of beta parameter for polynomial smearing", default=0.0)
+parser.add_argument("--pol_b", type=float, dest="pol_b", help="value of b parameter for polynomial smearing", default=0.0)
+parser.add_argument("--pol_c", type=float, dest="pol_c", help="value of c parameter for polynomial smearing", default=0.0)
+
+parser.add_argument("--w1", dest="W1")
+parser.add_argument("--w2", dest="W2")
+
+parser.add_argument("--plot_features", dest="PLOT_FEATURES", choices=["NO", "FILTER", "NO-FILTER"], default="NO")
 
 args = parser.parse_args()
 

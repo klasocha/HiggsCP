@@ -89,6 +89,10 @@ def smear_exp(x, lambd):
     sign = np.random.choice(np.array([-1,1]), size=x.shape)
     return x + sign*noise
 
+def smear_log(x):
+    rn = np.random.random()
+    return x * (- np.log(rn))
+
 def polynomial_density(x, beta, b, c): return np.exp(-(1/beta)*x) * (1 + (b**2)*(x**2) + (c**2)*(x**4))
 
 def smear_polynomial(x, beta, b, c):
@@ -163,3 +167,12 @@ def approx_E_nu(p_tau_h, v_tau_nu_z):
     d = 2*p_tau_h.e
     v_tau_nu_E = (c1 + c2) / d
     return v_tau_nu_E
+
+
+def scale_lifetime(particle):
+    rn = np.random.random(size = len(particle.x))
+    scale = (- np.log(rn))
+    print(scale)
+    part = particle.scale_lifetime(scale)
+    return part
+
