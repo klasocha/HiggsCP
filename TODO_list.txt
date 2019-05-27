@@ -7,10 +7,14 @@
     -- used "print" "write", "msg service"
 
 2) plotting scripts better configurable
-   for directotries of input/output
+   for directories of input/output
 
-3) undrstand code+formulas for loos function in case of "soft"
+3) understand code+formulas for loos function in case of "soft"
 
 4) multi-class --> two class
    can we quantify better differences/similarities of performance
    which approach does what?
+
+5) oracle-predictions for multi-class, how to define
+
+6) better statistical quantification for multi-class performance 
