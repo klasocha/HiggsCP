@@ -46,7 +46,7 @@ def run(args):
             if e.errno != errno.EEXIST:
                 raise
     
-    total_train(pathOUT, model, points, emodel=emodel, batch_size=128, epochs=args.EPOCHS)
+    total_train(pathOUT, model, points, args, emodel=emodel, batch_size=128, epochs=args.EPOCHS)
 
 
 def start(args):

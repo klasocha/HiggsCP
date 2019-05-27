@@ -23,12 +23,17 @@ parser.add_argument("-f", "--features", dest="FEAT", help="Features",
                   "Variant-2.2", "Variant-3.0", "Variant-3.1", "Variant-4.0", "Variant-4.1"], default="Variant-All")
 parser.add_argument("--miniset", dest="MINISET", type=lambda s: s.lower() in ['true', 't', 'yes', '1'], default=False)
 parser.add_argument("--z_noise_fraction", dest="Z_NOISE_FRACTION", type=float, default=0.5)
+
 parser.add_argument("--num_classes", dest="NUM_CLASSES", type=int, default=11)
+parser.add_argument("--delt_classes", dest="DELT_CLASSES", type=int, default=0,
+                    help='Maximal distance between predicted and valid class for event being considered as correctly classified')
+
 parser.add_argument("--unweighted", dest="UNWEIGHTED", type=lambda s: s.lower() in ['true', 't', 'yes', '1'], default=False)
 parser.add_argument("--reuse_weights", dest="REUSE_WEIGTHS", type=bool, default=False)
 parser.add_argument("--restrict_most_probable_angle", dest="RESTRICT_MOST_PROBABLE_ANGLE", type=bool, default=False)
 parser.add_argument("--force_download", dest="FORCE_DOWNLOAD", type=bool, default=False)
 parser.add_argument("--normalize_weights", dest="NORMALIZE_WEIGHTS", type=bool, default=False)
+
 
 parser.add_argument("--beta",  type=float, dest="BETA", help="value of beta parameter for polynomial smearing", default=0.0)
 parser.add_argument("--pol_b", type=float, dest="pol_b", help="value of b parameter for polynomial smearing", default=0.0)
