@@ -2,8 +2,8 @@ import numpy as np
 import tensorflow as tf
 import os, errno
 
-from cpmix_utils import preprocess_data
-from download_data import download_data
+from cpmix_utils_rhorho import preprocess_data
+from download_data_rhorho import download_data
 from rhorho import RhoRhoEvent
 from data_utils import read_np, EventDatasets
 from tf_model import total_train, NeuralNetwork
