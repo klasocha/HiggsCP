@@ -3,13 +3,13 @@ import tensorflow as tf
 import os, errno
 
 
-from cpmix_utils_a1rho import preprocess_data
-from download_data_a1rho import download_data
-from a1rho import A1RhoEvent
-from data_utils import read_np, EventDatasets
-from tf_model import total_train, NeuralNetwork
-from monit_utils import monit_plots
-from plot_utils import plot_one_TH1D, plot_two_TH1D
+from src_scripts.cpmix_utils import preprocess_data
+from src_scripts.download_data_a1rho import download_data
+from src_scripts.a1rho import A1RhoEvent
+from src_scripts.data_utils import read_np, EventDatasets
+from src_scripts.tf_model import total_train, NeuralNetwork
+from src_scripts.monit_utils import monit_plots
+from src_scripts.plot_utils import plot_one_TH1D, plot_two_TH1D
 
 
 
