@@ -30,3 +30,10 @@
 2) Problem with
      -- a1rho: Variant-2.0, Variant-2.1  >  nan from loos function
      -- a1a1: still cannot configure loading data
+
+3) I would like to have more structured project:
+      HiggsCP/main.py
+      HiggsCP/src_scripts/xxx.py
+      HiggsCP/anal_scripts/yyy.py
+      
+   how to tell in python directory where the source is?  
