@@ -63,4 +63,18 @@
    DONE
 
 
+30.05.2019
+==========
+
+1) How in the script
+       ploting_scripts/plot_softmax_rhorho.py
+   correct calculation of delta
+   delt_argmax = np.argmax(calc_w[:], axis=1) - np.argmax(preds_w[:], axis=1)
+   taking into account periodicity of phiCP
+   Increase in tails should dissapear, and RMS will improve
+
+2) How in the script 
+       anal_scripts/anal_rhorho_Variant_All_class_num.py
+   correct calculation of mean delta in the metric
+   taking into account periodicity of phiCP
 
