@@ -5,10 +5,11 @@ import numpy as np
 
 from scipy import optimize
 
-directory = "../slurm_results/monit_perf/nn_rhorho_Variant-All_Unweighted_False_FILTER_NUM_CLASSES_25/"
+pathIN  = "../slurm_results/monit_npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_10/"
+pathOUT = "../slurm_results/monit_perf/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_10/"
 
-calc_w  = np.load('../slurm_results/monit_npy/nn_rhorho_Variant-All_Unweighted_False_FILTER_NUM_CLASSES_25/softmax_calc_w.npy')
-preds_w = np.load('../slurm_results/monit_npy/nn_rhorho_Variant-All_Unweighted_False_FILTER_NUM_CLASSES_25/softmax_preds_w.npy')
+calc_w  = np.load(pathIN+'softmax_calc_w.npy')
+preds_w = np.load(pathIN+'softmax_preds_w.npy')
 
 #----------------------------------------------------------------------------------
 
@@ -25,11 +26,11 @@ plt.legend()
     
 if filename:
     try:
-        os.makedirs(directory)
+        os.makedirs(pathOUT)
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
-    plt.savefig(directory + filename+".eps")
+    plt.savefig(pathOUT + filename+".eps")
 else:
     plt.show()
 plt.clf()
@@ -38,25 +39,25 @@ plt.clf()
 
 print  np.argmax(calc_w[:], axis=1)
 print  np.argmax(calc_w[:], axis=0)
-delta_argmax = np.argmax(calc_w[:], axis=1) - np.argmax(preds_w[:], axis=1)
+delt_argmax = np.argmax(calc_w[:], axis=1) - np.argmax(preds_w[:], axis=1)
 
-filename = "delta_argmax"
-plt.hist(delta_argmax, histtype='step', bins=100)
-plt.xlabel('delta phiCP class')
+filename = "delt_argmax"
+plt.hist(delt_argmax, histtype='step', bins=100)
+plt.xlabel('delt phiCP class')
 plt.legend()
 
 ax = plt.gca()
-ax.annotate("Mean = {:0.3f} \nRMS = {:1.3f}".format(np.mean(delta_argmax), np.std(delta_argmax)), xy=(0.7, 0.85), xycoords='axes fraction', fontsize=12)
+ax.annotate("Mean = {:0.3f} \nRMS = {:1.3f}".format(np.mean(delt_argmax), np.std(delt_argmax)), xy=(0.7, 0.85), xycoords='axes fraction', fontsize=12)
 
 plt.tight_layout()
 
 if filename:
     try:
-        os.makedirs(directory)
+        os.makedirs(pathOUT)
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
-    plt.savefig(directory + filename+".eps")
+    plt.savefig(pathOUT + filename+".eps")
 else:
     plt.show()
 

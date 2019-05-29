@@ -9,7 +9,7 @@ pcovs = np.load('../../HiggsCP_data/rhorho/pcovs.npy')
 
 weights = np.load('../../HiggsCP_data/rhorho/rhorho_raw.w.npy')
 
-directory = "../slurm_results/monit_perf/"
+pathOUT = "figures/"
 
 def weight_fun(x, a, b, c):
     return a + b * np.cos(x) + c * np.sin(x)
@@ -23,7 +23,7 @@ x_fit = np.linspace(0, 2*np.pi)
 # fit error should be printed in the legend
 
 i = 0
-filename = "popts_event_1"
+filename = "popts_rhorho_event_1"
 
 chi2 = np.sqrt(np.diag(pcovs[i]))
 
@@ -41,11 +41,12 @@ plt.tight_layout()
 
 if filename:
     try:
-        os.makedirs(directory)
+        os.makedirs(pathOUT)
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
-    plt.savefig(directory + filename+".eps")
+    plt.savefig(pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
 else:
     plt.show()
 

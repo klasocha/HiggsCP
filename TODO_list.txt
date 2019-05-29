@@ -8,6 +8,7 @@
 
 2) plotting scripts better configurable
    for directories of input/output
+   automatize 
 
 3) understand code+formulas for loss function in case of "soft"
 
@@ -36,4 +37,7 @@
       HiggsCP/src_scripts/xxx.py
       HiggsCP/anal_scripts/yyy.py
       
-   how to tell in python directory where the source is?  
+   how to tell in python directory where the source is?
+
+
+
