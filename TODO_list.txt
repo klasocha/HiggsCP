@@ -44,9 +44,16 @@
    python main.py -e 5 -t nn_a1rho -i A1RHO_DATA -f Variant-4.1 --num_classes 2
 
    environmental variable $A1RHO_DATA is fine, still cannot find data, should not
-   be trying to donwload them.
+   be trying to donwload them. Looks that args.IN is not propagated correctly by the
+   os system. Is not understanding that should use $A1RHO_DATA and not A1RHO_DATA
 
 5) add rafjoz@gmail.com  for pull/push rights into erichter branches
+
+6) clean up for calculating features of Variant-2X and Variant-3X families if not used,
+   clean up also for: RuntimeWarning: invalid value encountered in sqrt
+
+7) for plotting metrics (anal_scripts), horizontal axes do not represent number of classes,
+   but the stacking count. How to convert?
 
 
 
