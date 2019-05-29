@@ -3,7 +3,7 @@ import urllib
 
 import numpy as np
 
-DATA_URL = 'http://th-www.if.uj.edu.pl/~erichter/forMichal/HiggsCP_data_CPmix/'
+#DATA_URL = 'http://th-www.if.uj.edu.pl/~erichter/forMichal/HiggsCP_data_CPmix/'
 
 
 def download_data(args):
@@ -16,6 +16,7 @@ def download_data(args):
 
 def download_weights(args):
     data_path = args.IN
+    print data_path
     # CPmix_index = 0 (scalar), 10 (pseudoscalar), 20 (scalar)
     CPmix_index = ['00', '02', '04', '06', '08', '10', '12', '14', '16', '18', '20']
     weights = []
@@ -27,9 +28,8 @@ def download_weights(args):
     for index in CPmix_index:
         filename = 'a1rho_raw.w_' + index + '.npy'
         print 'Donwloading ' + filename
-        print 'from ' + data_path
         filepath = os.path.join(data_path, filename)
-#       urllib.urlretrieve(DATA_URL + filename, filepath)
+        #       urllib.urlretrieve(DATA_URL + filename, filepath)
         weights.append(np.load(filepath))
     weights = np.stack(weights)
     np.save(output_weight_file, weights)
