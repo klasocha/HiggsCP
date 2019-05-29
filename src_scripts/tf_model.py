@@ -66,7 +66,7 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             tf.logging.info(msg_str_1)
             tf.logging.info(msg_str_2)
             
-            calc_w, preds_w = softmax_predictions(emodel, data.valid, filtered=False)
+            calc_w, preds_w = softmax_predictions(emodel, data.valid, filtered=True)
 
             #ERW
             # control print
@@ -107,7 +107,7 @@ def predictions(model, dataset, at_most=None, filtered=False):
     return x, p, weights, arg_maxs, popts
 
 
-def softmax_predictions(model, dataset, at_most=None, filtered=False):
+def softmax_predictions(model, dataset, at_most=None, filtered=True):
     sess = tf.get_default_session()
     x = dataset.x[dataset.mask]
     weights = dataset.weights[dataset.mask]
