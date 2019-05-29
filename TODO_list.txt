@@ -27,9 +27,10 @@
 1) Added a1rho and a1a1 channels, but not yet configured well.
    Have to introduce redundant cpmix_utils.py download_data.py
    because file names are not configurable.
+   DONE: use suffix from args.TYPE
 
 2) Problem with
-     -- a1rho: Variant-2.0, Variant-2.1  >  nan from loos function
+     -- a1rho: Variant-2.0, Variant-2.1  >  nan from loss function
      -- a1a1: still cannot configure loading data
 
 3) I would like to have more structured project:
@@ -38,6 +39,8 @@
       HiggsCP/anal_scripts/yyy.py
       
    how to tell in python directory where the source is?
+   DONE: utworzyc pusty  plik __init__.py w podkartotece src_scripts
+         import src_scripts.xxx.py
 
 4) not clear why it is not working today
 
@@ -47,13 +50,17 @@
    be trying to donwload them. Looks that args.IN is not propagated correctly by the
    os system. Is not understanding that should use $A1RHO_DATA and not A1RHO_DATA
 
+   DONE: use -i $A1RHO_DATA
+
 5) add rafjoz@gmail.com  for pull/push rights into erichter branches
+   DONE
 
 6) clean up for calculating features of Variant-2X and Variant-3X families if not used,
-   clean up also for: RuntimeWarning: invalid value encountered in sqrt
+   clean up also for: "RuntimeWarning: invalid value encountered in sqrt"
 
 7) for plotting metrics (anal_scripts), horizontal axes do not represent number of classes,
    but the stacking count. How to convert?
+   DONE
 
 
 
