@@ -1,5 +1,5 @@
 
-23.11.2019
+23.05.2019
 ==========
 
 1) harmonise standards for control printouts
@@ -9,7 +9,7 @@
 2) plotting scripts better configurable
    for directories of input/output
 
-3) understand code+formulas for loos function in case of "soft"
+3) understand code+formulas for loss function in case of "soft"
 
 4) multi-class --> two class
    can we quantify better differences/similarities of performance
@@ -18,3 +18,15 @@
 5) oracle-predictions for multi-class, how to define
 
 6) better statistical quantification for multi-class performance 
+
+
+29.05.2019
+==========
+
+1) Added a1rho and a1a1 channels, but not yet configured well.
+   Have to introduce redundant cpmix_utils.py download_data.py
+   because file names are not configurable.
+
+2) Problem with
+     -- a1rho: Variant-2.0, Variant-2.1  >  nan from loos function
+     -- a1a1: still cannot configure loading data

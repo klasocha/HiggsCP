@@ -1,9 +1,9 @@
 import argparse
 import os
 
-import train_rhorho
+import train_rhorho, train_a1rho, train_a1a1
 
-types = {"nn_rhorho": train_rhorho.start}
+types = {"nn_rhorho": train_rhorho.start,"nn_a1rho": train_a1rho.start,"nn_a1a1": train_a1a1.start, }
 
 parser = argparse.ArgumentParser(description='Train classifier')
 parser.add_argument("-t", "--type", dest="TYPE", choices=types.keys(), default='nn_rhorho')
