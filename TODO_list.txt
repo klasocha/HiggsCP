@@ -91,4 +91,19 @@
 
 2) What about restricting range to [0, pi], would it help? confuse performance?
 
+3) Looking more into tf_model:
+
+    -->  Predicted weights are normalised to probability and calculated no!!!!
+         Important correction to calculating metric!!!
+
+    -->  Total_train is returning "train_accs", "valid_accs"
+         we do nothing with it? Not used? not stored?
+
+    -->  Loss value not monitored for further tests, could be stored as .npy?
+         is it normalised to the number of classes?
+
+    -->  Why saving: softmax_calc_w.npy, softmax_preds_w.npy
+         inside the loop "for i in range(epochs)"
+	 aren't we interested in the last iteration?
+
 
