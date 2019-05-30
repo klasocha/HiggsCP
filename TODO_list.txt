@@ -106,4 +106,20 @@
          inside the loop "for i in range(epochs)"
 	 aren't we interested in the last iteration?
 
+4) Problem affecting performance metrices:
+      "p" in normalised t unity, weights are not
+       should be cleaned in few places consistently
+       normalise weights at initialisation?
+
+5) Store in .npy format wuantities for monitoring nn learning,
+   so we can confirm  choices for nn architecture to avoid overfitting.
+   Add scripts monitoring learning process, like in the past publications.
+
+6) Stacking metrix is good idea, see anal_scripts
+
+    metrics_Variant_1_1 = np.stack(metrics_Variant_1_1)
+
+   but what to do if number of classes is not uniformly ditributed,
+   i.e. only few are simulated like: 2, 4, 10, 25, 50, 100
+
 
