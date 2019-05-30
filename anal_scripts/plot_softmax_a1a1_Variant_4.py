@@ -5,7 +5,7 @@ import numpy as np
 
 from scipy import optimize
 
-pathIN  = "npy/nn_a1rho_Variant-1.1_Unweighted_False_NO_NUM_CLASSES_10/"
+pathIN  = "npy/nn_a1a1_Variant-4.1_Unweighted_False_NO_NUM_CLASSES_10/"
 pathOUT = "figures/"
 
 calc_w  = np.load(pathIN+'softmax_calc_w.npy')
@@ -16,12 +16,12 @@ preds_w = np.load(pathIN+'softmax_preds_w.npy')
 # why it is plotting two dots in the legend box?
 
 i = 1
-filename = "calc_preds_w_a1rho_Variant-1.1_nc_10_event_1"
+filename = "calc_preds_w_a1a1_Variant-4.1_nc_10_event_1"
 plt.plot(calc_w[i], 'o', label='calc_w')
 plt.plot(preds_w[i], 'o', label='preds_w')
 plt.xlabel('phiCP class')
 plt.ylabel('w')
-plt.title('Features list: Variant-1.1')
+plt.title('Features list: Variant-4.1')
     
 if filename:
     try:
@@ -38,17 +38,17 @@ plt.clf()
 #----------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------
 
-pathIN  = "npy/nn_a1rho_Variant-1.1_Unweighted_False_NO_NUM_CLASSES_4/"
+pathIN  = "npy/nn_a1a1_Variant-4.1_Unweighted_False_NO_NUM_CLASSES_4/"
 pathOUT = "figures/"
 
 calc_w_nc4  = np.load(pathIN+'softmax_calc_w.npy')
 preds_w_nc4 = np.load(pathIN+'softmax_preds_w.npy')
 delt_argmax_nc4 = np.argmax(calc_w_nc4[:], axis=1) - np.argmax(preds_w_nc4[:], axis=1)
 
-filename = "delt_argmax_a1rho_Variant-1.1_nc_4"
+filename = "delt_argmax_a1a1_Variant-4.1_nc_4"
 plt.hist(delt_argmax_nc4, histtype='step', bins=100)
 plt.xlabel(r'$\Delta$  classes')
-plt.title('Features list: Variant-1.1')
+plt.title('Features list: Variant-4.1')
 
 ax = plt.gca()
 mean = np.mean(delt_argmax_nc4) * 6.28/4.0
@@ -84,17 +84,17 @@ print('Acc3_nc_4', acc3)
 print('---------')
 #----------------------------------------------------------------------------------
 
-pathIN  = "npy/nn_a1rho_Variant-1.1_Unweighted_False_NO_NUM_CLASSES_10/"
+pathIN  = "npy/nn_a1a1_Variant-4.1_Unweighted_False_NO_NUM_CLASSES_10/"
 pathOUT = "figures/"
 
 calc_w_nc10  = np.load(pathIN+'softmax_calc_w.npy')
 preds_w_nc10 = np.load(pathIN+'softmax_preds_w.npy')
 delt_argmax_nc10 = np.argmax(calc_w[:], axis=1) - np.argmax(preds_w[:], axis=1)
 
-filename = "delt_argmax_a1rho_Variant-1.1_nc_10"
+filename = "delt_argmax_a1a1_Variant-4.1_nc_10"
 plt.hist(delt_argmax_nc10, histtype='step', bins=100)
 plt.xlabel(r'$\Delta$  classes')
-plt.title('Features list: Variant-1.1')
+plt.title('Features list: Variant-4.1')
 
 ax = plt.gca()
 mean = np.mean(delt_argmax_nc10) * 6.28/10.0
@@ -130,17 +130,17 @@ print('Acc3_nc_10', acc3)
 print('---------')
 #----------------------------------------------------------------------------------
 
-pathIN  = "npy/nn_a1rho_Variant-1.1_Unweighted_False_NO_NUM_CLASSES_20/"
+pathIN  = "npy/nn_a1a1_Variant-4.1_Unweighted_False_NO_NUM_CLASSES_20/"
 pathOUT = "figures/"
 
 calc_w_nc20  = np.load(pathIN+'softmax_calc_w.npy')
 preds_w_nc20 = np.load(pathIN+'softmax_preds_w.npy')
 delt_argmax_nc20 = np.argmax(calc_w_nc20[:], axis=1) - np.argmax(preds_w_nc20[:], axis=1)
 
-filename = "delt_argmax_a1rho_Variant-1.1_nc_20"
+filename = "delt_argmax_a1a1_Variant-4.1_nc_20"
 plt.hist(delt_argmax_nc20, histtype='step', bins=100)
 plt.xlabel(r'$\Delta$  classes')
-plt.title('Features list: Variant-1.1')
+plt.title('Features list: Variant-4.1')
 
 ax = plt.gca()
 mean = np.mean(delt_argmax_nc20) * 6.28/20.0
