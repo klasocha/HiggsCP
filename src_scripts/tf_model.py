@@ -21,7 +21,7 @@ def train(model, dataset, batch_size=128):
     sys.stdout.write("\n")
     return np.mean(losses)
 
-#ERW
+# ERW
 # tf_model knows nothing about classes <-->angle relations
 # operates on arrays which has dimention of num_classes
 def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=25):
@@ -30,6 +30,7 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
         emodel = model
     train_accs = []
     valid_accs = []
+    losses = []
 
     # ERW
     # maximal sensitivity not defined in  multi-class case?
@@ -68,17 +69,34 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             
             calc_w, preds_w = softmax_predictions(emodel, data.valid, filtered=True)
 
-            #ERW
+            # ERW
             # control print
-            # print "softmax: calc_w", calc_w
-            # print "softmax: preds_w", preds_w
-            
+            # print "ERW test on softmax: calc_w \n"
+            # print calc_w
+            # print "ERW test on softmax: preds_w \n"
+            # print preds_w
+
+            # ERW: stored will be results from last iteration?
             np.save(pathOUT+'softmax_calc_w.npy', calc_w)
             np.save(pathOUT+'softmax_preds_w.npy', preds_w)
 
             train_accs += [train_acc]
             valid_accs += [valid_acc]
+            losses += [loss]
             
+    calc_w_f, preds_w_f = softmax_predictions(emodel, data.valid, filtered=True)
+    np.save(pathOUT+'softmax_calc_w_f.npy', calc_w_f)
+    np.save(pathOUT+'softmax_preds_w_f.npy', preds_w_f)
+
+    np.save(pathOUT+'losses.npy', losses)
+    print "losses", losses
+
+   # ERW
+   # print "ERW test on softmax: calc_w final \n"
+   # print calc_w_f
+   # print "ERW test on softmax: preds_w final \n"
+   # print preds_w_f
+
     return train_accs, valid_accs
 
 
@@ -103,6 +121,10 @@ def predictions(model, dataset, at_most=None, filtered=True):
       x = x[filt == 1]
       weights = weights[filt == 1]
       arg_maxs = arg_maxs[filt == 1]
+
+    # ERW
+    # problem with consistency, p is normalised to unity, but weights are not!!
+    # leads to wrong estimate of the L1, L2 metrics
 
     return x, p, weights, arg_maxs, popts
 
@@ -158,6 +180,11 @@ def evaluate(model, dataset, args, at_most=None, filtered=True):
     # Accuracy: average that most probable predicted class match most probable class
     delt_max = args.DELT_CLASSES
     acc = (np.abs(np.argmax(calc_w, axis=1) - np.argmax(pred_w, axis=1)) <= delt_max).mean()
+
+    # ERW
+    # problem with consistency, p is normalised to unity, but weights are not!!
+    # leads to wrong estimate of the L1, L2 metrics
+
     l1_delt_w = np.mean(np.abs(calc_w - pred_w))
     l2_delt_w = np.sqrt(np.mean((calc_w - pred_w)**2))
     return acc, mse, l1_delt_w, l2_delt_w
