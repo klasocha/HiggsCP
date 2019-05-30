@@ -17,9 +17,13 @@ preds_w = np.load(pathIN+'softmax_preds_w.npy')
 
 i = 1
 filename = "calc_preds_w_a1a1_Variant-1.1_nc_10_event_1"
-plt.plot(calc_w[i], 'o', label='calc_w')
-plt.plot(preds_w[i], 'o', label='preds_w')
-plt.xlabel('phiCP class')
+x = np.arange(1,11)
+plt.plot(x,calc_w[i]/sum(calc_w[i]), 'o', label='calc_w')
+plt.plot(x,preds_w[i], 'd', label='preds_w')
+plt.legend()
+plt.ylim([0.0, 0.2])
+plt.xlabel('Index of class')
+plt.xticks(x)
 plt.ylabel('w')
 plt.title('Features list: Variant-1.1')
     
@@ -30,7 +34,9 @@ if filename:
         if e.errno != errno.EEXIST:
             raise
     plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
     plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
 else:
     plt.show()
 plt.clf()
@@ -44,6 +50,7 @@ pathOUT = "figures/"
 calc_w_nc4  = np.load(pathIN+'softmax_calc_w.npy')
 preds_w_nc4 = np.load(pathIN+'softmax_preds_w.npy')
 delt_argmax_nc4 = np.argmax(calc_w_nc4[:], axis=1) - np.argmax(preds_w_nc4[:], axis=1)
+
 
 filename = "delt_argmax_a1a1_Variant-1.1_nc_4"
 plt.hist(delt_argmax_nc4, histtype='step', bins=100)
@@ -90,6 +97,7 @@ pathOUT = "figures/"
 calc_w_nc10  = np.load(pathIN+'softmax_calc_w.npy')
 preds_w_nc10 = np.load(pathIN+'softmax_preds_w.npy')
 delt_argmax_nc10 = np.argmax(calc_w[:], axis=1) - np.argmax(preds_w[:], axis=1)
+
 
 filename = "delt_argmax_a1a1_Variant-1.1_nc_10"
 plt.hist(delt_argmax_nc10, histtype='step', bins=100)
