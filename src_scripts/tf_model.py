@@ -82,7 +82,7 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
     return train_accs, valid_accs
 
 
-def predictions(model, dataset, at_most=None, filtered=False):
+def predictions(model, dataset, at_most=None, filtered=True):
     sess = tf.get_default_session()
     x = dataset.x[dataset.mask]
     weights = dataset.weights[dataset.mask]
@@ -131,7 +131,7 @@ def softmax_predictions(model, dataset, at_most=None, filtered=True):
 # extended input objects of original class
 # added functionality of storing output information, hard-coded filenames which should be avoided
 # roc_auc_score is not calculated as it is multi-class classification
-def evaluate(model, dataset, args, at_most=None, filtered=False):
+def evaluate(model, dataset, args, at_most=None, filtered=True):
     _, pred_w, calc_w, arg_maxs, popts = predictions(model, dataset, at_most, filtered)
 
     #ERW
@@ -168,7 +168,7 @@ def evaluate(model, dataset, args, at_most=None, filtered=False):
 # VERY IMPORTANT CLOSURE TEST
 
 
-def evaluate_oracle(model, dataset, at_most=None, filtered=False):
+def evaluate_oracle(model, dataset, at_most=None, filtered=True):
     _, ps, was, wbs = predictions(model, dataset, at_most, filtered)
     return evaluate_preds(was/(was+wbs), was, wbs)
 
