@@ -20,6 +20,11 @@ def calculate_metrics(directory, num_class):
     meanDelta = np.mean(calc_pred_argmaxs_distances)
     meanDeltaScaled = np.mean(calc_pred_argmaxs_distances/(1.0*num_class)*3.14/2.)
 
+    # ERW
+    # calc_w are not normalised to unity, while preds_w are
+    # clarify this point
+    for i in range (len(calc_w)):
+      calc_w[i] = calc_w[i]/sum(calc_w[i])
     l1_delta_w = np.mean(np.abs(calc_w - preds_w))
     l2_delta_w = np.sqrt(np.mean((calc_w - preds_w)**2))
     
