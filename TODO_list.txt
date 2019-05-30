@@ -1,4 +1,3 @@
-
 23.05.2019
 ==========
 
@@ -8,7 +7,8 @@
 
 2) plotting scripts better configurable
    for directories of input/output
-   automatize 
+   automatize
+   DONE: partially, fine for a moment
 
 3) understand code+formulas for loss function in case of "soft"
 
@@ -39,10 +39,11 @@
       HiggsCP/anal_scripts/yyy.py
       
    how to tell in python directory where the source is?
+   
    DONE: utworzyc pusty  plik __init__.py w podkartotece src_scripts
          import src_scripts.xxx.py
 
-4) not clear why it is not working today
+4) not clear why it is not working
 
    python main.py -e 5 -t nn_a1rho -i A1RHO_DATA -f Variant-4.1 --num_classes 2
 
@@ -50,7 +51,7 @@
    be trying to donwload them. Looks that args.IN is not propagated correctly by the
    os system. Is not understanding that should use $A1RHO_DATA and not A1RHO_DATA
 
-   DONE: use -i $A1RHO_DATA
+   DONE: use "-i $A1RHO_DATA"
 
 5) add rafjoz@gmail.com  for pull/push rights into erichter branches
    DONE
@@ -68,13 +69,26 @@
 
 1) How in the script
        ploting_scripts/plot_softmax_rhorho.py
+       
    correct calculation of delta
    delt_argmax = np.argmax(calc_w[:], axis=1) - np.argmax(preds_w[:], axis=1)
    taking into account periodicity of phiCP
-   Increase in tails should dissapear, and RMS will improve
+   
+   Increase in tails should dissapear, and RMS would improve
+   Instead of (mean, RMS), can we fit Gauss distribution?
 
 2) How in the script 
        anal_scripts/anal_rhorho_Variant_All_class_num.py
+       
    correct calculation of mean delta in the metric
    taking into account periodicity of phiCP
+
+
+31.05.2019
+==========
+
+1) Move to run on prometheus + increase runs to 25 epochs
+
+2) What about restricting range to [0, pi], would it help? confuse performance?
+
 
