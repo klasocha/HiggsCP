@@ -140,7 +140,7 @@ filename = "rhorho_L1delt_w_Variant_4.1_nc"
 
 plt.plot(x, metrics_Variant_1_1[:, 5],'o', label=r'L1 $<\Delta w>$')
 
-plt.ylim([0.0, 1.5])
+plt.ylim([0.0, 0.2])
 plt.xticks(x)
 plt.legend()
 plt.xlabel('Number of classes')
@@ -172,7 +172,7 @@ filename = "rhorho_L2delt_w_Variant_4.1_nc"
 
 plt.plot(x, metrics_Variant_1_1[:, 6],'o', label=r'L2 $<\Delta w>$')
 
-plt.ylim([0.0, 2.0])
+plt.ylim([0.0, 0.2])
 plt.xticks(x)
 plt.legend()
 plt.xlabel('Number of classes')
