@@ -8,7 +8,7 @@ def train(model, dataset, batch_size=128):
     epoch_size = dataset.n / batch_size
     losses = []
 
-    sys.stdout.write("np.mean(losses):")
+    sys.stdout.write("<losses>):")
     for i in range(epoch_size):
         x, weights, arg_maxs, popts, filt,  = dataset.next_batch(batch_size)
         loss, _ = sess.run([model.loss, model.train_op],
@@ -28,9 +28,11 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
     sess = tf.get_default_session()
     if emodel is None:
         emodel = model
-    train_accs = []
-    valid_accs = []
-    losses = []
+    train_accs   = []
+    valid_accs   = []
+    test_accs    = []
+    train_losses = []
+
 
     # ERW
     # maximal sensitivity not defined in  multi-class case?
@@ -40,7 +42,7 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
 
     for i in range(epochs):
         sys.stdout.write("\nEPOCH: %d \n" % (i + 1))
-        loss = train(model, data.train, batch_size)
+        train_loss = train(model, data.train, batch_size)
 
         if model.tloss=='parametrized_sincos':
             data.unweightedtest.weight(None)
@@ -57,7 +59,7 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
         if model.tloss == 'soft':
             train_acc, train_mse, train_l1_delta_w, train_l2_delta_w = evaluate(emodel, data.train, args, 100000, filtered=True)
             valid_acc, valid_mse, valid_l1_delta_w, valid_l2_delta_w = evaluate(emodel, data.valid, args, filtered=True)
-            msg_str_0 = "TRAINING:     LOSS: %.3f \n" % (loss)
+            msg_str_0 = "TRAINING:     LOSS: %.3f \n" % (train_loss)
             msg_str_1 = "TRAINING:     ACCURACY: %.3f MSE: %.3f L1_delta_w: %.3f  L2_delta_w: %.3f \n" % (train_acc, train_mse, train_l1_delta_w, train_l2_delta_w)
             msg_str_2 = "VALIDATION:   ACCURACY: %.3f MSE  %.3f L1_delta_w: %.3f, L2_delta_w: %.3f \n" % (valid_acc, valid_mse, valid_l1_delta_w, valid_l2_delta_w)
             print msg_str_0
@@ -67,37 +69,40 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             tf.logging.info(msg_str_1)
             tf.logging.info(msg_str_2)
             
-            calc_w, preds_w = softmax_predictions(emodel, data.valid, filtered=True)
+            train_accs   += [train_acc]
+            valid_accs   += [valid_acc]
+            train_losses += [train_loss]
 
-            # ERW
-            # control print
-            # print "ERW test on softmax: calc_w \n"
-            # print calc_w
-            # print "ERW test on softmax: preds_w \n"
-            # print preds_w
+            if valid_acc == np.max(valid_accs):
+                test_acc, test_mse, test_l1_delta_w, test_l2_delta_w = evaluate(emodel, data.test, args, filtered=True)
+                msg_str_3 = "TESTING:      ACCURACY: %.3f MSE  %.3f L1_delta_w: %.3f, L2_delta_w: %.3f \n" % (test_acc, test_mse, test_l1_delta_w, test_l2_delta_w)
+                print msg_str_3
+                tf.logging.info(msg_str_3)
+                
+                test_accs += [test_acc]
 
-            # ERW: stored will be results from last iteration?
-            np.save(pathOUT+'softmax_calc_w.npy', calc_w)
-            np.save(pathOUT+'softmax_preds_w.npy', preds_w)
+                calc_w, preds_w = softmax_predictions(emodel, data.test, filtered=True)
 
-            train_accs += [train_acc]
-            valid_accs += [valid_acc]
-            losses += [loss]
-            
-    calc_w_f, preds_w_f = softmax_predictions(emodel, data.valid, filtered=True)
-    np.save(pathOUT+'softmax_calc_w_f.npy', calc_w_f)
-    np.save(pathOUT+'softmax_preds_w_f.npy', preds_w_f)
+                # ERW
+                # control print
+                # print "ERW test on softmax: calc_w \n"
+                # print calc_w
+                # print "ERW test on softmax: preds_w \n"
+                # print preds_w
+                np.save(pathOUT+'softmax_calc_w.npy', calc_w)
+                np.save(pathOUT+'softmax_preds_w.npy', preds_w)
 
-    np.save(pathOUT+'losses.npy', losses)
-    print "losses", losses
+    # storing history of training            
+    np.save(pathOUT+'train_losses.npy', train_losses)
+    print "train_losses", train_losses
+    np.save(pathOUT+'train_accs.npy', train_accs )
+    print "train_accs", train_accs
+    np.save(pathOUT+'valid_accs.npy', valid_accs )
+    print "valid_accs", valid_accs
+    np.save(pathOUT+'test_accs.npy', test_accs )
+    print "valid_accs", valid_accs
 
-   # ERW
-   # print "ERW test on softmax: calc_w final \n"
-   # print calc_w_f
-   # print "ERW test on softmax: preds_w final \n"
-   # print preds_w_f
-
-    return train_accs, valid_accs
+    return train_accs, valid_accs, test_accs
 
 
 def predictions(model, dataset, at_most=None, filtered=True):
@@ -182,11 +187,14 @@ def evaluate(model, dataset, args, at_most=None, filtered=True):
     acc = (np.abs(np.argmax(calc_w, axis=1) - np.argmax(pred_w, axis=1)) <= delt_max).mean()
 
     # ERW
-    # problem with consistency, p is normalised to unity, but weights are not!!
-    # leads to wrong estimate of the L1, L2 metrics
+    # for comparing with predictions, calculated weight normalised to probability
 
+    for i in range (len(calc_w)):
+      calc_w[i] = calc_w[i]/sum(calc_w[i])
+      
     l1_delt_w = np.mean(np.abs(calc_w - pred_w))
     l2_delt_w = np.sqrt(np.mean((calc_w - pred_w)**2))
+    
     return acc, mse, l1_delt_w, l2_delt_w
 
 # ERW
@@ -256,7 +264,7 @@ class NeuralNetwork(object):
             # wa / (wa + wb + 1) = p_a / (p_a + p_b + p_c)
             
             #ERW
-            # labels: class probabilities, calculated as normalised weighs
+            # labels: class probabilities, calculated as normalised weighs (probabilities)
             labels = weights / tf.tile(tf.reshape(tf.reduce_sum(weights, axis=1), (-1, 1)), (1,num_classes))
             self.loss = loss = tf.nn.softmax_cross_entropy_with_logits(logits=sx, labels=labels)
         elif tloss == "regr":
