@@ -41,7 +41,7 @@ def run(args):
     tf.global_variables_initializer().run()
 
     print "Training"
-    pathOUT = "laptop_results/monit_npy/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "_NUM_CLASSES_" + str(args.NUM_CLASSES) + "/"
+    pathOUT = "temp_results/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "_NUM_CLASSES_" + str(args.NUM_CLASSES) + "/"
     if pathOUT:
         try:
             os.makedirs(pathOUT)
