@@ -100,6 +100,11 @@ pathOUT = "figures/"
 calc_w_nc10  = np.load(pathIN+'softmax_calc_w.npy')
 preds_w_nc10 = np.load(pathIN+'softmax_preds_w.npy')
 delt_argmax_nc10 = np.argmax(calc_w[:], axis=1) - np.argmax(preds_w[:], axis=1)
+for i in range (len(delt_argmax_nc10)):
+    if  delt_argmax_nc10[i] > 10.0/2.0 :
+        delt_argmax_nc10[i] = 10.0 -  delt_argmax_nc10[i]
+    if  delt_argmax_nc10[i] < - 10.0/2.0 :
+        delt_argmax_nc10[i] = - 10.0 -  delt_argmax_nc10[i]
 
 filename = "delt_argmax_rhorho_Variant-All_nc_10"
 plt.hist(delt_argmax_nc10, histtype='step', bins=100)
@@ -146,6 +151,11 @@ pathOUT = "figures/"
 calc_w_nc20  = np.load(pathIN+'softmax_calc_w.npy')
 preds_w_nc20 = np.load(pathIN+'softmax_preds_w.npy')
 delt_argmax_nc20 = np.argmax(calc_w_nc20[:], axis=1) - np.argmax(preds_w_nc20[:], axis=1)
+for i in range (len(delt_argmax_nc20)):
+    if  delt_argmax_nc20[i] > 20.0/2.0 :
+        delt_argmax_nc20[i] = 20.0 -  delt_argmax_nc20[i]
+    if  delt_argmax_nc20[i] < - 20.0/2.0 :
+        delt_argmax_nc20[i] = - 20.0 -  delt_argmax_nc20[i]
 
 filename = "delt_argmax_rhorho_Variant-All_nc_20"
 plt.hist(delt_argmax_nc20, histtype='step', bins=100)
@@ -193,6 +203,11 @@ pathOUT = "figures/"
 calc_w_nc25  = np.load(pathIN+'softmax_calc_w.npy')
 preds_w_nc25 = np.load(pathIN+'softmax_preds_w.npy')
 delt_argmax_nc25 = np.argmax(calc_w_nc25[:], axis=1) - np.argmax(preds_w_nc25[:], axis=1)
+for i in range (len(delt_argmax_nc25)):
+    if  delt_argmax_nc25[i] > 25.0/2.0 :
+        delt_argmax_nc25[i] = 25.0 -  delt_argmax_nc25[i]
+    if  delt_argmax_nc25[i] < - 25.0/2.0 :
+        delt_argmax_nc25[i] = - 25.0 -  delt_argmax_nc25[i]
 
 filename = "delt_argmax_rhorho_Variant-All_nc_25"
 plt.hist(delt_argmax_nc25, histtype='step', bins=50)
@@ -240,6 +255,11 @@ pathOUT = "figures/"
 calc_w_nc50  = np.load(pathIN+'softmax_calc_w.npy')
 preds_w_nc50 = np.load(pathIN+'softmax_preds_w.npy')
 delt_argmax_nc50 = np.argmax(calc_w_nc50[:], axis=1) - np.argmax(preds_w_nc50[:], axis=1)
+for i in range (len(delt_argmax_nc50)):
+    if  delt_argmax_nc50[i] > 50.0/2.0 :
+        delt_argmax_nc50[i] = 50.0 -  delt_argmax_nc50[i]
+    if  delt_argmax_nc50[i] < - 50.0/2.0 :
+        delt_argmax_nc50[i] = - 50.0 -  delt_argmax_nc50[i]
 
 filename = "delt_argmax_rhorho_Variant-All_nc_50"
 plt.hist(delt_argmax_nc50, histtype='step', bins=100)
@@ -287,6 +307,11 @@ pathOUT = "figures/"
 calc_w_nc100  = np.load(pathIN+'softmax_calc_w.npy')
 preds_w_nc100 = np.load(pathIN+'softmax_preds_w.npy')
 delt_argmax_nc100 = np.argmax(calc_w_nc100[:], axis=1) - np.argmax(preds_w_nc100[:], axis=1)
+for i in range (len(delt_argmax_nc100)):
+    if  delt_argmax_nc100[i] > 100.0/2.0 :
+        delt_argmax_nc100[i] = 100.0 -  delt_argmax_nc100[i]
+    if  delt_argmax_nc100[i] < - 100.0/2.0 :
+        delt_argmax_nc100[i] = - 100.0 -  delt_argmax_nc100[i]
 
 filename = "delt_argmax_rhorho_Variant-All_nc_100"
 plt.hist(delt_argmax_nc100, histtype='step', bins=100)
