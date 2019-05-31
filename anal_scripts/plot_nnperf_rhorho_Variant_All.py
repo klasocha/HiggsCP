@@ -1,0 +1,134 @@
+import sys
+import os, errno
+import matplotlib.pyplot as plt
+import numpy as np
+import tensorflow as tf
+
+
+from scipy import optimize
+
+
+pathIN  = "npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_100/"
+pathOUT = "figures/"
+
+train_losses    = np.load(pathIN+'train_losses.npy')
+
+train_accs      = np.load(pathIN+'train_accs.npy')
+test_accs       = np.load(pathIN+'test_accs.npy')
+valid_accs      = np.load(pathIN+'valid_accs.npy')
+
+train_l1_deltas = np.load(pathIN+'train_L1_deltas.npy')
+test_l1_deltas  = np.load(pathIN+'test_L1_deltas.npy')
+valid_l1_deltas = np.load(pathIN+'valid_L1_deltas.npy')
+
+train_l2_deltas = np.load(pathIN+'train_L2_deltas.npy')
+test_l2_deltas  = np.load(pathIN+'test_L2_deltas.npy')
+valid_l2_deltas = np.load(pathIN+'valid_L2_deltas.npy')
+
+#----------------------------------------------------------------------------------
+
+filename = "dnn_train_accs_rhorho_Variant-All_nc_100"
+x = np.arange(1,len(train_accs)+1)
+plt.plot(x,train_accs, 'o', label='train_accs')
+plt.plot(x,valid_accs, 'd', label='valid_accs')
+plt.legend()
+plt.ylim([0.0, 0.1])
+plt.xlabel('Number of epochs')
+plt.xticks(x)
+plt.ylabel('Accuracy')
+plt.title('Features list: Variant-All')
+    
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+plt.clf()
+
+
+#----------------------------------------------------------------------------------
+
+filename = "dnn_train_l1_deltas_rhorho_Variant-All_nc_100"
+x = np.arange(1,len(train_l1_deltas)+1)
+plt.plot(x,train_l1_deltas, 'o', label='train_l1_deltas')
+plt.plot(x,valid_l1_deltas, 'd', label='valid_l1_deltas')
+plt.legend()
+plt.ylim([0.0, 0.005])
+plt.xlabel('Number of epochs')
+plt.xticks(x)
+plt.ylabel('L1 <w>')
+plt.title('Features list: Variant-All')
+    
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+plt.clf()
+
+#----------------------------------------------------------------------------------
+
+filename = "dnn_train_l2_deltas_rhorho_Variant-All_nc_100"
+x = np.arange(1,len(train_l2_deltas)+1)
+plt.plot(x,train_l2_deltas, 'o', label='train_l2_deltas')
+plt.plot(x,valid_l2_deltas, 'd', label='valid_l2_deltas')
+plt.legend()
+plt.ylim([0.0, 0.005])
+plt.xlabel('Number of epochs')
+plt.xticks(x)
+plt.ylabel('L2 <w>')
+plt.title('Features list: Variant-All')
+    
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+plt.clf()
+
+#----------------------------------------------------------------------------------
+
+filename = "dnn_test_l2_deltas_rhorho_Variant-All_nc_100"
+plt.plot(test_l2_deltas, 'o', label='test_l2_deltas')
+plt.legend()
+plt.ylim([0.0, 0.005])
+plt.xlabel('Count of updates')
+plt.ylabel('L2 <w>')
+plt.title('Features list: Variant-All')
+    
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+plt.clf()
+
+#----------------------------------------------------------------------------------
