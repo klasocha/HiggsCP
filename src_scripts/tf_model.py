@@ -32,6 +32,12 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
     valid_accs   = []
     test_accs    = []
     train_losses = []
+    train_L1_deltas = []
+    train_L2_deltas = []
+    valid_L1_deltas = []
+    valid_L2_deltas = []
+    test_L1_deltas  = []
+    test_L2_deltas  = []
 
 
     # ERW
@@ -72,6 +78,11 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             train_accs   += [train_acc]
             valid_accs   += [valid_acc]
             train_losses += [train_loss]
+            
+            train_L1_deltas += [train_L1_delta_w]
+            train_L2_deltas += [train_L2_delta_w]
+            valid_L1_deltas += [valid_L1_delta_w]
+            valid_L2_deltas += [valid_L2_delta_w]
 
             if valid_acc == np.max(valid_accs):
                 test_acc, test_mse, test_l1_delta_w, test_l2_delta_w = evaluate(emodel, data.test, args, filtered=True)
@@ -80,6 +91,8 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
                 tf.logging.info(msg_str_3)
                 
                 test_accs += [test_acc]
+                test_L1_deltas += [test_L1_delta_w]
+                test_L2_deltas += [test_L2_delta_w]
 
                 calc_w, preds_w = softmax_predictions(emodel, data.test, filtered=True)
 
@@ -95,12 +108,27 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
     # storing history of training            
     np.save(pathOUT+'train_losses.npy', train_losses)
     print "train_losses", train_losses
+
     np.save(pathOUT+'train_accs.npy', train_accs )
     print "train_accs", train_accs
     np.save(pathOUT+'valid_accs.npy', valid_accs )
     print "valid_accs", valid_accs
     np.save(pathOUT+'test_accs.npy', test_accs )
     print "test_accs", test_accs
+
+    np.save(pathOUT+'train_L1_deltas.npy', train_L1_deltas )
+    print "train_L1_deltas", train_L1_deltas
+    np.save(pathOUT+'valid_L1_deltas.npy', valid_L1_deltas )
+    print "valid_L1_deltas", valid_L1_deltas
+    np.save(pathOUT+'test_L1_deltas.npy', test_L1_deltas )
+    print "test_L1_deltas", test_L1_deltas
+
+    np.save(pathOUT+'train_L2_deltas.npy', train_L2_deltas )
+    print "train_L2_deltas", train_L2_deltas
+    np.save(pathOUT+'valid_L2_deltas.npy', valid_L2_deltas )
+    print "valid_L2_deltas", valid_L2_deltas
+    np.save(pathOUT+'test_L2_deltas.npy', test_L2_deltas )
+    print "test_L2_deltas", test_L2_deltas
 
     return train_accs, valid_accs, test_accs
 
