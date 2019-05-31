@@ -79,10 +79,10 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             valid_accs   += [valid_acc]
             train_losses += [train_loss]
             
-            train_L1_deltas += [train_L1_delta_w]
-            train_L2_deltas += [train_L2_delta_w]
-            valid_L1_deltas += [valid_L1_delta_w]
-            valid_L2_deltas += [valid_L2_delta_w]
+            train_L1_deltas += [train_l1_delta_w]
+            train_L2_deltas += [train_l2_delta_w]
+            valid_L1_deltas += [valid_l1_delta_w]
+            valid_L2_deltas += [valid_l2_delta_w]
 
             if valid_acc == np.max(valid_accs):
                 test_acc, test_mse, test_l1_delta_w, test_l2_delta_w = evaluate(emodel, data.test, args, filtered=True)
@@ -91,8 +91,8 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
                 tf.logging.info(msg_str_3)
                 
                 test_accs += [test_acc]
-                test_L1_deltas += [test_L1_delta_w]
-                test_L2_deltas += [test_L2_delta_w]
+                test_L1_deltas += [test_l1_delta_w]
+                test_L2_deltas += [test_l2_delta_w]
 
                 calc_w, preds_w = softmax_predictions(emodel, data.test, filtered=True)
 
