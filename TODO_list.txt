@@ -111,15 +111,17 @@
        should be cleaned in few places consistently
        normalise weights at initialisation?
 
-5) Store in .npy format wuantities for monitoring nn learning,
+5) Store in .npy format quantities for monitoring nn learning,
    so we can confirm  choices for nn architecture to avoid overfitting.
    Add scripts monitoring learning process, like in the past publications.
 
-6) Stacking metrix is good idea, see anal_scripts
+6) Stacking metrics is a good idea, see anal_scripts
 
     metrics_Variant_1_1 = np.stack(metrics_Variant_1_1)
 
    but what to do if number of classes is not uniformly ditributed,
    i.e. only few are simulated like: 2, 4, 10, 25, 50, 100
 
-
+7) Final performance should be evaluated on test data.
+   Evaluation performed on the model on which valid_accs is maximal.
+   DONE
