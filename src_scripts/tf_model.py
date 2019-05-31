@@ -100,7 +100,7 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
     np.save(pathOUT+'valid_accs.npy', valid_accs )
     print "valid_accs", valid_accs
     np.save(pathOUT+'test_accs.npy', test_accs )
-    print "valid_accs", valid_accs
+    print "test_accs", test_accs
 
     return train_accs, valid_accs, test_accs
 
