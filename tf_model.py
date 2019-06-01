@@ -138,28 +138,24 @@ def softmax_predictions(model, dataset, at_most=None, filtered=False):
 
 def calculate_classification_metrics(pred_w, calc_w, args):
     num_classes = calc_w.shape[1]
+
+    calc_w = calc_w / np.tile(np.reshape(np.sum(calc_w, axis=1), (-1, 1)), (1, num_classes))
     pred_arg_maxs = np.argmax(pred_w, axis=1)
     calc_arg_maxs = np.argmax(calc_w, axis=1)
-
-    # ERW
-    # control print
-    # print "evaluate: calc_arg_maxs", calc_arg_maxs
-    # print "evaluate: pred_arg_maxs", pred_arg_maxs
-
     calc_pred_argmaxs_distances = np.min(
         np.stack(
             [np.abs(pred_arg_maxs - calc_arg_maxs), (num_classes - np.abs(pred_arg_maxs - calc_arg_maxs))]
         ), axis=0)
-
-    mse = np.mean(calc_pred_argmaxs_distances)
-
     # Accuracy: average that most probable predicted class match most probable class
     # delta_class should be a variable in args
     delta_class = args.DATA_CLASS_DISTANCE
     accuracy = (calc_pred_argmaxs_distances <= delta_class).mean()
-    l1_delta_w = np.mean(np.abs(calc_w - pred_w))
-    l2_delta_w = np.sqrt(np.mean((calc_w - pred_w) ** 2))
-    return accuracy, mse, l1_delta_w, l2_delta_w
+
+    mse = np.mean(calc_pred_argmaxs_distances)
+    l1_delta_w = np.mean(np.abs(calc_w - pred_w)) / num_classes
+    l2_delta_w = np.sqrt(np.mean((calc_w - pred_w) ** 2)) / num_classes
+
+    return np.array([accuracy, mse, l1_delta_w, l2_delta_w])
 
 
 # ERW
@@ -186,7 +182,7 @@ def evaluate_test(model, dataset, args, at_most=None, filtered=False):
 def calculate_roc_auc(pred_w, calc_w, index_a, index_b):
     n, num_classes = calc_w.shape
     true_labels = np.concatenate([np.ones(n), np.zeros(n)])
-    preds = np.concatenate([pred_w[:, index_a], calc_w[:, index_b]])
+    preds = np.concatenate([pred_w[:, index_a], pred_w[:, index_a]])
     weights = np.concatenate([calc_w[:, index_a], calc_w[:, index_b]])
 
     return roc_auc_score(true_labels, preds, sample_weight=weights)
