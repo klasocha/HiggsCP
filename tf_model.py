@@ -181,13 +181,13 @@ def evaluate_test(model, dataset, args, at_most=None, filtered=False):
 
     pred_w = calc_w  # Assume for tests that calc_w equals calc_w
     return calculate_classification_metrics(pred_w, calc_w, args)
-    
 
-def evaluate_preds(preds, wa, wb):
-    n = len(preds)
+
+def calculate_roc_auc(pred_w, calc_w, index_a, index_b):
+    n, num_classes = calc_w.shape
     true_labels = np.concatenate([np.ones(n), np.zeros(n)])
-    preds = np.concatenate([preds, preds])
-    weights = np.concatenate([wa, wb])
+    preds = np.concatenate([pred_w[:, index_a], calc_w[:, index_b]])
+    weights = np.concatenate([calc_w[:, index_a], calc_w[:, index_b]])
 
     return roc_auc_score(true_labels, preds, sample_weight=weights)
 
