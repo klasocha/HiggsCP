@@ -37,8 +37,13 @@ metrics_Variant_1_1 = np.stack(metrics_Variant_1_1)
 
 pathOUT = "figures/"
 filename = "a1a1_acc_Variant-1.1_nc"
-x = np.arange(1,11)*2
+
+# ERW
 # example plt.plot(x, metrics_Variant_1_1[:, 0],'o', label=r'$\sigma$' )
+# example plt.plot(metrics_Variant_1_1[:,0], metrics_Variant_1_1[:,1] )
+# requires changes in calculate_metrics
+
+x = np.arange(1,11)*2
 plt.plot(x, metrics_Variant_1_1[:, 0],'o', label='Acc0')
 plt.plot(x, metrics_Variant_1_1[:, 1],'x', label='Acc1')
 plt.plot(x, metrics_Variant_1_1[:, 2],'d', label='Acc2')

@@ -54,10 +54,15 @@ pathOUT = "figures/"
 calc_w_nc4  = np.load(pathIN+'softmax_calc_w.npy')
 preds_w_nc4 = np.load(pathIN+'softmax_preds_w.npy')
 delt_argmax_nc4 = np.argmax(calc_w_nc4[:], axis=1) - np.argmax(preds_w_nc4[:], axis=1)
+for i in range (len(delt_argmax_nc4)):
+    if  delt_argmax_nc4[i] > 4.0/2.0 :
+        delt_argmax_nc4[i] = 4.0 -  delt_argmax_nc4[i]
+    if  delt_argmax_nc4[i] < - 4.0/2.0 :
+        delt_argmax_nc4[i] = - 4.0 -  delt_argmax_nc4[i]
 
 filename = "delt_argmax_rhorho_Variant-All_nc_4"
 plt.hist(delt_argmax_nc4, histtype='step', bins=100)
-plt.xlabel(r'$\Delta$  classes')
+plt.xlabel(r'$\Delta$  class index')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
@@ -108,7 +113,7 @@ for i in range (len(delt_argmax_nc10)):
 
 filename = "delt_argmax_rhorho_Variant-All_nc_10"
 plt.hist(delt_argmax_nc10, histtype='step', bins=100)
-plt.xlabel(r'$\Delta$  classes')
+plt.xlabel(r'$\Delta$  class index')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
@@ -159,7 +164,7 @@ for i in range (len(delt_argmax_nc20)):
 
 filename = "delt_argmax_rhorho_Variant-All_nc_20"
 plt.hist(delt_argmax_nc20, histtype='step', bins=100)
-plt.xlabel(r'$\Delta$  classes')
+plt.xlabel(r'$\Delta$  class index')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
@@ -211,7 +216,7 @@ for i in range (len(delt_argmax_nc25)):
 
 filename = "delt_argmax_rhorho_Variant-All_nc_25"
 plt.hist(delt_argmax_nc25, histtype='step', bins=50)
-plt.xlabel(r'$\Delta$  classes')
+plt.xlabel(r'$\Delta$  class index')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
@@ -263,7 +268,7 @@ for i in range (len(delt_argmax_nc50)):
 
 filename = "delt_argmax_rhorho_Variant-All_nc_50"
 plt.hist(delt_argmax_nc50, histtype='step', bins=100)
-plt.xlabel(r'$\Delta$  classes')
+plt.xlabel(r'$\Delta$  class index')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
@@ -315,7 +320,7 @@ for i in range (len(delt_argmax_nc100)):
 
 filename = "delt_argmax_rhorho_Variant-All_nc_100"
 plt.hist(delt_argmax_nc100, histtype='step', bins=100)
-plt.xlabel(r'$\Delta$  classes')
+plt.xlabel(r'$\Delta$  class index')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()

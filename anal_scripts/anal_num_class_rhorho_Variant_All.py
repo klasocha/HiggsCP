@@ -134,7 +134,6 @@ else:
 plt.clf()
 #---------------------------------------------------------------------
 
-
 pathOUT = "figures/"
 filename = "rhorho_L1delt_w_Variant_All_nc"
 

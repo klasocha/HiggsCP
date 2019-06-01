@@ -47,14 +47,20 @@ plt.clf()
 pathIN  = "npy/nn_a1a1_Variant-1.1_Unweighted_False_NO_NUM_CLASSES_4/"
 pathOUT = "figures/"
 
-calc_w_nc4  = np.load(pathIN+'softmax_calc_w.npy')
-preds_w_nc4 = np.load(pathIN+'softmax_preds_w.npy')
+calc_w_nc4      = np.load(pathIN+'softmax_calc_w.npy')
+preds_w_nc4     = np.load(pathIN+'softmax_preds_w.npy')
+
 delt_argmax_nc4 = np.argmax(calc_w_nc4[:], axis=1) - np.argmax(preds_w_nc4[:], axis=1)
 
+for i in range (len(delt_argmax_nc4)):
+    if  delt_argmax_nc4[i] > 4.0/2.0 :
+        delt_argmax_nc4[i] = 4.0 -  delt_argmax_nc4[i]
+    if  delt_argmax_nc4[i] < - 4.0/2.0 :
+        delt_argmax_nc4[i] = -4.0 -  delt_argmax_nc4[i]
 
 filename = "delt_argmax_a1a1_Variant-1.1_nc_4"
 plt.hist(delt_argmax_nc4, histtype='step', bins=100)
-plt.xlabel(r'$\Delta$  classes')
+plt.xlabel(r'$\Delta$  class index')
 plt.title('Features list: Variant-1.1')
 
 ax = plt.gca()
@@ -98,10 +104,16 @@ calc_w_nc10  = np.load(pathIN+'softmax_calc_w.npy')
 preds_w_nc10 = np.load(pathIN+'softmax_preds_w.npy')
 delt_argmax_nc10 = np.argmax(calc_w[:], axis=1) - np.argmax(preds_w[:], axis=1)
 
+for i in range (len(delt_argmax_nc10)):
+    if  delt_argmax_nc10[i] > 10.0/2.0 :
+        delt_argmax_nc10[i] = 10.0 -  delt_argmax_nc10[i]
+    if  delt_argmax_nc10[i] < - 10.0/2.0 :
+        delt_argmax_nc10[i] = - 10.0 -  delt_argmax_nc10[i]
+
 
 filename = "delt_argmax_a1a1_Variant-1.1_nc_10"
 plt.hist(delt_argmax_nc10, histtype='step', bins=100)
-plt.xlabel(r'$\Delta$  classes')
+plt.xlabel(r'$\Delta$  class index')
 plt.title('Features list: Variant-1.1')
 
 ax = plt.gca()
@@ -145,9 +157,15 @@ calc_w_nc20  = np.load(pathIN+'softmax_calc_w.npy')
 preds_w_nc20 = np.load(pathIN+'softmax_preds_w.npy')
 delt_argmax_nc20 = np.argmax(calc_w_nc20[:], axis=1) - np.argmax(preds_w_nc20[:], axis=1)
 
+for i in range (len(delt_argmax_nc20)):
+    if  delt_argmax_nc20[i] > 20.0/2.0 :
+        delt_argmax_nc20[i] = 20.0 -  delt_argmax_nc20[i]
+    if  delt_argmax_nc20[i] < - 20.0/2.0 :
+        delt_argmax_nc20[i] = -20.0 -  delt_argmax_nc20[i]
+
 filename = "delt_argmax_a1a1_Variant-1.1_nc_20"
 plt.hist(delt_argmax_nc20, histtype='step', bins=100)
-plt.xlabel(r'$\Delta$  classes')
+plt.xlabel(r'$\Delta$  class index')
 plt.title('Features list: Variant-1.1')
 
 ax = plt.gca()
