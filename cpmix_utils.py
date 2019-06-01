@@ -58,13 +58,13 @@ def preprocess_data(args):
         np.save(os.path.join(data_path, 'pcovs.npy'), pcovs)
     popts = np.load(os.path.join(data_path, 'popts.npy'))
 
-    if not reuse_weigths or not os.path.exists(os.path.join(data_path, 'weigths.npy')) \
+    if not reuse_weigths or not os.path.exists(os.path.join(data_path, 'weigths_{}.npy'.format(num_classes))) \
             or not os.path.exists(os.path.join(data_path, 'arg_maxs.npy')) \
-            or np.load(os.path.join(data_path, 'weigths.npy')).shape[1] != num_classes:
+            or np.load(os.path.join(data_path, 'weigths_{}.npy'.format(num_classes))).shape[1] != num_classes:
         weights, arg_maxs = calc_weights_and_arg_maxs(classes, popts, data_len, num_classes)
-        np.save(os.path.join(data_path, 'weigths.npy'), weights)
+        np.save(os.path.join(data_path, 'weigths_{}.npy'.format(num_classes)), weights)
         np.save(os.path.join(data_path, 'arg_maxs.npy'), arg_maxs)
-    weights  = np.load(os.path.join(data_path, 'weigths.npy'))
+    weights = np.load(os.path.join(data_path, 'weigths_{}.npy'.format(num_classes)))
     arg_maxs = np.load(os.path.join(data_path, 'arg_maxs.npy'))
 
     #ERW
