@@ -18,6 +18,15 @@ Start new branch
 
 `----normalize_weights True/False` normalize weights to make constant term equal one
 ### Changelog
+3.06
+- Added WEIGHTS_SUBSET option
+- Fixed calculation of l1 and l2 metric in classification
+- Fixed plotting histogram of most probable class prediction
+- Allow run in different processes parallely (different training)
+- Add ROC AUC calculation
+- Add testing max sensitive evaluation
+- Add ROC AUC testing in notebook
+- Fixed plots in notebook
 
 ### Version 2
 Modifications made
