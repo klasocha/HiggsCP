@@ -136,39 +136,21 @@ def softmax_predictions(model, dataset, at_most=None, filtered=False):
     return weights, preds
 
 
-# ERW
-# extended input objects of original class
-# added functionality of storing output information, hard-coded filenames which should be avoided
-# roc_auc_score is not calculated as it is multi-class classification
-def evaluate(model, dataset, args, at_most=None, filtered=False):
-    _, pred_w, calc_w, arg_maxs, popts = predictions(model, dataset, at_most, filtered)
-
-    #ERW
-    # control print
-    # print "evaluate: calc_w", calc_w
-    # print "evaluate: pred_w", pred_w
-
+def calculate_classification_metrics(pred_w, calc_w, args):
     num_classes = calc_w.shape[1]
     pred_arg_maxs = np.argmax(pred_w, axis=1)
     calc_arg_maxs = np.argmax(calc_w, axis=1)
 
-    #ERW
+    # ERW
     # control print
     # print "evaluate: calc_arg_maxs", calc_arg_maxs
     # print "evaluate: pred_arg_maxs", pred_arg_maxs
 
-
-    # ERW bez sensu, nie mozna porownywac roznicy wag i roznicy phi !!!
-    # MS: I don't agree. It's difference between calc and pred arg_maxs calculated in two different directions (and taken minimum)
-    # For example difference between last and first class is 1 (not num_class-1)
     calc_pred_argmaxs_distances = np.min(
-       np.stack(
-           [np.abs(pred_arg_maxs-calc_arg_maxs), (num_classes - np.abs(pred_arg_maxs-calc_arg_maxs))]
-       ), axis=0)
+        np.stack(
+            [np.abs(pred_arg_maxs - calc_arg_maxs), (num_classes - np.abs(pred_arg_maxs - calc_arg_maxs))]
+        ), axis=0)
 
-    # print np.abs(pred_arg_maxs - calc_arg_maxs)
-    #ERW: correct that if abs(pred_arg_maxs - calc_arg_maxs) = num_class -1, abs(pred_arg_maxs - calc_arg_maxs) = 0
-    # MS: If I understand correctly it works correctly before. Fixed.
     mse = np.mean(calc_pred_argmaxs_distances)
 
     # Accuracy: average that most probable predicted class match most probable class
@@ -176,12 +158,30 @@ def evaluate(model, dataset, args, at_most=None, filtered=False):
     delta_class = args.DATA_CLASS_DISTANCE
     accuracy = (calc_pred_argmaxs_distances <= delta_class).mean()
     l1_delta_w = np.mean(np.abs(calc_w - pred_w))
-    l2_delta_w = np.sqrt(np.mean((calc_w - pred_w)**2))
+    l2_delta_w = np.sqrt(np.mean((calc_w - pred_w) ** 2))
     return accuracy, mse, l1_delta_w, l2_delta_w
 
-# ERW
-# removed class evaluate2. Why??
 
+# ERW
+# extended input objects of original class
+# added functionality of storing output information, hard-coded filenames which should be avoided
+# roc_auc_score is not calculated as it is multi-class classification
+def evaluate(model, dataset, args, at_most=None, filtered=False):
+    _, pred_w, calc_w, arg_maxs, popts = predictions(model, dataset, at_most, filtered)
+
+    # ERW
+    # control print
+    # print "evaluate: calc_w", calc_w
+    # print "evaluate: pred_w", pred_w
+    return calculate_classification_metrics(pred_w, calc_w, args)
+
+
+def evaluate_test(model, dataset, args, at_most=None, filtered=False):
+    _, pred_w, calc_w, arg_maxs, popts = predictions(model, dataset, at_most, filtered)
+
+    pred_w = calc_w  # Assume for tests that calc_w equals calc_w
+    return calculate_classification_metrics(pred_w, calc_w, args)
+    
 
 def evaluate_preds(preds, wa, wb):
     n = len(preds)
