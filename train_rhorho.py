@@ -12,6 +12,8 @@ from monit_utils import monit_plots
 
 def run(args):
     num_classes = args.NUM_CLASSES
+    if args.WEIGHTS_SUBSET:
+        num_classes = len(args.WEIGHTS_SUBSET)
 
     download_data(args)
     data, weights, arg_maxs, perm, popts = preprocess_data(args)
@@ -38,7 +40,9 @@ def run(args):
     tf.global_variables_initializer().run()
 
     print "Training"
-    pathOUT = "monit_npy/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "_NUM_CLASSES_" + str(args.NUM_CLASSES) + "/"
+    weights_subset_desc = "_WEIGHTS_SUBS" + str(args.WEIGHTS_SUBSET) if args.WEIGHTS_SUBSET else ""
+    pathOUT = "monit_npy/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_"\
+              + args.PLOT_FEATURES + "_NUM_CLASSES_" + str(args.NUM_CLASSES) + weights_subset_desc + "/"
     if pathOUT:
         try:
             os.makedirs(pathOUT)

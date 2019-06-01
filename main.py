@@ -24,7 +24,7 @@ parser.add_argument("-f", "--features", dest="FEAT", help="Features",
                     default="Variant-All")
 parser.add_argument("--miniset", dest="MINISET", type=lambda s: s.lower() in ['true', 't', 'yes', '1'], default=False)
 parser.add_argument("--z_noise_fraction", dest="Z_NOISE_FRACTION", type=float, default=0.5)
-parser.add_argument("--num_classes", dest="NUM_CLASSES", type=int, default=11)
+parser.add_argument("--num_classes", dest="NUM_CLASSES", type=int, default=21)
 parser.add_argument("--unweighted", dest="UNWEIGHTED", type=lambda s: s.lower() in ['true', 't', 'yes', '1'],
                     default=False)
 parser.add_argument("--reuse_weights", dest="REUSE_WEIGTHS", type=bool, default=False,
@@ -43,6 +43,8 @@ parser.add_argument("--data_url", dest="DATA_URL",
                     default='http://th-www.if.uj.edu.pl/~erichter/forMichal/HiggsCP_data_CPmix/', type=str,
                     help='set url to data location (with files `rhorho_raw.data.npy`, `rhorho_raw.perm.npy`, `rhorho_raw.w_<i>.npy`)')
 
+parser.add_argument("--weights_subset", dest="WEIGHTS_SUBSET", default=None, type=list,
+                    help="If set reduce number of weights to given indexes")
 parser.add_argument("--beta", type=float, dest="BETA", help="value of beta parameter for polynomial smearing",
                     default=0.0)
 parser.add_argument("--pol_b", type=float, dest="pol_b", help="value of b parameter for polynomial smearing",

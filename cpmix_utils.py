@@ -93,4 +93,9 @@ def preprocess_data(args):
     # ERW
     # here weights and arg_maxs are calculated at value of CPmix representing given class
     # in training, class is expressed as integer, not fraction pf pi.
+    if args.WEIGHTS_SUBSET:
+        weights_new = np.zeros((weights.shape[0], len(args.WEIGHTS_SUBSET)))
+        for i, w in enumerate(args.WEIGHTS_SUBSET):
+            weights_new[:, i] = weights[:, w]
+        weights = weights_new
     return data, weights, arg_maxs, perm, popts
