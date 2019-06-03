@@ -82,11 +82,7 @@ def preprocess_data(args):
     # It makes sense when we choose regression type of training. In classificator it is not used.
     if args.RESTRICT_MOST_PROBABLE_ANGLE:
         arg_maxs[arg_maxs > np.pi] = -1 * arg_maxs[arg_maxs > np.pi] + 2 * np.pi
-    if args.NORMALIZE_WEIGHTS:
-        weights = weights/np.reshape(popts[:, 0], (-1, 1))
 
-    #ERW
-    # this optimisation does not help, revisit, maybe not correctly implemented?
     if args.NORMALIZE_WEIGHTS:
         weights = weights/np.reshape(popts[:, 0], (-1, 1))
 
