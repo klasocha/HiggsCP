@@ -144,7 +144,7 @@ def calculate_classification_metrics(pred_w, calc_w, args):
     calc_arg_maxs = np.argmax(calc_w, axis=1)
     calc_pred_argmaxs_distances = np.min(
         np.stack(
-            [np.abs(pred_arg_maxs - calc_arg_maxs), (num_classes - np.abs(pred_arg_maxs - calc_arg_maxs))]
+            [np.abs(pred_arg_maxs - calc_arg_maxs), (num_classes - 1 - np.abs(pred_arg_maxs - calc_arg_maxs))]
         ), axis=0)
     # Accuracy: average that most probable predicted class match most probable class
     # delta_class should be a variable in args

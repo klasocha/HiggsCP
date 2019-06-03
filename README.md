@@ -27,6 +27,7 @@ Start new branch
 - Add testing max sensitive evaluation
 - Add ROC AUC testing in notebook
 - Fixed plots in notebook
+- Fixed calculating distance in accuracy (first and last class is the same)
 
 ### Version 2
 Modifications made
