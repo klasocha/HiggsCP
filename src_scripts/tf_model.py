@@ -202,10 +202,12 @@ def evaluate(model, dataset, args, at_most=None, filtered=True):
     # control print
     # print "evaluate: calc_arg_maxs", calc_arg_maxs
     # print "evaluate: pred_arg_maxs", pred_arg_maxs
-    
+
+    #ERW
+    # changes (after Michal)":  "num_classes -1" because first and last class are the same
     delta_argmaxs = np.min(
        np.stack(
-           [np.abs(pred_arg_maxs-calc_arg_maxs), (num_classes - np.abs(pred_arg_maxs-calc_arg_maxs))]
+           [np.abs(pred_arg_maxs-calc_arg_maxs), ( (num_classes -1) - np.abs(pred_arg_maxs-calc_arg_maxs))]
        ), axis=0)
 
     mse = np.mean(delta_argmaxs)
