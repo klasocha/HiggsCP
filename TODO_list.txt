@@ -125,3 +125,16 @@
 7) Final performance should be evaluated on test data.
    Evaluation performed on the model on which valid_accs is maximal.
    DONE
+
+
+4.06.2019
+==========
+
+1) Unclear role of "WEIGHTS_SUBSET" and why it is coupled to "NUM_CLASSES".
+
+
+2) For Michal: new version of  "calculate_metrics" method should be explained,
+               looks not correct to me.
+
+3) Move train_xxx.py to src_py directory, and still be able to call it
+   from main.py. What is the solution?
