@@ -14,7 +14,7 @@ pathOUT = "figures/"
 calc_w  = np.load(pathIN+'softmax_calc_w.npy')
 preds_w = np.load(pathIN+'softmax_preds_w.npy')
 
-
+k2PI = 6.28
 #----------------------------------------------------------------------------------
 #ERW
 # why it is plotting two dots in the legend box?
@@ -54,11 +54,12 @@ pathOUT = "figures/"
 calc_w_nc4  = np.load(pathIN+'softmax_calc_w.npy')
 preds_w_nc4 = np.load(pathIN+'softmax_preds_w.npy')
 delt_argmax_nc4 = np.argmax(calc_w_nc4[:], axis=1) - np.argmax(preds_w_nc4[:], axis=1)
+nc4=4.0
 for i in range (len(delt_argmax_nc4)):
-    if  delt_argmax_nc4[i] > 4.0/2.0 :
-        delt_argmax_nc4[i] = 4.0 -  delt_argmax_nc4[i]
-    if  delt_argmax_nc4[i] < - 4.0/2.0 :
-        delt_argmax_nc4[i] = - 4.0 -  delt_argmax_nc4[i]
+    if  delt_argmax_nc4[i] > nc4/2.0 :
+        delt_argmax_nc4[i] = nc4 -  delt_argmax_nc4[i]
+    if  delt_argmax_nc4[i] < - nc4/2.0 :
+        delt_argmax_nc4[i] = - nc4 -  delt_argmax_nc4[i]
 
 filename = "delt_argmax_rhorho_Variant-All_nc_4"
 plt.hist(delt_argmax_nc4, histtype='step', bins=100)
@@ -66,9 +67,9 @@ plt.xlabel(r'$\Delta$  class index')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
-mean = np.mean(delt_argmax_nc4) * 6.28/4.0
-rms  = np.std(delt_argmax_nc4) * 6.28/4.0
-ax.annotate("Mean = {:0.3f} (rad) \nRMS =  {:1.3f} (rad)".format(mean, rms), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+mean = np.mean(delt_argmax_nc4) * k2PI/nc4
+std  = np.std(delt_argmax_nc4) * k2PI/nc4
+ax.annotate("Mean = {:0.3f} (rad) \nSTD =  {:1.3f} (rad)".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
 
 plt.tight_layout()
 
@@ -118,8 +119,8 @@ plt.title('Features list: Variant-All')
 
 ax = plt.gca()
 mean = np.mean(delt_argmax_nc10) * 6.28/10.0
-rms  = np.std(delt_argmax_nc10) * 6.28/10.0
-ax.annotate("Mean = {:0.3f} (rad) \nRMS =  {:1.3f} (rad)".format(mean, rms), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+std  = np.std(delt_argmax_nc10) * 6.28/10.0
+ax.annotate("Mean = {:0.3f} (rad) \nSTD =  {:1.3f} (rad)".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
 
 plt.tight_layout()
 
@@ -169,8 +170,8 @@ plt.title('Features list: Variant-All')
 
 ax = plt.gca()
 mean = np.mean(delt_argmax_nc20) * 6.28/20.0
-rms  = np.std(delt_argmax_nc20) * 6.28/20.0
-ax.annotate("Mean = {:0.3f} (rad) \nRMS =  {:1.3f} (rad)".format(mean, rms), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+std  = np.std(delt_argmax_nc20) * 6.28/20.0
+ax.annotate("Mean = {:0.3f} (rad) \nSTD =  {:1.3f} (rad)".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
 
 plt.tight_layout()
 
@@ -221,8 +222,8 @@ plt.title('Features list: Variant-All')
 
 ax = plt.gca()
 mean = np.mean(delt_argmax_nc25) * 6.28/25.0
-rms  = np.std(delt_argmax_nc25) * 6.28/25.0
-ax.annotate("Mean = {:0.3f} (rad) \nRMS =  {:1.3f} (rad)".format(mean, rms), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+std  = np.std(delt_argmax_nc25) * 6.28/25.0
+ax.annotate("Mean = {:0.3f} (rad) \nSTD =  {:1.3f} (rad)".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
 
 plt.tight_layout()
 
@@ -273,8 +274,8 @@ plt.title('Features list: Variant-All')
 
 ax = plt.gca()
 mean = np.mean(delt_argmax_nc50) * 6.28/50.0
-rms  = np.std(delt_argmax_nc50) * 6.28/50.0
-ax.annotate("Mean = {:0.3f} (rad) \nRMS =  {:1.3f} (rad)".format(mean, rms), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+std  = np.std(delt_argmax_nc50) * 6.28/50.0
+ax.annotate("Mean = {:0.3f} (rad) \nSTD =  {:1.3f} (rad)".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
 
 plt.tight_layout()
 
@@ -325,8 +326,8 @@ plt.title('Features list: Variant-All')
 
 ax = plt.gca()
 mean = np.mean(delt_argmax_nc100) * 6.28/100.0
-rms  = np.std(delt_argmax_nc100) * 6.28/100.0
-ax.annotate("Mean = {:0.3f} (rad) \nRMS =  {:1.3f} (rad)".format(mean, rms), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+std  = np.std(delt_argmax_nc100) * 6.28/100.0
+ax.annotate("Mean = {:0.3f} (rad) \nSTD =  {:1.3f} (rad)".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
 
 plt.tight_layout()
 

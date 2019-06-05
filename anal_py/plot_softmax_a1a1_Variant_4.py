@@ -62,8 +62,8 @@ plt.title('Features list: Variant-4.1')
 
 ax = plt.gca()
 mean = np.mean(delt_argmax_nc4) * 6.28/4.0
-rms  = np.std(delt_argmax_nc4) * 6.28/4.0
-ax.annotate("Mean = {:0.3f} (rad) \nRMS =  {:1.3f} (rad)".format(mean, rms), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+std  = np.std(delt_argmax_nc4) * 6.28/4.0
+ax.annotate("Mean = {:0.3f} (rad) \nSTD =  {:1.3f} (rad)".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
 
 plt.tight_layout()
 
@@ -113,8 +113,8 @@ plt.title('Features list: Variant-4.1')
 
 ax = plt.gca()
 mean = np.mean(delt_argmax_nc10) * 6.28/10.0
-rms  = np.std(delt_argmax_nc10) * 6.28/10.0
-ax.annotate("Mean = {:0.3f} (rad) \nRMS =  {:1.3f} (rad)".format(mean, rms), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+std  = np.std(delt_argmax_nc10) * 6.28/10.0
+ax.annotate("Mean = {:0.3f} (rad) \nSTD =  {:1.3f} (rad)".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
 
 plt.tight_layout()
 
@@ -164,8 +164,8 @@ plt.title('Features list: Variant-4.1')
 
 ax = plt.gca()
 mean = np.mean(delt_argmax_nc20) * 6.28/20.0
-rms  = np.std(delt_argmax_nc20) * 6.28/20.0
-ax.annotate("Mean = {:0.3f} (rad) \nRMS =  {:1.3f} (rad)".format(mean, rms), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+std  = np.std(delt_argmax_nc20) * 6.28/20.0
+ax.annotate("Mean = {:0.3f} (rad) \nSTD =  {:1.3f} (rad)".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
 
 plt.tight_layout()
 
