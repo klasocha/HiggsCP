@@ -13,3 +13,5 @@ https://arxiv.org/pdf/1608.02609.pdf
 https://arxiv.org/pdf/1812.08140.pdf
 
 https://arxiv.org/pdf/1803.00838.pdf
+
+https://arxiv.org/pdf/1706.07983.pdf
