@@ -11,6 +11,11 @@ Data for analysis:
 Code documentation (P. Winkowska)
 
     http://th-www.if.uj.edu.pl/~erichter/forHiggsCP/AAREADME.pdf
+    
+MSc theses (P. Winkowska)  
+   
+   http://th-www.if.uj.edu.pl/~erichter/forHiggsCP/MSc_thesis.pdf
+    
 
 Papers  (by analysis team):
 
