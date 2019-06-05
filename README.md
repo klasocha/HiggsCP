@@ -14,7 +14,7 @@ Code documentation (P. Winkowska)
     
 MSc theses (P. Winkowska)  
    
-   http://th-www.if.uj.edu.pl/~erichter/forHiggsCP/MSc_thesis.pdf
+    http://th-www.if.uj.edu.pl/~erichter/forHiggsCP/MSc_thesis.pdf
     
 
 Papers  (by analysis team):
