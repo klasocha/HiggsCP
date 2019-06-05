@@ -17,7 +17,7 @@ MSc theses (P. Winkowska)
     http://th-www.if.uj.edu.pl/~erichter/forHiggsCP/MSc_thesis.pdf
     
 
-Papers  (by analysis team):
+Recent papers by the analysis team:
 
     https://arxiv.org/abs/1608.02609
 
@@ -27,6 +27,6 @@ Papers  (by analysis team):
 
     https://arxiv.org/abs/1706.07983
 
-Papers (selected) on ML in HEP
+Selected papers on Machine Learning in High Energy Physics
 
     http://th-www.if.uj.edu.pl/~erichter/forHiggsCP/papers-ML/
