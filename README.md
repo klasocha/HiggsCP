@@ -1,12 +1,12 @@
 Data for analysis:
 
-preprocessed in .npy format
+--> preprocessed in .npy format
 
-http://th-www.if.uj.edu.pl/~erichter/forHiggsCP/HiggsCP_data/
+    http://th-www.if.uj.edu.pl/~erichter/forHiggsCP/HiggsCP_data/
 
-primary in txt asci format
+--> primary in asci format
 
-http://th-www.if.uj.edu.pl/~erichter/forHiggsCP/HiggsCP_data_org/
+    http://th-www.if.uj.edu.pl/~erichter/forHiggsCP/HiggsCP_data_org/
 
 Code documentation (P. Winkowska)
 
