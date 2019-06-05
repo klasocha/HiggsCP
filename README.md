@@ -19,13 +19,13 @@ MSc theses (P. Winkowska)
 
 Papers  (by analysis team):
 
-    https://arxiv.org/pdf/1608.02609.pdf
+    https://arxiv.org/abs/1608.02606
 
-    https://arxiv.org/pdf/1812.08140.pdf
+    https://arxiv.org/abs/1812.08140
 
-    https://arxiv.org/pdf/1803.00838.pdf
+    https://arxiv.org/abs/1803.00838
 
-    https://arxiv.org/pdf/1706.07983.pdf
+    https://arxiv.org/abs/1706.07983
 
 Papers (selected) on ML in HEP
 
