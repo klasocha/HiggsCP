@@ -127,14 +127,40 @@
    DONE
 
 
-4.06.2019
+5.06.2019
 ==========
 
 1) Unclear role of "WEIGHTS_SUBSET" and why it is coupled to "NUM_CLASSES".
 
+2) Comment "For Michal" refers to his recent commits in the branch msadowski-multiclass
 
-2) For Michal: new version of  "calculate_metrics" method should be explained,
-               looks not correct to me.
+     -->  new version of  "calculate_metrics" method should be explained,
+          looks not correct to me.
+
+     -->  "run is separate processes", don't understand this option.
+           Please explain.
+
+     What below is the version for nootebook only?
+     --> "calculate_classification_metrics" returns now np.array of arrays,
+          but it is nor reflected in the total_train module of your code.
+	  It is expecting individual arrays being returned.
+          Is it OK or not?
+	        
+    -->   implementing "evaluate_test" is good to have, but not used (?)
+          however it is not evaluating "oracle" predictions, right?
+	  or it is, we cannot make anything better.
+	        
+    -->   implementing "calculate_roc_auc" is good to have, but not used (?)
+
 
 3) Move train_xxx.py to src_py directory, and still be able to call it
-   from main.py. What is the solution?
+   from main.py. How to do it?
+
+
+6.06.2019
+==========
+
+1) added scripts for plotting/printing ROC-AUC in case of two-class dscrimination.
+   Problem: Oracle predictions to do reach control performance value from original
+            analysis. WHY?
+	    Same observed for different feauture lists.
