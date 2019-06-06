@@ -53,7 +53,13 @@ def test_roc_auc(directory, num_class):
     print directory
     calc_w = np.load(os.path.join(directory, 'softmax_calc_w.npy'))
     preds_w = np.load(os.path.join(directory, 'softmax_preds_w.npy'))
+
+    roc_auc = []
+    oracle_roc_auc = []
+    
     for i in range(0, num_class):
+         roc_auc += [calculate_roc_auc(preds_w, calc_w, 0, i)]
+         oracle_roc_auc += [calculate_roc_auc(calc_w, calc_w, 0, i)]
          print(i, 'roc_auc: {}'.format(calculate_roc_auc(preds_w, calc_w, 0, i)),
                   'oracle_roc_auc: {}'.format(calculate_roc_auc(calc_w, calc_w, 0, i)))
-         
+    return oracle_roc_auc,  roc_auc     
