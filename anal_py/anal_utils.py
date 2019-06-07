@@ -41,25 +41,42 @@ def get_filename_for_class(pathIN, class_num, subset=None):
         d += "_WEIGHTS_SUBS" + str(subset)
     return d
 
-def calculate_roc_auc(pred_w, calc_w, index_a, index_b):
+
+def evaluate_roc_auc(preds, wa, wb):
+    n = len(preds)
+    true_labels = np.concatenate([np.ones(n), np.zeros(n)])
+    preds = np.concatenate([preds, preds])
+    weights = np.concatenate([wa, wb])
+    
+    return roc_auc_score(true_labels, preds, sample_weight=weights)
+
+
+def calculate_roc_auc(preds_w, calc_w, index_a, index_b):
     n, num_classes = calc_w.shape
     true_labels = np.concatenate([np.ones(n), np.zeros(n)])
-    preds = np.concatenate([pred_w[:, index_a], pred_w[:, index_a]])
+    preds = np.concatenate([preds_w[:, index_a], preds_w[:, index_a]])
     weights = np.concatenate([calc_w[:, index_a], calc_w[:, index_b]])
 
     return roc_auc_score(true_labels, preds, sample_weight=weights)
 
 def test_roc_auc(directory, num_class):
-    print directory
     calc_w = np.load(os.path.join(directory, 'softmax_calc_w.npy'))
     preds_w = np.load(os.path.join(directory, 'softmax_preds_w.npy'))
-
-    roc_auc = []
+    
     oracle_roc_auc = []
+    calc_roc_auc   = []
+    preds_roc_auc  = []
+
+    # ERW: oracle part is not corrrectly calculated.
+    # I don't understand method well enough. Need clarifiction
     
     for i in range(0, num_class):
-         roc_auc += [calculate_roc_auc(preds_w, calc_w, 0, i)]
-         oracle_roc_auc += [calculate_roc_auc(calc_w, calc_w, 0, i)]
-         print(i, 'roc_auc: {}'.format(calculate_roc_auc(preds_w, calc_w, 0, i)),
-                  'oracle_roc_auc: {}'.format(calculate_roc_auc(calc_w, calc_w, 0, i)))
-    return oracle_roc_auc,  roc_auc     
+#         oracle_roc_auc += [evaluate_roc_auc(calc_w[0]/(calc_w[0]+calc_w[i]), calc_w[0],  calc_w[i])]
+         preds_roc_auc  += [calculate_roc_auc(preds_w, calc_w, 0, i)]
+         calc_roc_auc   += [calculate_roc_auc(calc_w, calc_w, 0, i)]
+         print(i,
+#                 'oracle_roc_auc: {}'.format(evaluate_roc_auc(calc_w[0]/(calc_w[0]+calc_w[i]), calc_w[0],  calc_w[i])),
+                  'preds_roc_auc: {}'.format(calculate_roc_auc(preds_w, calc_w, 0, i)),
+                  'calc_roc_auc: {}'.format(calculate_roc_auc(calc_w, calc_w, 0, i)))
+
+    return calc_roc_auc, preds_roc_auc

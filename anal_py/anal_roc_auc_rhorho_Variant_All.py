@@ -38,7 +38,7 @@ test_roc_auc(filelist[idx], nc)
 
 idx = 9
 nc = 20
-oracle_roc_auc_20, roc_auc_20 = test_roc_auc(filelist[idx], nc)
+calc_roc_auc_20, roc_auc_20 = test_roc_auc(filelist[idx], nc)
 
 #---------------------------------------------------------------------
 
@@ -46,8 +46,8 @@ pathOUT  = "figures/"
 filename = "rhorho_roc_auc_w_Variant_All_nc_20"
 
 x = np.arange(1,21)
-plt.plot(x, oracle_roc_auc_20,'o', label='Oracle')
-plt.plot(x, roc_auc_20,'x', label='Variant-All')
+plt.plot(x, calc_roc_auc_20,'o', label='Oracle')
+plt.plot(x, roc_auc_20,'v', label='Variant-All')
 
 plt.ylim([0.5, 0.8])
 plt.xticks(x)
@@ -76,52 +76,3 @@ else:
 plt.clf()
 #---------------------------------------------------------------------
 
-idx = 10
-nc = 25
-test_roc_auc(filelist[idx], nc)
-
-idx = 11
-nc = 50
-test_roc_auc(filelist[idx], nc)
-
-idx = 12
-nc = 100
-test_roc_auc(filelist[idx], nc)
-
-oracle_roc_auc_100, roc_auc_100 = test_roc_auc(filelist[idx], nc)
-
-#---------------------------------------------------------------------
-
-pathOUT  = "figures/"
-filename = "rhorho_roc_auc_w_Variant_All_nc_100"
-
-x = np.arange(1,101)
-plt.plot(x, oracle_roc_auc_100,'o', label='Oracle')
-plt.plot(x, roc_auc_100,'x', label='Variant-All')
-
-plt.ylim([0.5, 0.8])
-plt.xticks(x)
-plt.legend()
-plt.xlabel('Number of classes')
-plt.ylabel('ROC AUC')
-plt.title('Feautures list: Variant-All')
-
-ax = plt.gca()
-plt.tight_layout()
-
-if filename:
-    try:
-        os.makedirs(pathOUT)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    plt.savefig(pathOUT + filename+".eps")
-    print('Saved '+pathOUT + filename+".eps")
-    plt.savefig(pathOUT + filename+".pdf")
-    print('Saved '+pathOUT + filename+".pdf")
-else:
-    plt.show()
-
-#---------------------------------------------------------------------
-plt.clf()
-#---------------------------------------------------------------------
