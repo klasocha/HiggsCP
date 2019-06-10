@@ -86,6 +86,14 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             train_accs += [train_acc]
             valid_accs += [valid_acc]
 
+        if model.tloss == 'regr_popts':
+            msg_str = "TRAINING:     LOSS: %.3f \n" % (loss)
+            print msg_str
+
+            calc_popts, pred_popts = regr_popts_predictions(emodel, data.valid, filtered=False)
+            np.save(pathOUT + 'regression_calc_popts.npy', calc_popts)
+            np.save(pathOUT + 'regression_preds_popts.npy', pred_popts)
+
     return train_accs, valid_accs
 
 
@@ -156,6 +164,24 @@ def calculate_classification_metrics(pred_w, calc_w, args):
     l2_delta_w = np.sqrt(np.mean((calc_w - pred_w) ** 2)) / num_classes
 
     return np.array([accuracy, mse, l1_delta_w, l2_delta_w])
+
+
+def regr_popts_predictions(model, dataset, at_most=None, filtered=False):
+    sess = tf.get_default_session()
+    x = dataset.x[dataset.mask]
+    calc_popts = dataset.popts[dataset.mask]
+    filt = dataset.filt[dataset.mask]
+
+    if at_most is not None:
+        filt = filt[:at_most]
+        calc_popts = calc_popts[:at_most]
+        x = x[:at_most]
+
+    if filtered:
+        x = x[filt == 1]
+
+    pred_popts = sess.run(model.p, {model.x: x})
+    return calc_popts, pred_popts
 
 
 # ERW
@@ -244,7 +270,7 @@ class NeuralNetwork(object):
             sx = linear(x, "regr", 1)
             self.sx = sx
             self.loss = loss = tf.losses.mean_squared_error(self.arg_maxs, sx[:, 0])
-        elif tloss == "popts":
+        elif tloss == "regr_popts":
             sx = linear(x, "regr", 3)
             self.sx = sx
             self.p = sx
