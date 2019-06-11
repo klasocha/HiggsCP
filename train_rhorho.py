@@ -35,13 +35,13 @@ def run(args):
         model = NeuralNetwork(num_features, num_classes,
                               num_layers=args.LAYERS, size=args.SIZE,
                               keep_prob=(1-args.DROPOUT), optimizer=args.OPT,
-                              tloss="regr_popts")
+                              tloss=args.TRAINING_METHOD)
 
     with tf.variable_scope("model1", reuse=True) as vs:
         emodel = NeuralNetwork(num_features, num_classes,
                                num_layers=args.LAYERS, size=args.SIZE,
                                keep_prob=(1-args.DROPOUT), optimizer=args.OPT,
-                               tloss="regr_popts")
+                               tloss=args.TRAINING_METHOD)
 
     tf.global_variables_initializer().run()
 
@@ -49,6 +49,9 @@ def run(args):
     weights_subset_desc = "_WEIGHTS_SUBS" + str(args.WEIGHTS_SUBSET) if args.WEIGHTS_SUBSET else ""
     pathOUT = "monit_npy/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_"\
               + args.PLOT_FEATURES + "_NUM_CLASSES_" + str(args.NUM_CLASSES) + weights_subset_desc + "/"
+    if args.TRAINING_METHOD == 'regr_popts':
+        pathOUT = "monit_npy/REGRESSION" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" \
+                  + args.PLOT_FEATURES + "/"
     if pathOUT:
         try:
             os.makedirs(pathOUT)
