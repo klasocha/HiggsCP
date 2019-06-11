@@ -50,7 +50,7 @@ def run(args):
     pathOUT = "monit_npy/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_"\
               + args.PLOT_FEATURES + "_NUM_CLASSES_" + str(args.NUM_CLASSES) + weights_subset_desc + "/"
     if args.TRAINING_METHOD == 'regr_popts':
-        pathOUT = "monit_npy/REGRESSION" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" \
+        pathOUT = "monit_npy/REGRESSION_" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" \
                   + args.PLOT_FEATURES + "/"
     if pathOUT:
         try:

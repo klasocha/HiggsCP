@@ -18,6 +18,12 @@ Start new branch
 
 `----normalize_weights True/False` normalize weights to make constant term equal one
 ### Changelog
+10.06
+- Fixed distance calculation between predicted and calculated maximum
+- Created popts regression training option (parameter --TRAINING_METHOD=regr_popts)
+- Added saving popts predictions in regression (example dir output `REGRESSION_nn_rhorho_Variant-All_Unweighted_False_NO`)
+- Created Analyze_popts_regression notebook with analysis of results of popts regression
+
 3.06
 - Added WEIGHTS_SUBSET option
 - Fixed calculation of l1 and l2 metric in classification
