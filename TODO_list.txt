@@ -164,3 +164,44 @@
    Problem: Oracle predictions to do reach control performance value from original
             analysis. WHY?
 	    Same observed for different feauture lists.
+
+2) add test which un standard binary-classification problem on the same date, reproduce
+   results from previous papers
+
+
+18.06.2019
+===========
+
+1) Comments to python script:
+   msadowski-multiclass/notebooks/Analyze_popts_regression.ipynb
+
+  --> wrong naming for method
+      def generate_predicted_classes(num_classes, popts):
+
+      --> it is not "generating" but "calculating,
+          generating is a naming reserved to case where random number is used
+      --> "predicted_classes"
+          in fact method is calculating not predicted classes but weights
+	  given arrays of popts
+
+     Please correct name according to what this method is doing
+	  
+  --> cell below "L2 distance"
+      ptl.ylabel('l1')  should be ptl.ylabel('l2')
+
+  --> plots for "mixing angle"
+      clearly "calc_popts" and "pred_popts" have different relative
+      normalisation, probably "pred_popts" are normalised to unit area
+      of the weight_fun (??) Please check and correct because then any shape
+      comparison used as metrics is misleading
+
+  --> cell below "Distance between maximums"
+      why the "fminbound" method used here? Wouldn't it be more consistent
+      to use he same method as in the multi-class case for finding argument
+      at which functon has its maximum.
+
+  --> last cell, last figure
+      calculate and plot also the mean position of the peak and the half width
+      of the distribution in the peak region.
+      
+      
