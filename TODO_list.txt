@@ -172,6 +172,17 @@
 18.06.2019
 ===========
 
+0) URGENT!!!   test with option FILTER=TRUE everywhere
+
+   I have tried some of your methods and realised that data_len
+   has different value when applid to filtered events and
+   pred_arg_maxs and calc_arg_maxs
+
+   For events with filter=false, popts are not predicted, which is
+   not the case for popts calculated. Should be solved when preparing
+   comparison between "calc" and "pred" . As it is now we are just
+   not comparing weights or popts for the same events.
+
 1) Comments to python script:
    msadowski-multiclass/notebooks/Analyze_popts_regression.ipynb
 
@@ -205,3 +216,21 @@
       of the distribution in the peak region.
       
       
+2) Try uniform methods used for calculating metrics between
+
+         Analyze_popts_regression.ipynb
+     and
+         Analyze_different_class_num.ipynb
+
+   create util.py library with methods used by both notebooks
+   and import relevant method from there
+
+3) Try to uniform plots/tables from both notebooks so we can directly compare
+   performance of both approaches:
+   multi-class classification vs regression on functional form. 
+
+4) The "calc_min_distances"  method is different in both notebooks than used
+   2 weeks ago was it bug for treateaning the edges or it is cosmetics?
+
+
+   
