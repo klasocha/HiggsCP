@@ -181,7 +181,13 @@
    For events with filter=false, popts are not predicted, which is
    not the case for popts calculated. Should be solved when preparing
    comparison between "calc" and "pred" . As it is now we are just
-   not comparing weights or popts for the same events.
+   not comparing weights or popts for the same events. 
+
+   URGENT!!!    
+   The new version of calc_min_distances  is wrong in my opinion, I got
+   values which are oscilating in sign for odd and even number of
+   num_classes!!! 
+
 
 1) Comments to python script:
    msadowski-multiclass/notebooks/Analyze_popts_regression.ipynb
@@ -231,8 +237,6 @@
 
 4) The "calc_min_distances"  method is different in both notebooks than used
    2 weeks ago, was it bug for treateaning the edges or it is cosmetic change?
-
-5)
 
 
    
