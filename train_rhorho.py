@@ -23,7 +23,7 @@ def run(args):
     num_features = points.train.x.shape[1]
     print "Prepared %d features" % num_features
 
-    pathOUT = "temp_results/" + args.TYPE + "_" + args.FEAT + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "_NUM_CLASSES_" + str(args.NUM_CLASSES) + "/"
+    pathOUT = "temp_results/" + args.TYPE + "_" + args.FEAT + "_" + args.TRAINING_METHOD + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "_NUM_CLASSES_" + str(args.NUM_CLASSES) + "/"
     if pathOUT:
         try:
             os.makedirs(pathOUT)
@@ -55,10 +55,16 @@ def run(args):
 
     print "Initializing model"
     with tf.variable_scope("model1") as vs:
-        model = NeuralNetwork(num_features, num_classes, num_layers=args.LAYERS, size=args.SIZE, keep_prob=(1-args.DROPOUT), optimizer=args.OPT)
+        model = NeuralNetwork(num_features, num_classes,
+                              num_layers=args.LAYERS, size=args.SIZE,
+                              keep_prob=(1-args.DROPOUT), optimizer=args.OPT,
+                              tloss=args.TRAINING_METHOD)
 
     with tf.variable_scope("model1", reuse=True) as vs:
-        emodel = NeuralNetwork(num_features, num_classes, num_layers=args.LAYERS, size=args.SIZE, keep_prob=(1-args.DROPOUT), optimizer=args.OPT)
+        emodel = NeuralNetwork(num_features, num_classes,
+                               num_layers=args.LAYERS, size=args.SIZE,
+                               keep_prob=(1-args.DROPOUT), optimizer=args.OPT,
+                               tloss=args.TRAINING_METHOD)
 
     tf.global_variables_initializer().run()
 

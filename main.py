@@ -3,7 +3,7 @@ import os
 
 import train_rhorho, train_a1rho, train_a1a1
 
-types = {"nn_rhorho": train_rhorho.start,"nn_a1rho": train_a1rho.start,"nn_a1a1": train_a1a1.start, }
+types = {"nn_rhorho": train_rhorho.start,"nn_a1rho": train_a1rho.start,"nn_a1a1": train_a1a1.start}
 
 parser = argparse.ArgumentParser(description='Train classifier')
 parser.add_argument("-t", "--type", dest="TYPE", choices=types.keys(), default='nn_rhorho')
@@ -24,7 +24,7 @@ parser.add_argument("-f", "--features", dest="FEAT", help="Features",
 parser.add_argument("--miniset", dest="MINISET", type=lambda s: s.lower() in ['true', 't', 'yes', '1'], default=False)
 parser.add_argument("--z_noise_fraction", dest="Z_NOISE_FRACTION", type=float, default=0.5)
 
-parser.add_argument("--num_classes", dest="NUM_CLASSES", type=int, default=11)
+parser.add_argument("--num_classes", dest="NUM_CLASSES", type=int, default=0)
 parser.add_argument("--delt_classes", dest="DELT_CLASSES", type=int, default=0,
                     help='Maximal distance between predicted and valid class for event being considered as correctly classified')
 
@@ -43,6 +43,7 @@ parser.add_argument("--w1", dest="W1")
 parser.add_argument("--w2", dest="W2")
 
 parser.add_argument("--plot_features", dest="PLOT_FEATURES", choices=["NO", "FILTER", "NO-FILTER"], default="NO")
+parser.add_argument("--training_method", dest="TRAINING_METHOD", choices=["soft", "regr_popts"], default="soft")
 
 args = parser.parse_args()
 
