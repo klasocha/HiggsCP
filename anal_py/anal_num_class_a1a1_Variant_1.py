@@ -5,6 +5,8 @@ import os, errno
 import matplotlib.pyplot as plt
 
 from anal_utils import calculate_metrics
+from anal_utils import weight_fun
+
 
 filelist_a1a1_Variant_1_1 = []
 

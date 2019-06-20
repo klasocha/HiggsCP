@@ -230,7 +230,9 @@
    multi-class classification vs regression on functional form. 
 
 4) The "calc_min_distances"  method is different in both notebooks than used
-   2 weeks ago was it bug for treateaning the edges or it is cosmetics?
+   2 weeks ago, was it bug for treateaning the edges or it is cosmetic change?
+
+5)
 
 
    
