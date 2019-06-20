@@ -46,6 +46,8 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
     # max_perf = evaluate2(emodel, data.valid, filtered=True)
     # print max_perf
 
+    print "model = ", model.tloss
+
     for i in range(epochs):
         sys.stdout.write("\nEPOCH: %d \n" % (i + 1))
         train_loss = train(model, data.train, batch_size)
@@ -105,31 +107,49 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
                 np.save(pathOUT+'softmax_calc_w.npy', calc_w)
                 np.save(pathOUT+'softmax_preds_w.npy', preds_w)
 
-    # storing history of training            
-    np.save(pathOUT+'train_losses.npy', train_losses)
-    print "train_losses", train_losses
 
-    np.save(pathOUT+'train_accs.npy', train_accs )
-    print "train_accs", train_accs
-    np.save(pathOUT+'valid_accs.npy', valid_accs )
-    print "valid_accs", valid_accs
-    np.save(pathOUT+'test_accs.npy', test_accs )
-    print "test_accs", test_accs
+        if model.tloss == 'regr_popts':
+            msg_str = "TRAINING:     LOSS: %.3f \n" % (train_loss)
+            print msg_str
 
-    np.save(pathOUT+'train_L1_deltas.npy', train_L1_deltas )
-    print "train_L1_deltas", train_L1_deltas
-    np.save(pathOUT+'valid_L1_deltas.npy', valid_L1_deltas )
-    print "valid_L1_deltas", valid_L1_deltas
-    np.save(pathOUT+'test_L1_deltas.npy', test_L1_deltas )
-    print "test_L1_deltas", test_L1_deltas
+            valid_calc_popts, valid_pred_popts = regr_popts_predictions(emodel, data.valid, filtered=True)
+            np.save(pathOUT + 'valid_regr_calc_popts.npy', valid_calc_popts)
+            np.save(pathOUT + 'valid_regr_preds_popts.npy', valid_pred_popts)
 
-    np.save(pathOUT+'train_L2_deltas.npy', train_L2_deltas )
-    print "train_L2_deltas", train_L2_deltas
-    np.save(pathOUT+'valid_L2_deltas.npy', valid_L2_deltas )
-    print "valid_L2_deltas", valid_L2_deltas
-    np.save(pathOUT+'test_L2_deltas.npy', test_L2_deltas )
-    print "test_L2_deltas", test_L2_deltas
+            test_calc_popts, test_pred_popts = regr_popts_predictions(emodel, data.test, filtered=True)
+            np.save(pathOUT + 'test_regr_calc_popts.npy', test_calc_popts)
+            np.save(pathOUT + 'test_regr_preds_popts.npy', test_pred_popts)
 
+                
+    if model.tloss == 'soft':
+        test_roc_auc(preds_w, calc_w)             
+
+        # storing history of training            
+        np.save(pathOUT+'train_losses.npy', train_losses)
+        print "train_losses", train_losses
+
+        np.save(pathOUT+'train_accs.npy', train_accs )
+        print "train_accs", train_accs
+        np.save(pathOUT+'valid_accs.npy', valid_accs )
+        print "valid_accs", valid_accs
+        np.save(pathOUT+'test_accs.npy', test_accs )
+        print "test_accs", test_accs
+
+        np.save(pathOUT+'train_L1_deltas.npy', train_L1_deltas )
+        print "train_L1_deltas", train_L1_deltas
+        np.save(pathOUT+'valid_L1_deltas.npy', valid_L1_deltas )
+        print "valid_L1_deltas", valid_L1_deltas
+        np.save(pathOUT+'test_L1_deltas.npy', test_L1_deltas )
+        print "test_L1_deltas", test_L1_deltas
+
+        np.save(pathOUT+'train_L2_deltas.npy', train_L2_deltas )
+        print "train_L2_deltas", train_L2_deltas
+        np.save(pathOUT+'valid_L2_deltas.npy', valid_L2_deltas )
+        print "valid_L2_deltas", valid_L2_deltas
+        np.save(pathOUT+'test_L2_deltas.npy', test_L2_deltas )
+        print "test_L2_deltas", test_L2_deltas
+
+    
     return train_accs, valid_accs, test_accs
 
 
@@ -182,6 +202,74 @@ def softmax_predictions(model, dataset, at_most=None, filtered=True):
     return weights, preds
 
 
+#prepared by Michal
+def calculate_classification_metrics(pred_w, calc_w, args):
+
+    num_classes = calc_w.shape[1]
+    # normalising calc_w to probabilities
+    calc_w = calc_w / np.tile(np.reshape(np.sum(calc_w, axis=1), (-1, 1)), (1, num_classes))
+    pred_arg_maxs = np.argmax(pred_w, axis=1)
+    calc_arg_maxs = np.argmax(calc_w, axis=1)
+    calc_pred_argmaxs_distances = np.min(
+        np.stack(
+            [np.abs(pred_arg_maxs - calc_arg_maxs), (num_classes - 1 - np.abs(pred_arg_maxs - calc_arg_maxs))]
+        ), axis=0)
+    # Accuracy: average that most probable predicted class match most probable class
+    # delta_class should be a variable in args
+    delt_max = args.DELT_CLASSES
+    acc = (calc_pred_argmaxs_distances <= delt_max).mean()
+
+    mean = np.mean(calc_pred_argmaxs_distances)
+    l1_delta_w = np.mean(np.abs(calc_w - pred_w)) / num_classes
+    l2_delta_w = np.sqrt(np.mean((calc_w - pred_w) ** 2)) / num_classes
+
+    return np.array([acc, mean, l1_delta_w, l2_delta_w])
+
+#prepared by Michal
+def regr_popts_predictions(model, dataset, at_most=None, filtered=True):
+    sess = tf.get_default_session()
+    x = dataset.x[dataset.mask]
+    calc_popts = dataset.popts[dataset.mask]
+    filt = dataset.filt[dataset.mask]
+
+    if at_most is not None:
+        filt = filt[:at_most]
+        calc_popts = calc_popts[:at_most]
+        x = x[:at_most]
+
+    if filtered:
+        calc_popts = calc_popts[filt == 1]
+        x = x[filt == 1]
+
+    pred_popts = sess.run(model.p, {model.x: x})
+    return calc_popts, pred_popts
+
+
+
+#prepared by Michal
+def evaluate_test(model, dataset, args, at_most=None, filtered=True):
+    _, pred_w, calc_w, arg_maxs, popts = predictions(model, dataset, at_most, filtered)
+
+    pred_w = calc_w  # Assume for tests that calc_w equals calc_w
+    return calculate_classification_metrics(pred_w, calc_w, args)
+
+#prepared by Michal
+def calculate_roc_auc(pred_w, calc_w, index_a, index_b):
+    n, num_classes = calc_w.shape
+    true_labels = np.concatenate([np.ones(n), np.zeros(n)])
+    preds = np.concatenate([pred_w[:, index_a], pred_w[:, index_a]])
+    weights = np.concatenate([calc_w[:, index_a], calc_w[:, index_b]])
+
+    return roc_auc_score(true_labels, preds, sample_weight=weights)
+
+
+def test_roc_auc(preds_w, calc_w):
+    n, num_classes = calc_w.shape
+    for i in range(0, num_classes):
+         print(i+1, 'oracle_roc_auc: {}'.format(calculate_roc_auc(calc_w, calc_w, 0, i)),
+                  'roc_auc: {}'.format(calculate_roc_auc(preds_w, calc_w, 0, i)))
+ 
+
 # ERW
 # extended input objects of original class
 # added functionality of storing output information, hard-coded filenames which should be avoided
@@ -189,10 +277,10 @@ def softmax_predictions(model, dataset, at_most=None, filtered=True):
 def evaluate(model, dataset, args, at_most=None, filtered=True):
     _, pred_w, calc_w, arg_maxs, popts = predictions(model, dataset, at_most, filtered)
 
-    #ERW
+    # ERW
     # control print
-    # print "evaluate: calc_w", calc_w
-    # print "evaluate: pred_w", pred_w
+    print "evaluate: calc_w", calc_w
+    print "evaluate: pred_w", pred_w
     
     num_classes = calc_w.shape[1]
     pred_arg_maxs = np.argmax(pred_w, axis=1)
@@ -231,7 +319,6 @@ def evaluate(model, dataset, args, at_most=None, filtered=True):
 # evaluate_oracle and  evaluate_preds has to be still
 # implemented for multi-class classification.
 # VERY IMPORTANT CLOSURE TEST
-
 
 def evaluate_oracle(model, dataset, at_most=None, filtered=True):
     _, ps, was, wbs = predictions(model, dataset, at_most, filtered)
@@ -301,7 +388,7 @@ class NeuralNetwork(object):
             sx = linear(x, "regr", 1)
             self.sx = sx
             self.loss = loss = tf.losses.mean_squared_error(self.arg_maxs, sx[:, 0])
-        elif tloss == "popts":
+        elif tloss == "regr_popts":
             sx = linear(x, "regr", 3)
             self.sx = sx
             self.p = sx
