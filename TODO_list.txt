@@ -172,7 +172,8 @@
 19.06.2019
 ===========
 
-0) URGENT!!!   test with option FILTER=TRUE everywhere
+0) URGENT!!!
+   test with option FILTER=TRUE everywhere
 
    I have tried some of your methods and realised that data_len
    has different value when applid to filtered events and
@@ -181,7 +182,14 @@
    For events with filter=false, popts are not predicted, which is
    not the case for popts calculated. Should be solved when preparing
    comparison between "calc" and "pred" . As it is now we are just
-   not comparing weights or popts for the same events. 
+   not comparing weights or popts for the same events.
+
+   I realised that there is some mismatch, early impelemntation was giving
+   event with filter=false weight=0, new one is removing event from the
+   list of events? Which one is better? The second one would not require
+   propagating filter bit down the analysis stream and it will become part
+   of data preparation. So probbaly it is good choice to be made.
+   In any case should be made consistent everywhere in the code. 
 
    URGENT!!!    
    The new version of calc_min_distances  is wrong in my opinion, I got
