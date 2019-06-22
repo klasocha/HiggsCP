@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 import os
 from data_utils import read_np
@@ -7,25 +8,30 @@ from scipy import optimize
 def weight_fun(x, a, b, c):
     return a + b * np.cos(x) + c * np.sin(x)
 
+
+def calculate_arg_maxs(fitted_parameters):
+    arg_max = 0
+    if weight_fun(2 * np.pi, *fitted_parameters) > weight_fun(arg_max, *fitted_parameters):
+        arg_max = 2 * np.pi
+    phi = np.arctan(fitted_parameters[2] / fitted_parameters[1])
+
+    if 0 < phi < 2 * np.pi and weight_fun(phi, *fitted_parameters) > weight_fun(arg_max, *fitted_parameters):
+        arg_max = phi
+    if 0 < phi + np.pi < 2 * np.pi and weight_fun(phi + np.pi, *fitted_parameters) > weight_fun(arg_max, *fitted_parameters):
+        arg_max = phi + np.pi
+    if 0 < phi + 2 * np.pi < 2 * np.pi and weight_fun(phi + 2 * np.pi, *fitted_parameters) > weight_fun(arg_max,
+                                                                                               *fitted_parameters):
+        arg_max = phi + 2 * np.pi
+    return arg_max
+
+
 # here weights and arg_maxs are calculated from continuum distributions
 def calc_weights_and_arg_maxs(classes, popts, data_len, num_classes):
     arg_maxs = np.zeros(data_len)
     weights = np.zeros((data_len, num_classes))
     for i in range(data_len):
         weights[i] = weight_fun(classes, *popts[i])
-        arg_max = 0
-        if weight_fun(2 * np.pi, *popts[i]) > weight_fun(arg_max, *popts[i]):
-            arg_max = 2 * np.pi
-        phi = np.arctan(popts[i][2] / popts[i][1])
-
-        if 0 < phi < 2 * np.pi and weight_fun(phi, *popts[i]) > weight_fun(arg_max, *popts[i]):
-            arg_max = phi
-        if 0 < phi + np.pi < 2 * np.pi and weight_fun(phi + np.pi, *popts[i]) > weight_fun(arg_max, *popts[i]):
-            arg_max = phi + np.pi
-        if 0 < phi + 2 * np.pi < 2 * np.pi and weight_fun(phi + 2 * np.pi, *popts[i]) > weight_fun(arg_max,
-                                                                                                   *popts[i]):
-            arg_max = phi + 2 * np.pi
-
+        arg_max = calculate_arg_maxs(popts[i])
         arg_maxs[i] = arg_max
     return weights, arg_maxs
 
@@ -35,11 +41,11 @@ def preprocess_data(args):
     num_classes = args.NUM_CLASSES
     reuse_weigths = args.REUSE_WEIGTHS  # Set this flag to true if you want reuse calculated weights
 
-    print "Loading data"
+    print("Loading data")
     data = read_np(os.path.join(data_path, "rhorho_raw.data.npy"))
     w = read_np(os.path.join(data_path, "rhorho_raw.w.npy")).swapaxes(0, 1)
     perm = read_np(os.path.join(data_path, "rhorho_raw.perm.npy"))
-    print "Read %d events" % data.shape[0]
+    print("Read %d events" % data.shape[0])
 
     data_len = data.shape[0]
     classes = np.linspace(0, 2, num_classes) * np.pi

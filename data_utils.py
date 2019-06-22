@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 import random
 
@@ -105,7 +106,7 @@ class EventDatasets(object):
             test_ids = perm[-100000:]
 
         if not raw:
-            print "SCALE!!"
+            print("SCALE!!")
             means = data[train_ids].mean(0)
             stds = data[train_ids].std(0)
             data = (data - means) / stds
