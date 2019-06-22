@@ -11,7 +11,7 @@ from anal_utils import weight_fun
 
 
 
-pathIN  = "npy/nn_rhorho_Variant-All_regr_popts_Unweighted_False_NO_NUM_CLASSES_0/monit_npy/"
+pathIN  = "npy/nn_rhorho_Variant-4.1_regr_popts_Unweighted_False_NO_NUM_CLASSES_0/monit_npy/"
 pathOUT = "figures/"
 
 calc_popts  = np.load(pathIN+'valid_regr_calc_popts.npy')
@@ -23,7 +23,7 @@ k2PI = 6.28
 # should normalise to same area which is not the case for now
                            
 i = 1
-filename = "regr_preds_popts_rhorho_Variant-All_event_1"
+filename = "regr_preds_popts_rhorho_Variant-4.1_event_1"
 x = np.linspace(0, 2*np.pi, 10)
 plt.plot(x,weight_fun(x, *calc_popts[i]), 'o', label='calc_w')
 plt.plot(x,weight_fun(x, *preds_popts[i]), 'd', label='preds_w')
@@ -32,7 +32,7 @@ plt.ylim([0.0, 2.0])
 plt.xlabel('CP mixing parameter')
 plt.xticks(x)
 plt.ylabel('w')
-plt.title('Features list: Variant-All')
+plt.title('Features list: Variant-4.1')
     
 if filename:
     try:
@@ -55,7 +55,7 @@ plt.clf()
 # should normalise to same area which is not the case for now
                            
 i = 10
-filename = "regr_preds_popts_rhorho_Variant-All_event_10"
+filename = "regr_preds_popts_rhorho_Variant-4.1_event_10"
 x = np.linspace(0, 2*np.pi, 10)
 plt.plot(x,weight_fun(x, *calc_popts[i]), 'o', label='calc_w')
 plt.plot(x,weight_fun(x, *preds_popts[i]), 'd', label='preds_w')
@@ -64,7 +64,7 @@ plt.ylim([0.0, 2.0])
 plt.xlabel('CP mixing parameter')
 plt.xticks(x)
 plt.ylabel('w')
-plt.title('Features list: Variant-All')
+plt.title('Features list: Variant-4.1')
     
 if filename:
     try:
@@ -87,7 +87,7 @@ plt.clf()
 # should normalise to same area which is not the case for now
                            
 i = 100
-filename = "regr_preds_popts_rhorho_Variant-All_event_100"
+filename = "regr_preds_popts_rhorho_Variant-4.1_event_100"
 x = np.linspace(0, 2*np.pi, 10)
 plt.plot(x,weight_fun(x, *calc_popts[i]), 'o', label='calc_w')
 plt.plot(x,weight_fun(x, *preds_popts[i]), 'd', label='preds_w')
@@ -96,7 +96,7 @@ plt.ylim([0.0, 2.0])
 plt.xlabel('CP mixing parameter')
 plt.xticks(x)
 plt.ylabel('w')
-plt.title('Features list: Variant-All')
+plt.title('Features list: Variant-4.1')
     
 if filename:
     try:
@@ -121,11 +121,11 @@ print calc_popts[:,0]
 print delt_popts[:,0]
 print delt_popts[:,0]/calc_popts[:,0]
 
-filename = "delt_popts_A_rhorho_Variant-All"
+filename = "delt_popts_A_rhorho_Variant-4.1"
 plt.hist(delt_popts[:,0], histtype='step', bins=100)
 plt.xlim([-1.5, 1.5])
 plt.xlabel(r'$\Delta$A')
-plt.title('Features list: Variant-All')
+plt.title('Features list: Variant-4.1')
 
 ax = plt.gca()
 mean = np.mean(delt_popts[:,0])
@@ -157,12 +157,12 @@ print delt_popts[:,0]
 print delt_popts[:,0]/calc_popts[:,0]
 #----------------------------------------------------------------------------------
 
-filename = "popts_A_rhorho_Variant-All"
+filename = "popts_A_rhorho_Variant-4.1"
 plt.hist(calc_popts[:,0], histtype='step', bins=100)
 plt.hist(preds_popts[:,0], histtype='step', bins=100)
 plt.xlim([-0.0, 2.0])
 plt.xlabel(r'A')
-plt.title('Features list: Variant-All')
+plt.title('Features list: Variant-4.1')
 
 ax = plt.gca()
 mean = np.mean(calc_popts[:,0])
@@ -197,12 +197,12 @@ print delt_popts[:,1]
 print delt_popts[:,1]/calc_popts[:,1]
 #----------------------------------------------------------------------------------
 
-filename = "popts_B_rhorho_Variant-All"
+filename = "popts_B_rhorho_Variant-4.1"
 plt.hist(calc_popts[:,1], histtype='step', bins=100)
 plt.hist(preds_popts[:,1], histtype='step', bins=100)
 plt.xlim([-2.0, 2.0])
 plt.xlabel(r'B')
-plt.title('Features list: Variant-All')
+plt.title('Features list: Variant-4.1')
 
 ax = plt.gca()
 calc_mean = np.mean(calc_popts[:,1])
@@ -230,11 +230,11 @@ else:
 plt.clf()
 #----------------------------------------------------------------------------------
 
-filename = "delt_popts_B_rhorho_Variant-All"
+filename = "delt_popts_B_rhorho_Variant-4.1"
 plt.hist(delt_popts[:,1], histtype='step', bins=100)
 plt.xlim([-1.5, 1.5])
 plt.xlabel(r'$\Delta$B/B')
-plt.title('Features list: Variant-All')
+plt.title('Features list: Variant-4.1')
 
 ax = plt.gca()
 mean = np.mean(delt_popts[:,1])
@@ -264,12 +264,12 @@ print delt_popts[:,2]
 print delt_popts[:,2]/calc_popts[:,2]
 #----------------------------------------------------------------------------------
 
-filename = "popts_C_rhorho_Variant-All"
+filename = "popts_C_rhorho_Variant-4.1"
 plt.hist(calc_popts[:,2], histtype='step', bins=100)
 plt.hist(preds_popts[:,2], histtype='step', bins=100)
 plt.xlim([-2.0, 2.0])
 plt.xlabel(r'B')
-plt.title('Features list: Variant-All')
+plt.title('Features list: Variant-4.1')
 
 ax = plt.gca()
 calc_mean = np.mean(calc_popts[:,2])
@@ -297,11 +297,11 @@ else:
 plt.clf()
 #----------------------------------------------------------------------------------
 
-filename = "delt_popts_C_rhorho_Variant-All"
+filename = "delt_popts_C_rhorho_Variant-4.1"
 plt.hist(delt_popts[:,2], histtype='step', bins=100)
 plt.xlim([-1.5, 1.5])
 plt.xlabel(r'$\Delta$C')
-plt.title('Features list: Variant-All')
+plt.title('Features list: Variant-4.1')
 
 ax = plt.gca()
 mean = np.mean(delt_popts[:,0])
