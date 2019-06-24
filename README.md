@@ -18,6 +18,15 @@ Start new branch
 
 `----normalize_weights True/False` normalize weights to make constant term equal one
 ### Changelog
+22.06
+- Changed misleading functions names (mainly in notebooks)
+- Added other way of finding of most probable angle in metrics calculation (regression model)
+- Calculate and plot also the mean position of the peak and the half width of the distribution in the peak region.
+- Methods of calculating metrics are uniformed and refactored
+
+17.06
+- Fixed the way min distances between most probable predicted and valid most probable class is calculated. (in some cases old implementation may work incorrectly)
+
 10.06
 - Fixed distance calculation between predicted and calculated maximum
 - Created popts regression training option (parameter --TRAINING_METHOD=regr_popts)
