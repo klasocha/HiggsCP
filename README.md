@@ -19,6 +19,8 @@ Start new branch
 `----normalize_weights True/False` normalize weights to make constant term equal one
 ### Changelog
 22.06
+- Fixed unweighted training option
+- Fixed saving filtered calc_data and pred_data for regression (popts) model training.
 - Changed misleading functions names (mainly in notebooks)
 - Added other way of finding of most probable angle in metrics calculation (regression model)
 - Calculate and plot also the mean position of the peak and the half width of the distribution in the peak region.

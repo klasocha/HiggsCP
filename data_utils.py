@@ -121,9 +121,8 @@ class EventDatasets(object):
         def unweight(x):
             return 0 if x < random.random()*2 else 1
 
-        # if unweighted:
-        #     w_a = np.array(map(unweight, w_a))
-        #     w_b = np.array(map(unweight, w_b))
+        if unweighted:
+            weights = np.vectorize(unweight)(weights)
 
         self.train = Dataset(data[train_ids], weights[train_ids, :], arg_maxs[train_ids], popts[train_ids])
         self.valid = Dataset(data[valid_ids], weights[valid_ids, :], arg_maxs[valid_ids], popts[valid_ids])

@@ -179,6 +179,7 @@ def regr_popts_predictions(model, dataset, at_most=None, filtered=False):
 
     if filtered:
         x = x[filt == 1]
+        calc_popts = calc_popts[filt == 1]
 
     pred_popts = sess.run(model.p, {model.x: x})
     return calc_popts, pred_popts
