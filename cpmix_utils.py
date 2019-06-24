@@ -9,31 +9,31 @@ def weight_fun(x, a, b, c):
     return a + b * np.cos(x) + c * np.sin(x)
 
 
-def calculate_arg_maxs(fitted_parameters):
-    arg_max = 0
-    if weight_fun(2 * np.pi, *fitted_parameters) > weight_fun(arg_max, *fitted_parameters):
-        arg_max = 2 * np.pi
-    phi = np.arctan(fitted_parameters[2] / fitted_parameters[1])
+def calc_arg_maxs(fitted_parameters, data_len):
+    arg_maxs = np.zeros(data_len)
+    for i in range(data_len):
+        arg_max = 0
+        if weight_fun(2 * np.pi, *fitted_parameters[i]) > weight_fun(arg_max, *fitted_parameters[i]):
+            arg_max = 2 * np.pi
+        phi = np.arctan(fitted_parameters[i][2] / fitted_parameters[i][1])
 
-    if 0 < phi < 2 * np.pi and weight_fun(phi, *fitted_parameters) > weight_fun(arg_max, *fitted_parameters):
-        arg_max = phi
-    if 0 < phi + np.pi < 2 * np.pi and weight_fun(phi + np.pi, *fitted_parameters) > weight_fun(arg_max, *fitted_parameters):
-        arg_max = phi + np.pi
-    if 0 < phi + 2 * np.pi < 2 * np.pi and weight_fun(phi + 2 * np.pi, *fitted_parameters) > weight_fun(arg_max,
-                                                                                               *fitted_parameters):
-        arg_max = phi + 2 * np.pi
-    return arg_max
+        if 0 < phi < 2 * np.pi and weight_fun(phi, *fitted_parameters[i]) > weight_fun(arg_max, *fitted_parameters[i]):
+            arg_max = phi
+        if 0 < phi + np.pi < 2 * np.pi and weight_fun(phi + np.pi, *fitted_parameters[i]) > weight_fun(arg_max, *fitted_parameters[i]):
+            arg_max = phi + np.pi
+        if 0 < phi + 2 * np.pi < 2 * np.pi and weight_fun(phi + 2 * np.pi, *fitted_parameters[i]) > weight_fun(arg_max,
+                                                                                                   *fitted_parameters[i]):
+            arg_max = phi + 2 * np.pi
+        arg_maxs[i] = arg_max
+    return arg_maxs
 
 
 # here weights and arg_maxs are calculated from continuum distributions
-def calc_weights_and_arg_maxs(classes, popts, data_len, num_classes):
-    arg_maxs = np.zeros(data_len)
+def calc_weights(classes, popts, data_len, num_classes):
     weights = np.zeros((data_len, num_classes))
     for i in range(data_len):
         weights[i] = weight_fun(classes, *popts[i])
-        arg_max = calculate_arg_maxs(popts[i])
-        arg_maxs[i] = arg_max
-    return weights, arg_maxs
+    return weights
 
 
 def preprocess_data(args):
@@ -67,7 +67,8 @@ def preprocess_data(args):
     if not reuse_weigths or not os.path.exists(os.path.join(data_path, 'weigths_{}.npy'.format(num_classes))) \
             or not os.path.exists(os.path.join(data_path, 'arg_maxs.npy')) \
             or np.load(os.path.join(data_path, 'weigths_{}.npy'.format(num_classes))).shape[1] != num_classes:
-        weights, arg_maxs = calc_weights_and_arg_maxs(classes, popts, data_len, num_classes)
+        weights = calc_weights(classes, popts, data_len, num_classes)
+        arg_maxs = calc_arg_maxs(popts, data_len)
         np.save(os.path.join(data_path, 'weigths_{}.npy'.format(num_classes)), weights)
         np.save(os.path.join(data_path, 'arg_maxs.npy'), arg_maxs)
     weights = np.load(os.path.join(data_path, 'weigths_{}.npy'.format(num_classes)))
@@ -101,3 +102,34 @@ def preprocess_data(args):
             weights_new[:, i] = weights[:, w]
         weights = weights_new
     return data, weights, arg_maxs, perm, popts
+
+
+def calc_min_distances(pred_arg_maxs, calc_arg_maxs, num_class):
+    min_distances = np.zeros(len(calc_arg_maxs))
+    for i in range(len(calc_arg_maxs)):
+        dist = pred_arg_maxs[i] - calc_arg_maxs[i]
+        if np.abs(num_class + pred_arg_maxs[i] - calc_arg_maxs[i])<np.abs(dist):
+            dist = num_class + pred_arg_maxs[i] - calc_arg_maxs[i]
+        if np.abs(-num_class + pred_arg_maxs[i] - calc_arg_maxs[i])<np.abs(dist):
+            dist = -num_class + pred_arg_maxs[i] - calc_arg_maxs[i]
+        min_distances[i] = dist
+    return min_distances
+
+
+def calculate_metrics(num_class, calc_w, preds_w):
+    calc_w = calc_w / np.tile(np.reshape(np.sum(calc_w, axis=1), (-1, 1)), (1, num_class))
+    preds_w = preds_w / np.tile(np.reshape(np.sum(preds_w, axis=1), (-1, 1)), (1, num_class))
+    pred_arg_maxs = np.argmax(preds_w, axis=1)
+    calc_arg_maxs = np.argmax(calc_w, axis=1)
+    min_distances = calc_min_distances(pred_arg_maxs, calc_arg_maxs, num_class)
+
+    acc0 = (np.abs(min_distances) <= 0).mean()
+    acc1 = (np.abs(min_distances) <= 1).mean()
+    acc2 = (np.abs(min_distances) <= 2).mean()
+    acc3 = (np.abs(min_distances) <= 3).mean()
+
+    mean_error = np.mean(np.abs(min_distances))
+    l1_delta_w = np.mean(np.abs(calc_w - preds_w))
+    l2_delta_w = np.sqrt(np.mean((calc_w - preds_w) ** 2))
+
+    return np.array([acc0, acc1, acc2, acc3, mean_error, l1_delta_w, l2_delta_w])
