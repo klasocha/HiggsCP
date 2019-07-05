@@ -21,6 +21,8 @@ Start new branch
 5.07 
 - Updated notebook Analyze_popts_regression (add normalization option)
 - Updated notebook softmax_test (print sum of values to prove that they are normalized)
+- Moved calc_min_distances_continuous to cpmix_utils from notebook
+- Calc_min_distances_continuous in cpmix_utils assumes that distances between last and first class is 0
 
 22.06
 - Fixed unweighted training option

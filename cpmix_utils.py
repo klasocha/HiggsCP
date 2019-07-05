@@ -104,14 +104,26 @@ def preprocess_data(args):
     return data, weights, arg_maxs, perm, popts
 
 
-def calc_min_distances(pred_arg_maxs, calc_arg_maxs, num_class):
+def calc_min_distances_discrete(pred_arg_maxs, calc_arg_maxs, num_class):
     min_distances = np.zeros(len(calc_arg_maxs))
     for i in range(len(calc_arg_maxs)):
         dist = pred_arg_maxs[i] - calc_arg_maxs[i]
-        if np.abs(num_class + pred_arg_maxs[i] - calc_arg_maxs[i])<np.abs(dist):
-            dist = num_class + pred_arg_maxs[i] - calc_arg_maxs[i]
-        if np.abs(-num_class + pred_arg_maxs[i] - calc_arg_maxs[i])<np.abs(dist):
-            dist = -num_class + pred_arg_maxs[i] - calc_arg_maxs[i]
+        if np.abs((num_class-1) + pred_arg_maxs[i] - calc_arg_maxs[i])<np.abs(dist):
+            dist = (num_class-1) + pred_arg_maxs[i] - calc_arg_maxs[i]
+        if np.abs(-(num_class-1) + pred_arg_maxs[i] - calc_arg_maxs[i])<np.abs(dist):
+            dist = -(num_class-1) + pred_arg_maxs[i] - calc_arg_maxs[i]
+        min_distances[i] = dist
+    return min_distances
+
+
+def calc_min_distances_continuous(max_pred, max_calc):
+    min_distances = np.zeros(len(max_calc))
+    for i in range(len(max_calc)):
+        dist = max_pred[i] - max_calc[i]
+        if np.abs(2 * np.pi + max_pred[i] - max_calc[i]) < np.abs(dist):
+            dist = 2 * np.pi + max_pred[i] - max_calc[i]
+        if np.abs(-2 * np.pi + max_pred[i] - max_calc[i]) < np.abs(dist):
+            dist = -2 * np.pi + max_pred[i] - max_calc[i]
         min_distances[i] = dist
     return min_distances
 
@@ -121,7 +133,7 @@ def calculate_metrics(num_class, calc_w, preds_w):
     preds_w = preds_w / np.tile(np.reshape(np.sum(preds_w, axis=1), (-1, 1)), (1, num_class))
     pred_arg_maxs = np.argmax(preds_w, axis=1)
     calc_arg_maxs = np.argmax(calc_w, axis=1)
-    min_distances = calc_min_distances(pred_arg_maxs, calc_arg_maxs, num_class)
+    min_distances = calc_min_distances_discrete(pred_arg_maxs, calc_arg_maxs, num_class)
 
     acc0 = (np.abs(min_distances) <= 0).mean()
     acc1 = (np.abs(min_distances) <= 1).mean()
