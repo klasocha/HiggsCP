@@ -18,6 +18,10 @@ Start new branch
 
 `----normalize_weights True/False` normalize weights to make constant term equal one
 ### Changelog
+10.07
+- Calc min distances tests - add calculating std
+- Updated histogram bins
+
 5.07 
 - Updated notebook Analyze_popts_regression (add normalization option)
 - Updated notebook softmax_test (print sum of values to prove that they are normalized)
