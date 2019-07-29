@@ -37,6 +37,8 @@ parser.add_argument("--pol_c", type=float, dest="pol_c", help="value of c parame
 parser.add_argument("--smear_loc", type=float, dest="smear_loc", help="value of loc parameter for exporm smearing", default=0.0)
 parser.add_argument("--smear_scale", type=float, dest="smear_scale", help="value of scale parameter for expnorm smearing", default=0.0)
 
+parser.add_argument("--metric", dest="METRIC",  choices=["roc_auc", "prec_score"], default="roc_auc")
+
 parser.add_argument("--w1", dest="W1")
 parser.add_argument("--w2", dest="W2")
 
