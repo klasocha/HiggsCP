@@ -44,7 +44,7 @@ class A1A1Event(object):
 
         for i, idx in enumerate([0, 1, 2, 3, 4, 5, 6, 7]):
             part = boost_and_rotate(p[idx], PHI, THETA, p_a1_a1)
-            if args.FEAT in ["Variant-1.0", "Variant-1.1", "Variant-2.0", "Variant-2.1", "Variant-2.2", "Variant-3.0", "Variant-3.1"]:
+            if args.FEAT in ["Variant-1.0", "Variant-1.1", "Variant-2.0", "Variant-2.1", "Variant-2.2", "Variant-3.0", "Variant-3.1", "Variant-3.2"]:
                 if idx not in [0, 4]:
                     cols.append(part.vec)
             if args.FEAT == "Variant-All":
@@ -131,6 +131,10 @@ class A1A1Event(object):
         vn_tau1_nu_phi = smear_exp(v_tau1_nu_phi, beta_noise)
         vn_tau2_nu_phi = smear_exp(v_tau2_nu_phi, beta_noise)
 
+        if args.FEAT in [ "Variant-3.2"]:
+            vn_tau1_nu_phi = smear_expnorm(v_tau1_nu_phi, args.BETA, args.smear_loc, args.smear_scale)
+            vn_tau2_nu_phi = smear_expnorm(v_tau2_nu_phi, args.BETA, args.smear_loc, args.smear_scale)
+
         tau1_sin_phi = np.sin(vn_tau1_nu_phi)
         tau1_cos_phi = np.cos(vn_tau1_nu_phi)
         tau2_sin_phi = np.sin(vn_tau2_nu_phi)
@@ -155,7 +159,7 @@ class A1A1Event(object):
 
         if args.FEAT in ["Variant-2.1", "Variant-2.2"]:
             cols += [va_tau1_nu_long, va_tau2_nu_long, va_tau1_nu_E, va_tau2_nu_E, va_tau1_nu_trans, va_tau2_nu_trans]
-        elif args.FEAT in ["Variant-3.0", "Variant-3.1"]:
+        elif args.FEAT in ["Variant-3.0", "Variant-3.1", "Variant-3.2"]:
             cols += [va_tau1_nu_long, va_tau2_nu_long, va_tau1_nu_E, va_tau2_nu_E, va_tau1_nu_trans * tau1_sin_phi, va_tau2_nu_trans * tau2_sin_phi, va_tau1_nu_trans * tau1_cos_phi, va_tau2_nu_trans * tau2_cos_phi]
         elif args.FEAT == "Variant-2.0":
             cols += [ve_tau1_nu_long, ve_tau2_nu_long, ve_tau1_nu_E, ve_tau2_nu_E, ve_tau1_nu_trans, ve_tau2_nu_trans]
@@ -170,7 +174,7 @@ class A1A1Event(object):
         if args.FEAT in ["Variant-1.0", "Variant-1.1", "Variant-All"]:
             cols += [filt]
 
-        elif args.FEAT in ["Variant-2.1", "Variant-2.2", "Variant-3.0", "Variant-3.1"]:
+        elif args.FEAT in ["Variant-2.1", "Variant-2.2", "Variant-3.0", "Variant-3.1", "Variant-3.2"]:
             isFilter = np.full(p_tau1_a1.e.shape, True, dtype=bool)
             
             va_alpha1_A, va_alpha2_A = approx_alpha_A(v_ETmiss_x, v_ETmiss_y, p_tau1_rho, p_tau2_rho)
@@ -227,6 +231,7 @@ class A1A1Event(object):
 
         self.cols = np.concatenate(cols, 1)
 	if args.BETA > 0:
+
 		vn_tau1_nu_phi = smear_polynomial(v_tau1_nu_phi, args.BETA, args.pol_b, args.pol_c)
 		vn_tau2_nu_phi = smear_polynomial(v_tau2_nu_phi, args.BETA, args.pol_b, args.pol_c)
 
