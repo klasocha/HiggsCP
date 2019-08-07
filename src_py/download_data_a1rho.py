@@ -3,7 +3,7 @@ import urllib
 
 import numpy as np
 
-#DATA_URL = 'http://th-www.if.uj.edu.pl/~erichter/forMichal/HiggsCP_data_CPmix/'
+#DATA_URL = 'http://th-www.if.uj.edu.pl/~erichter/forHiggsCP/a1rho/'
 
 
 def download_data(args):
