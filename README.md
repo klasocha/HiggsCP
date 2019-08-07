@@ -11,9 +11,11 @@ Step 2
 -------
 To convert into .npy format use script
 https://github.com/klasocha/HiggsCP/blob/erichter-CPmix/src_py/prepare_rhorho.py
-which will process separately files for each CPmix version and create .npy files
-with events, with CP weights and helper file with permution sequences. 
+which will process files of each CPmix version and create separate .npy files
+with events, with CP weights and with permution sequences. 
 
 Step 3
 --------
-It is very handy then to concanate 
+It is very handy then to append all weights into one file
+This can be processed with script
+https://github.com/klasocha/HiggsCP/blob/erichter-CPmix/src_py/download_data_rhorho.py
