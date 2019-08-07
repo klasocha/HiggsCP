@@ -44,5 +44,10 @@ what is done
   --> calculated are weights (based on the functional form) for required number of classes,
       stored in the weights.npy file
       
-Check-point: for few events plot calculated (from functional form) and original (from input files) 
-weights as a function of mixing angle.       
+Check-point 1: for few events plot calculated (from functional form) and original (input files) 
+weights as a function of mixing angle. Calculated weights are in weights.npy file, 
+original weights are in  rhorho_raw.w.npy file. 
+
+Check-point 2: for few events plot weights using functional form using coefficients from popts.npy file  
+and original (input files) weights as a function of mixing angle. 
+Original weights are in  rhorho_raw.w.npy file.
