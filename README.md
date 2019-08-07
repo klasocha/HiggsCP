@@ -32,11 +32,17 @@ example
 python main.py -e 5 -t nn_rhorho -i $RHORHO_DATA -f Variant-All --num_classes 10
 
 Components:
---------
+------------
 data pre-processing
 
 https://github.com/klasocha/HiggsCP/blob/erichter-CPmix/train_rhorho.py
+
 what is done
+
   --> fitted are A, B, C coefficients of the functional form and stored in the popts.npy file
+  
   --> calculated are weights (based on the functional form) for required number of classes,
       stored in the weights.npy file
+      
+Check-point: for few events plot calculated (from functional form) and original (from input files) 
+weights as a function of mixing angle.       
