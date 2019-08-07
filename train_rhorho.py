@@ -13,6 +13,7 @@ from src_py.monit_utils import monit_plots
 def run(args):
     num_classes = args.NUM_CLASSES
 
+    print "Downloading and preprocessing data"
     download_data(args)
     data, weights, arg_maxs, perm, popts = preprocess_data(args)
 
