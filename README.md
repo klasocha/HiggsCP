@@ -22,7 +22,7 @@ https://github.com/klasocha/HiggsCP/blob/erichter-CPmix/src_py/download_data_rho
 
 How to analyse data: case of rho-rho
 
-Step 4:
+Step 1:
 -----------
 configure and execute 
 https://github.com/klasocha/HiggsCP/blob/erichter-CPmix/main.py
@@ -37,6 +37,6 @@ data pre-processing
 
 https://github.com/klasocha/HiggsCP/blob/erichter-CPmix/train_rhorho.py
 what is done
-  --> fitted are coefficients for the functional form and stored in the popts.npy file
+  --> fitted are A, B, C coefficients of the functional form and stored in the popts.npy file
   --> calculated are weights (based on the functional form) for required number of classes,
       stored in the weights.npy file
