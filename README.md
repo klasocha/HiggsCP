@@ -20,6 +20,8 @@ It is very handy then to append all weights into one file
 This can be processed with script
 https://github.com/klasocha/HiggsCP/blob/erichter-CPmix/src_py/download_data_rhorho.py
 
+How to analyse data: case of rho-rho
+
 Step 4:
 -----------
 configure and execute 
@@ -29,7 +31,7 @@ tshis script is only managing configuration and activates required channel of an
 example
 python main.py -e 5 -t nn_rhorho -i $RHORHO_DATA -f Variant-All --num_classes 10
 
-Step 4a:
+Components:
 --------
 data pre-processing in
 https://github.com/klasocha/HiggsCP/blob/erichter-CPmix/train_rhorho.py
