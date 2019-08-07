@@ -33,7 +33,8 @@ python main.py -e 5 -t nn_rhorho -i $RHORHO_DATA -f Variant-All --num_classes 10
 
 Components:
 --------
-data pre-processing in
+data pre-processing
+
 https://github.com/klasocha/HiggsCP/blob/erichter-CPmix/train_rhorho.py
 what is done
   --> fitted are coefficients for the functional form and stored in the popts.npy file
