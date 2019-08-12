@@ -51,3 +51,12 @@ original weights are in  rhorho_raw.w.npy file.
 Check-point 2: for few events plot weights using functional form using coefficients from popts.npy file  
 and original (input files) weights as a function of mixing angle. 
 Original weights are in  rhorho_raw.w.npy file.
+
+Check-point 3: write down mathematical formulas (latex format) used in 
+https://github.com/klasocha/HiggsCP/blob/erichter-CPmix/src_py/cpmix_utils.py
+def calc_weights_and_arg_maxs
+plot for the data the resolution on the position of maximum weight using functional form
+and discrete weights, show for granularity of num_classes = 11, 25, 51
+
+Plotting: can be prepared as nootebook or .py file, but plots should be (also) available in .eps and .pdf format.
+Try to assure publishable quality of the plots: marked axeses, legends, line/markers style.
