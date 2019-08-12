@@ -65,4 +65,7 @@ https://github.com/klasocha/HiggsCP/blob/erichter-CPmix/src_py/cpmix_utils.py
 plot for the data the resolution on the position of maximum weight using functional form
 and discrete weights, show for granularity of num_classes = 11, 25, 51
 
+Check-point 4: verify code used in method 
+https://github.com/klasocha/HiggsCP/blob/erichter-CPmix/src_py/tf_model.py
 
+ calculate_classification_metrics
