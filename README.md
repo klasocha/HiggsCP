@@ -59,6 +59,7 @@ Original weights are in  rhorho_raw.w.npy file.
 
 Check-point 3: write down mathematical formulas (latex format) used in 
 https://github.com/klasocha/HiggsCP/blob/erichter-CPmix/src_py/cpmix_utils.py
+
  calc_weights_and_arg_maxs
  
 plot for the data the resolution on the position of maximum weight using functional form
