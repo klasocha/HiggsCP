@@ -1,133 +1,71 @@
-Start new branch
-# ML Higgs
-## Multiclass classification
-### Running training
-1.Set `RHORHO_DATA` env variable
+How to prepare data: case of rho-rho
 
-2.Download `rhorho_raw.data.npy`, `rhorho_raw.w.npy`, `rhorho_raw.perm.npy` from `https://ujchmura-my.sharepoint.com/:f:/g/personal/m_sadowski_student_uj_edu_pl/Ev9uTEm_-SZHpnoglCc4NeIBl4SCMkc3M2wd8CBebl90Dg?e=9gMNvdz`
+Prepare data: step 1:
+---------------------
+Original data are in the files
+    pythia.H.rhorho.1M.%s.%s.outTUPLE_labFrame
+available from location   
+http://th-www.if.uj.edu.pl/~erichter/forHiggsCP/HiggsCP_data/rhorho/
 
-3. Run `main.py`
+Prepare data: step 2:
+---------------------
+To convert into .npy format use script
+https://github.com/klasocha/HiggsCP/blob/erichter-CPmix/src_py/prepare_rhorho.py
+which will process files of each CPmix version and create separate .npy files
+with events, with CP weights and with permution sequences. 
 
-### Changelog
+Prepare data: step 3:
+---------------------
+It is very handy then to append all weights into one file
+This can be processed with script
+https://github.com/klasocha/HiggsCP/blob/erichter-CPmix/src_py/download_data_rhorho.py
 
-### Version 2
-Modifications made
+How to analyse data: case of rho-rho
 
-- Prepered model for new weights e.g. change range from 2pi to 1pi to prevent from ambiguous mixing angle
-- Preperad unweighted datasets
-- Implemented huber loss with sin-cos parametrization (`tloss==parametrized_sincos`) which is now default
-- Prepared `MixingAngleAnalysis` notebook with tests on unweighted data in `notebooks` directory
-- Added `InitialModelTests` notebook with initial analysis 
-- Added `Sin-cos training_test` notebook with benchmark to test training on simple data
+Analyse data:
+--------------
+configure and execute 
+https://github.com/klasocha/HiggsCP/blob/erichter-CPmix/main.py
+tshis script is only managing configuration and activates required channel of analysis
 
-### Version 1
-Modified files:
-- `train_rhorho.py`
-- `tf_model.py`
-- `data_utils.py`
+example
+python main.py -e 5 -t nn_rhorho -i $RHORHO_DATA -f Variant-All --num_classes 10
 
-Modification made:
-1. Modifications of `Dataset` and `EventDatasets` classes in `data_utils.py`.
-    - Changed `wa`, `wb` weights of class scalar and pseudoscalar to array of weights
-    - Added `max_args` array which stores `phi` value which corresponds to maximum weight for each event
-    - Added `popts` array which stores `a`, `b`, `c` parameters of weights function fitting
-    ```
-    self.train = Dataset(data[train_ids], weights[train_ids, :], arg_maxs[train_ids], popts[train_ids])
-    self.valid = Dataset(data[valid_ids], weights[valid_ids, :], arg_maxs[valid_ids], popts[valid_ids])
-    self.test = Dataset(data[test_ids], weights[test_ids, :], arg_maxs[test_ids], popts[test_ids])
-    ```
-2. Changes in data loading (`train_rhorho.py` file):
-    - There are three data files loaded
-    ```
-    data = read_np(os.path.join(data_path, "rhorho_raw.data.npy"))
-    w = read_np(os.path.join(data_path, "rhorho_raw.w.npy"))
-    perm = read_np(os.path.join(data_path, "rhorho_raw.perm.npy"))
-    ```
-    - `rhorho_raw.data.npy` is numpy file with event data (particle kinematics data) (not changed, from previous version),
-    - `rhorho_raw.w.npy` is numpy file with weights for each event (0, 0.1, 0.2, ..., 0.9, 1)
-    - `rhorho_raw.perm.npy` is numpy permutation file (not changed, from previous version)
+Components:
+------------
+data pre-processing
 
-3. Changes in data preprocessing (`train_rhorho.py` file):
-    - If file with calculated fitting parameters does not exist (`popt.npy`), we run fitting process to weights and save the results
-    ```angular2
-    if not os.path.exists(os.path.join(data_path, 'popts.npy')):
-        popts = np.zeros((data_len, 3))
-        for i in range(data_len ):
-            popt, pcov = optimize.curve_fit(weight_fun, x, w[i, :], p0=[1, 1, 1])
-            popts[i] = popt
-        np.save(os.path.join(data_path, 'popts.npy'), popts)
-    ```
-    - if flag `reuse_weigths` is not set we run process of calculating weights for each class (based on number of classes). For example if `NUM_CLASSES` parameters is set to 50, it will be calulated 50 weights for each event (for different phi)
-    - Simultaneusly there is found argument (phi) which corresponds to maximum weight
-    - Results are saved to file. It saves time if parameter `NUM_CLASSESS` is not changed
-    ```
-    if not reuse_weigths:
-        for i in range(data_len):
-            weights[i] = weight_fun(classes, *popts[i])
-            arg_max = 0
-            if weight_fun(np.pi, *popts[i]) > weight_fun(arg_max, *popts[i]):
-                arg_max = np.pi
-            phi = np.arctan(popts[i][2] / popts[i][1])
+https://github.com/klasocha/HiggsCP/blob/erichter-CPmix/train_rhorho.py
 
-            if 0 < phi < np.pi and weight_fun(phi, *popts[i]) > weight_fun(arg_max, *popts[i]):
-                arg_max = phi
-            if 0 < phi + np.pi < np.pi and weight_fun(phi + np.pi, *popts[i]) > weight_fun(arg_max, *popts[i]):
-                arg_max = phi + np.pi
+what is done
 
-            arg_maxs[i] = arg_max
-        np.save(os.path.join(data_path, 'weigths.npy'), weights)
-        np.save(os.path.join(data_path, 'arg_maxs.npy'), arg_maxs)
-    ```
+  --> fitted are A, B, C coefficients of the functional form and stored in the popts.npy file
+  
+  --> calculated are weights (based on the functional form) for required number of classes,
+      stored in the weights.npy file
+      
+Checks to be completed:
+-----------------------
+Plotting: can be prepared as nootebook or .py files, but plots should be (also) available in .eps and .pdf format.
+Try to assure publishable quality of the plots: marked axeses, legends, line/markers style.
 
-3. Neural network modifications (`tf_model.py` file)
-    - There are three available loss function options. Option is chosen by setting parameter `tloss` of `NeuralNetwork` class. Default is `soft` which corresponds to softmax. Other options are `regr` and `popts` which corresponds to regression to maximum weight value and regression to fitting parameters respectively.
-    - Softmax is generalization of previous method on more than two classes. Instead of two classes weights `wa` `wb` , there is passesed array of weights. Loss functions is softmax cross entropy which is common for classification tasks.
-    ```angular2
-    sx = linear(x, "regression", num_classes)
-    self.preds = tf.nn.softmax(sx)
-    self.p = self.preds
+Check-point 1: for few events plot calculated (from functional form) and original (input files) 
+weights as a function of mixing angle. Calculated weights are in weights.npy file, 
+original weights are in  rhorho_raw.w.npy file. 
 
-    labels = weights / tf.tile(tf.reshape(tf.reduce_sum(weights, axis=1), (-1, 1)), (1,num_classes))
-    self.loss = loss = tf.nn.softmax_cross_entropy_with_logits(logits=sx, labels=labels)
-    ```
-    - Regr is regression to argument for maximum weight. Only this value is returned by neural network. Loss function is set to l2 metric (MSE)
-    ```
-    sx = linear(x, "regr", 1)
-    self.sx = sx
-    self.loss = loss = tf.losses.mean_squared_error(self.arg_maxs, sx[:, 0])
-    ```
-    - Popts is modification of regr method. In this case neural network retuns three values, which corresponds to three parameters of weights function fitting. Loss function is set to l2 metric (MSE)
-    ```
-    sx = linear(x, "regr", 3)
-    self.sx = sx
-    self.p = sx
-    self.loss = loss = tf.losses.mean_squared_error(self.popts, sx)
-    ```
-4. Evaluation (Work in progress) (`tf_model.py` file)
-    - Function `predictions` is modifed to return more predictions (based on chosen loss function option). It also return real data weights, popts, and max_args from train, valid or test dataset.
-    ```angular2
-    def predictions(model, dataset, at_most=None, filtered=False):
-        sess = tf.get_default_session()
-        x = dataset.x
-        weights = dataset.weights
-        filt = dataset.filt
-        arg_maxs = dataset.arg_maxs
-        popts = dataset.popts
+Check-point 2: for few events plot weights using functional form using coefficients from popts.npy file  
+and original (input files) weights as a function of mixing angle. 
+Original weights are in  rhorho_raw.w.npy file.
 
-        if at_most is not None:
-          filt = filt[:at_most]
-          x = x[:at_most]
-          weights = weights[:at_most]
-          arg_maxs = arg_maxs[:at_most]
+Check-point 3: write down mathematical formulas (latex format) used in 
+https://github.com/klasocha/HiggsCP/blob/erichter-CPmix/src_py/cpmix_utils.py
 
-        p = sess.run(model.p, {model.x: x})
+ calc_weights_and_arg_maxs
+ 
+plot for the data the resolution on the position of maximum weight using functional form
+and discrete weights, show for granularity of num_classes = 11, 25, 51
 
-        if filtered:
-          p = p[filt == 1]
-          x = x[filt == 1]
-          weights = weights[filt == 1]
-          arg_maxs = arg_maxs[filt == 1]
+Check-point 4: verify code used in method 
+https://github.com/klasocha/HiggsCP/blob/erichter-CPmix/src_py/tf_model.py
 
-        return x, p, weights, arg_maxs, popts
-    ```
-    - Function `evaluate` is used to calulate scores or save values returned by neural network. Currently it is not generic, when I run experiments for different options I modify this function to save specific values and scores. It will be fixed soon.  
+ calculate_classification_metrics

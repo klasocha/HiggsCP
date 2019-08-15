@@ -13,13 +13,15 @@ from src_py.monit_utils import monit_plots
 def run(args):
     num_classes = args.NUM_CLASSES
 
+    print "Downloading data"
     download_data(args)
+    
+    print "Preprocessing data"
     data, weights, arg_maxs, perm, popts = preprocess_data(args)
 
     print "Processing data"
     event = RhoRhoEvent(data, args)
     points = EventDatasets(event, weights, arg_maxs, perm, popts=popts, miniset=args.MINISET, unweighted=args.UNWEIGHTED)
-
     num_features = points.train.x.shape[1]
     print "Prepared %d features" % num_features
 
