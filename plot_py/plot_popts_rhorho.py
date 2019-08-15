@@ -29,8 +29,8 @@ chi2 = np.sqrt(np.diag(pcovs[i]))
 
 plt.plot(x_weights, weights[:,i], 'o', label='generated')
 plt.plot(x_fit, weight_fun(x_fit, *popts[i]),label='fit')
-plt.xlabel('2 phiCP (radians)')
-plt.ylabel('weight CP')
+plt.xlabel(r'$\alpha^{CP}$ (radians)')
+plt.ylabel('wt')
 plt.legend()
 
 ax = plt.gca()
@@ -60,8 +60,8 @@ plt.clf()
 i = 10 
 plt.plot(x_weights, weights[:,i], 'o')
 plt.plot(x_fit, weight_fun(x_fit, *popts[i]))
-plt.xlabel('2 phi')
-plt.ylabel('w')
+plt.xlabel(r'$\alpha^{CP}$ (rad)')
+plt.ylabel('wt')
 print('error: ' + str(np.sqrt(np.diag(pcovs[i]))))
 
 plt.show()
@@ -70,7 +70,7 @@ plt.clf()
 i = 1000 
 plt.plot(x_weights, weights[:,i], 'o')
 plt.plot(x_fit, weight_fun(x_fit, *popts[i]))
-plt.xlabel('2 phi')
+plt.xlabel(r'$\alpha^{CP}$ (rad)')
 plt.ylabel('w')
 print('error: ' + str(np.sqrt(np.diag(pcovs[i]))))
 
@@ -80,7 +80,7 @@ plt.clf()
 i = 2000 
 plt.plot(x_weights, weights[:,i], 'o')
 plt.plot(x_fit, weight_fun(x_fit, *popts[i]))
-plt.xlabel('2 phi')
+plt.xlabel(r'$\alpha^{CP}$ (rad)')
 plt.ylabel('w')
 print('error: ' + str(np.sqrt(np.diag(pcovs[i]))))
 
@@ -90,7 +90,7 @@ plt.clf()
 i = 8000 
 plt.plot(x_weights, weights[:,i], 'o')
 plt.plot(x_fit, weight_fun(x_fit, *popts[i]))
-plt.xlabel('2 phi')
+plt.xlabel(r'$\alpha^{CP}$ (rad)')
 plt.ylabel('w')
 print('error: ' + str(np.sqrt(np.diag(pcovs[i]))))
 
@@ -100,7 +100,7 @@ plt.clf()
 i = 10000 
 plt.plot(x_weights, weights[:,i], 'o')
 plt.plot(x_fit, weight_fun(x_fit, *popts[i]))
-plt.xlabel('2 phi')
+plt.xlabel(r'$\alpha^{CP}$ (rad)')
 plt.ylabel('w')
 print('error: ' + str(np.sqrt(np.diag(pcovs[i]))))
 
