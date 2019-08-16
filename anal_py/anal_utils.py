@@ -51,7 +51,7 @@ def calculate_metrics(directory, num_classes):
     acc3 = (calc_pred_argmaxs_distances <= 3).mean()
 
     mean_error = np.mean(calc_pred_argmaxs_distances)
-    #ERW: scaled to radians and in units of phi^CP
+    #ERW: scaled to radians and in units of alpha^CP
     k2PI = 6.28
     mean_error_scaled = np.mean(calc_pred_argmaxs_distances/(1.0*num_classes) * k2PI/2. )
 
@@ -91,7 +91,7 @@ def calculate_metrics_regr_popts(directory, num_classes):
     acc3 = (calc_pred_argmaxs_distances <= 3).mean()
 
     mean_error = np.mean(calc_pred_argmaxs_distances)
-    #ERW: scaled to radians and in units of phi^CP
+    #ERW: scaled to radians and in units of alpha^CP
     k2PI = 6.28
     mean_error_scaled = np.mean(calc_pred_argmaxs_distances/(1.0*num_classes) * k2PI/2. )
 
@@ -130,24 +130,19 @@ def calculate_roc_auc(preds_w, calc_w, index_a, index_b):
 
     return roc_auc_score(true_labels, preds, sample_weight=weights)
 
+# binary classification
 def test_roc_auc(directory, num_class):
     calc_w = np.load(os.path.join(directory, 'softmax_calc_w.npy'))
     preds_w = np.load(os.path.join(directory, 'softmax_preds_w.npy'))
     
     oracle_roc_auc = []
-    calc_roc_auc   = []
     preds_roc_auc  = []
-
-    # ERW: oracle part is not corrrectly calculated.
-    # I don't understand method well enough. Need clarifiction
     
     for i in range(0, num_class):
-#         oracle_roc_auc += [evaluate_roc_auc(calc_w[0]/(calc_w[0]+calc_w[i]), calc_w[0],  calc_w[i])]
-         preds_roc_auc  += [calculate_roc_auc(preds_w, calc_w, 0, i)]
-         calc_roc_auc   += [calculate_roc_auc(calc_w, calc_w, 0, i)]
+         oracle_roc_auc  += [calculate_roc_auc(calc_w, calc_w, 0, i)]
+         preds_roc_auc   += [calculate_roc_auc(preds_w, calc_w, 0, i)]
          print(i,
-#                 'oracle_roc_auc: {}'.format(evaluate_roc_auc(calc_w[0]/(calc_w[0]+calc_w[i]), calc_w[0],  calc_w[i])),
-                  'preds_roc_auc: {}'.format(calculate_roc_auc(preds_w, calc_w, 0, i)),
-                  'calc_roc_auc: {}'.format(calculate_roc_auc(calc_w, calc_w, 0, i)))
+                  'oracle_roc_auc: {}'.format(calculate_roc_auc(calc_w, calc_w, 0, i)),
+                  'preds_roc_auc: {}'.format(calculate_roc_auc(preds_w, calc_w, 0, i)))
 
-    return calc_roc_auc, preds_roc_auc
+    return oracle_roc_auc, preds_roc_auc
