@@ -23,6 +23,8 @@ filelist.append('npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_25')
 filelist.append('npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_50')
 filelist.append('npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_100')
 
+# predicted weights are used for binary classification ROC AUC
+
 idx = 0
 nc = 2
 test_roc_auc(filelist[idx], nc)
@@ -39,7 +41,6 @@ test_roc_auc(filelist[idx], nc)
 idx = 9
 nc = 20
 calc_roc_auc_20, roc_auc_20 = test_roc_auc(filelist[idx], nc)
-
 #---------------------------------------------------------------------
 
 pathOUT  = "figures/"

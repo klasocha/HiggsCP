@@ -105,13 +105,13 @@ plt.clf()
 pathOUT = "figures/"
 filename = "a1rho_meanDelt_phiCPmix_Variant-1.1_nc"
 
-plt.plot(x, metrics_Variant_1_1[:, 7],'o', label=r'$<\Delta \phi^{CP}>$ ')
+plt.plot(x, metrics_Variant_1_1[:, 7],'o', label=r'$<\Delta \alpha^{CP}>$ ')
 
 plt.ylim([0.0, 0.5])
 plt.xticks(x)
 plt.legend()
 plt.xlabel('Number of classes')
-plt.ylabel(r'$<\Delta \phi^{CP}>$ (rad)')
+plt.ylabel(r'$<\Delta \alpha^{CP}>$ (rad)')
 plt.title('Feautures list: Variant-1.1')
 
 ax = plt.gca()

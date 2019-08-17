@@ -16,7 +16,12 @@
        def evaluate_roc_auc()
 
    and their original versions in
-     src_py/tf_model.py
+       src_py/tf_model.py
+
+   Note, that with original weights there is no problem and note the difference
+   with the implementation used for calculating AUC
+   see in scripts:
+       anal_py/ anal_oracle_rhorho.py
 
 
 19.06.2019

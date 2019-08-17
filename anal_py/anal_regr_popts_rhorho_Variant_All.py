@@ -96,13 +96,13 @@ plt.clf()
 pathOUT = "figures/"
 filename = "rhorho_meanDelt_phiCPmix_Variant-All_regr"
 
-plt.plot(x, metrics_Variant_All[:, 7],'o', label=r'$<\Delta \phi^{CP}>$ ')
+plt.plot(x, metrics_Variant_All[:, 7],'o', label=r'$<\Delta \alpha^{CP}>$ ')
 
 plt.ylim([0.0, 0.5])
 plt.xticks(x)
 plt.legend()
 plt.xlabel('Number of classes')
-plt.ylabel(r'$<\Delta \phi^{CP}>$ (rad)')
+plt.ylabel(r'$<\Delta \alpha^{CP}>$ (rad)')
 plt.title('Feautures list: Variant-All')
 
 ax = plt.gca()
