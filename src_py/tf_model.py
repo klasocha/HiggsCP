@@ -98,6 +98,11 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
 
                 calc_w, preds_w = softmax_predictions(emodel, data.test, filtered=True)
 
+                # calc_w, preds_w normalisation to probability
+
+                calc_w = calc_w / np.sum(calc_w, axis=1)[:, np.newaxis]
+                preds_w = preds_w / np.sum(preds_w, axis=1)[:, np.newaxis]
+
                 # ERW
                 # control print
                 # print "ERW test on softmax: calc_w \n"

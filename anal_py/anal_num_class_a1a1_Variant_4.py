@@ -4,7 +4,7 @@ import os, errno
 
 import matplotlib.pyplot as plt
 
-from anal_utils import calculate_metrics
+from anal_utils import calculate_metrics_from_file
 
 filelist_a1a1_Variant_1_1 = []
 
@@ -20,11 +20,11 @@ filelist_a1a1_Variant_1_1.append('npy/nn_a1a1_Variant-4.1_Unweighted_False_NO_NU
 filelist_a1a1_Variant_1_1.append('npy/nn_a1a1_Variant-4.1_Unweighted_False_NO_NUM_CLASSES_20')
 
 
-metrics_Variant_1_1 = [calculate_metrics(filelist_a1a1_Variant_1_1[0], 2),  calculate_metrics(filelist_a1a1_Variant_1_1[1], 4),
-                       calculate_metrics(filelist_a1a1_Variant_1_1[2], 6),  calculate_metrics(filelist_a1a1_Variant_1_1[3], 8),
-                       calculate_metrics(filelist_a1a1_Variant_1_1[4], 10), calculate_metrics(filelist_a1a1_Variant_1_1[5], 12),
-                       calculate_metrics(filelist_a1a1_Variant_1_1[6], 14), calculate_metrics(filelist_a1a1_Variant_1_1[7], 16),
-                       calculate_metrics(filelist_a1a1_Variant_1_1[8], 18), calculate_metrics(filelist_a1a1_Variant_1_1[9], 20)]
+metrics_Variant_1_1 = [calculate_metrics_from_file(filelist_a1a1_Variant_1_1[0], 2), calculate_metrics_from_file(filelist_a1a1_Variant_1_1[1], 4),
+                       calculate_metrics_from_file(filelist_a1a1_Variant_1_1[2], 6), calculate_metrics_from_file(filelist_a1a1_Variant_1_1[3], 8),
+                       calculate_metrics_from_file(filelist_a1a1_Variant_1_1[4], 10), calculate_metrics_from_file(filelist_a1a1_Variant_1_1[5], 12),
+                       calculate_metrics_from_file(filelist_a1a1_Variant_1_1[6], 14), calculate_metrics_from_file(filelist_a1a1_Variant_1_1[7], 16),
+                       calculate_metrics_from_file(filelist_a1a1_Variant_1_1[8], 18), calculate_metrics_from_file(filelist_a1a1_Variant_1_1[9], 20)]
            
 metrics_Variant_1_1 = np.stack(metrics_Variant_1_1)
 
