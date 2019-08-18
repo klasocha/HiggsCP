@@ -128,6 +128,15 @@ def get_filename_for_class(pathIN, class_num, subset=None):
     return d
 
 
+# The primary versions of three methods below were
+#  evaluate from tf_model.py
+#  evaluate2 from tf_model.py
+#  both using 
+#  evaluate_preds  from tf_model.py
+# when extending to multi-class something is not correctly
+# implemented for handling numpy arrays. 
+
+
 def evaluate_roc_auc(preds, wa, wb):
     n = len(preds)
     true_labels = np.concatenate([np.ones(n), np.zeros(n)])
