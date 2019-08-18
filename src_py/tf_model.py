@@ -370,7 +370,7 @@ class NeuralNetwork(object):
         # tloss ==  "soft" is a simple extension of what was implemented
         # previously as binary classification
         if tloss == "soft":
-            sx = linear(x, "regression", num_classes)
+            sx = linear(x, "classes", num_classes)
             self.preds = tf.nn.softmax(sx)
             #self.p = preds[:, 0] / (preds[:, 0] + preds[:, 1])
             self.p = self.preds
