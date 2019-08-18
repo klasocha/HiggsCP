@@ -7,7 +7,19 @@
     change definition so the abs() is taken latter when needed,
     eg. for calculating fractions in a given bin.
 
+--> original weights wt are not normalised to probabilities.
+     Int. (A + B cos(alpha) + C sin(alpha) ) = 2 pi A
+    predicted weights by DNN are normalised to probablities.
+    Check that weights stored in files
+        softmax_calc_w.npy
+        softmax_preds_w.npy
+    are normalised to unity integral  before storing, so it
+    does not have to be corrected at the analysis level.
 
+    Check that normalised weights are used for calculating
+    loss function.
+    
+    Same problem in case of option with regression
 
 16.08.2019
 ============
