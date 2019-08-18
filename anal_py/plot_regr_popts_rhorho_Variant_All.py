@@ -24,12 +24,12 @@ k2PI = 6.28
                            
 i = 1
 filename = "regr_preds_popts_rhorho_Variant-All_event_1"
-x = np.linspace(0, 2*np.pi, 10)
+x = np.linspace(0, k2PI, 10)
 plt.plot(x,weight_fun(x, *calc_popts[i]), 'o', label='calc_w')
 plt.plot(x,weight_fun(x, *preds_popts[i]), 'd', label='preds_w')
 plt.legend()
 plt.ylim([0.0, 2.0])
-plt.xlabel('CP mixing parameter')
+plt.xlabel(r'$\alpha^{CP}$ [rad]')
 plt.xticks(x)
 plt.ylabel('w')
 plt.title('Features list: Variant-All')
@@ -56,12 +56,12 @@ plt.clf()
                            
 i = 10
 filename = "regr_preds_popts_rhorho_Variant-All_event_10"
-x = np.linspace(0, 2*np.pi, 10)
+x = np.linspace(0, k2PI, 10)
 plt.plot(x,weight_fun(x, *calc_popts[i]), 'o', label='calc_w')
 plt.plot(x,weight_fun(x, *preds_popts[i]), 'd', label='preds_w')
 plt.legend()
 plt.ylim([0.0, 2.0])
-plt.xlabel('CP mixing parameter')
+plt.xlabel(r'$\alpha^{CP}$ [rad]')
 plt.xticks(x)
 plt.ylabel('w')
 plt.title('Features list: Variant-All')
@@ -88,12 +88,12 @@ plt.clf()
                            
 i = 100
 filename = "regr_preds_popts_rhorho_Variant-All_event_100"
-x = np.linspace(0, 2*np.pi, 10)
+x = np.linspace(0, k2PI, 10)
 plt.plot(x,weight_fun(x, *calc_popts[i]), 'o', label='calc_w')
 plt.plot(x,weight_fun(x, *preds_popts[i]), 'd', label='preds_w')
 plt.legend()
 plt.ylim([0.0, 2.0])
-plt.xlabel('CP mixing parameter')
+plt.xlabel(r'$\alpha^{CP}$ [rad]')
 plt.xticks(x)
 plt.ylabel('w')
 plt.title('Features list: Variant-All')
@@ -233,7 +233,7 @@ plt.clf()
 filename = "delt_popts_B_rhorho_Variant-All"
 plt.hist(delt_popts[:,1], histtype='step', bins=100)
 plt.xlim([-1.5, 1.5])
-plt.xlabel(r'$\Delta$B/B')
+plt.xlabel(r'$\Delta$B')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
