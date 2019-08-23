@@ -3,6 +3,8 @@ import os
 import numpy as np
 from sklearn.metrics import roc_auc_score
 
+from src_py.metrics_calculation import calculate_errors_unsigned, calculate_errors_signed
+
 
 def weight_fun(x, a, b, c):
     return a + b * np.cos(x) + c * np.sin(x)
@@ -17,18 +19,8 @@ def calc_weights(num_classes, popts):
     return weights
 
 
-# definition from Michal
-# something wrong with it, gives oscilating values
 def calc_argmaxs_distances(pred_arg_maxs, calc_arg_maxs, num_class):
-    min_distances = np.zeros(len(calc_arg_maxs))
-    for i in range(len(calc_arg_maxs)):
-        dist = pred_arg_maxs[i] - calc_arg_maxs[i]
-        if np.abs((num_class - 1) + (pred_arg_maxs[i] - calc_arg_maxs[i])) < np.abs(dist):
-            dist = (num_class - 1) + (pred_arg_maxs[i] - calc_arg_maxs[i])
-        if np.abs(-(num_class - 1) + (pred_arg_maxs[i] - calc_arg_maxs[i])) < np.abs(dist):
-            dist = -(num_class - 1) + (pred_arg_maxs[i] - calc_arg_maxs[i])
-        min_distances[i] = dist
-    return min_distances
+    return calculate_errors_signed(calc_arg_maxs, pred_arg_maxs, num_class)
 
 
 def calculate_metrics_from_file(directory, num_classes):
@@ -41,13 +33,7 @@ def calculate_metrics(calc_w, preds_w, num_classes):
     pred_arg_maxs = np.argmax(preds_w, axis=1)
     calc_arg_maxs = np.argmax(calc_w, axis=1)
 
-    # ERW including here redefinition of  calc_pred_argmaxs_distances by Michal
-    # Should be num_classes, not num_classes - 1. First and last buckets are not the same bucket.
-    # For example if num_classes is 3 and answers are 0, 2 - answer should be 1, not 0.
-    calc_pred_argmaxs_distances = np.min(
-        np.stack(
-            [np.abs(pred_arg_maxs - calc_arg_maxs), (num_classes - np.abs(pred_arg_maxs - calc_arg_maxs))]
-        ), axis=0)
+    calc_pred_argmaxs_distances = calculate_errors_unsigned(calc_arg_maxs, pred_arg_maxs, num_classes)
 
     # new definition from Michal
     # something qrong with this definition, oscilating values
@@ -79,10 +65,7 @@ def calculate_metrics_regr_popts(directory, num_classes):
     calc_arg_maxs = np.argmax(calc_w, axis=1)
 
     # ERW including here redefinition of  calc_pred_argmaxs_distances by Michal
-    calc_pred_argmaxs_distances = np.min(
-        np.stack(
-            [np.abs(pred_arg_maxs - calc_arg_maxs), ((num_classes - 1) - np.abs(pred_arg_maxs - calc_arg_maxs))]
-        ), axis=0)
+    calc_pred_argmaxs_distances = calculate_errors_unsigned(calc_arg_maxs, pred_arg_maxs, num_classes)
 
     # new definition from Michal
     # something wrong with this definition, oscilating values
