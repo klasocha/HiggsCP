@@ -32,7 +32,7 @@ def run(args):
     tf.global_variables_initializer().run()
 
     print "Training"
-    total_train(model, points, emodel=emodel, batch_size=128, epochs=args.EPOCHS)
+    total_train(model, points, emodel=emodel, batch_size=128, epochs=args.EPOCHS, metric = args.METRIC)
 
 
 def start(args):

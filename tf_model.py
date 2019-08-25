@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_auc_score, average_precision_score
 import sys
 
 def train(model, dataset, batch_size=128):
@@ -19,27 +19,27 @@ def train(model, dataset, batch_size=128):
     return np.mean(losses)
 
 
-def total_train(model, data, emodel=None, batch_size=128, epochs=25):
+def total_train(model, data, emodel=None, batch_size=128, epochs=25, metric = "roc_auc"):
     if emodel is None:
         emodel = model
     train_aucs = []
     valid_aucs = []
-    max_perf = evaluate2(emodel, data.valid, filtered=True)
+    max_perf = evaluate2(emodel, data.valid, filtered=True, metric = metric)
     print max_perf
     
     test_auc = 0
     for i in range(epochs):
         sys.stdout.write("EPOCH: %d " % (i + 1))
         loss = train(model, data.train, batch_size)
-        train_auc = evaluate(emodel, data.train, 100000, filtered=True)
-        valid_auc = evaluate(emodel, data.valid, filtered=True)
+        train_auc = evaluate(emodel, data.train, 100000, filtered=True, metric = metric)
+        valid_auc = evaluate(emodel, data.valid, filtered=True, metric = metric)
         msg_str = "TRAIN LOSS: %.3f AUC: %.3f VALID AUC: %.3f" % (loss, train_auc, valid_auc)
         print msg_str
         tf.logging.info(msg_str)
         train_aucs += [train_auc]
         valid_aucs += [valid_auc]
         if valid_auc == np.max(valid_aucs):
-            test_auc = evaluate(emodel, data.test, filtered=True)
+            test_auc = evaluate(emodel, data.test, filtered=True, metric = metric)
     print test_auc	
     return train_aucs, valid_aucs
 
@@ -69,26 +69,28 @@ def predictions(model, dataset, at_most=None, filtered=False):
     return x, p, wa, wb
 
 
-def evaluate(model, dataset, at_most=None, filtered=False):
+def evaluate(model, dataset, at_most=None, filtered=False, metric = "roc_auc"):
     _, ps, was, wbs = predictions(model, dataset, at_most, filtered)
 
-    return evaluate_preds(ps, was, wbs)    
+    return evaluate_preds(ps, was, wbs, metric = metric)    
     # replace by line below to get max sensitivity
     #return evaluate_preds(was/(was+wbs), was, wbs)
 
-def evaluate2(model, dataset, at_most=None, filtered=False):
+def evaluate2(model, dataset, at_most=None, filtered=False, metric = "roc_auc"):
     _, ps, was, wbs = predictions(model, dataset, at_most, filtered)
-    return evaluate_preds(was/(was+wbs), was, wbs)
+    return evaluate_preds(was/(was+wbs), was, wbs, metric = metric)
 
 
-def evaluate_preds(preds, wa, wb):
+def evaluate_preds(preds, wa, wb, metric = "roc_auc"):
     n = len(preds)
     true_labels = np.concatenate([np.ones(n), np.zeros(n)])
     preds = np.concatenate([preds, preds])
     weights = np.concatenate([wa, wb])
     
-    return roc_auc_score(true_labels, preds, sample_weight=weights)
-
+    if metric == "roc_auc":
+    	return roc_auc_score(true_labels, preds, sample_weight=weights)
+    elif metric == "prec_score":
+    	return average_precision_score(true_labels, preds, sample_weight=weights)
 
 def linear(x, name, size, bias=True):
     w = tf.get_variable(name + "/W", [x.get_shape()[1], size])

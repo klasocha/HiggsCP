@@ -19,7 +19,7 @@ parser.add_argument("-i", "--input", dest="IN", required=True)
 parser.add_argument("-d", "--dropout", dest="DROPOUT", type=float, default=0.2)
 parser.add_argument("-e", "--epochs", dest="EPOCHS", type=int, default=25)
 parser.add_argument("-f", "--features", dest="FEAT", help="Features",
-	choices= ["Variant-All", "Variant-1.0", "Variant-1.1", "Variant-2.0", "Variant-2.1", "Variant-2.2", "Variant-3.0", "Variant-3.1"])
+	choices= ["Variant-All", "Variant-1.0", "Variant-1.1", "Variant-2.0", "Variant-2.1", "Variant-2.2", "Variant-3.0", "Variant-3.1", "Variant-3.2"])
 parser.add_argument("--treedepth", dest="TREEDEPTH", type=int, default=5)
 parser.add_argument("--miniset", dest="MINISET", type=lambda s: s.lower() in ['true', 't', 'yes', '1'], default=False)
 parser.add_argument("--svm_c", dest="SVM_C", type=float)
@@ -33,6 +33,11 @@ parser.add_argument("--unweighted", dest="UNWEIGHTED", type=lambda s: s.lower() 
 parser.add_argument("--beta", type=float, dest="BETA", help="value of beta parameter for polynomial smearing", default=0.0)
 parser.add_argument("--pol_b", type=float, dest="pol_b", help="value of b parameter for polynomial smearing", default=0.0)
 parser.add_argument("--pol_c", type=float, dest="pol_c", help="value of c parameter for polynomial smearing", default=0.0)
+
+parser.add_argument("--smear_loc", type=float, dest="smear_loc", help="value of loc parameter for exporm smearing", default=0.0)
+parser.add_argument("--smear_scale", type=float, dest="smear_scale", help="value of scale parameter for expnorm smearing", default=0.0)
+
+parser.add_argument("--metric", dest="METRIC",  choices=["roc_auc", "prec_score"], default="roc_auc")
 
 parser.add_argument("--w1", dest="W1")
 parser.add_argument("--w2", dest="W2")
