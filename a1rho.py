@@ -50,8 +50,8 @@ class A1RhoEvent(object):
                     cols.append(part.vec)
             if args.FEAT == "Variant-All":
                 cols.append(part.vec)
-	
-         if args.FEAT == "Variant-4.0":
+
+        if args.FEAT == "Variant-4.0":
             part   = boost_and_rotate(p_tau1, PHI, THETA, p_a1_rho)
             cols.append(part.vec)
             part   = boost_and_rotate(p_tau2, PHI, THETA, p_a1_rho)

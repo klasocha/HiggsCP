@@ -26,8 +26,8 @@ class RhoRhoEvent(object):
 
             return tau2_nu, tau2_pi, tau2_rho, tau2
 
-        p_tau1_nu, l_tau1_pi, p_tau1_rho = get_tau1(p) # p- particle, l-list
-        p_tau2_nu, l_tau2_pi, p_tau2_rho = get_tau2(p)
+        p_tau1_nu, l_tau1_pi, p_tau1_rho, p_tau1 = get_tau1(p) # p- particle, l-list
+        p_tau2_nu, l_tau2_pi, p_tau2_rho, p_tau2 = get_tau2(p)
 
         rho_rho = p_tau1_rho + p_tau2_rho
 

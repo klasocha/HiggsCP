@@ -141,7 +141,7 @@ class A1A1Event(object):
 
            
 
-        lambda_noise = args.LAMBDA
+        lambda_noise = args.BETA
         v_tau1_nu_phi = np.arctan2(pb_tau1_nu.x, pb_tau1_nu.y) #boosted
         v_tau2_nu_phi = np.arctan2(pb_tau2_nu.x, pb_tau2_nu.y)
         vn_tau1_nu_phi = smear_exp(v_tau1_nu_phi, beta_noise)

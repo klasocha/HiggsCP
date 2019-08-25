@@ -90,6 +90,12 @@ class Particle(object):
         ret = ret.boost_along_z(-p_len, p.e)
         return ret.rotate_xz(theta).rotate_xy(phi)
 
+    def scale_lifetime(self, scale):		
+        mass2 = self.e*self.e - self.x*self.x - self.y*self.y - self.z*self.z		
+        energy = np.sqrt(  self.x*self.x*scale*scale + self.y*self.y*scale*scale + self.z*self.z*scale*scale + mass2)		
+        return Particle([self.x*scale, self.y*scale, self.z*scale,  energy])  
+
+
     def sum(self, dim):
         return np.sum(self.vec, dim)
 
