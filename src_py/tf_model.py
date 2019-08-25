@@ -102,7 +102,6 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
                 calc_w, preds_w = softmax_predictions(emodel, data.test, filtered=True)
 
                 # calc_w, preds_w normalisation to probability
-
                 calc_w = calc_w / np.sum(calc_w, axis=1)[:, np.newaxis]
                 preds_w = preds_w / np.sum(preds_w, axis=1)[:, np.newaxis]
 
@@ -218,13 +217,14 @@ def calculate_classification_metrics(pred_w, calc_w, args):
     calc_w = calc_w / np.tile(np.reshape(np.sum(calc_w, axis=1), (-1, 1)), (1, num_classes))
     pred_arg_maxs = np.argmax(pred_w, axis=1)
     calc_arg_maxs = np.argmax(calc_w, axis=1)
-    calc_pred_argmaxs_distances = calculate_errors_unsigned(pred_arg_maxs, calc_arg_maxs, num_classes)
+    calc_pred_argmaxs_abs_distances = calculate_errors_unsigned(pred_arg_maxs, calc_arg_maxs, num_classes)
+    calc_pred_argmaxs_signed_distances = calculate_errors_unsigned(pred_arg_maxs, calc_arg_maxs, num_classes)
     # Accuracy: average that most probable predicted class match most probable class
     # delta_class should be a variable in args
     delt_max = args.DELT_CLASSES
-    acc = (calc_pred_argmaxs_distances <= delt_max).mean()
+    acc = (calc_pred_argmaxs_abs_distances <= delt_max).mean()
 
-    mean = np.mean(calc_pred_argmaxs_distances)
+    mean = np.mean(calc_pred_argmaxs_signed_distances)
     l1_delta_w = np.mean(np.abs(calc_w - pred_w)) / num_classes
     l2_delta_w = np.sqrt(np.mean((calc_w - pred_w) ** 2)) / num_classes
 
@@ -298,9 +298,9 @@ def evaluate(model, dataset, args, at_most=None, filtered=True):
 
     #ERW
     # changes (after Michal)":  "num_classes -1" because first and last class are the same
-    delta_argmaxs = np.min(
+    delta_abs_argmaxs = np.min(
        np.stack(
-           [np.abs(pred_arg_maxs-calc_arg_maxs), ( (num_classes -1) - np.abs(pred_arg_maxs-calc_arg_maxs))]
+           [np.abs(pred_arg_maxs-calc_arg_maxs), (num_classes - np.abs(pred_arg_maxs-calc_arg_maxs))]
        ), axis=0)
 
     mse = np.mean(delta_argmaxs)
@@ -375,7 +375,7 @@ class NeuralNetwork(object):
         # tloss ==  "soft" is a simple extension of what was implemented
         # previously as binary classification
         if tloss == "soft":
-            sx = linear(x, "regression", num_classes)
+            sx = linear(x, "classes", num_classes)
             self.preds = tf.nn.softmax(sx)
             #self.p = preds[:, 0] / (preds[:, 0] + preds[:, 1])
             self.p = self.preds
