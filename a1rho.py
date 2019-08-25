@@ -13,26 +13,28 @@ class A1RhoEvent(object):
             p_tau1_nu = p[0]
             l_tau1_pi = p[1:4]                              # pi-, pi-, pi+
             p_tau1_a1 = sum(l_tau1_pi)
+            p_tau1 = p_tau1_nu + p_tau1_a1
 
             l_tau1_rho = [None]*2
             l_tau1_rho[0] = l_tau1_pi[0] + l_tau1_pi[2]     # pi1- + pi+
             l_tau1_rho[1] = l_tau1_pi[1] + l_tau1_pi[2]     # pi2- + pi+
 
-            return p_tau1_nu, p_tau1_a1, l_tau1_pi, l_tau1_rho
+            return p_tau1_nu, p_tau1_a1, l_tau1_pi, l_tau1_rho, p_tau1
 
         def get_tau2(p):
             p_tau2_nu = p[4]
             l_tau2_pi = p[5:7]
+            p_tau2 = p_tau2_nu + sum(l_tau2_pi)
 
             l_tau2_rho = [None]
             l_tau2_rho[0] = l_tau2_pi[0] + l_tau2_pi[1]     # pi+ + pi0
 
-            return p_tau2_nu, l_tau2_pi, l_tau2_rho
+            return p_tau2_nu, l_tau2_pi, l_tau2_rho, p_tau2
 
-        p_tau1_nu, p_tau1_a1, l_tau1_pi, l_tau1_rho = get_tau1(p)
+        p_tau1_nu, p_tau1_a1, l_tau1_pi, l_tau1_rho, p_tau1 = get_tau1(p)
         p_tau1_rho = sum(l_tau1_pi)
 
-        p_tau2_nu, l_tau2_pi, l_tau2_rho = get_tau2(p)
+        p_tau2_nu, l_tau2_pi, l_tau2_rho, p_tau2 = get_tau2(p)
         p_tau2_rho = sum(l_tau2_pi)
 
         p_a1_rho = sum(l_tau1_pi + l_tau2_pi)
@@ -43,12 +45,26 @@ class A1RhoEvent(object):
         # all particles boosted & rotated
         for i, idx in enumerate([0, 1, 2, 3, 4, 5, 6]):
             part = boost_and_rotate(p[idx], PHI, THETA, p_a1_rho)
-            if args.FEAT in ["Variant-1.0", "Variant-1.1", "Variant-2.0", "Variant-2.1", "Variant-2.2", "Variant-3.0", "Variant-3.1", "Variant-3.2"]:
+            if args.FEAT in ["Variant-1.0", "Variant-1.1", "Variant-2.0", "Variant-2.1", "Variant-2.2", "Variant-3.0", "Variant-3.1", "Variant-3.2", "Variant-4.0", "Variant-4.1"]:
                 if idx not in [0, 4]:
                     cols.append(part.vec)
             if args.FEAT == "Variant-All":
                 cols.append(part.vec)
 	
+         if args.FEAT == "Variant-4.0":
+            part   = boost_and_rotate(p_tau1, PHI, THETA, p_a1_rho)
+            cols.append(part.vec)
+            part   = boost_and_rotate(p_tau2, PHI, THETA, p_a1_rho)
+            cols.append(part.vec)
+
+        if args.FEAT == "Variant-4.1":
+            p_tau1_approx = scale_lifetime(p_tau1)
+            part   = boost_and_rotate(p_tau1_approx, PHI, THETA, p_a1_rho)
+            cols.append(part.vec)
+            p_tau2_approx = scale_lifetime(p_tau2)
+            part   = boost_and_rotate(p_tau2_approx, PHI, THETA, p_a1_rho)
+            cols.append(part.vec)
+
         # rho particles
         if args.FEAT == "Variant-1.1":
             for i, rho in enumerate(l_tau1_rho + l_tau2_rho):
@@ -158,7 +174,7 @@ class A1RhoEvent(object):
             filt = filt & (part.pt >= 1)    
         filt = filt.astype(np.float32)
 
-        if args.FEAT in ["Variant-1.0", "Variant-1.1", "Variant-All"]:
+        if args.FEAT in ["Variant-1.0", "Variant-1.1", "Variant-All", "Variant-4.0","Variant-4.1"]:
             cols += [filt]
 
         elif args.FEAT in ["Variant-2.1", "Variant-2.2", "Variant-3.0", "Variant-3.1", "Variant-3.2"]:
