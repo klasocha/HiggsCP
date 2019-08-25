@@ -8,7 +8,7 @@ import tensorflow as tf
 from scipy import optimize
 
 
-pathIN  = "npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_10/"
+pathIN  = "../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_10/monit_npy/"
 pathOUT = "figures/"
 
 calc_w  = np.load(pathIN+'softmax_calc_w.npy')
@@ -48,7 +48,7 @@ plt.clf()
 #----------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------
 
-pathIN  = "npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_4/"
+pathIN  = "../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_4/monit_npy/"
 pathOUT = "figures/"
 
 calc_w_nc4  = np.load(pathIN+'softmax_calc_w.npy')
@@ -100,7 +100,7 @@ print('Acc3_nc_4', acc3)
 print('---------')
 #----------------------------------------------------------------------------------
 
-pathIN  = "npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_10/"
+pathIN  = "../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_10/monit_npy/"
 pathOUT = "figures/"
 
 calc_w_nc10  = np.load(pathIN+'softmax_calc_w.npy')
@@ -151,7 +151,7 @@ print('Acc3_nc_10', acc3)
 print('---------')
 #----------------------------------------------------------------------------------
 
-pathIN  = "npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_20/"
+pathIN  = "../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_20/monit_npy/"
 pathOUT = "figures/"
 
 calc_w_nc20  = np.load(pathIN+'softmax_calc_w.npy')
@@ -203,7 +203,7 @@ print('---------')
 #----------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------
 
-pathIN  = "npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_25/"
+pathIN  = "../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_25/monit_npy/"
 pathOUT = "figures/"
 
 calc_w_nc25  = np.load(pathIN+'softmax_calc_w.npy')
@@ -255,7 +255,7 @@ print('---------')
 #----------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------
 
-pathIN  = "npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_50/"
+pathIN  = "../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_50/monit_npy/"
 pathOUT = "figures/"
 
 calc_w_nc50  = np.load(pathIN+'softmax_calc_w.npy')
@@ -307,7 +307,7 @@ print('---------')
 #----------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------
 
-pathIN  = "npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_100/"
+pathIN  = "../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_100/monit_npy/"
 pathOUT = "figures/"
 
 calc_w_nc100  = np.load(pathIN+'softmax_calc_w.npy')

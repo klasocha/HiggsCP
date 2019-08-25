@@ -4,27 +4,27 @@ import os, errno
 
 import matplotlib.pyplot as plt
 
-from anal_utils import calculate_metrics
+from anal_utils import calculate_metrics_from_file
 
 filelist_rhorho_Variant_1_1 = []
 
-filelist_rhorho_Variant_1_1.append('npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_2')
-filelist_rhorho_Variant_1_1.append('npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_4')
-filelist_rhorho_Variant_1_1.append('npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_6')
-filelist_rhorho_Variant_1_1.append('npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_8')
-filelist_rhorho_Variant_1_1.append('npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_10')
-filelist_rhorho_Variant_1_1.append('npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_12')
-filelist_rhorho_Variant_1_1.append('npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_14')
-filelist_rhorho_Variant_1_1.append('npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_16')
-filelist_rhorho_Variant_1_1.append('npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_18')
-filelist_rhorho_Variant_1_1.append('npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_20')
+filelist_rhorho_Variant_1_1.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_2/monit_npy/')
+filelist_rhorho_Variant_1_1.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_4/monit_npy/')
+filelist_rhorho_Variant_1_1.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_6/monit_npy/')
+filelist_rhorho_Variant_1_1.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_8/monit_npy/')
+filelist_rhorho_Variant_1_1.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_10/monit_npy/')
+filelist_rhorho_Variant_1_1.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_12/monit_npy/')
+filelist_rhorho_Variant_1_1.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_14/monit_npy/')
+filelist_rhorho_Variant_1_1.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_16/monit_npy/')
+filelist_rhorho_Variant_1_1.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_18/monit_npy/')
+filelist_rhorho_Variant_1_1.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_20/monit_npy/')
 
 
-metrics_Variant_1_1 = [calculate_metrics(filelist_rhorho_Variant_1_1[0], 2),  calculate_metrics(filelist_rhorho_Variant_1_1[1], 4),
-                       calculate_metrics(filelist_rhorho_Variant_1_1[2], 6),  calculate_metrics(filelist_rhorho_Variant_1_1[3], 8),
-                       calculate_metrics(filelist_rhorho_Variant_1_1[4], 10), calculate_metrics(filelist_rhorho_Variant_1_1[5], 12),
-                       calculate_metrics(filelist_rhorho_Variant_1_1[6], 14), calculate_metrics(filelist_rhorho_Variant_1_1[7], 16),
-                       calculate_metrics(filelist_rhorho_Variant_1_1[8], 18), calculate_metrics(filelist_rhorho_Variant_1_1[9], 20)]
+metrics_Variant_1_1 = [calculate_metrics_from_file(filelist_rhorho_Variant_1_1[0], 2), calculate_metrics_from_file(filelist_rhorho_Variant_1_1[1], 4),
+                       calculate_metrics_from_file(filelist_rhorho_Variant_1_1[2], 6), calculate_metrics_from_file(filelist_rhorho_Variant_1_1[3], 8),
+                       calculate_metrics_from_file(filelist_rhorho_Variant_1_1[4], 10), calculate_metrics_from_file(filelist_rhorho_Variant_1_1[5], 12),
+                       calculate_metrics_from_file(filelist_rhorho_Variant_1_1[6], 14), calculate_metrics_from_file(filelist_rhorho_Variant_1_1[7], 16),
+                       calculate_metrics_from_file(filelist_rhorho_Variant_1_1[8], 18), calculate_metrics_from_file(filelist_rhorho_Variant_1_1[9], 20)]
            
 metrics_Variant_1_1 = np.stack(metrics_Variant_1_1)
 
@@ -75,7 +75,7 @@ filename = "rhorho_meanDelt_class_Variant-All_nc"
 
 plt.plot(x, metrics_Variant_1_1[:, 4],'o', label=r'$<\Delta>$ classes')
 
-plt.ylim([0.0, 3])
+#plt.ylim([0.0, 0.5])
 plt.xticks(x)
 plt.legend()
 plt.xlabel('Number of classes')
@@ -105,13 +105,13 @@ plt.clf()
 pathOUT = "figures/"
 filename = "rhorho_meanDelt_phiCPmix_Variant-All_nc"
 
-plt.plot(x, metrics_Variant_1_1[:, 7],'o', label=r'$<\Delta \alpha^{CP}>$ ')
+plt.plot(x, metrics_Variant_1_1[:, 7],'o', label=r'$<\Delta \phi^{CP}> [rad]$ ')
 
-plt.ylim([0.0, 0.5])
+#plt.ylim([0.0, 0.5])
 plt.xticks(x)
 plt.legend()
 plt.xlabel('Number of classes')
-plt.ylabel(r'$<\Delta \alpha^{CP}>$ (rad)')
+plt.ylabel(r'$<\Delta \phi^{CP}>$ (rad)')
 plt.title('Feautures list: Variant-All')
 
 ax = plt.gca()

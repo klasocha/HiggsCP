@@ -27,27 +27,31 @@ def calculate_metrics_from_file(directory, num_classes):
     preds_w = np.load(os.path.join(directory, 'softmax_preds_w.npy'))
     return calculate_metrics(calc_w, preds_w, num_classes)
 
-def calculate_metrics(directory, num_classes):
-    calc_w  = np.load(os.path.join(directory, 'softmax_calc_w.npy'))
-    preds_w = np.load(os.path.join(directory, 'softmax_preds_w.npy'))    
+#def calculate_metrics(directory, num_classes):
+#    calc_w  = np.load(os.path.join(directory, 'softmax_calc_w.npy'))
+#    preds_w = np.load(os.path.join(directory, 'softmax_preds_w.npy'))    
+
+def calculate_metrics(calc_w, preds_w, num_classes):
     pred_arg_maxs = np.argmax(preds_w, axis=1)
     calc_arg_maxs = np.argmax(calc_w, axis=1)
 
-    calc_pred_argmaxs_distances = calculate_errors_unsigned(calc_arg_maxs, pred_arg_maxs, num_classes)
+    calc_pred_argmaxs_abs_distances = calculate_errors_unsigned(calc_arg_maxs, pred_arg_maxs, num_classes)
+    calc_pred_argmaxs_signed_distances = calculate_errors_signed(calc_arg_maxs, pred_arg_maxs, num_classes)
     
-    print calc_pred_argmaxs_distances
-    print np.mean(calc_pred_argmaxs_distances), np.mean(calc_pred_argmaxs_distances) * 360./(1.0*num_classes)
+    print "abs_distances", calc_pred_argmaxs_abs_distances
+    print "signed_distances", calc_pred_argmaxs_signed_distances
+    print "mean distance", np.mean(calc_pred_argmaxs_signed_distances), np.mean(calc_pred_argmaxs_signed_distances) * 360./(1.0*num_classes),"[deg]"
 
-    mean_error = np.mean(calc_pred_argmaxs_distances)
+    mean_error = np.mean(calc_pred_argmaxs_signed_distances)
     #ERW: scaled to radians and in units of alpha^CP
     k2PI = 6.28
-    mean_error_scaled = np.mean(calc_pred_argmaxs_distances) * k2PI/(1.0*num_classes)
+    mean_error_scaled = np.mean(calc_pred_argmaxs_signed_distances) * k2PI/(1.0*num_classes)
     print mean_error_scaled
     
-    acc0 = (calc_pred_argmaxs_distances <= 0).mean()
-    acc1 = (calc_pred_argmaxs_distances <= 1).mean()
-    acc2 = (calc_pred_argmaxs_distances <= 2).mean()
-    acc3 = (calc_pred_argmaxs_distances <= 3).mean()
+    acc0 = (calc_pred_argmaxs_abs_distances <= 0).mean()
+    acc1 = (calc_pred_argmaxs_abs_distances <= 1).mean()
+    acc2 = (calc_pred_argmaxs_abs_distances <= 2).mean()
+    acc3 = (calc_pred_argmaxs_abs_distances <= 3).mean()
 
     l1_delta_w = np.mean(np.abs(calc_w - preds_w))
     l2_delta_w = np.sqrt(np.mean((calc_w - preds_w)**2))
