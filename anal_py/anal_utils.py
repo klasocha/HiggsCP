@@ -4,6 +4,8 @@ import os, errno
 
 from sklearn.metrics import roc_auc_score
 
+from src_py.metrics_calculation import calculate_errors_unsigned, calculate_errors_signed
+
 
 def weight_fun(x, a, b, c):
     return a + b * np.cos(x) + c * np.sin(x)
@@ -16,41 +18,23 @@ def calc_weights(num_classes, popts):
         weights[i] = weight_fun(x, *popts[i])
     return weights
 
-# definition from Michal
-# something wrong with it, gives oscilating values
 def calc_argmaxs_distances(pred_arg_maxs, calc_arg_maxs, num_class):
-    min_distances = np.zeros(len(calc_arg_maxs))
-    for i in range(len(calc_arg_maxs)):
-        dist = pred_arg_maxs[i] - calc_arg_maxs[i]
-        if np.abs((num_class - 1) + (pred_arg_maxs[i] - calc_arg_maxs[i]))<np.abs(dist):
-            dist =(num_class - 1) + (pred_arg_maxs[i] - calc_arg_maxs[i])
-        if np.abs(-(num_class - 1) + (pred_arg_maxs[i] - calc_arg_maxs[i]))<np.abs(dist):
-            dist = -(num_class - 1) + (pred_arg_maxs[i] - calc_arg_maxs[i])
-        min_distances[i]  = dist
-    return min_distances
+    return calculate_errors_signed(calc_arg_maxs, pred_arg_maxs, num_class)
+
+
+def calculate_metrics_from_file(directory, num_classes):
+    calc_w = np.load(os.path.join(directory, 'softmax_calc_w.npy'))
+    preds_w = np.load(os.path.join(directory, 'softmax_preds_w.npy'))
+    return calculate_metrics(calc_w, preds_w, num_classes)
 
 def calculate_metrics(directory, num_classes):
     calc_w  = np.load(os.path.join(directory, 'softmax_calc_w.npy'))
     preds_w = np.load(os.path.join(directory, 'softmax_preds_w.npy'))    
     pred_arg_maxs = np.argmax(preds_w, axis=1)
     calc_arg_maxs = np.argmax(calc_w, axis=1)
-    
-    # ERW including here redefinition of  calc_pred_argmaxs_distances by Michal
-    # short cut is taken in the "sign", should not take mean of absolute value!!!
-    # example implementation from anal_py/plot_softmax_rhorho_Variant_All.py
 
-    # delt_argmax = np.argmax(calc_w[:], axis=1) - np.argmax(preds_w[:], axis=1)
-    # for i in range (len(delt_argmax)):
-    # if  delt_argmax[i] > num_classes/2.0 :
-    #     delt_argmax[i] = num_classes -  delt_argmax[i]
-    # if  delt_argmax[i] < - num_classes/2.0 :
-    #    delt_argmax[i] = - num_classes -  delt_argmax[i]
+    calc_pred_argmaxs_distances = calculate_errors_unsigned(calc_arg_maxs, pred_arg_maxs, num_classes)
     
-    calc_pred_argmaxs_distances = np.min(
-         np.stack(
-            [np.abs(pred_arg_maxs-calc_arg_maxs), ((num_classes - 1) - np.abs(pred_arg_maxs-calc_arg_maxs))]
-        ), axis=0)
-
     print calc_pred_argmaxs_distances
     print np.mean(calc_pred_argmaxs_distances), np.mean(calc_pred_argmaxs_distances) * 360./(1.0*num_classes)
 
@@ -60,21 +44,11 @@ def calculate_metrics(directory, num_classes):
     mean_error_scaled = np.mean(calc_pred_argmaxs_distances) * k2PI/(1.0*num_classes)
     print mean_error_scaled
     
-    # new definition from Michal
-    # something qrong with this definition, oscilating values
-    # calc_pred_argmaxs_distances = calc_argmaxs_distances(pred_arg_maxs, calc_arg_maxs, num_class)
-
-    # here it is OK, because we are interested in fractions
     acc0 = (calc_pred_argmaxs_distances <= 0).mean()
     acc1 = (calc_pred_argmaxs_distances <= 1).mean()
     acc2 = (calc_pred_argmaxs_distances <= 2).mean()
     acc3 = (calc_pred_argmaxs_distances <= 3).mean()
 
-    # ERW
-    # calc_w are not normalised to unity, while preds_w are
-    # clarify this point, here l1_delta_w,  l1_delta_w expressed in units of probabilities
-    for i in range (len(calc_w)):
-      calc_w[i] = calc_w[i]/sum(calc_w[i])
     l1_delta_w = np.mean(np.abs(calc_w - preds_w))
     l2_delta_w = np.sqrt(np.mean((calc_w - preds_w)**2))
     
