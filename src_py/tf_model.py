@@ -303,7 +303,7 @@ def evaluate(model, dataset, args, at_most=None, filtered=True):
            [np.abs(pred_arg_maxs-calc_arg_maxs), (num_classes - np.abs(pred_arg_maxs-calc_arg_maxs))]
        ), axis=0)
 
-    mse = np.mean(delta_argmaxs)
+    mse = np.mean(delta_abs_argmaxs)
 
     # Accuracy: average that most probable predicted class match most probable class
     delt_max = args.DELT_CLASSES
