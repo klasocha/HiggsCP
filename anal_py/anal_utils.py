@@ -3,7 +3,7 @@ import os
 import numpy as np
 from sklearn.metrics import roc_auc_score
 
-from src_py.metrics_calculation import calculate_errors_unsigned, calculate_errors_signed
+from src_py.metrics_utils import calculate_deltas_unsigned, calculate_deltas_signed
 
 
 def weight_fun(x, a, b, c):
@@ -20,7 +20,7 @@ def calc_weights(num_classes, popts):
 
 
 def calc_argmaxs_distances(pred_arg_maxs, calc_arg_maxs, num_class):
-    return calculate_errors_signed(calc_arg_maxs, pred_arg_maxs, num_class)
+    return calculate_deltas_signed(calc_arg_maxs, pred_arg_maxs, num_class)
 
 
 def calculate_metrics_from_file(directory, num_classes):
@@ -33,7 +33,7 @@ def calculate_metrics(calc_w, preds_w, num_classes):
     pred_arg_maxs = np.argmax(preds_w, axis=1)
     calc_arg_maxs = np.argmax(calc_w, axis=1)
 
-    calc_pred_argmaxs_distances = calculate_errors_unsigned(calc_arg_maxs, pred_arg_maxs, num_classes)
+    calc_pred_argmaxs_distances = calculate_deltas_unsigned(calc_arg_maxs, pred_arg_maxs, num_classes)
 
     # new definition from Michal
     # something qrong with this definition, oscilating values
@@ -44,7 +44,7 @@ def calculate_metrics(calc_w, preds_w, num_classes):
     acc2 = (calc_pred_argmaxs_distances <= 2).mean()
     acc3 = (calc_pred_argmaxs_distances <= 3).mean()
 
-    mean_error = np.mean(calc_pred_argmaxs_distances)
+    mean_error = np.mean(calculate_deltas_signed(calc_arg_maxs, pred_arg_maxs, num_classes))
     # ERW: scaled to radians and in units of phi^CP
     k2PI = 6.28
     mean_error_scaled = mean_error / (1.0 * num_classes) * k2PI / 2.
@@ -65,7 +65,7 @@ def calculate_metrics_regr_popts(directory, num_classes):
     calc_arg_maxs = np.argmax(calc_w, axis=1)
 
     # ERW including here redefinition of  calc_pred_argmaxs_distances by Michal
-    calc_pred_argmaxs_distances = calculate_errors_unsigned(calc_arg_maxs, pred_arg_maxs, num_classes)
+    calc_pred_argmaxs_distances = calculate_deltas_unsigned(calc_arg_maxs, pred_arg_maxs, num_classes)
 
     # new definition from Michal
     # something wrong with this definition, oscilating values
