@@ -220,7 +220,7 @@ def calculate_classification_metrics(pred_w, calc_w, args):
     calc_pred_argmaxs_abs_distances = calculate_deltas_unsigned(pred_arg_maxs, calc_arg_maxs, num_classes)
     calc_pred_argmaxs_signed_distances = calculate_deltas_unsigned(pred_arg_maxs, calc_arg_maxs, num_classes)
     # Accuracy: average that most probable predicted class match most probable class
-    # delta_class should be a variable in args
+    # delta_class for matching  should be a variable in args
     delt_max = args.DELT_CLASSES
     acc = (calc_pred_argmaxs_abs_distances <= delt_max).mean()
 
@@ -287,7 +287,7 @@ def evaluate(model, dataset, args, at_most=None, filtered=True):
     pred_arg_maxs = np.argmax(pred_w, axis=1)
     calc_arg_maxs = np.argmax(calc_w, axis=1)
     calc_pred_argmaxs_abs_distances = calculate_deltas_unsigned(pred_arg_maxs, calc_arg_maxs, num_classes)
-    calc_pred_argmaxs_signed_distances = calculate_deltas_unsigned(pred_arg_maxs, calc_arg_maxs, num_classes)
+    calc_pred_argmaxs_signed_distances = calculate_deltas_signed(pred_arg_maxs, calc_arg_maxs, num_classes)
 
     mse = np.mean(calc_pred_argmaxs_signed_distances)
 
@@ -365,7 +365,6 @@ class NeuralNetwork(object):
             # wa + wb + 1 = (p_a + p_b + p_c) / p_c
             # wa / (wa + wb + 1) = p_a / (p_a + p_b + p_c)
             
-            #ERW
             # labels: class probabilities, calculated as normalised weighs (probabilities)
             labels = weights / tf.tile(tf.reshape(tf.reduce_sum(weights, axis=1), (-1, 1)), (1,num_classes))
             self.loss = loss = tf.nn.softmax_cross_entropy_with_logits(logits=sx, labels=labels)
