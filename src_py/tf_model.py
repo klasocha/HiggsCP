@@ -3,7 +3,7 @@ import tensorflow as tf
 from sklearn.metrics import roc_auc_score, accuracy_score
 import sys
 
-from src_py.metrics_calculation import calculate_errors_unsigned
+from src_py.metrics_utils import calculate_deltas_unsigned
 
 
 def train(model, dataset, batch_size=128):
@@ -217,8 +217,8 @@ def calculate_classification_metrics(pred_w, calc_w, args):
     calc_w = calc_w / np.tile(np.reshape(np.sum(calc_w, axis=1), (-1, 1)), (1, num_classes))
     pred_arg_maxs = np.argmax(pred_w, axis=1)
     calc_arg_maxs = np.argmax(calc_w, axis=1)
-    calc_pred_argmaxs_abs_distances = calculate_errors_unsigned(pred_arg_maxs, calc_arg_maxs, num_classes)
-    calc_pred_argmaxs_signed_distances = calculate_errors_unsigned(pred_arg_maxs, calc_arg_maxs, num_classes)
+    calc_pred_argmaxs_abs_distances = calculate_deltas_unsigned(pred_arg_maxs, calc_arg_maxs, num_classes)
+    calc_pred_argmaxs_signed_distances = calculate_deltas_unsigned(pred_arg_maxs, calc_arg_maxs, num_classes)
     # Accuracy: average that most probable predicted class match most probable class
     # delta_class should be a variable in args
     delt_max = args.DELT_CLASSES
@@ -274,11 +274,6 @@ def test_roc_auc(preds_w, calc_w):
          print(i+1, 'oracle_roc_auc: {}'.format(calculate_roc_auc(calc_w, calc_w, 0, i)),
                   'roc_auc: {}'.format(calculate_roc_auc(preds_w, calc_w, 0, i)))
  
-
-# ERW
-# extended input objects of original class
-# added functionality of storing output information, hard-coded filenames which should be avoided
-# roc_auc_score is not calculated as it is multi-class classification
 def evaluate(model, dataset, args, at_most=None, filtered=True):
     _, pred_w, calc_w, arg_maxs, popts = predictions(model, dataset, at_most, filtered)
 
@@ -288,32 +283,17 @@ def evaluate(model, dataset, args, at_most=None, filtered=True):
     print "evaluate: pred_w", pred_w
     
     num_classes = calc_w.shape[1]
+    calc_w = calc_w / np.tile(np.reshape(np.sum(calc_w, axis=1), (-1, 1)), (1, num_classes))
     pred_arg_maxs = np.argmax(pred_w, axis=1)
     calc_arg_maxs = np.argmax(calc_w, axis=1)
+    calc_pred_argmaxs_abs_distances = calculate_deltas_unsigned(pred_arg_maxs, calc_arg_maxs, num_classes)
+    calc_pred_argmaxs_signed_distances = calculate_deltas_unsigned(pred_arg_maxs, calc_arg_maxs, num_classes)
 
-    #ERW
-    # control print
-    # print "evaluate: calc_arg_maxs", calc_arg_maxs
-    # print "evaluate: pred_arg_maxs", pred_arg_maxs
-
-    #ERW
-    # changes (after Michal)":  "num_classes -1" because first and last class are the same
-    delta_abs_argmaxs = np.min(
-       np.stack(
-           [np.abs(pred_arg_maxs-calc_arg_maxs), (num_classes - np.abs(pred_arg_maxs-calc_arg_maxs))]
-       ), axis=0)
-
-    mse = np.mean(delta_abs_argmaxs)
+    mse = np.mean(calc_pred_argmaxs_signed_distances)
 
     # Accuracy: average that most probable predicted class match most probable class
     delt_max = args.DELT_CLASSES
-    acc = (np.abs(np.argmax(calc_w, axis=1) - np.argmax(pred_w, axis=1)) <= delt_max).mean()
-
-    # ERW
-    # for comparing with predictions, calculated weight normalised to probability
-
-    for i in range (len(calc_w)):
-      calc_w[i] = calc_w[i]/sum(calc_w[i])
+    acc = (calc_pred_argmaxs_abs_distances <= delt_max).mean()
       
     l1_delt_w = np.mean(np.abs(calc_w - pred_w))
     l2_delt_w = np.sqrt(np.mean((calc_w - pred_w)**2))
