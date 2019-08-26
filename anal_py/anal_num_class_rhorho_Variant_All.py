@@ -39,15 +39,15 @@ pathOUT = "figures/"
 filename = "rhorho_acc_Variant-All_nc"
 x = np.arange(1,11)*2
 # example plt.plot(x, metrics_Variant_1_1[:, 0],'o', label=r'$\sigma$' )
-plt.plot(x, metrics_Variant_1_1[:, 0],'o', label='Acc0')
-plt.plot(x, metrics_Variant_1_1[:, 1],'x', label='Acc1')
-plt.plot(x, metrics_Variant_1_1[:, 2],'d', label='Acc2')
-plt.plot(x, metrics_Variant_1_1[:, 3],'v', label='Acc3')
-plt.ylim([0.0, 1.3])
+plt.plot(x, metrics_Variant_1_1[:, 0],'o', label=r'$|\Delta_{class}| < 1$')
+plt.plot(x, metrics_Variant_1_1[:, 1],'x', label=r'$|\Delta_{class}| < 2$')
+plt.plot(x, metrics_Variant_1_1[:, 2],'d', label=r'$|\Delta_{class}| < 3$')
+plt.plot(x, metrics_Variant_1_1[:, 3],'v', label=r'$|\Delta_{class}| < 4$')
+plt.ylim([0.0, 1.5])
 plt.xticks(x)
 plt.legend()
-plt.xlabel('Number of classes')
-plt.ylabel('Accuracy')
+plt.xlabel(r'$N_{class}$')
+plt.ylabel('Fraction')
 plt.title('Feautures list: Variant-All')
 
 ax = plt.gca()
@@ -73,13 +73,13 @@ plt.clf()
 pathOUT = "figures/"
 filename = "rhorho_meanDelt_class_Variant-All_nc"
 
-plt.plot(x, metrics_Variant_1_1[:, 4],'o', label=r'$<\Delta>$ classes')
+plt.plot(x, metrics_Variant_1_1[:, 4],'o', label=r'$<\Delta>_{class}$')
 
-#plt.ylim([0.0, 0.5])
+plt.ylim([-1.0, 1.0])
 plt.xticks(x)
 plt.legend()
-plt.xlabel('Number of classes')
-plt.ylabel(r'$<\Delta>$ classes')
+plt.xlabel(r'$N_{class}$')
+plt.ylabel(r'$<\Delta>_{class}$')
 plt.title('Feautures list: Variant-All')
 
 ax = plt.gca()
@@ -105,13 +105,14 @@ plt.clf()
 pathOUT = "figures/"
 filename = "rhorho_meanDelt_phiCPmix_Variant-All_nc"
 
-plt.plot(x, metrics_Variant_1_1[:, 7],'o', label=r'$<\Delta \phi^{CP}> [rad]$ ')
+plt.plot(x, metrics_Variant_1_1[:, 7],'o', label=r'$<\Delta \alpha^{CP}> [rad]$ ')
 
 #plt.ylim([0.0, 0.5])
 plt.xticks(x)
 plt.legend()
-plt.xlabel('Number of classes')
-plt.ylabel(r'$<\Delta \phi^{CP}>$ (rad)')
+plt.ylim([-0.5, 0.5])
+plt.xlabel(r'$N_{class}$')
+plt.ylabel(r'$<\Delta \alpha^{CP}>$ [rad]')
 plt.title('Feautures list: Variant-All')
 
 ax = plt.gca()
@@ -137,13 +138,13 @@ plt.clf()
 pathOUT = "figures/"
 filename = "rhorho_L1delt_w_Variant_All_nc"
 
-plt.plot(x, metrics_Variant_1_1[:, 5],'o', label=r'L1 $<\Delta w>$')
+plt.plot(x, metrics_Variant_1_1[:, 5],'o', label=r'$l_1$')
 
-plt.ylim([0.0, 0.2])
+plt.ylim([0.0, 0.1])
 plt.xticks(x)
 plt.legend()
-plt.xlabel('Number of classes')
-plt.ylabel(r'L1 $<\Delta w>$')
+plt.xlabel(r'$N_{class}$')
+plt.ylabel(r'$l_1$')
 plt.title('Feautures list: Variant-All')
 
 ax = plt.gca()
@@ -169,13 +170,13 @@ plt.clf()
 pathOUT = "figures/"
 filename = "rhorho_L2delt_w_Variant_All_nc"
 
-plt.plot(x, metrics_Variant_1_1[:, 6],'o', label=r'L2 $<\Delta w>$')
+plt.plot(x, metrics_Variant_1_1[:, 6],'o', label=r'$l_2$')
 
-plt.ylim([0.0, 0.2])
+plt.ylim([0.0, 0.1])
 plt.xticks(x)
 plt.legend()
-plt.xlabel('Number of classes')
-plt.ylabel(r'L2 $<\Delta w>$')
+plt.xlabel(r'$N_{class}$')
+plt.ylabel(r'$l_2$')
 plt.title('Feautures list: Variant-All')
 
 ax = plt.gca()

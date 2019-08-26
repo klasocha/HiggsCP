@@ -8,7 +8,7 @@ import tensorflow as tf
 from scipy import optimize
 
 
-pathIN  = "npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_100/"
+pathIN  = "../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_100/monit_npy/"
 pathOUT = "figures/"
 
 train_losses    = np.load(pathIN+'train_losses.npy')
@@ -27,6 +27,33 @@ valid_l2_deltas = np.load(pathIN+'valid_L2_deltas.npy')
 
 #----------------------------------------------------------------------------------
 
+filename = "dnn_train_loss_rhorho_Variant-All_nc_100"
+x = np.arange(1,len(train_accs)+1)
+plt.plot(x,train_losses, 'o', label='train_loss')
+plt.legend()
+#plt.ylim([0.0, 0.1])
+plt.xlabel('Number of epochs')
+plt.xticks(x)
+plt.ylabel('Loss')
+plt.title('Features list: Variant-All')
+    
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+plt.clf()
+
+
+#----------------------------------------------------------------------------------
+
 filename = "dnn_train_accs_rhorho_Variant-All_nc_100"
 x = np.arange(1,len(train_accs)+1)
 plt.plot(x,train_accs, 'o', label='train_accs')
@@ -35,7 +62,7 @@ plt.legend()
 plt.ylim([0.0, 0.1])
 plt.xlabel('Number of epochs')
 plt.xticks(x)
-plt.ylabel('Accuracy')
+plt.ylabel(r'Fraction in $\Delta_c$ = 0')
 plt.title('Features list: Variant-All')
     
 if filename:

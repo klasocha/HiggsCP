@@ -16,19 +16,17 @@ preds_w = np.load(pathIN+'softmax_preds_w.npy')
 
 k2PI = 6.28
 #----------------------------------------------------------------------------------
-#ERW
-# why it is plotting two dots in the legend box?
                            
 i = 1
 filename = "calc_preds_w_rhorho_Variant-All_nc_10_event_1"
 x = np.arange(1,11)
-plt.plot(x,calc_w[i]/sum(calc_w[i]), 'o', label='calc_w')
-plt.plot(x,preds_w[i], 'd', label='preds_w')
+plt.plot(x,calc_w[i]/sum(calc_w[i]), 'o', label='calculated')
+plt.plot(x,preds_w[i], 'd', label='predicted')
 plt.legend()
 plt.ylim([0.0, 0.2])
-plt.xlabel('Index of class')
+plt.xlabel('Class index')
 plt.xticks(x)
-plt.ylabel('w')
+plt.ylabel(r'wt^{norm}')
 plt.title('Features list: Variant-All')
     
 if filename:
@@ -44,6 +42,91 @@ if filename:
 else:
     plt.show()
 plt.clf()
+#----------------------------------------------------------------------------------
+                           
+i = 10
+filename = "calc_preds_w_rhorho_Variant-All_nc_10_event_10"
+x = np.arange(1,11)
+plt.plot(x,calc_w[i]/sum(calc_w[i]), 'o', label='calculated')
+plt.plot(x,preds_w[i], 'd', label='predicted')
+plt.legend()
+plt.ylim([0.0, 0.2])
+plt.xlabel('Class index')
+plt.xticks(x)
+plt.ylabel(r'wt^{norm}')
+plt.title('Features list: Variant-All')
+    
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+plt.clf()
+
+#----------------------------------------------------------------------------------
+                           
+i = 1000
+filename = "calc_preds_w_rhorho_Variant-All_nc_10_event_1000"
+x = np.arange(1,11)
+plt.plot(x,calc_w[i]/sum(calc_w[i]), 'o', label='calculated')
+plt.plot(x,preds_w[i], 'd', label='predicted')
+plt.legend()
+plt.ylim([0.0, 0.2])
+plt.xlabel('Class index')
+plt.xticks(x)
+plt.ylabel(r'wt^{norm}')
+plt.title('Features list: Variant-All')
+    
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+plt.clf()
+
+
+#----------------------------------------------------------------------------------
+                           
+i = 2000
+filename = "calc_preds_w_rhorho_Variant-All_nc_10_event_2000"
+x = np.arange(1,11)
+plt.plot(x,calc_w[i]/sum(calc_w[i]), 'o', label='calculated')
+plt.plot(x,preds_w[i], 'd', label='predicted')
+plt.legend()
+plt.ylim([0.0, 0.2])
+plt.xlabel('Class index')
+plt.xticks(x)
+plt.ylabel(r'wt^{norm}')
+plt.title('Features list: Variant-All')
+    
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+plt.clf()
+
 
 #----------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------
@@ -63,13 +146,13 @@ for i in range (len(delt_argmax_nc4)):
 
 filename = "delt_argmax_rhorho_Variant-All_nc_4"
 plt.hist(delt_argmax_nc4, histtype='step', bins=100)
-plt.xlabel(r'$\Delta$  class index')
+plt.xlabel(r'$\Delta_{class}$')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
 mean = np.mean(delt_argmax_nc4) * k2PI/nc4
 std  = np.std(delt_argmax_nc4) * k2PI/nc4
-ax.annotate("Mean = {:0.3f} (rad) \nSTD =  {:1.3f} (rad)".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+ax.annotate("mean = {:0.3f} [rad] \nstd =  {:1.3f} [rad]".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
 
 plt.tight_layout()
 
@@ -113,14 +196,18 @@ for i in range (len(delt_argmax_nc10)):
         delt_argmax_nc10[i] = - 10.0 -  delt_argmax_nc10[i]
 
 filename = "delt_argmax_rhorho_Variant-All_nc_10"
-plt.hist(delt_argmax_nc10, histtype='step', bins=100)
-plt.xlabel(r'$\Delta$  class index')
+plt.hist(delt_argmax_nc10, histtype='step', bins=10)
+plt.ylabel('Entries')
+plt.xlabel(r'$\Delta_{class}$')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
-mean = np.mean(delt_argmax_nc10) * 6.28/10.0
-std  = np.std(delt_argmax_nc10) * 6.28/10.0
-ax.annotate("Mean = {:0.3f} (rad) \nSTD =  {:1.3f} (rad)".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+mean = np.mean(delt_argmax_nc10)
+std  = np.std(delt_argmax_nc10)
+meanrad = np.mean(delt_argmax_nc10) * 6.28/10.0
+stdrad  = np.std(delt_argmax_nc10) * 6.28/10.0
+ax.annotate("mean = {:0.3f}       \nstd =  {:1.3f}      ".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+ax.annotate("mean = {:0.3f} [rad] \nstd =  {:1.3f} [rad]".format(meanrad, stdrad), xy=(0.65, 0.65), xycoords='axes fraction', fontsize=12)
 
 plt.tight_layout()
 
@@ -165,13 +252,13 @@ for i in range (len(delt_argmax_nc20)):
 
 filename = "delt_argmax_rhorho_Variant-All_nc_20"
 plt.hist(delt_argmax_nc20, histtype='step', bins=100)
-plt.xlabel(r'$\Delta$  class index')
+plt.xlabel(r'$\Delta_{class}$')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
 mean = np.mean(delt_argmax_nc20) * 6.28/20.0
 std  = np.std(delt_argmax_nc20) * 6.28/20.0
-ax.annotate("Mean = {:0.3f} (rad) \nSTD =  {:1.3f} (rad)".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+ax.annotate("mean = {:0.3f} [rad] \nstd =  {:1.3f} [rad]".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
 
 plt.tight_layout()
 
@@ -217,13 +304,13 @@ for i in range (len(delt_argmax_nc25)):
 
 filename = "delt_argmax_rhorho_Variant-All_nc_25"
 plt.hist(delt_argmax_nc25, histtype='step', bins=50)
-plt.xlabel(r'$\Delta$  class index')
+plt.xlabel(r'$\Delta_{class}$')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
 mean = np.mean(delt_argmax_nc25) * 6.28/25.0
 std  = np.std(delt_argmax_nc25) * 6.28/25.0
-ax.annotate("Mean = {:0.3f} (rad) \nSTD =  {:1.3f} (rad)".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+ax.annotate("mean = {:0.3f} [rad] \nstd =  {:1.3f} [rad]".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
 
 plt.tight_layout()
 
@@ -268,14 +355,18 @@ for i in range (len(delt_argmax_nc50)):
         delt_argmax_nc50[i] = - 50.0 -  delt_argmax_nc50[i]
 
 filename = "delt_argmax_rhorho_Variant-All_nc_50"
-plt.hist(delt_argmax_nc50, histtype='step', bins=100)
-plt.xlabel(r'$\Delta$  class index')
+plt.hist(delt_argmax_nc50, histtype='step', bins=50)
+plt.ylabel('Entries')
+plt.xlabel(r'$\Delta_{class}$')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
-mean = np.mean(delt_argmax_nc50) * 6.28/50.0
-std  = np.std(delt_argmax_nc50) * 6.28/50.0
-ax.annotate("Mean = {:0.3f} (rad) \nSTD =  {:1.3f} (rad)".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+mean = np.mean(delt_argmax_nc50)
+std  = np.std(delt_argmax_nc50)
+meanrad = np.mean(delt_argmax_nc50) * 6.28/50.0
+stdrad  = np.std(delt_argmax_nc50) * 6.28/50.0
+ax.annotate("mean = {:0.3f}       \nstd =  {:1.3f}      ".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+ax.annotate("mean = {:0.3f} [rad] \nstd =  {:1.3f} [rad]".format(meanrad, stdrad), xy=(0.65, 0.65), xycoords='axes fraction', fontsize=12)
 
 plt.tight_layout()
 
@@ -321,13 +412,13 @@ for i in range (len(delt_argmax_nc100)):
 
 filename = "delt_argmax_rhorho_Variant-All_nc_100"
 plt.hist(delt_argmax_nc100, histtype='step', bins=100)
-plt.xlabel(r'$\Delta$  class index')
+plt.xlabel(r'$\Delta_{class}$')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
 mean = np.mean(delt_argmax_nc100) * 6.28/100.0
 std  = np.std(delt_argmax_nc100) * 6.28/100.0
-ax.annotate("Mean = {:0.3f} (rad) \nSTD =  {:1.3f} (rad)".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+ax.annotate("mean = {:0.3f} [rad] \nstd =  {:1.3f} [rad]".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
 
 plt.tight_layout()
 

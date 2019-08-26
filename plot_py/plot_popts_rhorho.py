@@ -29,6 +29,7 @@ chi2 = np.sqrt(np.diag(pcovs[i]))
 
 plt.plot(x_weights, weights[:,i], 'o', label='generated')
 plt.plot(x_fit, weight_fun(x_fit, *popts[i]),label='fit')
+plt.ylim([0.0, 2.0])
 plt.xlabel(r'$\alpha^{CP}$ [rad]')
 plt.ylabel('wt')
 plt.legend()
@@ -64,6 +65,7 @@ filename = "popts_rhorho_event_10"
 
 plt.plot(x_weights, weights[:,i], 'o')
 plt.plot(x_fit, weight_fun(x_fit, *popts[i]))
+plt.ylim([0.0, 2.0])
 plt.xlabel(r'$\alpha^{CP}$ [rad]')
 plt.ylabel('wt')
 plt.legend()
@@ -98,6 +100,7 @@ filename = "popts_rhorho_event_1000"
 
 plt.plot(x_weights, weights[:,i], 'o')
 plt.plot(x_fit, weight_fun(x_fit, *popts[i]))
+plt.ylim([0.0, 2.0])
 plt.xlabel(r'$\alpha^{CP}$ [rad]')
 plt.ylabel('wt')
 plt.legend()
@@ -132,6 +135,7 @@ filename = "popts_rhorho_event_2000"
 
 plt.plot(x_weights, weights[:,i], 'o')
 plt.plot(x_fit, weight_fun(x_fit, *popts[i]))
+plt.ylim([0.0, 2.0])
 plt.xlabel(r'$\alpha^{CP}$ [rad]')
 plt.ylabel('wt')
 plt.legend()

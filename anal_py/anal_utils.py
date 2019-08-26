@@ -4,7 +4,7 @@ import os, errno
 
 from sklearn.metrics import roc_auc_score
 
-from src_py.metrics_calculation import calculate_errors_unsigned, calculate_errors_signed
+from src_py.metrics_utils import calculate_deltas_unsigned, calculate_deltas_signed
 
 
 def weight_fun(x, a, b, c):
@@ -19,7 +19,7 @@ def calc_weights(num_classes, popts):
     return weights
 
 def calc_argmaxs_distances(pred_arg_maxs, calc_arg_maxs, num_class):
-    return calculate_errors_signed(calc_arg_maxs, pred_arg_maxs, num_class)
+    return calculate_deltas_signed(calc_arg_maxs, pred_arg_maxs, num_class)
 
 
 def calculate_metrics_from_file(directory, num_classes):
@@ -35,18 +35,18 @@ def calculate_metrics(calc_w, preds_w, num_classes):
     pred_arg_maxs = np.argmax(preds_w, axis=1)
     calc_arg_maxs = np.argmax(calc_w, axis=1)
 
-    calc_pred_argmaxs_abs_distances = calculate_errors_unsigned(calc_arg_maxs, pred_arg_maxs, num_classes)
-    calc_pred_argmaxs_signed_distances = calculate_errors_signed(calc_arg_maxs, pred_arg_maxs, num_classes)
+    calc_pred_argmaxs_abs_distances = calculate_deltas_unsigned(calc_arg_maxs, pred_arg_maxs, num_classes)
+    calc_pred_argmaxs_signed_distances = calculate_deltas_signed(calc_arg_maxs, pred_arg_maxs, num_classes)
     
     print "abs_distances", calc_pred_argmaxs_abs_distances
     print "signed_distances", calc_pred_argmaxs_signed_distances
     print "mean distance", np.mean(calc_pred_argmaxs_signed_distances), np.mean(calc_pred_argmaxs_signed_distances) * 360./(1.0*num_classes),"[deg]"
 
-    mean_error = np.mean(calc_pred_argmaxs_signed_distances)
+    mean_deltas = np.mean(calc_pred_argmaxs_signed_distances)
     #ERW: scaled to radians and in units of alpha^CP
     k2PI = 6.28
-    mean_error_scaled = np.mean(calc_pred_argmaxs_signed_distances) * k2PI/(1.0*num_classes)
-    print mean_error_scaled
+    mean_deltas_rad = mean_deltas * k2PI/(1.0*num_classes)
+    print mean_deltas_rad
     
     acc0 = (calc_pred_argmaxs_abs_distances <= 0).mean()
     acc1 = (calc_pred_argmaxs_abs_distances <= 1).mean()
@@ -56,7 +56,7 @@ def calculate_metrics(calc_w, preds_w, num_classes):
     l1_delta_w = np.mean(np.abs(calc_w - preds_w))
     l2_delta_w = np.sqrt(np.mean((calc_w - preds_w)**2))
     
-    return np.array([acc0, acc1, acc2, acc3, mean_error, l1_delta_w, l2_delta_w, mean_error_scaled])
+    return np.array([acc0, acc1, acc2, acc3, mean_deltas, l1_delta_w, l2_delta_w, mean_deltas_rad])
 
 def calculate_metrics_regr_popts(directory, num_classes):
 
