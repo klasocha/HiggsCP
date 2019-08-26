@@ -3,7 +3,7 @@ import tensorflow as tf
 from sklearn.metrics import roc_auc_score, accuracy_score
 import sys
 
-from src_py.metrics_utils import calculate_deltas_unsigned
+from src_py.metrics_utils import calculate_deltas_unsigned, calculate_deltas_signed
 
 
 def train(model, dataset, batch_size=128):
@@ -54,25 +54,13 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
     for i in range(epochs):
         sys.stdout.write("\nEPOCH: %d \n" % (i + 1))
         train_loss = train(model, data.train, batch_size)
-
-        if model.tloss=='parametrized_sincos':
-            data.unweightedtest.weight(None)
-            x, p, weights, arg_maxs, popts = predictions(emodel, data.unweightedtest)
-            np.save(pathOUT+'res_vec_pred.npy', p)
-            np.save(pathOUT+'res_vec_labels.npy', arg_maxs)
-            weights_to_test = [1, 3, 5, 7, 9]
-            for w in weights_to_test:
-                data.unweightedtest.weight(w)
-                x, p, weights, arg_maxs, popts = predictions(emodel, data.unweightedtest)
-                np.save(pathOUT+'res_vec_pred'+str(w)+'.npy', p)
-                np.save(pathOUT+'res_vec_labels'+str(w)+'.npy', arg_maxs)
                 
         if model.tloss == 'soft':
-            train_acc, train_mse, train_l1_delta_w, train_l2_delta_w = evaluate(emodel, data.train, args, 100000, filtered=True)
-            valid_acc, valid_mse, valid_l1_delta_w, valid_l2_delta_w = evaluate(emodel, data.valid, args, filtered=True)
-            msg_str_0 = "TRAINING:     LOSS: %.3f \n" % (train_loss)
-            msg_str_1 = "TRAINING:     ACCURACY: %.3f MSE: %.3f L1_delta_w: %.3f  L2_delta_w: %.3f \n" % (train_acc, train_mse, train_l1_delta_w, train_l2_delta_w)
-            msg_str_2 = "VALIDATION:   ACCURACY: %.3f MSE  %.3f L1_delta_w: %.3f, L2_delta_w: %.3f \n" % (valid_acc, valid_mse, valid_l1_delta_w, valid_l2_delta_w)
+            train_acc, train_mean, train_l1_delta_w, train_l2_delta_w = evaluate(emodel, data.train, args, 100000, filtered=True)
+            valid_acc, valid_mean, valid_l1_delta_w, valid_l2_delta_w = evaluate(emodel, data.valid, args, filtered=True)
+            msg_str_0 = "TRAINING:     loss: %.3f \n" % (train_loss)
+            msg_str_1 = "TRAINING:     acc: %.3f mean: %.3f L1_delta_w: %.3f  L2_delta_w: %.3f \n" % (train_acc, train_mean, train_l1_delta_w, train_l2_delta_w)
+            msg_str_2 = "VALIDATION:   acc: %.3f mean  %.3f L1_delta_w: %.3f, L2_delta_w: %.3f \n" % (valid_acc, valid_mean, valid_l1_delta_w, valid_l2_delta_w)
             print msg_str_0
             print msg_str_1
             print msg_str_2
@@ -90,8 +78,8 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             valid_L2_deltas += [valid_l2_delta_w]
 
             if valid_acc == np.max(valid_accs):
-                test_acc, test_mse, test_l1_delta_w, test_l2_delta_w = evaluate(emodel, data.test, args, filtered=True)
-                msg_str_3 = "TESTING:      ACCURACY: %.3f MSE  %.3f L1_delta_w: %.3f, L2_delta_w: %.3f \n" % (test_acc, test_mse, test_l1_delta_w, test_l2_delta_w)
+                test_acc, test_mean, test_l1_delta_w, test_l2_delta_w = evaluate(emodel, data.test, args, filtered=True)
+                msg_str_3 = "TESTING:      acc: %.3f mean  %.3f L1_delta_w: %.3f, L2_delta_w: %.3f \n" % (test_acc, test_mean, test_l1_delta_w, test_l2_delta_w)
                 print msg_str_3
                 tf.logging.info(msg_str_3)
                 
@@ -160,6 +148,7 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
     return train_accs, valid_accs, test_accs
 
 
+
 def predictions(model, dataset, at_most=None, filtered=True):
     sess = tf.get_default_session()
     x = dataset.x[dataset.mask]
@@ -187,7 +176,6 @@ def predictions(model, dataset, at_most=None, filtered=True):
     # leads to wrong estimate of the L1, L2 metrics
 
     return x, p, weights, arg_maxs, popts
-
 
 def softmax_predictions(model, dataset, at_most=None, filtered=True):
     sess = tf.get_default_session()
@@ -277,28 +265,26 @@ def test_roc_auc(preds_w, calc_w):
 def evaluate(model, dataset, args, at_most=None, filtered=True):
     _, pred_w, calc_w, arg_maxs, popts = predictions(model, dataset, at_most, filtered)
 
-    # ERW
-    # control print
-    print "evaluate: calc_w", calc_w
-    print "evaluate: pred_w", pred_w
-    
+    # normalise calc_w to probabilities
     num_classes = calc_w.shape[1]
     calc_w = calc_w / np.tile(np.reshape(np.sum(calc_w, axis=1), (-1, 1)), (1, num_classes))
+
     pred_arg_maxs = np.argmax(pred_w, axis=1)
     calc_arg_maxs = np.argmax(calc_w, axis=1)
     calc_pred_argmaxs_abs_distances = calculate_deltas_unsigned(pred_arg_maxs, calc_arg_maxs, num_classes)
     calc_pred_argmaxs_signed_distances = calculate_deltas_signed(pred_arg_maxs, calc_arg_maxs, num_classes)
 
-    mse = np.mean(calc_pred_argmaxs_signed_distances)
+    mean = np.mean(calc_pred_argmaxs_signed_distances)
 
-    # Accuracy: average that most probable predicted class match most probable class
+    # acc: average that most probable predicted class match most probable class
+    #      within tolerance of delt_max
     delt_max = args.DELT_CLASSES
     acc = (calc_pred_argmaxs_abs_distances <= delt_max).mean()
       
     l1_delt_w = np.mean(np.abs(calc_w - pred_w))
     l2_delt_w = np.sqrt(np.mean((calc_w - pred_w)**2))
     
-    return acc, mse, l1_delt_w, l2_delt_w
+    return acc, mean, l1_delt_w, l2_delt_w
 
 # ERW
 # evaluate_oracle and  evaluate_preds has to be still
@@ -359,11 +345,6 @@ class NeuralNetwork(object):
             self.preds = tf.nn.softmax(sx)
             #self.p = preds[:, 0] / (preds[:, 0] + preds[:, 1])
             self.p = self.preds
-
-            # wa = p_a / p_c
-            # wb = p_b / p_c
-            # wa + wb + 1 = (p_a + p_b + p_c) / p_c
-            # wa / (wa + wb + 1) = p_a / (p_a + p_b + p_c)
             
             # labels: class probabilities, calculated as normalised weighs (probabilities)
             labels = weights / tf.tile(tf.reshape(tf.reduce_sum(weights, axis=1), (-1, 1)), (1,num_classes))
@@ -377,23 +358,6 @@ class NeuralNetwork(object):
             self.sx = sx
             self.p = sx
             self.loss = loss = tf.losses.mean_squared_error(self.popts, sx)
-        elif tloss == "parametrized_sincos":
-            sx = linear(x, "regr", 2)
-
-            if activation == 'tanh':
-                sx = tf.nn.tanh(sx)
-            elif activation == 'clip':
-                sx = tf.clip_by_value(sx, -1., 1.)
-            elif activation == 'mixed_clip':
-                a = tf.clip_by_value(sx[:, 0], 0., 1.)
-                b = tf.clip_by_value(sx[:, 1], -1., 1.)
-                sx = tf.stack((a, b), axis=1)
-            elif activation == 'linear':
-                pass
-
-            self.sx = sx
-            self.p = sx
-            self.loss = loss = tf.losses.huber_loss(tf.stack([self.arg_maxs, self.arg_maxs], axis=1), sx, delta=0.3)
 
         else:
             raise ValueError("tloss unrecognized: %s" % tloss)
