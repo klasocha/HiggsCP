@@ -12,7 +12,7 @@ Prepare data: step 2:
 To convert into .npy format use script
 https://github.com/klasocha/HiggsCP/blob/erichter-CPmix/src_py/prepare_rhorho.py
 which will process files of each CPmix version and create separate .npy files
-with events, with CP weights and with permution sequences. 
+with events, with CP weights and with permutation sequences. 
 
 Prepare data: step 3:
 ---------------------
