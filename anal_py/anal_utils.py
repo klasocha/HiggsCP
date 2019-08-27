@@ -32,39 +32,36 @@ def calculate_metrics(calc_w, preds_w, num_classes):
     pred_arg_maxs = np.argmax(preds_w, axis=1)
     calc_arg_maxs = np.argmax(calc_w, axis=1)
 
-    calc_pred_argmaxs_abs_distances = calculate_deltas_unsigned(calc_arg_maxs, pred_arg_maxs, num_classes)
-    calc_pred_argmaxs_signed_distances = calculate_deltas_signed(calc_arg_maxs, pred_arg_maxs, num_classes)
+    calc_pred_argmaxs_abs_distances = calculate_deltas_unsigned( pred_arg_maxs, calc_arg_maxs, num_classes)
+    calc_pred_argmaxs_signed_distances = calculate_deltas_signed(pred_arg_maxs, calc_arg_maxs, num_classes)
     k2PI = 6.28
     calc_pred_argmaxs_abs_distances_rad = calc_pred_argmaxs_abs_distances * k2PI/(1.0*num_classes)
     
-    print "abs_distances", calc_pred_argmaxs_abs_distances
-    print "abs_distances[rad]", calc_pred_argmaxs_abs_distances_rad
-    print "signed_distances", calc_pred_argmaxs_signed_distances
-    print "mean distance", np.mean(calc_pred_argmaxs_signed_distances), np.mean(calc_pred_argmaxs_signed_distances) * 360./(1.0*num_classes),"[deg]"
-
-    mean_deltas = np.mean(calc_pred_argmaxs_signed_distances)
-    #ERW: scaled to radians and in units of alpha^CP
+    mean_deltas = np.mean(calc_pred_argmaxs_signed_distances, dtype=np.float64)
     mean_deltas_rad = mean_deltas * k2PI/(1.0*num_classes)
-    print mean_deltas_rad
 
     acc0 = (calc_pred_argmaxs_abs_distances <= 0).mean()
     acc1 = (calc_pred_argmaxs_abs_distances <= 1).mean()
     acc2 = (calc_pred_argmaxs_abs_distances <= 2).mean()
     acc3 = (calc_pred_argmaxs_abs_distances <= 3).mean()
 
-    print "fraction in 0, 1, 2, 3 class", acc0, acc1, acc2, acc3
-
     acc0_rad = (calc_pred_argmaxs_abs_distances_rad <= 0.25).mean()
     acc1_rad = (calc_pred_argmaxs_abs_distances_rad <= 0.50).mean()
     acc2_rad = (calc_pred_argmaxs_abs_distances_rad <= 1.75).mean()
-    acc3_rad = (calc_pred_argmaxs_abs_distances_rad <= 1.0).mean()
+    acc3_rad = (calc_pred_argmaxs_abs_distances_rad <= 1.00).mean()
 
-    print "fraction in 0.25, 0.50, 0.75, 1.0 [rad]", acc0_rad, acc1_rad, acc2_rad, acc3_rad
+    l1_delta_w = np.mean(np.abs(calc_w - preds_w), dtype=np.float64)
+    l2_delta_w = np.sqrt(np.mean((calc_w - preds_w)**2), dtype=np.float64)
 
-    l1_delta_w = np.mean(np.abs(calc_w - preds_w))
-    l2_delta_w = np.sqrt(np.mean((calc_w - preds_w)**2))
+    # calc_w, preds_w normalisation to probability
+    calc_w_norm = calc_w / np.sum(calc_w, axis=1)[:, np.newaxis]
+    preds_w_norm = preds_w / np.sum(preds_w, axis=1)[:, np.newaxis]
+ 
+    l1_delta_w_norm = np.mean(np.abs(calc_w_norm - preds_w_norm), dtype=np.float64)
+    l2_delta_w_norm = np.sqrt(np.mean((calc_w_norm - preds_w_norm)**2), dtype=np.float64)
+  
     
-    return np.array([acc0, acc1, acc2, acc3, mean_deltas, l1_delta_w, l2_delta_w, mean_deltas_rad, acc0_rad, acc1_rad, acc2_rad, acc3_rad])
+    return np.array([acc0, acc1, acc2, acc3, mean_deltas, l1_delta_w, l2_delta_w, mean_deltas_rad, acc0_rad, acc1_rad, acc2_rad, acc3_rad,l1_delta_w_norm, l2_delta_w_norm ])
 
 
 def calculate_metrics_regr_popts_from_file(directory, num_classes):

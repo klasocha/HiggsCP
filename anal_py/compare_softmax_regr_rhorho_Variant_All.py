@@ -5,6 +5,7 @@ import os, errno
 import matplotlib.pyplot as plt
 
 from anal_utils import calculate_metrics_from_file
+from anal_utils import calculate_metrics_regr_popts_from_file
 
 filelist_rhorho_Variant_All = []
 
@@ -20,13 +21,29 @@ filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft
 filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_20/monit_npy/')
 
 
-metrics_Variant_All = [calculate_metrics_from_file(filelist_rhorho_Variant_All[1], 4),
+metrics_softmax_Variant_All = [calculate_metrics_from_file(filelist_rhorho_Variant_All[1], 4),
                        calculate_metrics_from_file(filelist_rhorho_Variant_All[2], 6), calculate_metrics_from_file(filelist_rhorho_Variant_All[3], 8),
                        calculate_metrics_from_file(filelist_rhorho_Variant_All[4], 10), calculate_metrics_from_file(filelist_rhorho_Variant_All[5], 12),
                        calculate_metrics_from_file(filelist_rhorho_Variant_All[6], 14), calculate_metrics_from_file(filelist_rhorho_Variant_All[7], 16),
                        calculate_metrics_from_file(filelist_rhorho_Variant_All[8], 18), calculate_metrics_from_file(filelist_rhorho_Variant_All[9], 20)]
            
-metrics_Variant_All = np.stack(metrics_Variant_All)
+metrics_softmax_Variant_All = np.stack(metrics_softmax_Variant_All)
+
+
+filelist_rhorho_regr_Variant_All=[]
+filelist_rhorho_regr_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_regr_popts_Unweighted_False_NO_NUM_CLASSES_0/monit_npy/')
+
+
+metrics_regr_Variant_All = [calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 4),
+                       calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 6), calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 8),
+                       calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 10), calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 12),
+                       calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 14), calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 16),
+                       calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 18), calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 20)]
+
+           
+metrics_regr_Variant_All = np.stack(metrics_regr_Variant_All)
+
+
 
 
 # Now start plotting metrics
@@ -36,16 +53,19 @@ metrics_Variant_All = np.stack(metrics_Variant_All)
 #---------------------------------------------------------------------
 
 pathOUT = "figures/"
-filename = "rhorho_acc_Variant-All_nc"
+filename = "rhorho_acc_compared_Variant-All_nc"
 x = np.arange(2,11)*2
-# example plt.plot(x, metrics_Variant_All[:, 0],'o', label=r'$\sigma$' )
-plt.plot(x, metrics_Variant_All[:, 0],'o', label=r'$|\Delta_{class}| < 1$')
-plt.plot(x, metrics_Variant_All[:, 1],'x', label=r'$|\Delta_{class}| < 2$')
-plt.plot(x, metrics_Variant_All[:, 2],'d', label=r'$|\Delta_{class}| < 3$')
-plt.plot(x, metrics_Variant_All[:, 3],'v', label=r'$|\Delta_{class}| < 4$')
-plt.ylim([0.0, 1.5])
+plt.plot(x, metrics_softmax_Variant_All[:, 0],'o', label=r'$|\Delta_{class}| < 1$, multi-class')
+plt.plot(x, metrics_softmax_Variant_All[:, 1],'x', label=r'$|\Delta_{class}| < 2$, multi-class')
+plt.plot(x, metrics_softmax_Variant_All[:, 2],'d', label=r'$|\Delta_{class}| < 3$, multi-class')
+plt.plot(x, metrics_softmax_Variant_All[:, 3],'v', label=r'$|\Delta_{class}| < 4$, multi-class')
+plt.plot(x, metrics_regr_Variant_All[:, 0],'o', label=r'$|\Delta_{class}| < 1$, regresion')
+plt.plot(x, metrics_regr_Variant_All[:, 1],'x', label=r'$|\Delta_{class}| < 2$, regresion')
+plt.plot(x, metrics_regr_Variant_All[:, 2],'d', label=r'$|\Delta_{class}| < 3$, regresion')
+plt.plot(x, metrics_regr_Variant_All[:, 3],'v', label=r'$|\Delta_{class}| < 4$, regresion')
+plt.legend(loc='upper right')
+plt.ylim([0.0, 2.2])
 plt.xticks(x)
-plt.legend()
 plt.xlabel(r'$N_{class}$')
 plt.ylabel('Probability')
 plt.title('Feautures list: Variant-All')
@@ -70,76 +90,12 @@ else:
 plt.clf()
 #---------------------------------------------------------------------
 
-pathOUT = "figures/"
-filename = "rhorho_meanDelt_class_Variant-All_nc"
-
-plt.plot(x, metrics_Variant_All[:, 4],'o', label=r'$<\Delta_{class}> [idx]$')
-
-plt.ylim([-0.5, 0.5])
-plt.xticks(x)
-plt.legend()
-plt.xlabel('Number of classes')
-plt.ylabel(r'$<\Delta_{class}>$')
-plt.title('Feautures list: Variant-All')
-
-ax = plt.gca()
-plt.tight_layout()
-
-if filename:
-    try:
-        os.makedirs(pathOUT)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    plt.savefig(pathOUT + filename+".eps")
-    print('Saved '+pathOUT + filename+".eps")
-    plt.savefig(pathOUT + filename+".pdf")
-    print('Saved '+pathOUT + filename+".pdf")
-else:
-    plt.show()
-
-#---------------------------------------------------------------------
-plt.clf()
-#---------------------------------------------------------------------
 
 pathOUT = "figures/"
-filename = "rhorho_meanDelt_phiCPmix_Variant-All_nc"
+filename = "rhorho_L1delt_compared_Variant_All_nc"
 
-plt.plot(x, metrics_Variant_All[:, 7],'o', label=r'$<\Delta \alpha^{CP}> [rad]$ ')
-
-#plt.ylim([0.0, 0.5])
-plt.xticks(x)
-plt.legend()
-#plt.ylim([-0.5, 0.5])
-plt.ylim([-0.3, 0.3])
-plt.xlabel(r'$N_{class}$')
-plt.ylabel(r'$<\Delta \alpha^{CP}>$')
-plt.title('Feautures list: Variant-All')
-
-ax = plt.gca()
-plt.tight_layout()
-
-if filename:
-    try:
-        os.makedirs(pathOUT)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    plt.savefig(pathOUT + filename+".eps")
-    print('Saved '+pathOUT + filename+".eps")
-    plt.savefig(pathOUT + filename+".pdf")
-    print('Saved '+pathOUT + filename+".pdf")
-else:
-    plt.show()
-
-#---------------------------------------------------------------------
-plt.clf()
-#---------------------------------------------------------------------
-
-pathOUT = "figures/"
-filename = "rhorho_L1delt_w_Variant_All_nc"
-
-plt.plot(x, metrics_Variant_All[:, 12],'o', label=r'$l_1$ with $wt^{norm}$')
+plt.plot(x, metrics_softmax_Variant_All[:, 5],'o', label=r'$l_1$ with $wt^{norm}$, multi-class')
+plt.plot(x, metrics_regr_Variant_All[:, 12],'d', label=r'$l_1$ with $wt^{norm}$, regression')
 
 plt.ylim([0.0, 0.1])
 plt.xticks(x)
@@ -168,10 +124,13 @@ else:
 plt.clf()
 #---------------------------------------------------------------------
 
-pathOUT = "figures/"
-filename = "rhorho_L2delt_w_Variant_All_nc"
 
-plt.plot(x, metrics_Variant_All[:, 13],'o', label=r'$l_2$ with $wt^{norm}$')
+
+pathOUT = "figures/"
+filename = "rhorho_L2delt_compared_Variant_All_nc"
+
+plt.plot(x, metrics_softmax_Variant_All[:, 6],'o', label=r'$l_2$ with $wt^{norm}$, multi-class')
+plt.plot(x, metrics_regr_Variant_All[:, 13],'d', label=r'$l_2$ with $wt^{norm}$, regression')
 
 plt.ylim([0.0, 0.1])
 plt.xticks(x)
@@ -195,7 +154,8 @@ if filename:
     print('Saved '+pathOUT + filename+".pdf")
 else:
     plt.show()
+    
 #---------------------------------------------------------------------
 plt.clf()
 #---------------------------------------------------------------------
- 
+

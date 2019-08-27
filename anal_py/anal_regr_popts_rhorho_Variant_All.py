@@ -10,7 +10,7 @@ filelist_rhorho_Variant_All=[]
 filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_regr_popts_Unweighted_False_NO_NUM_CLASSES_0/monit_npy/')
 
 
-metrics_Variant_All = [calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 2), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 4),
+metrics_Variant_All = [calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 4),
                        calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 6), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 8),
                        calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 10), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 12),
                        calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 14), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 16),
@@ -28,7 +28,7 @@ metrics_Variant_All = np.stack(metrics_Variant_All)
 
 pathOUT = "figures/"
 filename = "rhorho_acc_Variant-All_regr"
-x = np.arange(1,11)*2
+x = np.arange(2,11)*2
 # example plt.plot(x, metrics_Variant_All[:, 0],'o', label=r'$\sigma$' )
 plt.plot(x, metrics_Variant_All[:, 0],'o', label=r'$|\Delta_{class}| < 1$')
 plt.plot(x, metrics_Variant_All[:, 1],'x', label=r'$|\Delta_{class}| < 2$')
@@ -165,7 +165,9 @@ plt.clf()
 pathOUT = "figures/"
 filename = "rhorho_L1delt_w_Variant_All_regr"
 
-plt.plot(x, metrics_Variant_All[:, 5],'o', label=r'$l_1$')
+plt.plot(x, metrics_Variant_All[:, 12],'o', label=r'$l_1$ with $wt^{norm}$')
+plt.plot(x, metrics_Variant_All[:, 5],'d', label=r'$l_1$ with $wt$')
+
 
 plt.ylim([0.0, 0.5])
 plt.xticks(x)
@@ -194,10 +196,12 @@ else:
 plt.clf()
 #---------------------------------------------------------------------
 
+
 pathOUT = "figures/"
 filename = "rhorho_L2delt_w_Variant_All_regr"
 
-plt.plot(x, metrics_Variant_All[:, 6],'o', label=r'$l_2$')
+plt.plot(x, metrics_Variant_All[:, 13],'o', label=r'$l_2$ with $wt^{norm}$')
+plt.plot(x, metrics_Variant_All[:, 6],'d', label=r'$l_2$ with $wt$')
 
 plt.ylim([0.0, 0.5])
 plt.xticks(x)
