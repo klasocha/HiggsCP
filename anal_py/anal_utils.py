@@ -27,9 +27,6 @@ def calculate_metrics_from_file(directory, num_classes):
     preds_w = np.load(os.path.join(directory, 'softmax_preds_w.npy'))
     return calculate_metrics(calc_w, preds_w, num_classes)
 
-#def calculate_metrics(directory, num_classes):
-#    calc_w  = np.load(os.path.join(directory, 'softmax_calc_w.npy'))
-#    preds_w = np.load(os.path.join(directory, 'softmax_preds_w.npy'))    
 
 def calculate_metrics(calc_w, preds_w, num_classes):
     pred_arg_maxs = np.argmax(preds_w, axis=1)
@@ -37,67 +34,52 @@ def calculate_metrics(calc_w, preds_w, num_classes):
 
     calc_pred_argmaxs_abs_distances = calculate_deltas_unsigned(calc_arg_maxs, pred_arg_maxs, num_classes)
     calc_pred_argmaxs_signed_distances = calculate_deltas_signed(calc_arg_maxs, pred_arg_maxs, num_classes)
+    k2PI = 6.28
+    calc_pred_argmaxs_abs_distances_rad = calc_pred_argmaxs_abs_distances * k2PI/(1.0*num_classes)
     
     print "abs_distances", calc_pred_argmaxs_abs_distances
+    print "abs_distances[rad]", calc_pred_argmaxs_abs_distances_rad
     print "signed_distances", calc_pred_argmaxs_signed_distances
     print "mean distance", np.mean(calc_pred_argmaxs_signed_distances), np.mean(calc_pred_argmaxs_signed_distances) * 360./(1.0*num_classes),"[deg]"
 
     mean_deltas = np.mean(calc_pred_argmaxs_signed_distances)
     #ERW: scaled to radians and in units of alpha^CP
-    k2PI = 6.28
     mean_deltas_rad = mean_deltas * k2PI/(1.0*num_classes)
     print mean_deltas_rad
-    
+
     acc0 = (calc_pred_argmaxs_abs_distances <= 0).mean()
     acc1 = (calc_pred_argmaxs_abs_distances <= 1).mean()
     acc2 = (calc_pred_argmaxs_abs_distances <= 2).mean()
     acc3 = (calc_pred_argmaxs_abs_distances <= 3).mean()
 
+    print "fraction in 0, 1, 2, 3 class", acc0, acc1, acc2, acc3
+
+    acc0_rad = (calc_pred_argmaxs_abs_distances_rad <= 0.25).mean()
+    acc1_rad = (calc_pred_argmaxs_abs_distances_rad <= 0.50).mean()
+    acc2_rad = (calc_pred_argmaxs_abs_distances_rad <= 1.75).mean()
+    acc3_rad = (calc_pred_argmaxs_abs_distances_rad <= 1.0).mean()
+
+    print "fraction in 0.25, 0.50, 0.75, 1.0 [rad]", acc0_rad, acc1_rad, acc2_rad, acc3_rad
+
     l1_delta_w = np.mean(np.abs(calc_w - preds_w))
     l2_delta_w = np.sqrt(np.mean((calc_w - preds_w)**2))
     
-    return np.array([acc0, acc1, acc2, acc3, mean_deltas, l1_delta_w, l2_delta_w, mean_deltas_rad])
+    return np.array([acc0, acc1, acc2, acc3, mean_deltas, l1_delta_w, l2_delta_w, mean_deltas_rad, acc0_rad, acc1_rad, acc2_rad, acc3_rad])
 
-def calculate_metrics_regr_popts(directory, num_classes):
 
+def calculate_metrics_regr_popts_from_file(directory, num_classes):
     calc_popts = np.load(os.path.join(directory,'test_regr_calc_popts.npy'))
     pred_popts = np.load(os.path.join(directory,'test_regr_preds_popts.npy'))
+
+    return calculate_metrics_regr_popts(calc_popts, pred_popts, num_classes)
+
+
+def calculate_metrics_regr_popts(calc_popts, pred_popts, num_classes):
     calc_w  = calc_weights(num_classes, calc_popts)
     preds_w = calc_weights(num_classes, pred_popts)
 
-    pred_arg_maxs = np.argmax(preds_w, axis=1)
-    calc_arg_maxs = np.argmax(calc_w, axis=1)
-    
-    # ERW including here redefinition of  calc_pred_argmaxs_distances by Michal
-    calc_pred_argmaxs_distances = np.min(
-         np.stack(
-            [np.abs(pred_arg_maxs-calc_arg_maxs), ((num_classes - 1) - np.abs(pred_arg_maxs-calc_arg_maxs))]
-         ), axis=0)
+    return calculate_metrics(calc_w, preds_w, num_classes)
 
-    # new definition from Michal
-    # something wrong with this definition, oscilating values
-    # calc_pred_argmaxs_distances = calc_argmaxs_distances(pred_arg_maxs, calc_arg_maxs, num_classes)
-    
-    acc0 = (calc_pred_argmaxs_distances <= 0).mean()
-    acc1 = (calc_pred_argmaxs_distances <= 1).mean()
-    acc2 = (calc_pred_argmaxs_distances <= 2).mean()
-    acc3 = (calc_pred_argmaxs_distances <= 3).mean()
-
-    mean_error = np.mean(calc_pred_argmaxs_distances)
-    #ERW: scaled to radians and in units of alpha^CP
-    k2PI = 6.28
-    mean_error_scaled = np.mean(calc_pred_argmaxs_distances/(1.0*num_classes) * k2PI/2. )
-
-    # ERW
-    # calc_w are not normalised to unity, while preds_w are
-    # clarify this point, here l1_delta_w,  l1_delta_w expressed in units of probabilities
-    for i in range (len(calc_w)):
-      calc_w[i]  = calc_w[i]/sum(calc_w[i])
-      preds_w[i] = preds_w[i]/sum(preds_w[i])
-    l1_delta_w = np.mean(np.abs(calc_w - preds_w))
-    l2_delta_w = np.sqrt(np.mean((calc_w - preds_w)**2))
-    
-    return np.array([acc0, acc1, acc2, acc3, mean_error, l1_delta_w, l2_delta_w, mean_error_scaled])
 
 def get_filename_for_class(pathIN, class_num, subset=None):
     d = '../monit_npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_{class_num}'
