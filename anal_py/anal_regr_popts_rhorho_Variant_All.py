@@ -14,10 +14,20 @@ metrics_Variant_All = [calculate_metrics_regr_popts_from_file(filelist_rhorho_Va
                        calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 6), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 8),
                        calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 10), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 12),
                        calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 14), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 16),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 18), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 20)]
+                       calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 18), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 20),
+                       calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 22), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 24),
+                       calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 26), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 28),
+                       calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 30), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 32),
+                       calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 34), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 36),
+                       calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 38), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 40),
+                       calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 42), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 44),
+                       calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 46), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 48),
+                       calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 50)]
 
            
 metrics_Variant_All = np.stack(metrics_Variant_All)
+
+x = np.arange(2,26)*2
 
 
 # Now start plotting metrics
@@ -28,7 +38,6 @@ metrics_Variant_All = np.stack(metrics_Variant_All)
 
 pathOUT = "figures/"
 filename = "rhorho_acc_Variant-All_regr"
-x = np.arange(2,11)*2
 # example plt.plot(x, metrics_Variant_All[:, 0],'o', label=r'$\sigma$' )
 plt.plot(x, metrics_Variant_All[:, 0],'o', label=r'$|\Delta_{class}| < 1$')
 plt.plot(x, metrics_Variant_All[:, 1],'x', label=r'$|\Delta_{class}| < 2$')
@@ -129,7 +138,7 @@ plt.clf()
 #---------------------------------------------------------------------
 
 pathOUT = "figures/"
-filename = "rhorho_meanDelt_phiCPmix_Variant-All_regr"
+filename = "rhorho_meanDelt_alphaCP_Variant-All_regr"
 
 plt.plot(x, metrics_Variant_All[:, 7],'o', label=r'$<\Delta \alpha^{CP}>$ ')
 

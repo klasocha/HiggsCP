@@ -6,9 +6,9 @@ import matplotlib.pyplot as plt
 
 from anal_utils import test_roc_auc
 
-file_Variant_1 = 'npy/nn_rhorho_Variant-1.1_Unweighted_False_NO_NUM_CLASSES_20'
-file_Variant_4 = 'npy/nn_rhorho_Variant-4.1_Unweighted_False_NO_NUM_CLASSES_20'
-file_Variant_All = 'npy/nn_rhorho_Variant-All_Unweighted_False_NO_NUM_CLASSES_20'
+file_Variant_1 = '../laptop_results/nn_rhorho_Variant-1.1_soft_Unweighted_False_NO_NUM_CLASSES_20/monit_npy/'
+file_Variant_4 = '../laptop_results/nn_rhorho_Variant-4.1_soft_Unweighted_False_NO_NUM_CLASSES_20/monit_npy/'
+file_Variant_All = '../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_20/monit_npy/'
 
 nc = 20
 oracle_roc_auc_Variant_All, roc_auc_Variant_All = test_roc_auc(file_Variant_All, nc)
@@ -20,18 +20,19 @@ oracle_roc_auc_Variant_4, roc_auc_Variant_4 = test_roc_auc(file_Variant_4, nc)
 pathOUT  = "figures/"
 filename = "rhorho_roc_auc_w_nc_20"
 
-x = np.arange(1,21)
+k2PI=6.28
+x = np.linspace(0, k2PI, 20)
 plt.plot(x, oracle_roc_auc_Variant_All,'o', label='Oracle')
 plt.plot(x, roc_auc_Variant_All,'x', label='Variant-All')
 plt.plot(x, roc_auc_Variant_4,'d', label='Variant-4.1')
 plt.plot(x, roc_auc_Variant_1,'v', label='Variant-1.1')
 
-plt.ylim([0.5, 0.8])
-plt.xticks(x)
+plt.ylim([0.5, 0.85])
+#plt.xticks(x)
 plt.legend()
-plt.xlabel('Class index')
-plt.ylabel('AUC vs class index = 1')
-plt.title(r'$\rho^\pm-\rho^\mp$ channel; class index =1, 20 (scalar), =10 (pseudoscalar)')
+plt.xlabel(r'$\alpha^{CP}$ [rad]')
+plt.ylabel(r'AUC vs $\alpha^{CP}$ = 0.0')
+plt.title(r'$\rho^\pm-\rho^\mp$ channel')
 
 ax = plt.gca()
 plt.tight_layout()

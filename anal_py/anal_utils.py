@@ -47,7 +47,7 @@ def calculate_metrics(calc_w, preds_w, num_classes):
 
     acc0_rad = (calc_pred_argmaxs_abs_distances_rad <= 0.25).mean()
     acc1_rad = (calc_pred_argmaxs_abs_distances_rad <= 0.50).mean()
-    acc2_rad = (calc_pred_argmaxs_abs_distances_rad <= 1.75).mean()
+    acc2_rad = (calc_pred_argmaxs_abs_distances_rad <= 0.75).mean()
     acc3_rad = (calc_pred_argmaxs_abs_distances_rad <= 1.00).mean()
 
     l1_delta_w = np.mean(np.abs(calc_w - preds_w), dtype=np.float64)
