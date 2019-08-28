@@ -8,7 +8,7 @@ import tensorflow as tf
 from scipy import optimize
 
 
-pathIN  = "../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_100/monit_npy/"
+pathIN  = "../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_20/monit_npy/"
 pathOUT = "figures/"
 
 train_losses    = np.load(pathIN+'train_losses.npy')
@@ -27,11 +27,11 @@ valid_l2_deltas = np.load(pathIN+'valid_L2_deltas.npy')
 
 #----------------------------------------------------------------------------------
 
-filename = "dnn_train_loss_rhorho_Variant-All_nc_100"
+filename = "dnn_train_loss_rhorho_Variant-All_nc_20"
 x = np.arange(1,len(train_accs)+1)
-plt.plot(x,train_losses, 'o', label='train_loss')
+plt.plot(x,train_losses, 'o', label='training')
 plt.legend()
-#plt.ylim([0.0, 0.1])
+plt.ylim([2.9, 3.0])
 plt.xlabel('Number of epochs')
 plt.xticks(x)
 plt.ylabel('Loss')
@@ -54,15 +54,15 @@ plt.clf()
 
 #----------------------------------------------------------------------------------
 
-filename = "dnn_train_accs_rhorho_Variant-All_nc_100"
+filename = "dnn_train_accs_rhorho_Variant-All_nc_20"
 x = np.arange(1,len(train_accs)+1)
-plt.plot(x,train_accs, 'o', label='train_accs')
-plt.plot(x,valid_accs, 'd', label='valid_accs')
+plt.plot(x,train_accs, 'o', label='training')
+plt.plot(x,valid_accs, 'd', label='validation')
 plt.legend()
-plt.ylim([0.0, 0.1])
+plt.ylim([0.0, 0.4])
 plt.xlabel('Number of epochs')
 plt.xticks(x)
-plt.ylabel(r'Fraction in $\Delta_c$ = 0')
+plt.ylabel(r'Probability $|\Delta_{class}|$ = 0')
 plt.title('Features list: Variant-All')
     
 if filename:
@@ -82,15 +82,15 @@ plt.clf()
 
 #----------------------------------------------------------------------------------
 
-filename = "dnn_train_l1_deltas_rhorho_Variant-All_nc_100"
+filename = "dnn_train_l1_deltas_rhorho_Variant-All_nc_20"
 x = np.arange(1,len(train_l1_deltas)+1)
-plt.plot(x,train_l1_deltas, 'o', label='train_l1_deltas')
-plt.plot(x,valid_l1_deltas, 'd', label='valid_l1_deltas')
+plt.plot(x,train_l1_deltas, 'o', label='training')
+plt.plot(x,valid_l1_deltas, 'd', label='validation')
 plt.legend()
-plt.ylim([0.0, 0.005])
+plt.ylim([0.010, 0.018])
 plt.xlabel('Number of epochs')
 plt.xticks(x)
-plt.ylabel('L1 <w>')
+plt.ylabel(r'$l_1$')
 plt.title('Features list: Variant-All')
     
 if filename:
@@ -109,15 +109,15 @@ plt.clf()
 
 #----------------------------------------------------------------------------------
 
-filename = "dnn_train_l2_deltas_rhorho_Variant-All_nc_100"
+filename = "dnn_train_l2_deltas_rhorho_Variant-All_nc_20"
 x = np.arange(1,len(train_l2_deltas)+1)
-plt.plot(x,train_l2_deltas, 'o', label='train_l2_deltas')
-plt.plot(x,valid_l2_deltas, 'd', label='valid_l2_deltas')
+plt.plot(x,train_l2_deltas, 'o', label='training')
+plt.plot(x,valid_l2_deltas, 'd', label='validation')
 plt.legend()
-plt.ylim([0.0, 0.005])
+plt.ylim([0.010, 0.025])
 plt.xlabel('Number of epochs')
 plt.xticks(x)
-plt.ylabel('L2 <w>')
+plt.ylabel(r'$l_2$')
 plt.title('Features list: Variant-All')
     
 if filename:
@@ -136,12 +136,12 @@ plt.clf()
 
 #----------------------------------------------------------------------------------
 
-filename = "dnn_test_l2_deltas_rhorho_Variant-All_nc_100"
-plt.plot(test_l2_deltas, 'o', label='test_l2_deltas')
+filename = "dnn_test_l2_deltas_rhorho_Variant-All_nc_20"
+plt.plot(test_l2_deltas, 'o', label='testing')
 plt.legend()
-plt.ylim([0.0, 0.005])
+#plt.ylim([0.0, 0.005])
 plt.xlabel('Count of updates')
-plt.ylabel('L2 <w>')
+plt.ylabel(r'$l_2$')
 plt.title('Features list: Variant-All')
     
 if filename:
