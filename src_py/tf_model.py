@@ -104,6 +104,8 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
 
 
         if model.tloss == 'regr_popts':
+
+            train_losses += [train_loss]
             msg_str = "TRAINING:     LOSS: %.3f \n" % (train_loss)
             print msg_str
 
@@ -144,7 +146,13 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
         np.save(pathOUT+'test_L2_deltas.npy', test_L2_deltas )
         print "test_L2_deltas", test_L2_deltas
 
-    
+                 
+    if model.tloss == 'regr_popts':
+
+        # storing history of training            
+        np.save(pathOUT+'train_losses.npy', train_losses)
+        print "train_losses", train_losses
+   
     return train_accs, valid_accs, test_accs
 
 
