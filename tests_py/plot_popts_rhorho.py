@@ -28,8 +28,9 @@ filename = "popts_rhorho_event_1"
 chi2 = np.sqrt(np.diag(pcovs[i]))
 
 plt.plot(x_weights, weights[:,i], 'o', label='generated')
-plt.plot(x_fit, weight_fun(x_fit, *popts[i]),label='fit')
-plt.xlabel(r'$\alpha^{CP}$ (radians)')
+plt.plot(x_fit, weight_fun(x_fit, *popts[i]),label='function')
+plt.ylim([0.0, 2.0])
+plt.xlabel(r'$\alpha^{CP}$ [rad]')
 plt.ylabel('wt')
 plt.legend()
 
@@ -56,6 +57,40 @@ plt.clf()
 
 
 #---------------------------------
+#---------------------------------
+
+i = 2000 
+filename = "popts_rhorho_event_2000"
+plt.plot(x_weights, weights[:,i], 'o', label='generated')
+plt.plot(x_fit, weight_fun(x_fit, *popts[i]),label='function')
+plt.ylim([0.0, 2.0])
+plt.xlabel(r'$\alpha^{CP}$ [rad]')
+plt.ylabel('wt')
+plt.legend()
+
+ax = plt.gca()
+#ERW
+# what is wrong with line below?
+#ax.annotate("chi2/Ndof = {%0.3f}\n".format(chi2), xy=(0.7, 0.85), xycoords='axes fraction', fontsize=12)
+plt.tight_layout()
+
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+else:
+    plt.show()
+
+print('error: ' + str(np.sqrt(np.diag(pcovs[i]))))
+
+plt.clf()
+
+#---------------------------------
+#---------------------------------
 
 i = 10 
 plt.plot(x_weights, weights[:,i], 'o')
@@ -68,16 +103,6 @@ plt.show()
 plt.clf()
 
 i = 1000 
-plt.plot(x_weights, weights[:,i], 'o')
-plt.plot(x_fit, weight_fun(x_fit, *popts[i]))
-plt.xlabel(r'$\alpha^{CP}$ (rad)')
-plt.ylabel('w')
-print('error: ' + str(np.sqrt(np.diag(pcovs[i]))))
-
-plt.show()
-plt.clf()
-
-i = 2000 
 plt.plot(x_weights, weights[:,i], 'o')
 plt.plot(x_fit, weight_fun(x_fit, *popts[i]))
 plt.xlabel(r'$\alpha^{CP}$ (rad)')
