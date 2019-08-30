@@ -5,6 +5,8 @@ import sys
 
 from src_py.metrics_utils import calculate_deltas_unsigned, calculate_deltas_signed
 
+# Issue with regr_popts, not learning well after modifications of last weeks, last
+# good production on June 20-th"
 
 def train(model, dataset, batch_size=128):
     sess = tf.get_default_session()
