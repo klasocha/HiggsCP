@@ -34,9 +34,9 @@ def calculate_metrics(calc_w, preds_w, num_classes):
     pred_arg_maxs = np.argmax(preds_w, axis=1)
     calc_arg_maxs = np.argmax(calc_w, axis=1)
 
+    k2PI = 2 * np.pi
     calc_pred_argmaxs_abs_distances = calculate_deltas_unsigned( pred_arg_maxs, calc_arg_maxs, num_classes)
     calc_pred_argmaxs_signed_distances = calculate_deltas_signed(pred_arg_maxs, calc_arg_maxs, num_classes)
-    k2PI = 6.28
     calc_pred_argmaxs_abs_distances_rad = calc_pred_argmaxs_abs_distances * k2PI/(1.0*num_classes)
     
     mean_deltas = np.mean(calc_pred_argmaxs_signed_distances, dtype=np.float64)

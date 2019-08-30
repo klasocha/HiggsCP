@@ -15,10 +15,10 @@ from src_py.metrics_utils import  calculate_deltas_signed
 pathIN  = "../laptop_results/nn_rhorho_Variant-All_regr_popts_Unweighted_False_NO_NUM_CLASSES_0/monit_npy/"
 pathOUT = "figures/"
 
-calc_popts  = np.load(pathIN+'valid_regr_calc_popts.npy')
-preds_popts = np.load(pathIN+'valid_regr_preds_popts.npy')
+calc_popts  = np.load(pathIN+'test_regr_calc_popts.npy')
+preds_popts = np.load(pathIN+'test_regr_preds_popts.npy')
 
-k2PI = 6.28
+k2PI = 2 * np.pi
 #----------------------------------------------------------------------------------
 # ERW
 # should normalise to same area which is not the case for now
@@ -116,8 +116,9 @@ plt.clf()
 delt_popts= calc_popts - preds_popts
 
 print calc_popts[:,0]
+print preds_popts[:,0]
 print delt_popts[:,0]
-print delt_popts[:,0]/calc_popts[:,0]
+#----------------------------------------------------------------------------------
 
 filename = "delt_popts_A_rhorho_Variant-All"
 plt.hist(delt_popts[:,0], histtype='step', bins=50,  color = 'black')
@@ -146,13 +147,6 @@ else:
     plt.show()
 
 plt.clf()
-#----------------------------------------------------------------------------------
-
-delt_popts= calc_popts - preds_popts
-
-print calc_popts[:,0]
-print delt_popts[:,0]
-print delt_popts[:,0]/calc_popts[:,0]
 #----------------------------------------------------------------------------------
 
 filename = "popts_A_rhorho_Variant-All"
@@ -189,8 +183,8 @@ else:
 plt.clf()
 #----------------------------------------------------------------------------------
 print calc_popts[:,1]
+print preds_popts[:,1]
 print delt_popts[:,1]
-print delt_popts[:,1]/calc_popts[:,1]
 #----------------------------------------------------------------------------------
 
 filename = "popts_B_rhorho_Variant-All"
@@ -256,8 +250,8 @@ else:
 plt.clf()
 #----------------------------------------------------------------------------------
 print calc_popts[:,2]
+print preds_popts[:,2]
 print delt_popts[:,2]
-print delt_popts[:,2]/calc_popts[:,2]
 #----------------------------------------------------------------------------------
 
 filename = "popts_C_rhorho_Variant-All"
@@ -322,19 +316,19 @@ else:
 plt.clf()
 #----------------------------------------------------------------------------------
 
-calc_w_nc4  =  calc_weights(4, calc_popts)
-preds_w_nc4 =  calc_weights(4, preds_popts)
-delt_argmax_nc4 =  calculate_deltas_signed(np.argmax(preds_w_nc4[:], axis=1), np.argmax(calc_w_nc4[:], axis=1), 4)      
-nc4=4.0
+calc_w_nc5  =  calc_weights(5, calc_popts)
+preds_w_nc5 =  calc_weights(5, preds_popts)
+delt_argmax_nc5 =  calculate_deltas_signed(np.argmax(preds_w_nc5[:], axis=1), np.argmax(calc_w_nc5[:], axis=1), 5)      
+nc5=5.0
 
-filename = "delt_argmax_rhorho_Variant-All_nc_4_regr"
-plt.hist(delt_argmax_nc4, histtype='step', bins=100)
+filename = "delt_argmax_rhorho_Variant-All_nc_5_regr"
+plt.hist(delt_argmax_nc5, histtype='step', bins=5)
 plt.xlabel(r'$\Delta_{class}$')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
-mean = np.mean(delt_argmax_nc4) * k2PI/nc4
-std  = np.std(delt_argmax_nc4) * k2PI/nc4
+mean = np.mean(delt_argmax_nc5) * k2PI/nc5
+std  = np.std(delt_argmax_nc5) * k2PI/nc5
 ax.annotate("mean = {:0.3f} [rad] \nstd =  {:1.3f} [rad]".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
 
 plt.tight_layout()
@@ -355,21 +349,21 @@ else:
 plt.clf()
 #----------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------
-calc_w_nc10  =  calc_weights(10, calc_popts)
-preds_w_nc10 =  calc_weights(10, preds_popts)
-delt_argmax_nc10 =  calculate_deltas_signed(np.argmax(preds_w_nc10[:], axis=1), np.argmax(calc_w_nc10[:], axis=1), 10)      
+calc_w_nc11  =  calc_weights(11, calc_popts)
+preds_w_nc11 =  calc_weights(11, preds_popts)
+delt_argmax_nc11 =  calculate_deltas_signed(np.argmax(preds_w_nc11[:], axis=1), np.argmax(calc_w_nc11[:], axis=1), 11)      
 
-filename = "delt_argmax_rhorho_Variant-All_nc_10_regr"
-plt.hist(delt_argmax_nc10, histtype='step', bins=10)
+filename = "delt_argmax_rhorho_Variant-All_nc_11_regr"
+plt.hist(delt_argmax_nc11, histtype='step', bins=11)
 plt.ylabel('Entries')
 plt.xlabel(r'$\Delta_{class}$')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
-mean = np.mean(delt_argmax_nc10)
-std  = np.std(delt_argmax_nc10)
-meanrad = np.mean(delt_argmax_nc10) * 6.28/10.0
-stdrad  = np.std(delt_argmax_nc10) * 6.28/10.0
+mean = np.mean(delt_argmax_nc11)
+std  = np.std(delt_argmax_nc11)
+meanrad = np.mean(delt_argmax_nc11) * k2PI/11.0
+stdrad  = np.std(delt_argmax_nc11) * k2PI/11.0
 ax.annotate("mean = {:0.3f} [idx] \nstd =  {:1.3f} [idx]".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
 ax.annotate("mean = {:0.3f} [rad] \nstd =  {:1.3f} [rad]".format(meanrad, stdrad), xy=(0.65, 0.65), xycoords='axes fraction', fontsize=12)
 
@@ -391,18 +385,18 @@ else:
 plt.clf()
 
 #----------------------------------------------------------------------------------
-calc_w_nc20  =  calc_weights(20, calc_popts)
-preds_w_nc20 =  calc_weights(20, preds_popts)
-delt_argmax_nc20 =  calculate_deltas_signed(np.argmax(preds_w_nc20[:], axis=1), np.argmax(calc_w_nc20[:], axis=1), 20)      
+calc_w_nc21  =  calc_weights(21, calc_popts)
+preds_w_nc21 =  calc_weights(21, preds_popts)
+delt_argmax_nc21 =  calculate_deltas_signed(np.argmax(preds_w_nc21[:], axis=1), np.argmax(calc_w_nc21[:], axis=1), 21)      
 
-filename = "delt_argmax_rhorho_Variant-All_nc_20_regr"
-plt.hist(delt_argmax_nc20, histtype='step', bins=100)
+filename = "delt_argmax_rhorho_Variant-All_nc_21_regr"
+plt.hist(delt_argmax_nc21, histtype='step', bins=21)
 plt.xlabel(r'$\Delta_{class}$')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
-mean = np.mean(delt_argmax_nc20) * 6.28/20.0
-std  = np.std(delt_argmax_nc20) * 6.28/20.0
+mean = np.mean(delt_argmax_nc21) * k2PI/21.0
+std  = np.std(delt_argmax_nc21) * k2PI/21.0
 ax.annotate("mean = {:0.3f} [rad] \nstd =  {:1.3f} [rad]".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
 
 plt.tight_layout()
@@ -429,7 +423,7 @@ preds_w_nc25 =  calc_weights(25, preds_popts)
 delt_argmax_nc25 =  calculate_deltas_signed(np.argmax(preds_w_nc25[:], axis=1), np.argmax(calc_w_nc25[:], axis=1), 25)      
 
 filename = "delt_argmax_rhorho_Variant-All_nc_25_regr"
-plt.hist(delt_argmax_nc25, histtype='step', bins=50)
+plt.hist(delt_argmax_nc25, histtype='step', bins=25)
 plt.xlabel(r'$\Delta_{class}$')
 plt.title('Features list: Variant-All')
 
@@ -470,8 +464,44 @@ plt.title('Features list: Variant-All')
 ax = plt.gca()
 mean = np.mean(delt_argmax_nc50)
 std  = np.std(delt_argmax_nc50)
-meanrad = np.mean(delt_argmax_nc50) * 6.28/50.0
-stdrad  = np.std(delt_argmax_nc50) * 6.28/50.0
+meanrad = np.mean(delt_argmax_nc50) * k2PI/50.0
+stdrad  = np.std(delt_argmax_nc50) * k2PI/50.0
+ax.annotate("mean = {:0.3f} [idx] \nstd =  {:1.3f} [idx]".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+ax.annotate("mean = {:0.3f} [rad] \nstd =  {:1.3f} [rad]".format(meanrad, stdrad), xy=(0.65, 0.65), xycoords='axes fraction', fontsize=12)
+
+plt.tight_layout()
+
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+
+plt.clf()
+#----------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------
+calc_w_nc51  =  calc_weights(51, calc_popts)
+preds_w_nc51 =  calc_weights(51, preds_popts)
+delt_argmax_nc51 =  calculate_deltas_signed(np.argmax(preds_w_nc51[:], axis=1), np.argmax(calc_w_nc51[:], axis=1), 51)      
+
+filename = "delt_argmax_rhorho_Variant-All_nc_51_regr"
+plt.hist(delt_argmax_nc51, histtype='step', bins=51)
+plt.ylabel('Entries')
+plt.xlabel(r'$\Delta_{class}$')
+plt.title('Features list: Variant-All')
+
+ax = plt.gca()
+mean = np.mean(delt_argmax_nc51)
+std  = np.std(delt_argmax_nc51)
+meanrad = np.mean(delt_argmax_nc51) * k2PI/51.0
+stdrad  = np.std(delt_argmax_nc51) * k2PI/51.0
 ax.annotate("mean = {:0.3f} [idx] \nstd =  {:1.3f} [idx]".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
 ax.annotate("mean = {:0.3f} [rad] \nstd =  {:1.3f} [rad]".format(meanrad, stdrad), xy=(0.65, 0.65), xycoords='axes fraction', fontsize=12)
 
@@ -494,18 +524,18 @@ plt.clf()
 
 #----------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------
-calc_w_nc100  =  calc_weights(100, calc_popts)
-preds_w_nc100 =  calc_weights(100, preds_popts)
-delt_argmax_nc100 =  calculate_deltas_signed(np.argmax(preds_w_nc100[:], axis=1), np.argmax(calc_w_nc100[:], axis=1), 100)      
+calc_w_nc101  =  calc_weights(101, calc_popts)
+preds_w_nc101 =  calc_weights(101, preds_popts)
+delt_argmax_nc101 =  calculate_deltas_signed(np.argmax(preds_w_nc101[:], axis=1), np.argmax(calc_w_nc101[:], axis=1), 101)      
 
-filename = "delt_argmax_rhorho_Variant-All_nc_100_regr"
-plt.hist(delt_argmax_nc100, histtype='step', bins=100)
+filename = "delt_argmax_rhorho_Variant-All_nc_101_regr"
+plt.hist(delt_argmax_nc101, histtype='step', bins=101)
 plt.xlabel(r'$\Delta_{class}$')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
-mean = np.mean(delt_argmax_nc100) * 6.28/100.0
-std  = np.std(delt_argmax_nc100) * 6.28/100.0
+mean = np.mean(delt_argmax_nc101) * k2PI/101.0
+std  = np.std(delt_argmax_nc101) * k2PI/101.0
 ax.annotate("mean = {:0.3f} [rad] \nstd =  {:1.3f} [rad]".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
 
 plt.tight_layout()
