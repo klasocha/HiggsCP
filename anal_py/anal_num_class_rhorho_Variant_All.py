@@ -8,51 +8,51 @@ from anal_utils import calculate_metrics_from_file
 
 filelist_rhorho_Variant_All = []
 
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_2/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_4/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_6/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_8/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_10/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_12/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_14/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_16/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_18/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_20/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_22/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_24/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_26/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_28/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_30/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_32/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_34/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_36/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_38/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_40/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_42/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_44/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_46/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_48/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_50/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_3/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_5/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_7/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_9/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_11/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_13/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_15/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_17/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_19/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_21/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_23/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_25/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_27/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_29/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_31/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_33/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_35/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_37/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_39/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_41/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_43/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_45/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_47/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_49/monit_npy/')
+filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_51/monit_npy/')
 
 
-metrics_Variant_All = [calculate_metrics_from_file(filelist_rhorho_Variant_All[1], 4),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[2], 6), calculate_metrics_from_file(filelist_rhorho_Variant_All[3], 8),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[4], 10), calculate_metrics_from_file(filelist_rhorho_Variant_All[5], 12),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[6], 14), calculate_metrics_from_file(filelist_rhorho_Variant_All[7], 16),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[8], 18), calculate_metrics_from_file(filelist_rhorho_Variant_All[9], 20),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[10], 22), calculate_metrics_from_file(filelist_rhorho_Variant_All[11], 24),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[12], 26), calculate_metrics_from_file(filelist_rhorho_Variant_All[13], 28),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[14], 30), calculate_metrics_from_file(filelist_rhorho_Variant_All[15], 32),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[16], 34), calculate_metrics_from_file(filelist_rhorho_Variant_All[17], 36),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[18], 38), calculate_metrics_from_file(filelist_rhorho_Variant_All[19], 40),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[20], 42), calculate_metrics_from_file(filelist_rhorho_Variant_All[21], 44),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[22], 46), calculate_metrics_from_file(filelist_rhorho_Variant_All[23], 48),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[24], 50)]
+metrics_Variant_All = [calculate_metrics_from_file(filelist_rhorho_Variant_All[0], 3), calculate_metrics_from_file(filelist_rhorho_Variant_All[1], 5),
+                       calculate_metrics_from_file(filelist_rhorho_Variant_All[2], 7), calculate_metrics_from_file(filelist_rhorho_Variant_All[3], 9),
+                       calculate_metrics_from_file(filelist_rhorho_Variant_All[4], 11), calculate_metrics_from_file(filelist_rhorho_Variant_All[5], 11),
+                       calculate_metrics_from_file(filelist_rhorho_Variant_All[6], 15), calculate_metrics_from_file(filelist_rhorho_Variant_All[7], 17),
+                       calculate_metrics_from_file(filelist_rhorho_Variant_All[8], 19), calculate_metrics_from_file(filelist_rhorho_Variant_All[9], 21),
+                       calculate_metrics_from_file(filelist_rhorho_Variant_All[10], 23), calculate_metrics_from_file(filelist_rhorho_Variant_All[11], 25),
+                       calculate_metrics_from_file(filelist_rhorho_Variant_All[12], 27), calculate_metrics_from_file(filelist_rhorho_Variant_All[13], 29),
+                       calculate_metrics_from_file(filelist_rhorho_Variant_All[14], 31), calculate_metrics_from_file(filelist_rhorho_Variant_All[15], 33),
+                       calculate_metrics_from_file(filelist_rhorho_Variant_All[16], 35), calculate_metrics_from_file(filelist_rhorho_Variant_All[17], 37),
+                       calculate_metrics_from_file(filelist_rhorho_Variant_All[18], 39), calculate_metrics_from_file(filelist_rhorho_Variant_All[19], 41),
+                       calculate_metrics_from_file(filelist_rhorho_Variant_All[20], 43), calculate_metrics_from_file(filelist_rhorho_Variant_All[21], 45),
+                       calculate_metrics_from_file(filelist_rhorho_Variant_All[22], 47), calculate_metrics_from_file(filelist_rhorho_Variant_All[23], 49),
+                       calculate_metrics_from_file(filelist_rhorho_Variant_All[24], 51)]
            
 metrics_Variant_All = np.stack(metrics_Variant_All)
 
 #binning for vertical axis
-x = np.arange(2,26)*2
+x = np.array([3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51])
 
 
 # Now start plotting metrics
@@ -132,8 +132,8 @@ plt.clf()
 pathOUT = "figures/"
 filename = "rhorho_meanDelt_class_Variant-All_nc"
 
-plt.plot(x, metrics_Variant_All[:, 4],'o', label=r'$<\Delta_{class}> [idx]$')
-
+plt.errorbar(x, metrics_Variant_All[:,4], yerr=metrics_Variant_All[:,14], label=r'$<\Delta_{class}> [idx]$', linestyle = '', marker = 'o')
+plt.plot([3,51],[0,0],linestyle = "--", color = "black")
 plt.ylim([-0.5, 0.5])
 plt.xticks(x)
 plt.legend()
@@ -164,7 +164,8 @@ plt.clf()
 pathOUT = "figures/"
 filename = "rhorho_meanDelt_alphaCP_Variant-All_nc"
 
-plt.plot(x, metrics_Variant_All[:, 7],'o', label=r'$<\Delta \alpha^{CP}> [rad]$ ')
+plt.errorbar(x, metrics_Variant_All[:,7], yerr=metrics_Variant_All[:,15], label=r'$<\Delta \alpha^{CP}> [rad]$', linestyle = '', marker = 'o')
+plt.plot([3,51],[0,0],linestyle = "--", color = "black")
 
 #plt.ylim([0.0, 0.5])
 plt.xticks(x)

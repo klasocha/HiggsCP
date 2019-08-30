@@ -2,6 +2,8 @@ import numpy as np
 from glob import glob
 import os, errno
 
+from scipy import optimize, stats
+
 from sklearn.metrics import roc_auc_score
 
 from src_py.metrics_utils import calculate_deltas_unsigned, calculate_deltas_signed
@@ -38,7 +40,9 @@ def calculate_metrics(calc_w, preds_w, num_classes):
     calc_pred_argmaxs_abs_distances_rad = calc_pred_argmaxs_abs_distances * k2PI/(1.0*num_classes)
     
     mean_deltas = np.mean(calc_pred_argmaxs_signed_distances, dtype=np.float64)
+    mean_deltas_err = stats.sem(calc_pred_argmaxs_signed_distances)
     mean_deltas_rad = mean_deltas * k2PI/(1.0*num_classes)
+    mean_deltas_err_rad = mean_deltas_err * k2PI/(1.0*num_classes)
 
     acc0 = (calc_pred_argmaxs_abs_distances <= 0).mean()
     acc1 = (calc_pred_argmaxs_abs_distances <= 1).mean()
@@ -61,7 +65,7 @@ def calculate_metrics(calc_w, preds_w, num_classes):
     l2_delta_w_norm = np.sqrt(np.mean((calc_w_norm - preds_w_norm)**2), dtype=np.float64)
   
     
-    return np.array([acc0, acc1, acc2, acc3, mean_deltas, l1_delta_w, l2_delta_w, mean_deltas_rad, acc0_rad, acc1_rad, acc2_rad, acc3_rad,l1_delta_w_norm, l2_delta_w_norm ])
+    return np.array([acc0, acc1, acc2, acc3, mean_deltas, l1_delta_w, l2_delta_w, mean_deltas_rad, acc0_rad, acc1_rad, acc2_rad, acc3_rad,l1_delta_w_norm, l2_delta_w_norm, mean_deltas_err, mean_deltas_err_rad, ]) 
 
 
 def calculate_metrics_regr_popts_from_file(directory, num_classes):
