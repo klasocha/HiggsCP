@@ -34,15 +34,11 @@ def calculate_metrics(calc_w, preds_w, num_classes):
     calc_arg_maxs = np.argmax(calc_w, axis=1)
 
     calc_pred_argmaxs_distances = calculate_deltas_unsigned(calc_arg_maxs, pred_arg_maxs, num_classes)
-
     # new definition from Michal
     # something qrong with this definition, oscilating values
     # calc_pred_argmaxs_distances = calc_argmaxs_distances(pred_arg_maxs, calc_arg_maxs, num_class)
 
-    acc0 = (calc_pred_argmaxs_distances <= 0).mean()
-    acc1 = (calc_pred_argmaxs_distances <= 1).mean()
-    acc2 = (calc_pred_argmaxs_distances <= 2).mean()
-    acc3 = (calc_pred_argmaxs_distances <= 3).mean()
+    acc0, acc1, acc2, acc3 = ((calc_pred_argmaxs_distances <= n).mean() for n in range(4))
 
     mean_error = np.mean(calculate_deltas_signed(calc_arg_maxs, pred_arg_maxs, num_classes))
     # ERW: scaled to radians and in units of phi^CP
