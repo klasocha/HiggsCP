@@ -2,6 +2,7 @@ import argparse
 import os
 
 import train_rhorho, train_a1rho, train_a1a1
+from src_py.logging_utils import Logging
 
 types = {"nn_rhorho": train_rhorho.start,"nn_a1rho": train_a1rho.start,"nn_a1a1": train_a1a1.start}
 
@@ -45,6 +46,10 @@ parser.add_argument("--w2", dest="W2")
 parser.add_argument("--plot_features", dest="PLOT_FEATURES", choices=["NO", "FILTER", "NO-FILTER"], default="NO")
 parser.add_argument("--training_method", dest="TRAINING_METHOD", choices=["soft", "regr_popts"], default="soft")
 
+parser.add_argument("--log-level", dest="LOG_LEVEL", choices=["debug", "info", "warning", "error"], default="info")
+
 args = parser.parse_args()
+
+Logging.setup_custom_logger(args.LOG_LEVEL)
 
 types[args.TYPE](args)
