@@ -1,3 +1,6 @@
+import os
+import string
+
 import numpy as np
 
 
@@ -35,3 +38,21 @@ def read_raw_root(name, num_particles):
     values = np.array(values)
 
     return values, weights
+
+
+def read_raw_all(kind, args, channel, num_particles):
+    print "Reading %s" % kind
+
+    data_path = args.IN
+
+    all_data = []
+    all_weights = []
+    for letter in list(string.ascii_lowercase)[:args.DATASETS]:
+        name = os.path.join(data_path, "pythia.H.%s.1M.%s.%s.outTUPLE_labFrame" % (channel, letter, kind))
+        print letter, name
+        data, weights = read_raw_root(name, num_particles=num_particles)
+        all_data += [data]
+        all_weights += [weights]
+    all_data = np.concatenate(all_data)
+    all_weights = np.concatenate(all_weights)
+    return all_data, all_weights

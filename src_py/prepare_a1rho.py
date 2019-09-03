@@ -1,27 +1,7 @@
-import string
-
 import numpy as np
-from prepare_utils import read_raw_root
+from prepare_utils import read_raw_all
 import argparse
 import os
-
-
-def read_raw_all(kind, args):
-    print "Reading %s" % kind
-
-    data_path = args.IN
-
-    all_data = []
-    all_weights = []
-    for letter in list(string.ascii_lowercase)[:args.DATASETS]:
-        name = os.path.join(data_path, "pythia.H.a1rho.1M.%s.%s.outTUPLE_labFrame" % (letter, kind))
-        print letter, name
-        data, weights = read_raw_root(name, num_particles=8)
-        all_data += [data]
-        all_weights += [weights]
-    all_data = np.concatenate(all_data)
-    all_weights = np.concatenate(all_weights)
-    return all_data, all_weights
 
 
 if __name__ == "__main__":
@@ -33,7 +13,7 @@ if __name__ == "__main__":
     data_path = args.IN
 
     for i in range(0, 21, 2):
-        data, weights = read_raw_all("CPmix_%s" % str(i).zfill(2), args)
+        data, weights = read_raw_all(kind="CPmix_%s" % str(i).zfill(2), args=args, channel="a1rho", num_particles=8)
         if i == 0:
             data_00 = data
             np.random.seed(123)
