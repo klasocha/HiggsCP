@@ -1,3 +1,5 @@
+import string
+
 import numpy as np
 from prepare_utils import read_raw_root
 import argparse
@@ -11,7 +13,7 @@ def read_raw_all(kind, args):
 
     all_data = []
     all_weights = []
-    for letter in ["a","b","c","d","e","f","g","h","i","k"][:args.DATASETS]:
+    for letter in list(string.ascii_lowercase)[:args.DATASETS]:
         name = os.path.join(data_path, "pythia.H.a1rho.1M.%s.%s.outTUPLE_labFrame" % (letter, kind))
         print letter, name
         data, weights = read_raw_root(name, num_particles=8)
