@@ -6,10 +6,6 @@ class Particle(object):
         if isinstance(vec, list):
             vec = np.vstack(vec).T
         self.vec = vec
-        #self.x = vec[..., 0]
-        #self.y = vec[..., 1]
-        #self.z = vec[..., 2]
-        #self.e = vec[..., 3]
 
     def __getitem__(self, key):
         return self.vec[key]
@@ -17,12 +13,15 @@ class Particle(object):
     @property
     def x(self):
         return self.vec[..., 0]
+
     @property
     def y(self):
         return self.vec[..., 1]
+
     @property
     def z(self):
         return self.vec[..., 2]
+
     @property
     def e(self):
         return self.vec[..., 3]
@@ -35,7 +34,7 @@ class Particle(object):
     @property
     def recalculated_mass(self):
         mass = np.sum(np.square(self.vec) * [1, 1, 1, -1], 1)
-        return np.sqrt(np.abs(mass)) #* np.sign(mass)
+        return np.sqrt(np.abs(mass))  # * np.sign(mass)
 
     @property
     def angle_phi(self):
@@ -47,17 +46,16 @@ class Particle(object):
 
     @property
     def length(self):
-        lgth2 = np.square(self.vec[:,:3])
+        lgth2 = np.square(self.vec[:, :3])
         lgth2 = np.sum(lgth2, 1)
         lgth = np.sqrt(lgth2)
         return lgth
 
-    
     def scale_to_versor(self):
-        p_len = np.sqrt(self.e*self.e - self.x * self.x - self.y * self.y - self.z * self.z)
+        p_len = np.sqrt(self.e * self.e - self.x * self.x - self.y * self.y - self.z * self.z)
 
         return Particle([
-            self.x/p_len, self.y/p_len, self.z/p_len, self.e/p_len])
+            self.x / p_len, self.y / p_len, self.z / p_len, self.e / p_len])
 
     def set(self, other):
         if isinstance(other, Particle):
@@ -97,13 +95,12 @@ class Particle(object):
         ret = ret.boost_along_z(-p_len, p.e)
         return ret.rotate_xz(theta).rotate_xy(phi)
 
-
     def scale_lifetime(self, scale):
 
-        mass2 = self.e*self.e - self.x*self.x - self.y*self.y - self.z*self.z
-        energy = np.sqrt(  self.x*self.x*scale*scale + self.y*self.y*scale*scale + self.z*self.z*scale*scale + mass2)
-        return Particle([self.x*scale, self.y*scale, self.z*scale,  energy])     
-    
+        mass2 = self.e * self.e - self.x * self.x - self.y * self.y - self.z * self.z
+        energy = np.sqrt(
+            self.x * self.x * scale * scale + self.y * self.y * scale * scale + self.z * self.z * scale * scale + mass2)
+        return Particle([self.x * scale, self.y * scale, self.z * scale, energy])
 
     def sum(self, dim):
         return np.sum(self.vec, dim)
@@ -134,5 +131,3 @@ class Particle(object):
 
     def __neg__(self, other):
         return Particle(-self.vec)
-
-

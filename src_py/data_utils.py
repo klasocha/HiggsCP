@@ -1,6 +1,7 @@
 import numpy as np
 import random
 
+
 class Dataset(object):
     def __init__(self, x, weights, arg_maxs, popts):
         self.x = x[:, :-1]
@@ -30,9 +31,11 @@ class Dataset(object):
 
         cur_id = self._next_id
         self._next_id += batch_size
-        return (self.x[cur_id:cur_id+batch_size],
-                self.weights[cur_id:cur_id+batch_size], self.arg_maxs[cur_id:cur_id+batch_size], self.popts[cur_id:cur_id+batch_size],
-                self.filt[cur_id:cur_id+batch_size])
+        return (self.x[cur_id:cur_id + batch_size],
+                self.weights[cur_id:cur_id + batch_size], self.arg_maxs[cur_id:cur_id + batch_size],
+                self.popts[cur_id:cur_id + batch_size],
+                self.filt[cur_id:cur_id + batch_size])
+
 
 def unweight(x):
     return 0 if x < random.random() * 2 else 1
@@ -48,7 +51,7 @@ class UnweightedDataset(object):
 
         self.n = x.shape[0]
         self._next_id = 0
-        self.mask = np.ones(self.n)==1
+        self.mask = np.ones(self.n) == 1
         self.shuffle()
 
     def weight(self, w_ind):
@@ -77,9 +80,10 @@ class UnweightedDataset(object):
 
         cur_id = self._next_id
         self._next_id += batch_size
-        return (self.x[self.mask][cur_id:cur_id+batch_size],
-                self.weights[self.mask][cur_id:cur_id+batch_size], self.arg_maxs[self.mask][cur_id:cur_id+batch_size], self.popts[self.mask][cur_id:cur_id+batch_size],
-                self.filt[self.mask][cur_id:cur_id+batch_size])
+        return (self.x[self.mask][cur_id:cur_id + batch_size],
+                self.weights[self.mask][cur_id:cur_id + batch_size],
+                self.arg_maxs[self.mask][cur_id:cur_id + batch_size], self.popts[self.mask][cur_id:cur_id + batch_size],
+                self.filt[self.mask][cur_id:cur_id + batch_size])
 
 
 def read_np(filename):
@@ -89,7 +93,8 @@ def read_np(filename):
 
 class EventDatasets(object):
 
-    def __init__(self, event, weights, arg_maxs, perm, popts, filtered=False, raw=False, miniset=False,  unweighted=False):
+    def __init__(self, event, weights, arg_maxs, perm, popts, filtered=False, raw=False, miniset=False,
+                 unweighted=False):
         data = event.cols[:, :-1]
         filt = event.cols[:, -1]
 
@@ -118,7 +123,7 @@ class EventDatasets(object):
         data = np.concatenate([data, filt.reshape([-1, 1])], 1)
 
         def unweight(x):
-            return 0 if x < random.random()*2 else 1
+            return 0 if x < random.random() * 2 else 1
 
         # if unweighted:
         #     w_a = np.array(map(unweight, w_a))
@@ -127,4 +132,5 @@ class EventDatasets(object):
         self.train = Dataset(data[train_ids], weights[train_ids, :], arg_maxs[train_ids], popts[train_ids])
         self.valid = Dataset(data[valid_ids], weights[valid_ids, :], arg_maxs[valid_ids], popts[valid_ids])
         self.test = Dataset(data[test_ids], weights[test_ids, :], arg_maxs[test_ids], popts[test_ids])
-        self.unweightedtest = UnweightedDataset(data[test_ids], weights[test_ids, :], arg_maxs[test_ids], popts[test_ids])
+        self.unweightedtest = UnweightedDataset(data[test_ids], weights[test_ids, :], arg_maxs[test_ids],
+                                                popts[test_ids])
