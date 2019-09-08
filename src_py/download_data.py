@@ -1,47 +1,58 @@
 import os
 import urllib
+from urlparse import urljoin
 
 import numpy as np
-
-DATA_URL = 'http://th-www.if.uj.edu.pl/~erichter/forMichal/HiggsCP_data_CPmix/'
-
-
-def download_data(args):
-    data_path = args.IN
-    if os.path.exists(data_path) is False:
-        os.mkdir(data_path)
-    download_weights(args)
-    download_data_files(args)
+import requests
 
 
-def download_weights(args):
-    data_path = args.IN
+def download_data(source_url, output, channel, force_download=False):
+    if os.path.exists(output) is False:
+        os.mkdir(output)
+    download_weights(source_url, output, channel, force_download)
+    download_data_files(source_url, output, channel, force_download)
+
+
+def resource_exists(url):
+    request = requests.get(url)
+    return request.status_code == 200
+
+
+def download_weights(source_url, output, channel, force_download=False):
     # CPmix_index = 0 (scalar), 10 (pseudoscalar), 20 (scalar)
     CPmix_index = ['00', '02', '04', '06', '08', '10', '12', '14', '16', '18', '20']
     weights = []
-    output_weight_file = os.path.join(data_path, 'rhorho_raw.w.npy')
-    if os.path.exists(output_weight_file) and not args.FORCE_DOWNLOAD:
+    output_weight_file = os.path.join(output, channel + '_raw.w.npy')
+    if os.path.exists(output_weight_file) and not force_download:
         print 'Output weights file exists. Downloading data cancelled. ' \
               'If you want to force download use --force_download option'
         return
     for index in CPmix_index:
-        filename = 'rhorho_raw.w_' + index + '.npy'
-        print 'Donwloading ' + filename
-        filepath = os.path.join(data_path, filename)
-        urllib.urlretrieve(DATA_URL + filename, filepath)
+        filename = channel + '_raw.w_' + index + '.npy'
+        print 'Downloading ' + filename
+        filepath = os.path.join(output, filename)
+        source_filepath = urljoin(source_url, filename)
+        if resource_exists(source_filepath):
+            urllib.urlretrieve(source_filepath, filepath)
+        else:
+            raise Exception("Could not retrieve file from " + source_filepath)
         weights.append(np.load(filepath))
     weights = np.stack(weights)
     np.save(output_weight_file, weights)
 
 
-def download_data_files(args):
-    data_path = args.IN
-    files = ['rhorho_raw.data.npy', 'rhorho_raw.perm.npy']
-    for file in files:
-        file_path = os.path.join(data_path, file)
-        if os.path.exists(file_path) and not args.FORCE_DOWNLOAD:
+def download_data_files(source_url, output, channel, force_download=False):
+    files = [channel + '_raw.data.npy', channel + '_raw.perm.npy']
+    for filename in files:
+        source_filepath = urljoin(source_url, filename)
+        file_path = os.path.join(output, filename)
+        if os.path.exists(file_path) and not force_download:
             print 'File ' + file_path + ' exists. Downloading data cancelled. ' \
-                  'If you want to force download use --force_download option'
+                                        'If you want to force download use --force_download option'
         else:
-            print 'Donwloading ' + file
-            urllib.urlretrieve(DATA_URL + file, file_path)
+            print 'Downloading ' + filename
+            if resource_exists(source_filepath):
+                urllib.urlretrieve(source_filepath, file_path)
+            else:
+                raise Exception("Could not retrieve file from " + source_filepath)
+
