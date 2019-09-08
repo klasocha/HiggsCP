@@ -1,3 +1,5 @@
 numpy
 tensorflow
 sklearn
+scipy
+matplotlib
