@@ -26,7 +26,7 @@ def run(args):
                            "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "_NUM_CLASSES_" + \
                            str(args.NUM_CLASSES))
 
-    if args.PLOT_FEATURES is not "NO":
+    if args.PLOT_FEATURES:
         w_a = weights[:,0]
         w_b = weights[:,num_classes/2]
         monit_plots(os.path.join(pathOUT, 'monit_plots'), args, event, w_a, w_b)
