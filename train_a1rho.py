@@ -49,6 +49,3 @@ def start(args):
     sess = tf.Session()
     with sess.as_default():
         run(args)
-
-if __name__ == "__main__":
-    start(args = {})
