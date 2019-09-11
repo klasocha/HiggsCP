@@ -8,6 +8,8 @@ def is_nan(x):
 
 
 def monit_plots(pathOUT, args, event, w_a, w_b):
+    if not os.path.exists(pathOUT):
+        os.makedirs(pathOUT)
 
     if args.PLOT_FEATURES == "FILTER":
         filt = [x==1 for x in event.cols[:,-1]]

@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import tensorflow as tf
 from sklearn.metrics import roc_auc_score, accuracy_score
@@ -43,6 +45,9 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
     valid_L2_deltas = []
     test_L1_deltas  = []
     test_L2_deltas  = []
+
+    if not os.path.exists(pathOUT):
+        os.makedirs(pathOUT)
 
 
     # ERW

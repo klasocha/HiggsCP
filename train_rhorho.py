@@ -22,35 +22,14 @@ def run(args):
     num_features = points.train.x.shape[1]
     print "Prepared %d features" % num_features
 
-    pathOUT = "temp_results/" + args.TYPE + "_" + args.FEAT + "_" + args.TRAINING_METHOD + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "_NUM_CLASSES_" + str(args.NUM_CLASSES) + "/"
-    if pathOUT:
-        try:
-            os.makedirs(pathOUT)
-        except OSError as e:
-            if e.errno != errno.EEXIST:
-                raise
+    pathOUT = os.path.join("temp_results", args.TYPE + "_" + args.FEAT + "_" + args.TRAINING_METHOD + \
+                           "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "_NUM_CLASSES_" + \
+                           str(args.NUM_CLASSES))
 
-    pathOUT_npy = pathOUT+'monit_npy/'
-    if pathOUT_npy:
-        try:
-            os.makedirs(pathOUT_npy)
-        except OSError as e:
-            if e.errno != errno.EEXIST:
-                raise
-
-    pathOUT_plots = pathOUT+'monit_plots/'
-    if pathOUT_plots:
-        try:
-            os.makedirs(pathOUT_plots)
-        except OSError as e:
-            if e.errno != errno.EEXIST:
-                raise
-
-    
     if args.PLOT_FEATURES is not "NO":
         w_a = weights[:,0]
         w_b = weights[:,num_classes/2]
-        monit_plots(pathOUT_plots, args, event, w_a, w_b)
+        monit_plots(os.path.join(pathOUT, 'monit_plots'), args, event, w_a, w_b)
 
     print "Initializing model"
     with tf.variable_scope("model1") as vs:
@@ -68,7 +47,7 @@ def run(args):
     tf.global_variables_initializer().run()
 
     print "Training"
-    total_train(pathOUT_npy, model, points, args, emodel=emodel, batch_size=128, epochs=args.EPOCHS)
+    total_train(os.path.join(pathOUT, "monit_npy"), model, points, args, emodel=emodel, batch_size=128, epochs=args.EPOCHS)
 
 
 def start(args):
