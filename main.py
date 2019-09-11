@@ -31,7 +31,6 @@ parser.add_argument("--delt_classes", dest="DELT_CLASSES", type=int, default=0,
 parser.add_argument("--unweighted", dest="UNWEIGHTED", type=lambda s: s.lower() in ['true', 't', 'yes', '1'], default=False)
 parser.add_argument("--reuse_weights", dest="REUSE_WEIGTHS", type=bool, default=False)
 parser.add_argument("--restrict_most_probable_angle", dest="RESTRICT_MOST_PROBABLE_ANGLE", type=bool, default=False)
-parser.add_argument("--force_download", dest="FORCE_DOWNLOAD", type=bool, default=False)
 parser.add_argument("--normalize_weights", dest="NORMALIZE_WEIGHTS", type=bool, default=False)
 
 

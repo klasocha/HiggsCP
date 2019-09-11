@@ -1,21 +1,18 @@
-import numpy as np
+import errno
+import os
+
 import tensorflow as tf
-import os, errno
 
 from src_py.cpmix_utils import preprocess_data
-from src_py.download_data_rhorho import download_data
-from src_py.rhorho import RhoRhoEvent
-from src_py.data_utils import read_np, EventDatasets
-from src_py.tf_model import total_train, NeuralNetwork
+from src_py.data_utils import EventDatasets
 from src_py.monit_utils import monit_plots
+from src_py.rhorho import RhoRhoEvent
+from src_py.tf_model import total_train, NeuralNetwork
 
 
 def run(args):
     num_classes = args.NUM_CLASSES
 
-    print "Downloading data"
-    download_data(args)
-    
     print "Preprocessing data"
     data, weights, arg_maxs, perm, popts = preprocess_data(args)
 

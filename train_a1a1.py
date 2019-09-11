@@ -1,14 +1,14 @@
-import numpy as np
-import tensorflow as tf
-import os, errno
+import errno
+import os
 
-from src_py.cpmix_utils import preprocess_data
-from src_py.download_data_a1a1 import download_data
+import tensorflow as tf
+
 from src_py.a1a1 import A1A1Event
-from src_py.data_utils import read_np, EventDatasets
-from src_py.tf_model import total_train, NeuralNetwork
+from src_py.cpmix_utils import preprocess_data
+from src_py.data_utils import EventDatasets
+from src_py.download_data_a1a1 import download_data
 from src_py.monit_utils import monit_plots
-from src_py.plot_utils import plot_one_TH1D, plot_two_TH1D
+from src_py.tf_model import total_train, NeuralNetwork
 
 
 def run(args):
