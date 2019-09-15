@@ -1,4 +1,3 @@
-import errno
 import os
 
 import tensorflow as tf
@@ -23,7 +22,7 @@ def run(args):
     print "Prepared %d features" % num_features
 
     pathOUT = os.path.join("temp_results", args.TYPE + "_" + args.FEAT + "_" + args.TRAINING_METHOD + \
-                           "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "_NUM_CLASSES_" + \
+                           "_Unweighted_" + str(args.UNWEIGHTED) + "_" + "_NUM_CLASSES_" + \
                            str(args.NUM_CLASSES))
 
     if args.PLOT_FEATURES:
