@@ -21,26 +21,25 @@ def monit_plots(filedir, args, event, w_a, w_b):
     for i in range(len(event.cols[0, :]) - 1):
         plot_two_TH1D(event.cols[:, i], filedir, filename=event.labels[i], w_a=w_a, w_b=w_b, filt=filt)
 
+    def plot_aco_angle(y1_index, y2_index, column_id, filename):
+        y1y2_pos = np.array(event.cols[:, y1_index][filt] * event.cols[:, y2_index][filt] >= 0)
+        y1y2_neg = np.array([not i for i in y1y2_pos])
+        plot_two_TH1D(event.cols[:, column_id], filedir, filename=filename + "_pos", w_a=w_a * y1y2_pos,
+                      w_b=w_b * y1y2_pos, filt=filt)
+        plot_two_TH1D(event.cols[:, column_id], filedir, filename=filename + "_neg", w_a=w_a * y1y2_neg,
+                      w_b=w_b * y1y2_neg, filt=filt)
+
     if args.FEAT == "Variant-1.1" and args.TYPE == "nn_rhorho":  # acoangle depending on y1y2 sign
         for y1_index, y2_index, column_id, filename in [[-3, -2, -4, "aco_angle_y1y2"]]:
-            y1y2_pos = np.array(event.cols[:, y1_index][filt] * event.cols[:, y2_index][filt] >= 0)
-            y1y2_neg = np.array([not i for i in y1y2_pos])
-            plot_two_TH1D(event.cols[:, column_id], filedir, filename=filename + "_pos", w_a=w_a * y1y2_pos,
-                          w_b=w_b * y1y2_pos, filt=filt)
-            plot_two_TH1D(event.cols[:, column_id], filedir, filename=filename + "_neg", w_a=w_a * y1y2_neg,
-                          w_b=w_b * y1y2_neg, filt=filt)
+            plot_aco_angle(y1_index, y2_index, column_id, filename)
 
     if args.FEAT == "Variant-1.1" and args.TYPE == "nn_a1rho":  # acoangle depending on y1y2 sign
         for y1_index, y2_index, column_id, filename in [[-9, -8, -11, "aco_angle_1_y1y2"],
                                                         [-8, -7, -10, "aco_angle_2_y1y2"],
                                                         [-4, -3, -6, "aco_angle_3_y1y2"],
                                                         [-3, -2, -5, "aco_angle_4_y1y2"]]:
-            y1y2_pos = np.array(event.cols[:, y1_index][filt] * event.cols[:, y2_index][filt] >= 0)
-            y1y2_neg = np.array([not i for i in y1y2_pos])
-            plot_two_TH1D(event.cols[:, column_id], filedir, filename=filename + "_pos", w_a=w_a * y1y2_pos,
-                          w_b=w_b * y1y2_pos, filt=filt)
-            plot_two_TH1D(event.cols[:, column_id], filedir, filename=filename + "_neg", w_a=w_a * y1y2_neg,
-                          w_b=w_b * y1y2_neg, filt=filt)
+            plot_aco_angle(y1_index, y2_index, column_id, filename)
+
 
     if args.FEAT == "Variant-1.1" and args.TYPE == "nn_a1a1":  # acoangle depending on y1y2 sign
         for y1_index, y2_index, column_id, filename in [[-45, -44, -49, "aco_angle_1_y1y"],
@@ -59,12 +58,8 @@ def monit_plots(filedir, args, event, w_a, w_b):
                                                         [-7, -6, -12, "aco_angle_14_y1y"],
                                                         [-5, -4, -11, "aco_angle_15_y1y"],
                                                         [-3, -2, -10, "aco_angle_16_y1y"]]:
-            y1y2_pos = np.array(event.cols[:, y1_index][filt] * event.cols[:, y2_index][filt] >= 0)
-            y1y2_neg = np.array([not i for i in y1y2_pos])
-            plot_two_TH1D(event.cols[:, column_id], filedir, filename=filename + "_pos", w_a=w_a * y1y2_pos,
-                          w_b=w_b * y1y2_pos, filt=filt)
-            plot_two_TH1D(event.cols[:, column_id], filedir, filename=filename + "_neg", w_a=w_a * y1y2_neg,
-                          w_b=w_b * y1y2_neg, filt=filt)
+            plot_aco_angle(y1_index, y2_index, column_id, filename)
+
 
     if args.FEAT == "Variant-4.1":
         for i in range(len(event.labels_suppl)):
