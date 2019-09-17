@@ -24,7 +24,7 @@ parser.add_argument("-f", "--features", dest="FEAT", help="Features",
 parser.add_argument("--miniset", dest="MINISET", type=lambda s: s.lower() in ['true', 't', 'yes', '1'], default=False)
 parser.add_argument("--z_noise_fraction", dest="Z_NOISE_FRACTION", type=float, default=0.5)
 
-parser.add_argument("--num_classes", dest="NUM_CLASSES", type=int, default=21)
+parser.add_argument("--num_classes", dest="NUM_CLASSES", type=int, default=0)
 parser.add_argument("--delt_classes", dest="DELT_CLASSES", type=int, default=0,
                     help='Maximal distance between predicted and valid class for event being considered as correctly classified')
 
@@ -43,7 +43,7 @@ parser.add_argument("--w1", dest="W1")
 parser.add_argument("--w2", dest="W2")
 
 parser.add_argument("--plot_features", dest="PLOT_FEATURES", choices=["NO", "FILTER", "NO-FILTER"], default="NO")
-parser.add_argument("--training_method", dest="TRAINING_METHOD", choices=["soft", "regr_popts", "regr_weights", "regr_max"], default="soft")
+parser.add_argument("--training_method", dest="TRAINING_METHOD", choices=["soft", "regr_popts", "regr_weights", "regr_argmaxs"], default="soft")
 
 args = parser.parse_args()
 
