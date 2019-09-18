@@ -119,6 +119,34 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             np.save(pathOUT + 'test_regr_calc_popts.npy', test_calc_popts)
             np.save(pathOUT + 'test_regr_preds_popts.npy', test_pred_popts)
 
+        if model.tloss == 'regr_argmaxs':
+
+            train_losses += [train_loss]
+            msg_str = "TRAINING:     LOSS: %.3f \n" % (train_loss)
+            print msg_str
+
+            valid_calc_argmaxs, valid_pred_argmaxs = regr_argmaxs_predictions(emodel, data.valid, filtered=True)
+            np.save(pathOUT + 'valid_regr_calc_argmaxs.npy', valid_calc_argmaxs)
+            np.save(pathOUT + 'valid_regr_preds_argmaxs.npy', valid_pred_argmaxs)
+
+            test_calc_argmaxs, test_pred_argmaxs = regr_argmaxs_predictions(emodel, data.test, filtered=True)
+            np.save(pathOUT + 'test_regr_calc_argmaxs.npy', test_calc_argmaxs)
+            np.save(pathOUT + 'test_regr_preds_argmaxs.npy', test_pred_argmaxs)
+
+        if model.tloss == 'regr_weights':
+
+            train_losses += [train_loss]
+            msg_str = "TRAINING:     LOSS: %.3f \n" % (train_loss)
+            print msg_str
+
+            valid_calc_weights, valid_pred_weights = regr_weights_predictions(emodel, data.valid, filtered=True)
+            np.save(pathOUT + 'valid_regr_calc_weights.npy', valid_calc_weights)
+            np.save(pathOUT + 'valid_regr_preds_weights.npy', valid_pred_weights)
+
+            test_calc_weights, test_pred_weights = regr_weights_predictions(emodel, data.test, filtered=True)
+            np.save(pathOUT + 'test_regr_calc_weights.npy', test_calc_weights)
+            np.save(pathOUT + 'test_regr_preds_weights.npy', test_pred_weights)
+
                 
     if model.tloss == 'soft':
         test_roc_auc(preds_w, calc_w)             
@@ -149,11 +177,24 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
         print "test_L2_deltas", test_L2_deltas
 
                  
+    if model.tloss == 'regr_argmaxs':
+
+        # storing history of training            
+        np.save(pathOUT+'train_losses_argmaxs.npy', train_losses)
+        print "train_losses_argmaxs", train_losses
+
+                 
     if model.tloss == 'regr_popts':
 
         # storing history of training            
-        np.save(pathOUT+'train_losses.npy', train_losses)
-        print "train_losses", train_losses
+        np.save(pathOUT+'train_losses_popts.npy', train_losses)
+        print "train_losses_popts", train_losses
+                 
+    if model.tloss == 'regr_weights':
+
+        # storing history of training            
+        np.save(pathOUT+'train_losses_weights.npy', train_losses)
+        print "train_losses_weights", train_losses
    
     return train_accs, valid_accs, test_accs
 
@@ -228,6 +269,24 @@ def calculate_classification_metrics(pred_w, calc_w, args):
 
     return np.array([acc, mean, l1_delta_w, l2_delta_w])
 
+def regr_weights_predictions(model, dataset, at_most=None, filtered=True):
+    sess = tf.get_default_session()
+    x = dataset.x[dataset.mask]
+    calc_weights = dataset.weights[dataset.mask]
+    filt = dataset.filt[dataset.mask]
+
+    if at_most is not None:
+        filt = filt[:at_most]
+        calc_weights = calc_weights[:at_most]
+        x = x[:at_most]
+
+    if filtered:
+        calc_weights = calc_weights[filt == 1]
+        x = x[filt == 1]
+
+    pred_weights = sess.run(model.p, {model.x: x})
+    return calc_weights, pred_weights
+
 #prepared by Michal
 def regr_popts_predictions(model, dataset, at_most=None, filtered=True):
     sess = tf.get_default_session()
@@ -246,6 +305,24 @@ def regr_popts_predictions(model, dataset, at_most=None, filtered=True):
 
     pred_popts = sess.run(model.p, {model.x: x})
     return calc_popts, pred_popts
+
+def regr_argmaxs_predictions(model, dataset, at_most=None, filtered=True):
+    sess = tf.get_default_session()
+    x = dataset.x[dataset.mask]
+    calc_argmaxs = dataset.arg_maxs[dataset.mask]
+    filt = dataset.filt[dataset.mask]
+
+    if at_most is not None:
+        filt = filt[:at_most]
+        calc_argmaxs = calc_argmaxs[:at_most]
+        x = x[:at_most]
+
+    if filtered:
+        calc_argmaxs = calc_argmaxs[filt == 1]
+        x = x[filt == 1]
+
+    pred_argmaxs = sess.run(model.p, {model.x: x})
+    return calc_argmaxs, pred_argmaxs
 
 
 
@@ -336,7 +413,7 @@ class NeuralNetwork(object):
         batch_size = None
         self.x = x = tf.placeholder(tf.float32, [batch_size, num_features])
         self.weights = weights = tf.placeholder(tf.float32, [batch_size, num_classes])
-        self.arg_maxs = tf.placeholder(tf.float32, [batch_size])
+        self.arg_maxs = tf.placeholder(tf.float32, [batch_size, 1])
         self.popts = tf.placeholder(tf.float32, [batch_size, 3])
         self.tloss = tloss
 
@@ -353,21 +430,25 @@ class NeuralNetwork(object):
         if tloss == "soft":
             sx = linear(x, "classes", num_classes)
             self.preds = tf.nn.softmax(sx)
-            #self.p = preds[:, 0] / (preds[:, 0] + preds[:, 1])
-            self.p = self.preds
-            
+            self.p = self.preds            
             # labels: class probabilities, calculated as normalised weighs (probabilities)
             labels = weights / tf.tile(tf.reshape(tf.reduce_sum(weights, axis=1), (-1, 1)), (1,num_classes))
             self.loss = loss = tf.nn.softmax_cross_entropy_with_logits(logits=sx, labels=labels)
-        elif tloss == "regr":
+        elif tloss == "regr_argmaxs":
             sx = linear(x, "regr", 1)
             self.sx = sx
-            self.loss = loss = tf.losses.mean_squared_error(self.arg_maxs, sx[:, 0])
+            self.p = sx
+            self.loss = loss = tf.losses.mean_squared_error(self.arg_maxs, sx)
         elif tloss == "regr_popts":
             sx = linear(x, "regr", 3)
             self.sx = sx
             self.p = sx
             self.loss = loss = tf.losses.mean_squared_error(self.popts, sx)
+        elif tloss == "regr_weights":
+            sx = linear(x, "classes", num_classes)
+            self.sx = sx
+            self.p = sx
+            self.loss = loss = tf.losses.mean_squared_error(self.weights, sx)
 
         else:
             raise ValueError("tloss unrecognized: %s" % tloss)

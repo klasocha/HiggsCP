@@ -9,7 +9,7 @@ def weight_fun(x, a, b, c):
 
 # here weights and arg_maxs are calculated from continuum distributions
 def calc_weights_and_arg_maxs(classes, popts, data_len, num_classes):
-    arg_maxs = np.zeros(data_len)
+    arg_maxs = np.zeros((data_len, 1))
     weights = np.zeros((data_len, num_classes))
     for i in range(data_len):
         weights[i] = weight_fun(classes, *popts[i])
@@ -33,7 +33,7 @@ def calc_weights_and_arg_maxs(classes, popts, data_len, num_classes):
 def preprocess_data(args):
     data_path = args.IN
     num_classes = args.NUM_CLASSES
-    reuse_weigths = args.REUSE_WEIGTHS  # Set this flag to true if you want reuse calculated weights
+    reuse_weights = args.REUSE_WEIGHTS  # Set this flag to true if you want reuse calculated weights
 
     print "Loading data"
     suffix = (args.TYPE).split("_")[-1] #-1 to indeks ostatniego elementu 
@@ -59,13 +59,13 @@ def preprocess_data(args):
         np.save(os.path.join(data_path, 'pcovs.npy'), pcovs)
     popts = np.load(os.path.join(data_path, 'popts.npy'))
 
-    if not reuse_weigths or not os.path.exists(os.path.join(data_path, 'weigths.npy')) \
+    if not reuse_weights or not os.path.exists(os.path.join(data_path, 'weights.npy')) \
             or not os.path.exists(os.path.join(data_path, 'arg_maxs.npy')) \
-            or np.load(os.path.join(data_path, 'weigths.npy')).shape[1] != num_classes:
+            or np.load(os.path.join(data_path, 'weights.npy')).shape[1] != num_classes:
         weights, arg_maxs = calc_weights_and_arg_maxs(classes, popts, data_len, num_classes)
-        np.save(os.path.join(data_path, 'weigths.npy'), weights)
+        np.save(os.path.join(data_path, 'weights.npy'), weights)
         np.save(os.path.join(data_path, 'arg_maxs.npy'), arg_maxs)
-    weights  = np.load(os.path.join(data_path, 'weigths.npy'))
+    weights  = np.load(os.path.join(data_path, 'weights.npy'))
     arg_maxs = np.load(os.path.join(data_path, 'arg_maxs.npy'))
 
     #ERW
