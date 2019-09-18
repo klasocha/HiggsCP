@@ -385,6 +385,59 @@ else:
 plt.clf()
 
 #----------------------------------------------------------------------------------
+calc_w_nc11  =  calc_weights(11, calc_popts)
+preds_w_nc11 =  calc_weights(11, preds_popts)
+preds_argmax_nc11 =  np.argmax(preds_w_nc11[:], axis=1) * 6.28/11.0    
+calc_argmax_nc11 =  np.argmax(calc_w_nc11[:], axis=1) * 6.28/11.0    
+
+filename = "preds_argmax_rhorho_Variant-All_nc_11_regr"
+plt.hist(preds_argmax_nc11, histtype='step', bins=11)
+plt.ylabel('Entries')
+plt.xlabel(r'$\alpha^{CP}_{max}$')
+plt.title('Features list: Variant-All')
+
+plt.tight_layout()
+
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+
+plt.clf()
+
+filename = "calc_argmax_rhorho_Variant-All_nc_11_regr_popts"
+plt.hist(calc_argmax_nc11, histtype='step', color = "black", bins=100, label = "generated")
+plt.hist(preds_argmax_nc11, histtype='step', color = "red", bins=100, label = "predicted")
+plt.ylabel('Entries')
+plt.xlabel(r'$\alpha^{CP}_{max}$')
+plt.title('Features list: Variant-All')
+
+plt.tight_layout()
+
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+
+plt.clf()
+
+#----------------------------------------------------------------------------------
 calc_w_nc21  =  calc_weights(21, calc_popts)
 preds_w_nc21 =  calc_weights(21, preds_popts)
 delt_argmax_nc21 =  calculate_deltas_signed(np.argmax(preds_w_nc21[:], axis=1), np.argmax(calc_w_nc21[:], axis=1), 21)      
@@ -523,6 +576,60 @@ else:
 plt.clf()
 
 #----------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------
+calc_w_nc101  =  calc_weights(101, calc_popts)
+preds_w_nc101 =  calc_weights(101, preds_popts)
+preds_argmax_nc101 =  np.argmax(preds_w_nc101[:], axis=1) * k2PI/101.0    
+calc_argmax_nc101 =  np.argmax(calc_w_nc101[:], axis=1) * k2PI/101.0    
+
+filename = "preds_argmax_rhorho_Variant-All_nc_101_regr"
+plt.hist(preds_argmax_nc101, histtype='step', bins=101)
+plt.ylabel('Entries')
+plt.xlabel(r'$\alpha^{CP}_{max}$')
+plt.title('Features list: Variant-All')
+
+plt.tight_layout()
+
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+
+plt.clf()
+
+filename = "calc_argmax_rhorho_Variant-All_nc_101_regr"
+plt.hist(calc_argmax_nc101, histtype='step', color = "black", bins=50, label = "generated")
+plt.hist(preds_argmax_nc101, histtype='step', color = "red", bins=50, label = "predicted")
+#plt.ylim([0, 800])
+plt.ylabel('Entries')
+plt.xlabel(r'$\alpha^{CP}_{max}$')
+plt.title('Features list: Variant-All')
+plt.legend()
+
+plt.tight_layout()
+
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+
+plt.clf()
 #----------------------------------------------------------------------------------
 calc_w_nc101  =  calc_weights(101, calc_popts)
 preds_w_nc101 =  calc_weights(101, preds_popts)

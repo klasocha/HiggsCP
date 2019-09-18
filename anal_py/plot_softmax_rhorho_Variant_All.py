@@ -171,13 +171,44 @@ else:
 
 plt.clf()
 #----------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------
 
 pathIN  = "../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_11/monit_npy/"
 pathOUT = "figures/"
 
 calc_w_nc11  = np.load(pathIN+'softmax_calc_w.npy')
 preds_w_nc11 = np.load(pathIN+'softmax_preds_w.npy')
+preds_argmax_nc11 =  np.argmax(preds_w_nc11[:], axis=1) * k2PI/11.0    
+calc_argmax_nc11 =  np.argmax(calc_w_nc11[:], axis=1) * k2PI/11.0    
+
 delt_argmax_nc11 =  calculate_deltas_signed(np.argmax(preds_w_nc11[:], axis=1), np.argmax(calc_w_nc11[:], axis=1), 11)      
+
+filename = "calc_argmax_rhorho_Variant-All_nc_11_soft"
+plt.hist(calc_argmax_nc11, histtype='step', color = "black", bins=100, label = "generated")
+plt.hist(preds_argmax_nc11, histtype='step', color = "red", bins=100, label = "predicted")
+#plt.ylim([0, 800])
+plt.ylabel('Entries')
+plt.xlabel(r'$\alpha^{CP}_{max}$')
+plt.title('Features list: Variant-All')
+plt.legend()
+
+plt.tight_layout()
+
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+
+plt.clf()
+#----------------------------------------------------------------------------------
 
 filename = "delt_argmax_rhorho_Variant-All_nc_11"
 plt.hist(delt_argmax_nc11, histtype='step', bins=11)
