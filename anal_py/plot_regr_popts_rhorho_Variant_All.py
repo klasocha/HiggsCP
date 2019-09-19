@@ -62,7 +62,7 @@ plt.plot(x,weight_fun(x, *preds_popts[i]), 'd', label='predicted')
 plt.legend()
 plt.ylim([0.0, 3.0])
 plt.xlabel(r'$\alpha^{CP}$ [rad]')
-plt.ylabel(r'$w$')
+plt.ylabel(r'$wt$')
 plt.title('Features list: Variant-All')
     
 if filename:
@@ -93,7 +93,7 @@ plt.plot(x,weight_fun(x, *preds_popts[i]), 'd', label='predicted')
 plt.legend()
 plt.ylim([0.0, 3.0])
 plt.xlabel(r'$\alpha^{CP}$ [rad]')
-plt.ylabel('w')
+plt.ylabel(r'$wt$')
 plt.title('Features list: Variant-All')
     
 if filename:
@@ -120,10 +120,10 @@ print preds_popts[:,0]
 print delt_popts[:,0]
 #----------------------------------------------------------------------------------
 
-filename = "delt_popts_A_rhorho_Variant-All"
+filename = "delt_popts_C0_rhorho_Variant-All"
 plt.hist(delt_popts[:,0], histtype='step', bins=50,  color = 'black')
 plt.xlim([-1.5, 1.5])
-plt.xlabel(r'$\Delta$A')
+plt.xlabel(r'$\Delta C_{0}$')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
@@ -149,11 +149,11 @@ else:
 plt.clf()
 #----------------------------------------------------------------------------------
 
-filename = "popts_A_rhorho_Variant-All"
+filename = "popts_C0_rhorho_Variant-All"
 plt.hist(calc_popts[:,0], histtype='step', color = 'black', linestyle='--', bins=50)
 plt.hist(preds_popts[:,0], histtype='step', color = 'red', bins=50)
 plt.xlim([-0.0, 2.0])
-plt.xlabel(r'A')
+plt.xlabel(r'$C_{0}$')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
@@ -187,11 +187,11 @@ print preds_popts[:,1]
 print delt_popts[:,1]
 #----------------------------------------------------------------------------------
 
-filename = "popts_B_rhorho_Variant-All"
+filename = "popts_C1_rhorho_Variant-All"
 plt.hist(calc_popts[:,1], histtype='step', bins=50, linestyle='--', color = 'black')
 plt.hist(preds_popts[:,1], histtype='step', bins=50, color = 'red')
 plt.xlim([-2.0, 2.0])
-plt.xlabel(r'B')
+plt.xlabel(r'$C_{1}$')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
@@ -220,10 +220,10 @@ else:
 plt.clf()
 #----------------------------------------------------------------------------------
 
-filename = "delt_popts_B_rhorho_Variant-All"
+filename = "delt_popts_C1_rhorho_Variant-All"
 plt.hist(delt_popts[:,1], histtype='step', bins=50,  color = 'black')
 plt.xlim([-1.5, 1.5])
-plt.xlabel(r'$\Delta$B')
+plt.xlabel(r'$\Delta C_{1}$')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
@@ -254,11 +254,11 @@ print preds_popts[:,2]
 print delt_popts[:,2]
 #----------------------------------------------------------------------------------
 
-filename = "popts_C_rhorho_Variant-All"
+filename = "popts_C2_rhorho_Variant-All"
 plt.hist(calc_popts[:,2], histtype='step', color = 'black', linestyle='--', bins=50)
 plt.hist(preds_popts[:,2], histtype='step',  color = 'red', bins=50)
 plt.xlim([-2.0, 2.0])
-plt.xlabel(r'C')
+plt.xlabel(r'$C_{2}$')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
@@ -287,10 +287,10 @@ else:
 plt.clf()
 #----------------------------------------------------------------------------------
 
-filename = "delt_popts_C_rhorho_Variant-All"
+filename = "delt_popts_C2_rhorho_Variant-All"
 plt.hist(delt_popts[:,2], histtype='step', bins=50,  color = 'black')
 plt.xlim([-1.5, 1.5])
-plt.xlabel(r'$\Delta$C')
+plt.xlabel(r'$\Delta C_{2}$')
 plt.title('Features list: Variant-All')
 
 ax = plt.gca()
