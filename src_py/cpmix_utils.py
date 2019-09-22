@@ -7,10 +7,21 @@ from scipy import optimize
 def weight_fun(x, a, b, c):
     return a + b * np.cos(x) + c * np.sin(x)
 
+def hits_fun(classes, x, num_classes):
+
+    hits = np.zeros(num_classes)
+    for i in range(num_classes):
+        if x >= classes[i] and  x < classes[i+1]:
+             hits[i] = 1.0
+
+    return hits
+
+
 # here weights and arg_maxs are calculated from continuum distributions
 def calc_weights_and_arg_maxs(classes, popts, data_len, num_classes):
-    arg_maxs   = np.zeros((data_len, 1))
-    weights    = np.zeros((data_len, num_classes))
+    arg_maxs     = np.zeros((data_len, 1))
+    weights      = np.zeros((data_len, num_classes))
+    hits_argmaxs = np.zeros((data_len, num_classes))
     for i in range(data_len):
         weights[i] = weight_fun(classes, *popts[i])
         arg_max = 0
@@ -27,8 +38,9 @@ def calc_weights_and_arg_maxs(classes, popts, data_len, num_classes):
             arg_max = phi + 2 * np.pi
 
         arg_maxs[i] = arg_max
+        hits_argmaxs[i] = hits_fun(classes, arg_max, num_classes)
 
-    return weights, arg_maxs
+    return weights, arg_maxs, hits_argmaxs
 
 
 def preprocess_data(args):
@@ -69,12 +81,16 @@ def preprocess_data(args):
 
     if not reuse_weights or not os.path.exists(os.path.join(data_path, 'weights.npy')) \
             or not os.path.exists(os.path.join(data_path, 'arg_maxs.npy')) \
-            or np.load(os.path.join(data_path, 'weights.npy')).shape[1] != num_classes:
-        weights, arg_maxs = calc_weights_and_arg_maxs(classes, coeffs, data_len, num_classes)
+            or not os.path.exists(os.path.join(data_path, 'hits_argmaxs.npy')) \
+            or np.load(os.path.join(data_path, 'weights.npy')).shape[1] != num_classes \
+            or np.load(os.path.join(data_path, 'hits_argmaxs')).shape[1] != num_classes:
+        weights, arg_maxs,  hits_argmaxs = calc_weights_and_arg_maxs(classes, coeffs, data_len, num_classes)
         np.save(os.path.join(data_path, 'weights.npy'), weights)
         np.save(os.path.join(data_path, 'arg_maxs.npy'), arg_maxs)
+        np.save(os.path.join(data_path, 'hits_argmaxs.npy'), hits_argmaxs)
     weights  = np.load(os.path.join(data_path, 'weights.npy'))
     arg_maxs = np.load(os.path.join(data_path, 'arg_maxs.npy'))
+    hits_argmaxs = np.load(os.path.join(data_path, 'hits_argmaxs.npy'))
 
     #ERW
     # here arg_maxs are in fraction of pi, not in the class index
@@ -95,4 +111,6 @@ def preprocess_data(args):
     # ERW    
     # here weights and arg_maxs are calculated at value of CPmix representing given class
     # in training, class is expressed as integer, not fraction pf pi.
-    return data, weights, arg_maxs, perm, popts
+
+    print "hits_argmaxs", hits_argmaxs
+    return data, weights, arg_maxs, perm, popts, hits_argmaxs

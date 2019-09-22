@@ -15,9 +15,9 @@ def train(model, dataset, batch_size=128):
 
     sys.stdout.write("<losses>):")
     for i in range(epoch_size):
-        x, weights, arg_maxs, popts, filt,  = dataset.next_batch(batch_size)
+        x, weights, arg_maxs, popts, hits_argmaxs, filt,  = dataset.next_batch(batch_size)
         loss, _ = sess.run([model.loss, model.train_op],
-                           {model.x: x, model.weights: weights, model.arg_maxs: arg_maxs, model.popts: popts})
+                           {model.x: x, model.weights: weights, model.arg_maxs: arg_maxs, model.popts: popts, model.hits_argmaxs: hits_argmaxs})
         losses.append(loss)
         if i % (epoch_size / 10) == 5:
           sys.stdout.write(". %.3f " % np.mean(losses))
@@ -154,12 +154,12 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             print msg_str
 
             valid_calc_argmaxs, valid_pred_argmaxs = soft_argmaxs_predictions(emodel, data.valid, filtered=True)
-            np.save(pathOUT + 'valid_soft_calc_argmaxs.npy', valid_calc_argmaxs)
-            np.save(pathOUT + 'valid_soft_preds_argmaxs.npy', valid_pred_argmaxs)
+            np.save(pathOUT + 'valid_soft_calc_hits_argmaxs.npy', valid_calc_argmaxs)
+            np.save(pathOUT + 'valid_soft_preds_hits_argmaxs.npy', valid_pred_argmaxs)
 
             test_calc_argmaxs, test_pred_argmaxs = soft_argmaxs_predictions(emodel, data.test, filtered=True)
-            np.save(pathOUT + 'test_soft_calc_argmaxs.npy', test_calc_argmaxs)
-            np.save(pathOUT + 'test_soft_preds_argmaxs.npy', test_pred_argmaxs)
+            np.save(pathOUT + 'test_soft_calc_hits_argmaxs.npy', test_calc_argmaxs)
+            np.save(pathOUT + 'test_soft_preds_hits_argmaxs.npy', test_pred_argmaxs)
 
         if model.tloss == 'regr_weights':
 
@@ -247,12 +247,15 @@ def predictions(model, dataset, at_most=None, filtered=True):
     filt = dataset.filt[dataset.mask]
     arg_maxs = dataset.arg_maxs[dataset.mask]
     popts = dataset.popts[dataset.mask]
+    hits_argmaxs = dataset.hits_argmaxs[dataset.mask]
 
     if at_most is not None:
       filt = filt[:at_most]
       x = x[:at_most]
       weights = weights[:at_most]
       arg_maxs = arg_maxs[:at_most]
+      popts = popts[:at_most]
+      hits_argmaxs = hits_argmaxs[:at_most]
 
     p = sess.run(model.p, {model.x: x})
 
@@ -261,12 +264,14 @@ def predictions(model, dataset, at_most=None, filtered=True):
       x = x[filt == 1]
       weights = weights[filt == 1]
       arg_maxs = arg_maxs[filt == 1]
+      popts = popts[filt == 1]
+      hits_argmaxs = hits_argmaxs[filt == 1]
 
     # ERW
     # problem with consistency, p is normalised to unity, but weights are not!!
     # leads to wrong estimate of the L1, L2 metrics
 
-    return x, p, weights, arg_maxs, popts
+    return x, p, weights, arg_maxs, popts, hits_argmaxs
 
 def softmax_predictions(model, dataset, at_most=None, filtered=True):
     sess = tf.get_default_session()
@@ -385,27 +390,27 @@ def regr_argmaxs_predictions(model, dataset, at_most=None, filtered=True):
 def soft_argmaxs_predictions(model, dataset, at_most=None, filtered=True):
     sess = tf.get_default_session()
     x = dataset.x[dataset.mask]
-    calc_argmaxs = dataset.arg_maxs[dataset.mask]
+    calc_hits_argmaxs = dataset.hits_argmaxs[dataset.mask]
     filt = dataset.filt[dataset.mask]
 
     if at_most is not None:
         filt = filt[:at_most]
-        calc_argmaxs = calc_argmaxs[:at_most]
+        calc_hits_argmaxs = calc_hits_argmaxs[:at_most]
         x = x[:at_most]
 
     if filtered:
-        calc_argmaxs = calc_argmaxs[filt == 1]
+        calc_hits_argmaxs = calc_hits_argmaxs[filt == 1]
         x = x[filt == 1]
 
-    pred_argmaxs = sess.run(model.p, {model.x: x})*np.pi*2.0
+    pred_hits_argmaxs = sess.run(model.p, {model.x: x})
     
-    return calc_argmaxs, pred_argmaxs
+    return calc_hits_argmaxs, pred_hits_argmaxs
 
 
 
 #prepared by Michal
 def evaluate_test(model, dataset, args, at_most=None, filtered=True):
-    _, pred_w, calc_w, arg_maxs, popts = predictions(model, dataset, at_most, filtered)
+    _, pred_w, calc_w, arg_maxs, popts, hits_argmaxs = predictions(model, dataset, at_most, filtered)
 
     pred_w = calc_w  # Assume for tests that calc_w equals calc_w
     return calculate_classification_metrics(pred_w, calc_w, args)
@@ -427,7 +432,7 @@ def test_roc_auc(preds_w, calc_w):
                   'roc_auc: {}'.format(calculate_roc_auc(preds_w, calc_w, 0, i)))
  
 def evaluate(model, dataset, args, at_most=None, filtered=True):
-    _, pred_w, calc_w, arg_maxs, popts = predictions(model, dataset, at_most, filtered)
+    _, pred_w, calc_w, arg_maxs, popts, hits_argmaxs = predictions(model, dataset, at_most, filtered)
 
     # normalise calc_w to probabilities
     num_classes = calc_w.shape[1]
@@ -492,6 +497,7 @@ class NeuralNetwork(object):
         self.weights = weights = tf.placeholder(tf.float32, [batch_size, num_classes])
         self.arg_maxs = arg_maxs = tf.placeholder(tf.float32, [batch_size, 1])
         self.popts = popts = tf.placeholder(tf.float32, [batch_size, 3])
+        self.hits_argmaxs = hits_argmaxs = tf.placeholder(tf.float32, [batch_size, num_classes])
         self.tloss = tloss
 
         if input_noise > 0.0:
@@ -520,11 +526,11 @@ class NeuralNetwork(object):
             labels = popts/ tf.tile(tf.reshape(tf.reduce_sum(popts, axis=1), (-1, 1)), (1,3))
             self.loss = loss = tf.nn.softmax_cross_entropy_with_logits(logits=sx, labels=labels)
         elif tloss == "soft_argmaxs":
-            sx = linear(x, "alphaCP", 1)
+            sx = linear(x, "classes", num_classes)
             self.preds = tf.nn.softmax(sx)
             self.p = self.preds
-            # labels: normalised weighs (probabilities)
-            labels = arg_maxs/tf.tile(tf.reshape(tf.reduce_sum(arg_maxs, axis=1), (-1, 1)), (1,1))
+            # labels: use hits map for arg_maxs
+            labels = hits_argmaxs / tf.tile(tf.reshape(tf.reduce_sum(hits_argmaxs, axis=1), (-1, 1)), (1,num_classes))
             self.loss = loss = tf.nn.softmax_cross_entropy_with_logits(logits=sx, labels=labels)
         elif tloss == "regr_argmaxs":
             # not learning close to angle = 0, 2pi

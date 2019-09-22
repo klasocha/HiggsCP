@@ -17,15 +17,17 @@ def run(args):
     download_data(args)
     
     print("Preprocessing data")
-    data, weights, arg_maxs, perm, popts = preprocess_data(args)
+    data, weights, arg_maxs, perm, popts, hits_argmaxs = preprocess_data(args)
 
     print("Processing data")
     event = RhoRhoEvent(data, args)
-    points = EventDatasets(event, weights, arg_maxs, perm, popts=popts, miniset=args.MINISET, unweighted=args.UNWEIGHTED)
+    points = EventDatasets(event, weights, arg_maxs, perm, popts=popts, hits_argmaxs=hits_argmaxs, miniset=args.MINISET, unweighted=args.UNWEIGHTED)
     num_features = points.train.x.shape[1]
     print("Prepared %d features" % num_features)
 
-    pathOUT = "temp_results/" + args.TYPE + "_" + args.FEAT + "_" + args.TRAINING_METHOD + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "_NUM_CLASSES_" + str(args.NUM_CLASSES) + "/"
+    print hits_argmaxs
+
+    pathOUT = "temp_results/"+ args.TYPE + "_" + args.FEAT + "_" + args.TRAINING_METHOD + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "_NUM_CLASSES_" + str(args.NUM_CLASSES) + "/"
     if pathOUT:
         try:
             os.makedirs(pathOUT)
