@@ -9,8 +9,8 @@ def weight_fun(x, a, b, c):
 
 # here weights and arg_maxs are calculated from continuum distributions
 def calc_weights_and_arg_maxs(classes, popts, data_len, num_classes):
-    arg_maxs = np.zeros((data_len, 1))
-    weights = np.zeros((data_len, num_classes))
+    arg_maxs   = np.zeros((data_len, 1))
+    weights    = np.zeros((data_len, num_classes))
     for i in range(data_len):
         weights[i] = weight_fun(classes, *popts[i])
         arg_max = 0
@@ -27,6 +27,7 @@ def calc_weights_and_arg_maxs(classes, popts, data_len, num_classes):
             arg_max = phi + 2 * np.pi
 
         arg_maxs[i] = arg_max
+
     return weights, arg_maxs
 
 
@@ -45,24 +46,31 @@ def preprocess_data(args):
     data_len = data.shape[0]
     classes = np.linspace(0, 2, num_classes) * np.pi
 
-    if not os.path.exists(os.path.join(data_path, 'popts.npy')):
-        popts = np.zeros((data_len, 3))
-        pcovs = np.zeros((data_len, 3, 3))
+    if not os.path.exists(os.path.join(data_path, 'popts.npy')) or not os.path.exists(os.path.join(data_path, 'coeffs.npy')):
+        coeffs = np.zeros((data_len, 3))
+        popts  = np.zeros((data_len, 3))
+        ccovs  = np.zeros((data_len, 3, 3))
         # here x correspond to values of CPmix at thich data were generated
+        # coeffs is an array for C0, C1, C2 coefficients (per event)
+        # popts is an array for  C0, C1, C2 coefficients shifted by+1.0, to avoid negative values
+        # being inputs to regression or softmax 
         x = np.array([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0]) * np.pi
         for i in range(data_len):
-            popt, pcov = optimize.curve_fit(weight_fun, x, w[i, :], p0=[1, 1, 1])
-            popts[i] = popt
-            pcovs[i] = pcov
+            coeff, ccov = optimize.curve_fit(weight_fun, x, w[i, :], p0=[1, 1, 1])
+            coeffs[i] = coeff
+            popts[i]  = coeff
+            ccovs[i]  = ccov
 
         np.save(os.path.join(data_path, 'popts.npy'), popts)
-        np.save(os.path.join(data_path, 'pcovs.npy'), pcovs)
+        np.save(os.path.join(data_path, 'coeffs.npy'), coeffs)
+        np.save(os.path.join(data_path, 'ccovs.npy'), ccovs)
     popts = np.load(os.path.join(data_path, 'popts.npy'))
+    coeffs = np.load(os.path.join(data_path, 'coeffs.npy'))
 
     if not reuse_weights or not os.path.exists(os.path.join(data_path, 'weights.npy')) \
             or not os.path.exists(os.path.join(data_path, 'arg_maxs.npy')) \
             or np.load(os.path.join(data_path, 'weights.npy')).shape[1] != num_classes:
-        weights, arg_maxs = calc_weights_and_arg_maxs(classes, popts, data_len, num_classes)
+        weights, arg_maxs = calc_weights_and_arg_maxs(classes, coeffs, data_len, num_classes)
         np.save(os.path.join(data_path, 'weights.npy'), weights)
         np.save(os.path.join(data_path, 'arg_maxs.npy'), arg_maxs)
     weights  = np.load(os.path.join(data_path, 'weights.npy'))
