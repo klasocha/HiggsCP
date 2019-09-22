@@ -13,17 +13,17 @@ from src_py.monit_utils import monit_plots
 def run(args):
     num_classes = args.NUM_CLASSES
 
-    print "Downloading data"
+    print("Downloading data")
     download_data(args)
     
-    print "Preprocessing data"
+    print("Preprocessing data")
     data, weights, arg_maxs, perm, popts = preprocess_data(args)
 
-    print "Processing data"
+    print("Processing data")
     event = RhoRhoEvent(data, args)
     points = EventDatasets(event, weights, arg_maxs, perm, popts=popts, miniset=args.MINISET, unweighted=args.UNWEIGHTED)
     num_features = points.train.x.shape[1]
-    print "Prepared %d features" % num_features
+    print("Prepared %d features" % num_features)
 
     pathOUT = "temp_results/" + args.TYPE + "_" + args.FEAT + "_" + args.TRAINING_METHOD + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "_NUM_CLASSES_" + str(args.NUM_CLASSES) + "/"
     if pathOUT:
@@ -55,7 +55,7 @@ def run(args):
         w_b = weights[:,num_classes/2]
         monit_plots(pathOUT_plots, args, event, w_a, w_b)
 
-    print "Initializing model"
+    print("Initializing model")
     with tf.variable_scope("model1") as vs:
         model = NeuralNetwork(num_features, num_classes,
                               num_layers=args.LAYERS, size=args.SIZE,
@@ -70,13 +70,15 @@ def run(args):
 
     tf.global_variables_initializer().run()
 
-    print "Training"
+    print("Training")
     total_train(pathOUT_npy, model, points, args, emodel=emodel, batch_size=128, epochs=args.EPOCHS)
 
 
 def start(args):
     tf.reset_default_graph()
     sess = tf.Session()
+    np.random.seed(781)
+    tf.set_random_seed(781)
     with sess.as_default():
         run(args)
 

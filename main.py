@@ -43,7 +43,7 @@ parser.add_argument("--w1", dest="W1")
 parser.add_argument("--w2", dest="W2")
 
 parser.add_argument("--plot_features", dest="PLOT_FEATURES", choices=["NO", "FILTER", "NO-FILTER"], default="NO")
-parser.add_argument("--training_method", dest="TRAINING_METHOD", choices=["soft", "regr_popts", "regr_weights", "regr_argmaxs"], default="soft")
+parser.add_argument("--training_method", dest="TRAINING_METHOD", choices=["soft_weights", "soft_popts",  "soft_argmaxs", "regr_popts", "regr_weights", "regr_argmaxs"], default="soft_weights")
 
 args = parser.parse_args()
 
