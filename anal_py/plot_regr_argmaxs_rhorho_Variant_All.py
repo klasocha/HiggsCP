@@ -30,6 +30,9 @@ delt_argmaxs = calc_argmaxs - preds_argmaxs
 delt_argmaxs = calculate_deltas_signed(calc_argmaxs, preds_argmaxs, 10000.)
 
 k2PI = 2 * np.pi
+calc_argmaxs= calc_argmaxs/k2PI
+print calc_argmaxs
+
 #----------------------------------------------------------------------------------
 filename = "calc_argmaxs_rhorho_Variant-All"
 
