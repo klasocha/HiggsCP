@@ -5,7 +5,7 @@ import sys
 
 from src_py.metrics_utils import calculate_deltas_unsigned, calculate_deltas_signed
 
-# Issue with regr_popts, not learning well after modifications of last weeks, last
+# Issue with regr_c012s, not learning well after modifications of last weeks, last
 # good production on June 20-th"
 
 def train(model, dataset, batch_size=128):
@@ -15,9 +15,10 @@ def train(model, dataset, batch_size=128):
 
     sys.stdout.write("<losses>):")
     for i in range(epoch_size):
-        x, weights, arg_maxs, popts, hits_argmaxs, filt,  = dataset.next_batch(batch_size)
+        x, weights, arg_maxs, c012s, hits_argmaxs, hits_c012s, filt,  = dataset.next_batch(batch_size)
         loss, _ = sess.run([model.loss, model.train_op],
-                           {model.x: x, model.weights: weights, model.arg_maxs: arg_maxs, model.popts: popts, model.hits_argmaxs: hits_argmaxs})
+                           {model.x: x, model.weights: weights, model.arg_maxs: arg_maxs, model.c012s: c012s,
+                            model.hits_argmaxs: hits_argmaxs, model.hits_c012s: hits_c012s})
         losses.append(loss)
         if i % (epoch_size / 10) == 5:
           sys.stdout.write(". %.3f " % np.mean(losses))
@@ -105,33 +106,37 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
                 np.save(pathOUT+'softmax_preds_w.npy', preds_w)
 
 
-        if model.tloss == 'soft_popts':
+        if model.tloss == 'soft_c012s':
 
             train_losses += [train_loss]
             msg_str = "TRAINING:     LOSS: %.3f \n" % (train_loss)
             print msg_str
 
-            valid_calc_popts, valid_pred_popts = soft_popts_predictions(emodel, data.valid, filtered=True)
-            np.save(pathOUT + 'valid_soft_calc_popts.npy', valid_calc_popts)
-            np.save(pathOUT + 'valid_soft_preds_popts.npy', valid_pred_popts)
+            train_calc_c012s, train_pred_c012s = soft_c012s_predictions(emodel, data.valid, filtered=True)
+            np.save(pathOUT + 'train_soft_calc_hits_c012s.npy', train_calc_c012s)
+            np.save(pathOUT + 'train_soft_preds_hits_c012s.npy', train_pred_c012s)
 
-            test_calc_popts, test_pred_popts = soft_popts_predictions(emodel, data.test, filtered=True)
-            np.save(pathOUT + 'test_soft_calc_popts.npy', test_calc_popts)
-            np.save(pathOUT + 'test_soft_preds_popts.npy', test_pred_popts)
+            valid_calc_c012s, valid_pred_c012s = soft_c012s_predictions(emodel, data.valid, filtered=True)
+            np.save(pathOUT + 'valid_soft_calc_c012s.npy', valid_calc_c012s)
+            np.save(pathOUT + 'valid_soft_preds_c012s.npy', valid_pred_c012s)
 
-        if model.tloss == 'regr_popts':
+            test_calc_c012s, test_pred_c012s = soft_c012s_predictions(emodel, data.test, filtered=True)
+            np.save(pathOUT + 'test_soft_calc_c012s.npy', test_calc_c012s)
+            np.save(pathOUT + 'test_soft_preds_c012s.npy', test_pred_c012s)
+
+        if model.tloss == 'regr_c012s':
 
             train_losses += [train_loss]
             msg_str = "TRAINING:     LOSS: %.3f \n" % (train_loss)
             print msg_str
 
-            valid_calc_popts, valid_pred_popts = regr_popts_predictions(emodel, data.valid, filtered=True)
-            np.save(pathOUT + 'valid_regr_calc_popts.npy', valid_calc_popts)
-            np.save(pathOUT + 'valid_regr_preds_popts.npy', valid_pred_popts)
+            valid_calc_c012s, valid_pred_c012s = regr_c012s_predictions(emodel, data.valid, filtered=True)
+            np.save(pathOUT + 'valid_regr_calc_c012s.npy', valid_calc_c012s)
+            np.save(pathOUT + 'valid_regr_preds_c012s.npy', valid_pred_c012s)
 
-            test_calc_popts, test_pred_popts = regr_popts_predictions(emodel, data.test, filtered=True)
-            np.save(pathOUT + 'test_regr_calc_popts.npy', test_calc_popts)
-            np.save(pathOUT + 'test_regr_preds_popts.npy', test_pred_popts)
+            test_calc_c012s, test_pred_c012s = regr_c012s_predictions(emodel, data.test, filtered=True)
+            np.save(pathOUT + 'test_regr_calc_c012s.npy', test_calc_c012s)
+            np.save(pathOUT + 'test_regr_preds_c012s.npy', test_pred_c012s)
 
         if model.tloss == 'regr_argmaxs':
 
@@ -152,6 +157,10 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             train_losses += [train_loss]
             msg_str = "TRAINING:     LOSS: %.3f \n" % (train_loss)
             print msg_str
+
+            train_calc_argmaxs, train_pred_argmaxs = soft_argmaxs_predictions(emodel, data.train, filtered=True)
+            np.save(pathOUT + 'train_soft_calc_hits_argmaxs.npy', train_calc_argmaxs)
+            np.save(pathOUT + 'train_soft_preds_hits_argmaxs.npy', train_pred_argmaxs)
 
             valid_calc_argmaxs, valid_pred_argmaxs = soft_argmaxs_predictions(emodel, data.valid, filtered=True)
             np.save(pathOUT + 'valid_soft_calc_hits_argmaxs.npy', valid_calc_argmaxs)
@@ -205,11 +214,11 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
         print "test_L2_deltas", test_L2_deltas
 
                   
-    if model.tloss == 'soft_popts':
+    if model.tloss == 'soft_c012s':
 
         # storing history of training            
-        np.save(pathOUT+'train_losses_soft_popts.npy', train_losses)
-        print "train_losses_soft_popts", train_losses
+        np.save(pathOUT+'train_losses_soft_c012s.npy', train_losses)
+        print "train_losses_soft_c012s", train_losses
                 
     if model.tloss == 'regr_argmaxs':
 
@@ -224,11 +233,11 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
         print "train_losses_soft_argmaxs", train_losses
 
                  
-    if model.tloss == 'regr_popts':
+    if model.tloss == 'regr_c012s':
 
         # storing history of training            
-        np.save(pathOUT+'train_losses_regr_popts.npy', train_losses)
-        print "train_losses_popts", train_losses
+        np.save(pathOUT+'train_losses_regr_c012s.npy', train_losses)
+        print "train_losses_c012s", train_losses
                  
     if model.tloss == 'regr_weights':
 
@@ -246,16 +255,18 @@ def predictions(model, dataset, at_most=None, filtered=True):
     weights = dataset.weights[dataset.mask]
     filt = dataset.filt[dataset.mask]
     arg_maxs = dataset.arg_maxs[dataset.mask]
-    popts = dataset.popts[dataset.mask]
+    c012s = dataset.c012s[dataset.mask]
     hits_argmaxs = dataset.hits_argmaxs[dataset.mask]
+    hits_c012s = dataset.hits_c012s[dataset.mask]
 
     if at_most is not None:
       filt = filt[:at_most]
       x = x[:at_most]
       weights = weights[:at_most]
       arg_maxs = arg_maxs[:at_most]
-      popts = popts[:at_most]
+      c012s = c012s[:at_most]
       hits_argmaxs = hits_argmaxs[:at_most]
+      hits_c012s = hits_c012s[:at_most]
 
     p = sess.run(model.p, {model.x: x})
 
@@ -264,14 +275,15 @@ def predictions(model, dataset, at_most=None, filtered=True):
       x = x[filt == 1]
       weights = weights[filt == 1]
       arg_maxs = arg_maxs[filt == 1]
-      popts = popts[filt == 1]
+      c012s = c012s[filt == 1]
       hits_argmaxs = hits_argmaxs[filt == 1]
+      hits_c012s = hits_c012s[filt == 1]
 
     # ERW
     # problem with consistency, p is normalised to unity, but weights are not!!
     # leads to wrong estimate of the L1, L2 metrics
 
-    return x, p, weights, arg_maxs, popts, hits_argmaxs
+    return x, p, weights, arg_maxs, c012s, hits_argmaxs, hits_c012s
 
 def softmax_predictions(model, dataset, at_most=None, filtered=True):
     sess = tf.get_default_session()
@@ -333,41 +345,41 @@ def regr_weights_predictions(model, dataset, at_most=None, filtered=True):
     return calc_weights, pred_weights
 
 #prepared by Michal
-def regr_popts_predictions(model, dataset, at_most=None, filtered=True):
+def regr_c012s_predictions(model, dataset, at_most=None, filtered=True):
     sess = tf.get_default_session()
     x = dataset.x[dataset.mask]
-    calc_popts = dataset.popts[dataset.mask]
+    calc_c012s = dataset.c012s[dataset.mask]
     filt = dataset.filt[dataset.mask]
 
     if at_most is not None:
         filt = filt[:at_most]
-        calc_popts = calc_popts[:at_most]
+        calc_c012s = calc_c012s[:at_most]
         x = x[:at_most]
 
     if filtered:
-        calc_popts = calc_popts[filt == 1]
+        calc_c012s = calc_c012s[filt == 1]
         x = x[filt == 1]
 
-    pred_popts = sess.run(model.p, {model.x: x})
-    return calc_popts, pred_popts
+    pred_c012s = sess.run(model.p, {model.x: x})
+    return calc_c012s, pred_c012s
 
-def soft_popts_predictions(model, dataset, at_most=None, filtered=True):
+def soft_c012s_predictions(model, dataset, at_most=None, filtered=True):
     sess = tf.get_default_session()
     x = dataset.x[dataset.mask]
-    calc_popts = dataset.popts[dataset.mask]
+    calc_hits_c012s = dataset.hits_c012s[dataset.mask]
     filt = dataset.filt[dataset.mask]
 
     if at_most is not None:
         filt = filt[:at_most]
-        calc_popts = calc_popts[:at_most]
+        calc_hits_c012s = calc_hits_c012s[:at_most]
         x = x[:at_most]
 
     if filtered:
-        calc_popts = calc_popts[filt == 1]
+        calc_hits_c012s = calc_hits_c012s[filt == 1]
         x = x[filt == 1]
 
-    pred_popts = sess.run(model.p, {model.x: x})
-    return calc_popts, pred_popts
+    pred_hits_c012s = sess.run(model.p, {model.x: x})
+    return calc_hits_c012s, pred_hits_c012s
 
 def regr_argmaxs_predictions(model, dataset, at_most=None, filtered=True):
     sess = tf.get_default_session()
@@ -410,7 +422,7 @@ def soft_argmaxs_predictions(model, dataset, at_most=None, filtered=True):
 
 #prepared by Michal
 def evaluate_test(model, dataset, args, at_most=None, filtered=True):
-    _, pred_w, calc_w, arg_maxs, popts, hits_argmaxs = predictions(model, dataset, at_most, filtered)
+    _, pred_w, calc_w, arg_maxs, c012s, hits_argmaxs, hits_c012s = predictions(model, dataset, at_most, filtered)
 
     pred_w = calc_w  # Assume for tests that calc_w equals calc_w
     return calculate_classification_metrics(pred_w, calc_w, args)
@@ -432,7 +444,7 @@ def test_roc_auc(preds_w, calc_w):
                   'roc_auc: {}'.format(calculate_roc_auc(preds_w, calc_w, 0, i)))
  
 def evaluate(model, dataset, args, at_most=None, filtered=True):
-    _, pred_w, calc_w, arg_maxs, popts, hits_argmaxs = predictions(model, dataset, at_most, filtered)
+    _, pred_w, calc_w, arg_maxs, c012s, hits_argmaxs, hits_c012s = predictions(model, dataset, at_most, filtered)
 
     # normalise calc_w to probabilities
     num_classes = calc_w.shape[1]
@@ -496,8 +508,9 @@ class NeuralNetwork(object):
         self.x = x = tf.placeholder(tf.float32, [batch_size, num_features])
         self.weights = weights = tf.placeholder(tf.float32, [batch_size, num_classes])
         self.arg_maxs = arg_maxs = tf.placeholder(tf.float32, [batch_size, 1])
-        self.popts = popts = tf.placeholder(tf.float32, [batch_size, 3])
+        self.c012s = c012s = tf.placeholder(tf.float32, [batch_size, 3])
         self.hits_argmaxs = hits_argmaxs = tf.placeholder(tf.float32, [batch_size, num_classes])
+        self.hits_c012s = hits_c012s = tf.placeholder(tf.float32, [batch_size, num_classes])
         self.tloss = tloss
 
         if input_noise > 0.0:
@@ -517,14 +530,6 @@ class NeuralNetwork(object):
             # labels: class probabilities, calculated as normalised weighs (probabilities)
             labels = weights / tf.tile(tf.reshape(tf.reduce_sum(weights, axis=1), (-1, 1)), (1,num_classes))
             self.loss = loss = tf.nn.softmax_cross_entropy_with_logits(logits=sx, labels=labels)
-        elif tloss == "soft_popts":
-            sx = linear(x, "popts", 3)
-            self.preds = tf.nn.softmax(sx)
-            self.p = self.preds
-            # labels: class probabilities, calculated as normalised weighs (probabilities)
-            # no working because popts[1], popts[2] are negative
-            labels = popts/ tf.tile(tf.reshape(tf.reduce_sum(popts, axis=1), (-1, 1)), (1,3))
-            self.loss = loss = tf.nn.softmax_cross_entropy_with_logits(logits=sx, labels=labels)
         elif tloss == "soft_argmaxs":
             sx = linear(x, "classes", num_classes)
             self.preds = tf.nn.softmax(sx)
@@ -532,17 +537,24 @@ class NeuralNetwork(object):
             # labels: use hits map for arg_maxs
             labels = hits_argmaxs / tf.tile(tf.reshape(tf.reduce_sum(hits_argmaxs, axis=1), (-1, 1)), (1,num_classes))
             self.loss = loss = tf.nn.softmax_cross_entropy_with_logits(logits=sx, labels=labels)
+        elif tloss == "soft_c012s":
+            sx = linear(x, "classes", num_classes)
+            self.preds = tf.nn.softmax(sx)
+            self.p = self.preds
+            # labels: use hits map for single coefficient c012s
+            labels = hits_c012s / tf.tile(tf.reshape(tf.reduce_sum(hits_c012s, axis=1), (-1, 1)), (1,num_classes))
+            self.loss = loss = tf.nn.softmax_cross_entropy_with_logits(logits=sx, labels=labels)
         elif tloss == "regr_argmaxs":
             # not learning close to angle = 0, 2pi
             sx = linear(x, "regr", 1)
             self.sx = sx
             self.p = sx
             self.loss = loss = tf.losses.mean_squared_error(self.arg_maxs, sx)
-        elif tloss == "regr_popts":
+        elif tloss == "regr_c012s":
             sx = linear(x, "regr", 3)
             self.sx = sx
             self.p = sx
-            self.loss = loss = tf.losses.mean_squared_error(self.popts, sx)
+            self.loss = loss = tf.losses.mean_squared_error(self.c012s, sx)
         elif tloss == "regr_weights":
             # not learning well
             sx = linear(x, "classes", num_classes)

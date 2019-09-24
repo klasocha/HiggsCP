@@ -10,31 +10,43 @@ def weight_fun(x, a, b, c):
 def hits_fun(classes, x, num_classes):
 
     hits = np.zeros(num_classes)
-    for i in range(num_classes):
+    for i in range(num_classes-1):
         if x >= classes[i] and  x < classes[i+1]:
              hits[i] = 1.0
 
     return hits
 
 
+# here hits maps are calculated 
+def calc_hits_c012s(classes, c012s, data_len, num_classes):
+    hits_c0s = np.zeros((data_len, num_classes))
+    hits_c1s = np.zeros((data_len, num_classes))
+    hits_c2s = np.zeros((data_len, num_classes))
+    for i in range(data_len):
+        hits_c0s[i] = hits_fun(classes, c012s[i][0], num_classes)
+        hits_c1s[i] = hits_fun(classes, c012s[i][1]+1.0, num_classes)
+        hits_c2s[i] = hits_fun(classes, c012s[i][2]+1.0, num_classes)
+
+    return hits_c0s, hits_c1s, hits_c2s
+
 # here weights and arg_maxs are calculated from continuum distributions
-def calc_weights_and_arg_maxs(classes, popts, data_len, num_classes):
+def calc_weights_and_arg_maxs(classes, c012s, data_len, num_classes):
     arg_maxs     = np.zeros((data_len, 1))
     weights      = np.zeros((data_len, num_classes))
     hits_argmaxs = np.zeros((data_len, num_classes))
     for i in range(data_len):
-        weights[i] = weight_fun(classes, *popts[i])
+        weights[i] = weight_fun(classes, *c012s[i])
         arg_max = 0
-        if weight_fun(2 * np.pi, *popts[i]) > weight_fun(arg_max, *popts[i]):
+        if weight_fun(2 * np.pi, *c012s[i]) > weight_fun(arg_max, *c012s[i]):
             arg_max = 2 * np.pi
-        phi = np.arctan(popts[i][2] / popts[i][1])
+        phi = np.arctan(c012s[i][2] / c012s[i][1])
 
-        if 0 < phi < 2 * np.pi and weight_fun(phi, *popts[i]) > weight_fun(arg_max, *popts[i]):
+        if 0 < phi < 2 * np.pi and weight_fun(phi, *c012s[i]) > weight_fun(arg_max, *c012s[i]):
             arg_max = phi
-        if 0 < phi + np.pi < 2 * np.pi and weight_fun(phi + np.pi, *popts[i]) > weight_fun(arg_max, *popts[i]):
+        if 0 < phi + np.pi < 2 * np.pi and weight_fun(phi + np.pi, *c012s[i]) > weight_fun(arg_max, *c012s[i]):
             arg_max = phi + np.pi
-        if 0 < phi + 2 * np.pi < 2 * np.pi and weight_fun(phi + 2 * np.pi, *popts[i]) > weight_fun(arg_max,
-                                                                                                   *popts[i]):
+        if 0 < phi + 2 * np.pi < 2 * np.pi and weight_fun(phi + 2 * np.pi, *c012s[i]) > weight_fun(arg_max,
+                                                                                                   *c012s[i]):
             arg_max = phi + 2 * np.pi
 
         arg_maxs[i] = arg_max
@@ -56,35 +68,53 @@ def preprocess_data(args):
     print "Read %d events" % data.shape[0]
 
     data_len = data.shape[0]
-    classes = np.linspace(0, 2, num_classes) * np.pi
 
-    if not os.path.exists(os.path.join(data_path, 'popts.npy')) or not os.path.exists(os.path.join(data_path, 'coeffs.npy')):
-        coeffs = np.zeros((data_len, 3))
-        popts  = np.zeros((data_len, 3))
+    if not os.path.exists(os.path.join(data_path, 'c012s.npy')):
+        c012s   = np.zeros((data_len, 3))
         ccovs  = np.zeros((data_len, 3, 3))
         # here x correspond to values of CPmix at thich data were generated
         # coeffs is an array for C0, C1, C2 coefficients (per event)
-        # popts is an array for  C0, C1, C2 coefficients shifted by+1.0, to avoid negative values
+        # c012 is an array for  C0, C1, C2 coefficients shifted by+1.0, to avoid negative values
         # being inputs to regression or softmax 
         x = np.array([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0]) * np.pi
         for i in range(data_len):
             coeff, ccov = optimize.curve_fit(weight_fun, x, w[i, :], p0=[1, 1, 1])
-            coeffs[i] = coeff
-            popts[i]  = coeff
+            c012s[i]  = coeff
             ccovs[i]  = ccov
 
-        np.save(os.path.join(data_path, 'popts.npy'), popts)
-        np.save(os.path.join(data_path, 'coeffs.npy'), coeffs)
+        np.save(os.path.join(data_path, 'c012s.npy'), c012s)
         np.save(os.path.join(data_path, 'ccovs.npy'), ccovs)
-    popts = np.load(os.path.join(data_path, 'popts.npy'))
-    coeffs = np.load(os.path.join(data_path, 'coeffs.npy'))
+
+    c012s = np.load(os.path.join(data_path, 'c012s.npy'))
+   
+
+    if not os.path.exists(os.path.join(data_path, 'hits_c0s.npy')) \
+       or not os.path.exists(os.path.join(data_path, 'hits_c1s.npy')) \
+       or not os.path.exists(os.path.join(data_path, 'hits_c2s.npy')) \
+       or np.load(os.path.join(data_path, 'hits_c0s.npy')).shape[1] != num_classes \
+       or np.load(os.path.join(data_path, 'hits_c1s.npy')).shape[1] != num_classes \
+       or np.load(os.path.join(data_path, 'hits_c2s.npy')).shape[1] != num_classes :
+        classes = np.linspace(0, 2, num_classes) 
+        hits_c0s, hits_c1s, hits_c2s = calc_hits_c012s(classes, c012s, data_len, num_classes)
+        np.save(os.path.join(data_path, 'hits_c0s.npy'), hits_c0s)
+        np.save(os.path.join(data_path, 'hits_c1s.npy'), hits_c1s)
+        np.save(os.path.join(data_path, 'hits_c2s.npy'), hits_c2s)
+
+    if args.HITS_C012s == "hits_c0s" :
+        hits_c012s = np.load(os.path.join(data_path, 'hits_c0s.npy'))
+    elif args.HITS_C012s == "hits_c1s" :   
+        hits_c012s = np.load(os.path.join(data_path, 'hits_c1s.npy'))
+    elif args.HITS_C012s == "hits_c2s" :   
+        hits_c012s = np.load(os.path.join(data_path, 'hits_c2s.npy'))
+
 
     if not reuse_weights or not os.path.exists(os.path.join(data_path, 'weights.npy')) \
             or not os.path.exists(os.path.join(data_path, 'arg_maxs.npy')) \
             or not os.path.exists(os.path.join(data_path, 'hits_argmaxs.npy')) \
             or np.load(os.path.join(data_path, 'weights.npy')).shape[1] != num_classes \
             or np.load(os.path.join(data_path, 'hits_argmaxs')).shape[1] != num_classes:
-        weights, arg_maxs,  hits_argmaxs = calc_weights_and_arg_maxs(classes, coeffs, data_len, num_classes)
+        classes = np.linspace(0, 2, num_classes) * np.pi
+        weights, arg_maxs,  hits_argmaxs = calc_weights_and_arg_maxs(classes, c012s, data_len, num_classes)
         np.save(os.path.join(data_path, 'weights.npy'), weights)
         np.save(os.path.join(data_path, 'arg_maxs.npy'), arg_maxs)
         np.save(os.path.join(data_path, 'hits_argmaxs.npy'), hits_argmaxs)
@@ -106,11 +136,10 @@ def preprocess_data(args):
     #ERW
     # this optimisation does not help, revisit, maybe not correctly implemented?
     if args.NORMALIZE_WEIGHTS:
-        weights = weights/np.reshape(popts[:, 0], (-1, 1))
+        weights = weights/np.reshape(c012s[:, 0], (-1, 1))
         
     # ERW    
     # here weights and arg_maxs are calculated at value of CPmix representing given class
     # in training, class is expressed as integer, not fraction pf pi.
 
-    print "hits_argmaxs", hits_argmaxs
-    return data, weights, arg_maxs, perm, popts, hits_argmaxs
+    return data, weights, arg_maxs, perm, c012s, hits_argmaxs, hits_c012s
