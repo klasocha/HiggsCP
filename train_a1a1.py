@@ -16,12 +16,12 @@ def run(args):
 
     print "Loading data"
     download_data(args)
-    data, weights, arg_maxs, perm, popts = preprocess_data(args)
+    data, weights, argmaxs, perm, popts = preprocess_data(args)
     data_path = args.IN
 
     print "Processing data"
     event = A1A1Event(data, args)
-    points = EventDatasets(event, weights, arg_maxs, perm, popts=popts, miniset=args.MINISET, unweighted=args.UNWEIGHTED)
+    points = EventDatasets(event, weights, argmaxs, perm, popts=popts, miniset=args.MINISET, unweighted=args.UNWEIGHTED)
 
     num_features = points.train.x.shape[1]
     print "Prepared %d features" % num_features
@@ -70,6 +70,8 @@ def run(args):
 
 def start(args):
     sess = tf.Session()
+    np.random.seed(781)
+    tf.set_random_seed(781)
     with sess.as_default():
         run(args)
 

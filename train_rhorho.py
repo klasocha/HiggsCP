@@ -17,11 +17,11 @@ def run(args):
     download_data(args)
     
     print("Preprocessing data")
-    data, weights, arg_maxs, perm, c012s, hits_argmaxs, hits_c012s = preprocess_data(args)
+    data, weights, argmaxs, perm, c012s, hits_argmaxs, hits_c012s = preprocess_data(args)
 
     print("Processing data")
     event = RhoRhoEvent(data, args)
-    points = EventDatasets(event, weights, arg_maxs, perm, c012s=c012s, hits_argmaxs=hits_argmaxs,  hits_c012s=hits_c012s, miniset=args.MINISET, unweighted=args.UNWEIGHTED)
+    points = EventDatasets(event, weights, argmaxs, perm, c012s=c012s, hits_argmaxs=hits_argmaxs,  hits_c012s=hits_c012s, miniset=args.MINISET, unweighted=args.UNWEIGHTED)
     num_features = points.train.x.shape[1]
     print("Prepared %d features" % num_features)
 
