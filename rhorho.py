@@ -214,6 +214,7 @@ class RhoRhoEvent(object):
                 cols[i] = cols[i].reshape([-1, 1])
 
         self.cols = np.concatenate(cols, 1)
+       	print np.sum(filt * isFilter)
 
 
 	if args.BETA > 0:

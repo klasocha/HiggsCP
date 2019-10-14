@@ -1,0 +1,7 @@
+export ANACONDA_PYTHON_PATH=/net/people/plgerichter/anaconda2/envs/tensorflow/bin
+export WORKDIR=/net/people/plgerichter/HiggsCP_2019/ml_higgs-kacper
+export A1A1_DATA=/net/scratch/people/plgerichter/higgs_data/a1a1
+export A1RHO_DATA=/net/scratch/people/plgerichter/higgs_data/a1rho/10M/
+export RHORHO_DATA=/net/scratch/people/plgerichter/higgs_data/rhorho/10M/
+# export ML_HIGGS_DIR=...
+export DATA_SOURCE=http://th-www.if.uj.edu.pl/~erichter/dydaktyka/Dydaktyka2014/TCS-2014/TauCP/

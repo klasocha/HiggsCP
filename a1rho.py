@@ -233,6 +233,7 @@ class A1RhoEvent(object):
                 cols[i] = cols[i].reshape([-1, 1])
 
         self.cols = np.concatenate(cols, 1)
+       	print np.sum(filt * isFilter)
 
 	if args.BETA > 0:
 		vn_tau1_nu_phi = smear_polynomial(v_tau1_nu_phi, args.BETA, args.pol_b, args.pol_c)

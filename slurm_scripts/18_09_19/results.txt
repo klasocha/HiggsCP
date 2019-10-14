@@ -1,0 +1,438 @@
+TrainBeta a1a1 NODROP Job. Beta:  0.2
+EPOCH: 42 . 1.007 . 1.010 . 1.010 . 1.010 . 1.010 . 1.010 . 1.010 . 1.010 . 1.010 . 1.010 TRAIN LOSS: 1.010 AUC: 0.759 VALID AUC: 0.758
+EPOCH: 43 . 1.014 . 1.010 . 1.010 slurmstepd: error: *** JOB 16659050 ON p2282 CANCELLED AT 2019-09-17T20:24:58 DUE TO TIME LIMIT ***
+TrainBeta a1a1 NODROP Job. Beta:  0.4
+TrainBeta a1a1 NODROP Job. Beta:  0.6
+0.689228221394252
+0.683907045884693
+TrainBeta a1a1 Job. Beta:  0.2
+TrainBeta a1a1 Job. Beta:  0.4
+EPOCH: 1 . 1.342 . 1.102 . 1.098 . 1.093 . 1.090 . 1.087 . 1.084 slurmstepd: error: *** JOB 16659053 ON p2266 CANCELLED AT 2019-09-17T20:24:58 DUE TO TIME LIMIT ***
+TrainBeta a1a1 Job. Beta:  0.6
+0.6607056947840768
+0.6523479187421762
+TrainSmear a1a1 Job. Beta:  0.2
+TrainSmear a1a1 Job. Beta:  0.4
+TrainSmear a1a1 Job. Beta:  0.6
+TrainSmear a1a1 Job. Beta:  0.2
+TrainSmear a1a1 Job. Beta:  0.4
+TrainSmear a1a1 Job. Beta:  0.6
+TrainSmear a1a1 Job. Beta:  0.2
+TrainSmear a1a1 Job. Beta:  0.4
+TrainSmear a1a1 Job. Beta:  0.6
+TrainSmear a1a1 NODROP Job. Beta:  0.2
+TrainSmear a1a1 NODROP Job. Beta:  0.4
+TrainSmear a1a1 NODROP Job. Beta:  0.6
+TrainSmear a1a1 NODROP Job. Beta:  0.2
+TrainSmear a1a1 NODROP Job. Beta:  0.4
+TrainSmear a1a1 NODROP Job. Beta:  0.6
+TrainSmear a1a1 NODROP Job. Beta:  0.2
+TrainSmear a1a1 NODROP Job. Beta:  0.4
+TrainSmear a1a1 NODROP Job. Beta:  0.6
+TrainBeta a1rho NODROP Job. Beta:  0.2
+0.766251738798771
+0.763483347125643
+TrainBeta a1rho NODROP Job. Beta:  0.4
+0.7385766662761502
+0.7338289067095629
+TrainBeta a1rho NODROP Job. Beta:  0.6
+0.7104457337888255
+0.7042684492239062
+TrainBeta a1rho Job. Beta:  0.2
+0.7381558883703562
+0.729701596761243
+TrainBeta a1rho Job. Beta:  0.4
+0.7144898417923283
+0.7054957107820286
+TrainBeta a1rho Job. Beta:  0.6
+0.6890379602995271
+0.6797908317174758
+TrainSmear a1rho Job. Beta:  0.2
+0.7389522497186692
+0.7311095207638637
+TrainSmear a1rho Job. Beta:  0.4
+0.7143590322073292
+0.7055070470801366
+TrainSmear a1rho Job. Beta:  0.6
+0.6873963934874634
+0.6786506698385619
+TrainSmear a1rho Job. Beta:  0.2
+0.7376255505836713
+0.7297440504093712
+TrainSmear a1rho Job. Beta:  0.4
+0.7144101506760289
+0.7053753624857367
+TrainSmear a1rho Job. Beta:  0.6
+0.6869900435875707
+0.6786023655573143
+TrainSmear a1rho Job. Beta:  0.2
+0.7365524625421775
+0.7282790446828153
+TrainSmear a1rho Job. Beta:  0.4
+0.7137296165569048
+0.7036348105343229
+TrainSmear a1rho Job. Beta:  0.6
+0.686676552318752
+0.6784219629282674
+TrainSmear a1rho NODROP Job. Beta:  0.2
+0.7663489659315843
+0.7635085024499471
+TrainSmear a1rho NODROP Job. Beta:  0.4
+0.737897655560694
+0.7335851512812718
+TrainSmear a1rho NODROP Job. Beta:  0.6
+0.7078182959754616
+0.7010238924745553
+TrainSmear a1rho NODROP Job. Beta:  0.2
+0.7655512451046461
+0.7624097539126973
+TrainSmear a1rho NODROP Job. Beta:  0.4
+0.7376865343712433
+0.732484037449261
+TrainSmear a1rho NODROP Job. Beta:  0.6
+0.7075216934672502
+0.7011363430016603
+TrainSmear a1rho NODROP Job. Beta:  0.2
+0.7637456823844501
+0.7597914957188998
+TrainSmear a1rho NODROP Job. Beta:  0.4
+0.7350871407942725
+0.7288514436009635
+TrainSmear a1rho NODROP Job. Beta:  0.6
+0.7079603550569145
+0.7021290753702446
+TrainBeta rhorho NODROP Job. Beta:  0.2
+0.7754415951048275
+0.7770951041428003
+TrainBeta rhorho NODROP Job. Beta:  0.4
+0.7507529279613898
+0.7504769771770115
+TrainBeta rhorho NODROP Job. Beta:  0.6
+0.7282168706595749
+0.7284097426385823
+TrainBeta rhorho Job. Beta:  0.2
+0.760491921942585
+0.7591900148815592
+TrainBeta rhorho Job. Beta:  0.4
+0.7379983856598933
+0.734880028892104
+TrainBeta rhorho Job. Beta:  0.6
+0.715026755676206
+0.7134907315389909
+TrainSmear rhorho Job. Beta:  0.2
+0.7611175590031041
+0.758759795354484
+TrainSmear rhorho Job. Beta:  0.4
+0.7385370890391121
+0.7367398650336804
+TrainSmear rhorho Job. Beta:  0.6
+0.7153702823617446
+0.7139029755205013
+TrainSmear rhorho Job. Beta:  0.2
+0.7600901722652855
+0.7581878893451247
+TrainSmear rhorho Job. Beta:  0.4
+0.7389584715438664
+0.7360416588956731
+TrainSmear rhorho Job. Beta:  0.6
+0.7156898095100437
+0.7130568889422257
+TrainSmear rhorho Job. Beta:  0.2
+0.7587885618780592
+0.7560463785234524
+TrainSmear rhorho Job. Beta:  0.4
+0.737616348786363
+0.7339470422926065
+TrainSmear rhorho Job. Beta:  0.6
+0.7142081531054992
+0.7126131491998123
+TrainSmear rhorho Job. NODROP Beta:  0.2
+0.7753891788685746
+0.7766738904265639
+TrainSmear rhorho Job. NODROP Beta:  0.4
+0.7516444299428137
+0.751514810696785
+TrainSmear rhorho Job. NODROP Beta:  0.6
+0.7291841733597617
+0.7293165071755269
+TrainSmear rhorho Job. NODROP Beta:  0.2
+0.7752728951499138
+0.7766061601985632
+TrainSmear rhorho Job. NODROP Beta:  0.4
+0.7512793461583842
+0.751259125201637
+TrainSmear rhorho Job. NODROP Beta:  0.6
+0.7294017188017773
+0.7286821910097987
+TrainSmear rhorho Job. NODROP Beta:  0.2
+0.773357042859721
+0.7741367146053698
+TrainSmear rhorho Job. NODROP Beta:  0.4
+0.7507296697705862
+0.7502393594910622
+TrainSmear rhorho Job. NODROP Beta:  0.6
+0.7271699179389086
+0.726907303404234
+TrainFeaturesA1A1 Job. Dropout 0.2. Method:  Variant-All
+EPOCH: 25 . 1.038 . 1.036 . 1.036 . 1.036 . 1.036 . 1.036 . 1.036 . 1.036 . 1.036 . 1.036 . 1.036 TRAIN LOSS: 1.036 AUC: 0.725 VALID AUC: 0.727
+EPOCH: 26 . 1.040 . 1.036 . 1.036 . 1.036 slurmstepd: error: *** JOB 16659110 ON p0187 CANCELLED AT 2019-09-17T20:24:58 DUE TO TIME LIMIT ***
+TrainFeaturesA1A1 Job. Dropout 0.2. Method:  Variant-1.0
+EPOCH: 24 . 1.086 . 1.087 . 1.087 . 1.087 . 1.087 . 1.087 . 1.087 . 1.087 . 1.087 . 1.087 . 1.087 TRAIN LOSS: 1.087 AUC: 0.573 VALID AUC: 0.573
+EPOCH: 25 . 1.090 . 1.086 slurmstepd: error: *** JOB 16659111 ON p0187 CANCELLED AT 2019-09-17T20:24:59 DUE TO TIME LIMIT ***
+TrainFeaturesA1A1 Job. Dropout 0.2. Method:  Variant-1.1
+EPOCH: 33 . 1.095 . 1.094 . 1.094 . 1.094 . 1.094 . 1.094 . 1.094 . 1.094 . 1.094 . 1.094 . 1.094 TRAIN LOSS: 1.094 AUC: 0.501 VALID AUC: 0.500
+EPOCH: 34 . 1.095 . 1.094 . 1.094 . 1.094 . 1.094 . 1.094 slurmstepd: error: *** JOB 16659121 ON p0978 CANCELLED AT 2019-09-17T20:26:57 DUE TO TIME LIMIT ***
+TrainFeaturesA1A1 Job. Dropout 0.2. Method:  Variant-2.0
+TrainFeaturesA1A1 Job. Dropout 0.2. Method:  Variant-2.1
+TrainFeaturesA1A1 Job. Dropout 0.2. Method:  Variant-2.2
+TrainFeaturesA1A1 Job. Dropout 0.2. Method:  Variant-3.0
+TrainFeaturesA1A1 Job. Dropout 0.2. Method:  Variant-4.0
+TrainFeaturesA1A1 Job. Dropout 0.2. Method:  Variant-4.1
+TrainFeaturesA1A1 Job. Dropout 0.0. Method:  Variant-All
+TrainFeaturesA1A1 Job. Dropout 0.0. Method:  Variant-1.0
+TrainFeaturesA1A1 Job. Dropout 0.0. Method:  Variant-1.1
+TrainFeaturesA1A1 Job. Dropout 0.0. Method:  Variant-2.0
+TrainFeaturesA1A1 Job. Dropout 0.0. Method:  Variant-2.1
+TrainFeaturesA1A1 Job. Dropout 0.0. Method:  Variant-2.2
+TrainFeaturesA1A1 Job. Dropout 0.0. Method:  Variant-3.0
+TrainFeaturesA1A1 Job. Dropout 0.0. Method:  Variant-4.0
+TrainFeaturesA1A1 Job. Dropout 0.0. Method:  Variant-4.1
+TrainFeaturesA1Rho Job. Dropout 0.2. Method:  Variant-All
+0.7484881652161596
+0.7422684650986491
+TrainFeaturesA1Rho Job. Dropout 0.2. Method:  Variant-1.0
+0.6027045109083132
+0.6016809467391463
+TrainFeaturesA1Rho Job. Dropout 0.2. Method:  Variant-1.1
+0.6085229836222749
+0.6074992215177217
+TrainFeaturesA1Rho Job. Dropout 0.2. Method:  Variant-2.0
+0.6255280513877793
+0.6246071850102964
+TrainFeaturesA1Rho Job. Dropout 0.2. Method:  Variant-2.1
+0.6224508604466448
+0.6224844253081392
+TrainFeaturesA1Rho Job. Dropout 0.2. Method:  Variant-2.2
+0.622437763334184
+0.6216423660002325
+TrainFeaturesA1Rho Job. Dropout 0.2. Method:  Variant-3.0
+0.7493441697603815
+0.7430420250422735
+TrainFeaturesA1Rho Job. Dropout 0.2. Method:  Variant-4.0
+0.7483403033463374
+0.7415590050992653
+TrainFeaturesA1Rho Job. Dropout 0.2. Method:  Variant-4.1
+TrainFeaturesA1Rho Job. Dropout 0.0. Method:  Variant-All
+0.7782704448475937
+0.777972711363166
+TrainFeaturesA1Rho Job. Dropout 0.0. Method:  Variant-1.0
+0.6112945146692341
+0.6113268313929401
+TrainFeaturesA1Rho Job. Dropout 0.0. Method:  Variant-1.1
+0.6126643561303391
+0.6128328732243835
+TrainFeaturesA1Rho Job. Dropout 0.0. Method:  Variant-2.0
+  File "/net/people/plgerichter/HiggsCP_2019/ml_higgs-kacper/tf_model.py", line 35, in total_train
+    train_auc = evaluate(emodel, data.train, 100000, filtered=True, metric = metric)
+TrainFeaturesA1Rho Job. Dropout 0.0. Method:  Variant-2.1
+0.6327547675746497
+0.6322376549679762
+TrainFeaturesA1Rho Job. Dropout 0.0. Method:  Variant-2.2
+0.6318227606249807
+0.6319152860637585
+TrainFeaturesA1Rho Job. Dropout 0.0. Method:  Variant-3.0
+0.7796647340964594
+0.7791695850265989
+TrainFeaturesA1Rho Job. Dropout 0.0. Method:  Variant-4.0
+0.7783669535485647
+0.7781449554788105
+TrainFeaturesA1Rho Job. Dropout 0.0. Method:  Variant-4.1
+TrainFeaturesRhoRho Job. Dropout 0.2 Method:  Variant-All
+0.7690867223706109
+0.7663163727463005
+TrainFeaturesRhoRho Job. Dropout 0.2 Method:  Variant-1.0
+0.6549049579194668
+0.6535252830216104
+TrainFeaturesRhoRho Job. Dropout 0.2 Method:  Variant-1.1
+0.6556544640128175
+0.6549379189773428
+TrainFeaturesRhoRho Job. Dropout 0.2 Method:  Variant-2.0
+0.6634984276411015
+0.6633384739354353
+TrainFeaturesRhoRho Job. Dropout 0.2 Method:  Variant-2.1
+0.6643256300625613
+0.6663284171642314
+TrainFeaturesRhoRho Job. Dropout 0.2 Method:  Variant-2.2
+0.6636563436612593
+0.6662524473091473
+TrainFeaturesRhoRho Job. Dropout 0.2 Method:  Variant-3.0
+0.770900449935111
+0.770564934133378
+TrainFeaturesRhoRho Job. Dropout 0.2 Method:  Variant-4.0
+0.7689098107342345
+0.7659869614784279
+TrainFeaturesRhoRho Job. Dropout 0.2 Method:  Variant-4.1
+TrainFeaturesRhoRho Job. Dropout 0. Method:  Variant-All
+0.7843368063273279
+0.7859733587263233
+TrainFeaturesRhoRho Job. Dropout 0. Method:  Variant-1.0
+0.6608096910901832
+0.6602836524505478
+TrainFeaturesRhoRho Job. Dropout 0. Method:  Variant-1.1
+0.6648251497898392
+0.6635945967131727
+TrainFeaturesRhoRho Job. Dropout 0. Method:  Variant-2.0
+0.6756087400016593
+0.6757103393374677
+TrainFeaturesRhoRho Job. Dropout 0. Method:  Variant-2.1
+0.6810880686802484
+0.6835656678366266
+TrainFeaturesRhoRho Job. Dropout 0. Method:  Variant-2.2
+0.6854327325560661
+0.6869820134522222
+TrainFeaturesRhoRho Job. Dropout 0. Method:  Variant-3.0
+0.7877548092226483
+0.7914808208523505
+TrainFeaturesRhoRho Job. Dropout 0. Method:  Variant-4.0
+0.7843062453621732
+0.7859262812678475
+TrainFeaturesRhoRho Job. Dropout 0. Method:  Variant-4.1
+TrainBeta a1a1 NODROP Job. Beta:  0.2
+0.7567502308591297
+0.7553442258689649
+TrainBeta a1a1 NODROP Job. Beta:  0.4
+0.724065618839933
+0.71839762235385
+TrainBeta a1a1 NODROP Job. Beta:  0.6
+0.6905719733971234
+0.685212509131305
+TrainBeta a1a1 Job. Beta:  0.2
+0.7181749944492078
+0.7104053548269849
+TrainBeta a1a1 Job. Beta:  0.4
+0.6870772414191363
+0.6776118477067921
+TrainBeta a1a1 Job. Beta:  0.6
+0.6598648563536279
+0.6515567628678856
+TrainSmear a1a1 Job. Beta:  0.2
+0.7125045265447871
+0.7051368294134881
+TrainSmear a1a1 Job. Beta:  0.4
+0.6898364383906226
+0.6807268129604482
+TrainSmear a1a1 Job. Beta:  0.6
+0.6602826426258923
+0.6526071851105172
+TrainSmear a1a1 Job. Beta:  0.2
+0.7154601808449336
+0.705914181270962
+TrainSmear a1a1 Job. Beta:  0.4
+0.6929922935596249
+0.6824968001289639
+TrainSmear a1a1 Job. Beta:  0.6
+0.6608944269717258
+0.6530901898739164
+TrainSmear a1a1 Job. Beta:  0.2
+0.7144003566441675
+0.7058687323007601
+TrainSmear a1a1 Job. Beta:  0.4
+0.688021011323332
+0.6798391253623143
+TrainSmear a1a1 Job. Beta:  0.6
+0.6602680081159331
+0.6525594426548968
+TrainSmear a1a1 NODROP Job. Beta:  0.2
+0.7573798156888831
+0.7555988312738573
+TrainSmear a1a1 NODROP Job. Beta:  0.4
+0.7257152796191608
+0.7215040119340846
+TrainSmear a1a1 NODROP Job. Beta:  0.6
+0.6902295997487686
+0.6849149538967053
+TrainSmear a1a1 NODROP Job. Beta:  0.2
+0.7567714778338566
+0.755018463047948
+TrainSmear a1a1 NODROP Job. Beta:  0.4
+0.7241146480872145
+0.7197637460256937
+TrainSmear a1a1 NODROP Job. Beta:  0.6
+0.6895662305954186
+0.6827446886194011
+TrainSmear a1a1 NODROP Job. Beta:  0.2
+0.7545299587242393
+0.7511895437372402
+TrainSmear a1a1 NODROP Job. Beta:  0.4
+0.720932425605091
+0.7148317246810924
+TrainSmear a1a1 NODROP Job. Beta:  0.6
+0.6902032313779531
+0.6842188568839778
+TrainFeaturesA1A1 Job. Dropout 0.0. Method:  Variant-All
+0.7726166559565465
+0.7738200425226728
+TrainFeaturesA1A1 Job. Dropout 0.0. Method:  Variant-1.0
+0.5837772738230302
+0.5886488354717063
+TrainFeaturesA1A1 Job. Dropout 0.0. Method:  Variant-1.1
+0.5869451877768952
+0.5895208320979775
+TrainFeaturesA1A1 Job. Dropout 0.0. Method:  Variant-2.0
+  File "/net/people/plgerichter/HiggsCP_2019/ml_higgs-kacper/tf_model.py", line 35, in total_train
+    train_auc = evaluate(emodel, data.train, 100000, filtered=True, metric = metric)
+TrainFeaturesA1A1 Job. Dropout 0.0. Method:  Variant-2.1
+0.6040376429616512
+0.6060184350837613
+TrainFeaturesA1A1 Job. Dropout 0.0. Method:  Variant-2.2
+0.6048334240708857
+0.6067629128506281
+TrainFeaturesA1A1 Job. Dropout 0.0. Method:  Variant-3.0
+0.7731705876549759
+0.7742556461567003
+TrainFeaturesA1A1 Job. Dropout 0.0. Method:  Variant-4.0
+0.7726163491961198
+0.7736961651719633
+TrainFeaturesA1A1 Job. Dropout 0.0. Method:  Variant-4.1
+0.725938577058483
+0.7248062015646406
+TrainFeaturesA1A1 Job. Dropout 0.2. Method:  Variant-All
+0.7277185893223597
+0.7195921607703472
+TrainFeaturesA1A1 Job. Dropout 0.2. Method:  Variant-1.0
+0.5730614351529146
+0.5776605299833888
+TrainFeaturesA1A1 Job. Dropout 0.2. Method:  Variant-1.1
+  File "/net/people/plgerichter/HiggsCP_2019/ml_higgs-kacper/tf_model.py", line 35, in total_train
+    train_auc = evaluate(emodel, data.train, 100000, filtered=True, metric = metric)
+TrainFeaturesA1A1 Job. Dropout 0.2. Method:  Variant-2.0
+0.5937202610402847
+0.5952504342425508
+TrainFeaturesA1A1 Job. Dropout 0.2. Method:  Variant-2.1
+0.5914765256595118
+0.5932441083978197
+TrainFeaturesA1A1 Job. Dropout 0.2. Method:  Variant-2.2
+0.5909924330110674
+0.5929447722857947
+TrainFeaturesA1A1 Job. Dropout 0.2. Method:  Variant-3.0
+0.7283102436058306
+0.7207845188432085
+TrainFeaturesA1A1 Job. Dropout 0.2. Method:  Variant-4.0
+0.7281478436536283
+0.7204543291473808
+TrainFeaturesA1A1 Job. Dropout 0.2. Method:  Variant-4.1
+Additional 18.09.19 rhorho:  0.2 4.1
+0.7380952080856271
+0.7331629260448591
+Additional 18.09.19 rhorho:  0 4.1
+0.7625915040101064
+0.7626891078044666
+Additional 18.09.19 a1rho:  0.2 4.1
+0.7044150570006279
+0.6962096403530784
+Additional 18.09.19 a1rho:  0 2.0
+0.6347627914185475
+0.6328253117067095
+Additional 18.09.19 a1rho:  0 4.1
+0.743751724054125
+0.7417194798224115

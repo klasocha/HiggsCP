@@ -6,9 +6,9 @@
 ## Number of tasks per node
 #SBATCH --ntasks-per-node=1
 ## Memory per CPU (default: 5GB)
-#SBATCH --mem-per-cpu=5GB
+#SBATCH --mem-per-cpu=40GB
 ## Max job time (HH:MM:SS format)
-#SBATCH --time=16:00:00
+#SBATCH --time=32:00:00
 ## Pratition specification
 #SBATCH -p plgrid
 #SBATCH --array=0-8
@@ -33,4 +33,4 @@ echo "TrainSmear a1rho Job. Beta: " $BETA
 echo "B: " $B
 echo "C: " $C
 
-$ANACONDA_PYTHON_PATH/python2.7 $WORKDIR/main.py -t nn_a1rho -i $A1RHO_DATA -e 25 -f Variant-3.1 -d 0.2 --lambda $BETA --beta $BETA --pol_b $B --pol_c $C -l 6 -s 300
+$ANACONDA_PYTHON_PATH/python2.7 $WORKDIR/main.py -t nn_a1rho -i $A1RHO_DATA -e 50 -f Variant-3.1 -d 0.2 --lambda $BETA --beta $BETA --pol_b $B --pol_c $C -l 6 -s 300

@@ -15,6 +15,8 @@ def read_raw_root(name, num_particles):
     lines = lines[find_first_line(lines, "TUPLE"):find_first_line(lines, "Analysed in total:")]
     # Ignore debug lines.
     lines = [line for line in lines if not line.startswith("Analysed:")]
+    lines = [line for line in lines if not line.startswith("Read:")]
+    lines = [line for line in lines if not line.startswith("ERW_status")]
     # Find ids of lines that start descriptions of examples.
     ids = [int(idx) for idx, line in enumerate(lines) if line.startswith("TUPLE")]
 

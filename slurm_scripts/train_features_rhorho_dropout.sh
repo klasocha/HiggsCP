@@ -6,12 +6,12 @@
 ## Number of tasks per node
 #SBATCH --ntasks-per-node=1
 ## Memory per CPU (default: 5GB)
-#SBATCH --mem-per-cpu=5GB
+#SBATCH --mem-per-cpu=40GB
 ## Max job time (HH:MM:SS format)
-#SBATCH --time=16:00:00
+#SBATCH --time=32:00:00
 ## Pratition specification
 #SBATCH -p plgrid
-#SBATCH --array=0-4
+#SBATCH --array=0-8
 
 ## Setup
 if [ -f setup ]; then source setup; fi
@@ -22,7 +22,7 @@ module add plgrid/apps/cuda/7.5
 cd $WORKDIR
 
 ## Command
-FEATURE_SETS=(Variant-All Variant-1.0 Variant-1.1 Variant-2.0 Variant-2.1 Variant-2.2 Variant-3.0)
+FEATURE_SETS=(Variant-All Variant-1.0 Variant-1.1 Variant-2.0 Variant-2.1 Variant-2.2 Variant-3.0 Variant-4.0 Variant-4.1)
 FEATURE_SET=${FEATURE_SETS[$SLURM_ARRAY_TASK_ID]}
 echo "TrainFeaturesRhoRho Job. Dropout 0.2 Method: " $FEATURE_SET
-$ANACONDA_PYTHON_PATH/python2.7 $WORKDIR/main.py -t nn_rhorho -i $RHORHO_DATA -e 25 -f $FEATURE_SET -d 0.2 -l 6 -s 300
+$ANACONDA_PYTHON_PATH/python2.7 $WORKDIR/main.py -t nn_rhorho -i $RHORHO_DATA -e 50 -f $FEATURE_SET -d 0.2 -l 6 -s 300

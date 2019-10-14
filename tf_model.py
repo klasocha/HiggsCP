@@ -1,7 +1,8 @@
 import numpy as np
 import tensorflow as tf
-from sklearn.metrics import roc_auc_score, average_precision_score
+from sklearn.metrics import roc_auc_score, average_precision_score, roc_curve
 import sys
+np.set_printoptions(threshold=np.inf)
 
 def train(model, dataset, batch_size=128):
     sess = tf.get_default_session()
@@ -10,8 +11,7 @@ def train(model, dataset, batch_size=128):
 
     for i in range(epoch_size):
         x, wa, wb, filt = dataset.next_batch(batch_size)
-        loss, _ = sess.run([model.loss, model.train_op],
-                           {model.x: x, model.wa: wa, model.wb: wb})
+        loss, _ = sess.run([model.loss, model.train_op], {model.x: x, model.wa: wa, model.wb: wb})
         losses.append(loss)
         if i % (epoch_size / 10) == 5:
           sys.stdout.write(". %.3f " % np.mean(losses))
@@ -26,6 +26,8 @@ def total_train(model, data, emodel=None, batch_size=128, epochs=25, metric = "r
     valid_aucs = []
     max_perf = evaluate2(emodel, data.valid, filtered=True, metric = metric)
     print max_perf
+    max_perf = evaluate2(emodel, data.valid, filtered=True, metric = "prec_score")
+    print max_perf
     
     test_auc = 0
     for i in range(epochs):
@@ -39,8 +41,12 @@ def total_train(model, data, emodel=None, batch_size=128, epochs=25, metric = "r
         train_aucs += [train_auc]
         valid_aucs += [valid_auc]
         if valid_auc == np.max(valid_aucs):
-            test_auc = evaluate(emodel, data.test, filtered=True, metric = metric)
-    print test_auc	
+            test_auc1 = evaluate(emodel, data.test, filtered=True, metric = "roc_auc")
+            test_auc2 = evaluate(emodel, data.test, filtered=True, metric = "prec_score")
+            roc_curve_data = get_roc(emodel, data.test, filtered=True)
+    print test_auc1
+    print test_auc2
+    print roc_curve_data
     return train_aucs, valid_aucs
 
 
@@ -69,9 +75,18 @@ def predictions(model, dataset, at_most=None, filtered=False):
     return x, p, wa, wb
 
 
-def evaluate(model, dataset, at_most=None, filtered=False, metric = "roc_auc"):
+def get_roc(model, dataset, at_most=None, filtered=False):
     _, ps, was, wbs = predictions(model, dataset, at_most, filtered)
 
+    n = len(ps)
+    true_labels = np.concatenate([np.ones(n), np.zeros(n)])
+    preds = np.concatenate([ps, ps])
+    weights = np.concatenate([was, wbs])
+
+    return roc_curve(true_labels, preds, sample_weight=weights)
+
+def evaluate(model, dataset, at_most=None, filtered=False, metric = "roc_auc"):
+    _, ps, was, wbs = predictions(model, dataset, at_most, filtered)
     return evaluate_preds(ps, was, wbs, metric = metric)    
     # replace by line below to get max sensitivity
     #return evaluate_preds(was/(was+wbs), was, wbs)

@@ -6,9 +6,9 @@
 ## Number of tasks per node
 #SBATCH --ntasks-per-node=4
 ## Memory per CPU (default: 5GB)
-#SBATCH --mem-per-cpu=5GB
+#SBATCH --mem-per-cpu=40GB
 ## Max job time (HH:MM:SS format)
-#SBATCH --time=16:00:00
+#SBATCH --time=32:00:00
 ## Pratition specification
 #SBATCH -p plgrid
 #SBATCH --array=0-49

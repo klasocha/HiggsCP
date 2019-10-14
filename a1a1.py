@@ -180,12 +180,13 @@ class A1A1Event(object):
         elif args.FEAT == "Variant-2.0":
             cols += [ve_tau1_nu_long, ve_tau2_nu_long, ve_tau1_nu_E, ve_tau2_nu_E, ve_tau1_nu_trans, ve_tau2_nu_trans]
 
-        print(ve_tau1_nu_long)
         # filter
         filt = (p_tau1_a1.pt >= 20) & (p_tau2_a1.pt >= 20)
         for part in (l_tau1_pi + l_tau2_pi):
             filt = filt & (part.pt >= 1)
         #filt = filt.astype(np.float32)
+        print np.sum(filt)
+
 
         if args.FEAT in ["Variant-1.0", "Variant-1.1", "Variant-All", "Variant-4.0", "Variant-4.1"]:
             cols += [filt]
@@ -224,10 +225,13 @@ class A1A1Event(object):
 
             for alpha in [va_alpha1_A, va_alpha1_B, va_alpha1_C, va_alpha2_A, va_alpha2_B, va_alpha2_C]:
                 isFilter *= (alpha > 0)
+            print np.sum(isFilter)
             for energy in [va_tau1_nu_E_A, va_tau1_nu_E_B, va_tau1_nu_E_C, va_tau2_nu_E_A, va_tau2_nu_E_B, va_tau2_nu_E_C]:
                 isFilter *= (energy > 0)
+	    print np.sum(isFilter)
             for trans_comp in [va_tau1_nu_trans_A, va_tau1_nu_trans_B, va_tau1_nu_trans_C, va_tau2_nu_trans_A, va_tau2_nu_trans_B, va_tau2_nu_trans_C]:
                 isFilter *= np.logical_not(np.isnan(trans_comp))
+	    print np.sum(isFilter)
             cols += [filt * isFilter]
 
 
@@ -244,7 +248,7 @@ class A1A1Event(object):
         for i in range(len(cols)):
             if len(cols[i].shape) == 1:
                 cols[i] = cols[i].reshape([-1, 1])
-
+        print np.sum(filt * isFilter)
         self.cols = np.concatenate(cols, 1)
 	if args.BETA > 0:
 

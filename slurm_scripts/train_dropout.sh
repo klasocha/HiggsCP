@@ -6,7 +6,7 @@
 ## Number of tasks per node
 #SBATCH --ntasks-per-node=4
 ## Memory per CPU (default: 5GB)
-#SBATCH --mem-per-cpu=5GB
+#SBATCH --mem-per-cpu=40GB
 ## Max job time (HH:MM:SS format)
 #SBATCH --time=72:00:00
 ## Pratition specification
@@ -24,4 +24,4 @@ cd $WORKDIR
 ## Command
 DROPOUT=0.$SLURM_ARRAY_TASK_ID
 echo "TrainDropout Job. Dropout: " $DROPOUT
-#$ANACONDA_PYTHON_PATH/python2.7 $WORKDIR/main.py -t nn_rhorho -i $RHORHO_DATA -e 250 -f Variant-1.1 -d $DROPOUT -l 6 -s 300
+#$ANACONDA_PYTHON_PATH/python2.7 $WORKDIR/main.py -t nn_rhorho -i $RHORHO_DATA -e 500 -f Variant-1.1 -d $DROPOUT -l 6 -s 300
