@@ -7,13 +7,12 @@ from scipy import optimize
 def weight_fun(x, a, b, c):
     return a + b * np.cos(x) + c * np.sin(x)
 
+
 def hits_fun(classes, x, num_classes):
-
     hits = np.zeros(num_classes)
-    for i in range(num_classes-1):
-        if x >= classes[i] and  x < classes[i+1]:
-             hits[i] = 1.0
-
+    for i in range(num_classes - 1):
+        if classes[i] <= x < classes[i + 1]:
+            hits[i] = 1.0
     return hits
 
 
@@ -24,10 +23,11 @@ def calc_hits_c012s(classes, c012s, data_len, num_classes):
     hits_c2s = np.zeros((data_len, num_classes))
     for i in range(data_len):
         hits_c0s[i] = hits_fun(classes, c012s[i][0], num_classes)
-        hits_c1s[i] = hits_fun(classes, c012s[i][1]+1.0, num_classes)
-        hits_c2s[i] = hits_fun(classes, c012s[i][2]+1.0, num_classes)
+        hits_c1s[i] = hits_fun(classes, c012s[i][1] + 1.0, num_classes)
+        hits_c2s[i] = hits_fun(classes, c012s[i][2] + 1.0, num_classes)
 
     return hits_c0s, hits_c1s, hits_c2s
+
 
 # here weights and argmaxs are calculated from continuum distributions
 def calc_weights_and_argmaxs(classes, c012s, data_len, num_classes):
@@ -51,31 +51,44 @@ def calc_weights_and_argmaxs(classes, c012s, data_len, num_classes):
 
         argmaxs[i] = arg_max
         hits_argmaxs[i] = hits_fun(classes, arg_max, num_classes)
-
     return weights, argmaxs, hits_argmaxs
 
 
-def calculate_popts_and_pcovs(weights, data_len, data_path):
-    popts = np.zeros((data_len, 3))
-    pcovs = np.zeros((data_len, 3, 3))
+def calculate_c012s_and_pcovs(weights, data_len):
+    c012s = np.zeros((data_len, 3))
+    ccovs = np.zeros((data_len, 3, 3))
     # here x correspond to values of CPmix at which data were generated
+    # coeffs is an array for C0, C1, C2 coefficients (per event)
+    # c012 is an array for  C0, C1, C2 coefficients shifted by+1.0, to avoid negative values
+    # being inputs to regression or softmax
     x = np.array([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0]) * np.pi
     for i in range(data_len):
-        popt, pcov = optimize.curve_fit(weight_fun, x, weights[i, :], p0=[1, 1, 1])
-        popts[i] = popt
-        pcovs[i] = pcov
+        coeff, ccov = optimize.curve_fit(weight_fun, x, weights[i, :], p0=[1, 1, 1])
+        c012s[i] = coeff
+        ccovs[i] = ccov
 
-    return popts, pcovs
+    return c012s, ccovs
 
 
-def should_calculate_popts(data_path):
-    return not os.path.exists(os.path.join(data_path, 'popts.npy'))
+def should_calculate_c012s(data_path):
+    return not os.path.exists(os.path.join(data_path, 'c012s.npy'))
 
 
 def should_calculate_weights(reuse_weights, data_path, num_classes):
     return not reuse_weights or not os.path.exists(os.path.join(data_path, 'weigths.npy')) \
-        or not os.path.exists(os.path.join(data_path, 'arg_maxs.npy')) \
-        or np.load(os.path.join(data_path, 'weigths.npy')).shape[1] != num_classes
+           or not os.path.exists(os.path.join(data_path, 'argmaxs.npy')) \
+           or not os.path.exists(os.path.join(data_path, 'hits_argmaxs.npy')) \
+           or np.load(os.path.join(data_path, 'weigths.npy')).shape[1] != num_classes \
+           or np.load(os.path.join(data_path, 'hits_argmaxs')).shape[1] != num_classes
+
+
+def should_calculate_hits_c012s(data_path, num_classes):
+    return not os.path.exists(os.path.join(data_path, 'hits_c0s.npy')) \
+           or not os.path.exists(os.path.join(data_path, 'hits_c1s.npy')) \
+           or not os.path.exists(os.path.join(data_path, 'hits_c2s.npy')) \
+           or np.load(os.path.join(data_path, 'hits_c0s.npy')).shape[1] != num_classes \
+           or np.load(os.path.join(data_path, 'hits_c1s.npy')).shape[1] != num_classes \
+           or np.load(os.path.join(data_path, 'hits_c2s.npy')).shape[1] != num_classes
 
 
 def preprocess_data(args):
@@ -84,7 +97,7 @@ def preprocess_data(args):
     reuse_weights = args.REUSE_WEIGHTS  # Set this flag to true if you want reuse calculated weights
 
     print "Loading data"
-    suffix = (args.TYPE).split("_")[-1]  # -1 to indeks ostatniego elementu
+    suffix = args.TYPE.split("_")[-1]  # -1 to indeks ostatniego elementu
     data = read_np(os.path.join(data_path, suffix + "_raw.data.npy"))
     w = read_np(os.path.join(data_path, suffix + "_raw.w.npy")).swapaxes(0, 1)
     perm = read_np(os.path.join(data_path, suffix + "_raw.perm.npy"))
@@ -93,46 +106,36 @@ def preprocess_data(args):
     data_len = data.shape[0]
     classes = np.linspace(0, 2, num_classes) * np.pi
 
-    if should_calculate_popts(data_path):
-        c012s, ccovs = calculate_popts_and_pcovs(w, data_len, data_path)
-
+    if should_calculate_c012s(data_path):
+        c012s, ccovs = calculate_c012s_and_pcovs(w, data_len)
         np.save(os.path.join(data_path, 'c012s.npy'), c012s)
         np.save(os.path.join(data_path, 'ccovs.npy'), ccovs)
     else:
         c012s = np.load(os.path.join(data_path, 'c012s.npy'))
 
-    if should_calculate_weights(reuse_weights, data_path, num_classes):
-        weights, argmaxs,  hits_argmaxs = calc_weights_and_argmaxs(classes, c012s, data_len, num_classes)
-        np.save(os.path.join(data_path, 'weights.npy'), weights)
-        np.save(os.path.join(data_path, 'argmaxs.npy'), argmaxs)
-        np.save(os.path.join(data_path, 'hits_argmaxs.npy'), hits_argmaxs)
-    else:
-        weights  = np.load(os.path.join(data_path, 'weights.npy'))
-        argmaxs = np.load(os.path.join(data_path, 'argmaxs.npy'))
-        hits_argmaxs = np.load(os.path.join(data_path, 'hits_argmaxs.npy'))
-
-
-    if not os.path.exists(os.path.join(data_path, 'hits_c0s.npy')) \
-            or not os.path.exists(os.path.join(data_path, 'hits_c1s.npy')) \
-            or not os.path.exists(os.path.join(data_path, 'hits_c2s.npy')) \
-            or np.load(os.path.join(data_path, 'hits_c0s.npy')).shape[1] != num_classes \
-            or np.load(os.path.join(data_path, 'hits_c1s.npy')).shape[1] != num_classes \
-            or np.load(os.path.join(data_path, 'hits_c2s.npy')).shape[1] != num_classes :
-        classes = np.linspace(0, 2, num_classes)
+    if should_calculate_hits_c012s(data_path, num_classes):
         hits_c0s, hits_c1s, hits_c2s = calc_hits_c012s(classes, c012s, data_len, num_classes)
         np.save(os.path.join(data_path, 'hits_c0s.npy'), hits_c0s)
         np.save(os.path.join(data_path, 'hits_c1s.npy'), hits_c1s)
         np.save(os.path.join(data_path, 'hits_c2s.npy'), hits_c2s)
-
-    if args.HITS_C012s == "hits_c0s" :
+    if args.HITS_C012s == "hits_c0s":
         hits_c012s = np.load(os.path.join(data_path, 'hits_c0s.npy'))
-    elif args.HITS_C012s == "hits_c1s" :
+    elif args.HITS_C012s == "hits_c1s":
         hits_c012s = np.load(os.path.join(data_path, 'hits_c1s.npy'))
-    elif args.HITS_C012s == "hits_c2s" :
+    elif args.HITS_C012s == "hits_c2s":
         hits_c012s = np.load(os.path.join(data_path, 'hits_c2s.npy'))
 
+    if should_calculate_weights(reuse_weights, data_path, num_classes):
+        weights, argmaxs, hits_argmaxs = calc_weights_and_argmaxs(classes, c012s, data_len, num_classes)
+        np.save(os.path.join(data_path, 'weigths.npy'), weights)
+        np.save(os.path.join(data_path, 'argmaxs.npy'), argmaxs)
+        np.save(os.path.join(data_path, 'hits_argmaxs.npy'), hits_argmaxs)
+    else:
+        weights = np.load(os.path.join(data_path, 'weigths.npy'))
+        argmaxs = np.load(os.path.join(data_path, 'argmaxs.npy'))
+        hits_argmaxs = np.load(os.path.join(data_path, 'hits_argmaxs.npy'))
 
-    #ERW
+    # ERW
     # here argmaxs are in fraction of pi, not in the class index
     # how we go then from fraction of pi to class index??
     # print "preprocess: weights", weights
@@ -146,11 +149,9 @@ def preprocess_data(args):
     # ERW
     # this optimisation does not help, revisit, maybe not correctly implemented?
     if args.NORMALIZE_WEIGHTS:
-
-        weights = weights/np.reshape(c012s[:, 0], (-1, 1))
+        weights = weights / np.reshape(c012s[:, 0], (-1, 1))
 
     # ERW
     # here weights and argmaxs are calculated at value of CPmix representing given class
     # in training, class is expressed as integer, not fraction pf pi.
-
     return data, weights, argmaxs, perm, c012s, hits_argmaxs, hits_c012s
