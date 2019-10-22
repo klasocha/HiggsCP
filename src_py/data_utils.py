@@ -95,10 +95,10 @@ class EventDatasets(object):
 
         if miniset:
             print("Miniset")
-            train_ids = perm[-300000:-200000]
+            train_ids = perm[-120000:-20000]
             print(len(train_ids))
-            valid_ids = perm[-200000:-100000]
-            test_ids = perm[-100000:]
+            valid_ids = perm[-20000:-10000]
+            test_ids = perm[-10000:]
         else:
             train_ids = perm[:-200000]
             valid_ids = perm[-200000:-100000]
