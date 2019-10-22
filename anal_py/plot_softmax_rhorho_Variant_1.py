@@ -1,9 +1,8 @@
-import sys
 import os, errno
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
-
-from scipy import optimize
 
 pathIN  = "npy/nn_rhorho_Variant-1.1_Unweighted_False_NO_NUM_CLASSES_10/"
 pathOUT = "figures/"

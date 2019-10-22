@@ -1,9 +1,3 @@
-import numpy as np
-from glob import glob
-import os, errno
-
-import matplotlib.pyplot as plt
-
 from anal_utils import test_roc_auc
 
 
