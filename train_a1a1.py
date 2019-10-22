@@ -1,6 +1,6 @@
-import errno
 import os
 
+import numpy as np
 import tensorflow as tf
 
 from src_py.a1a1 import A1A1Event
@@ -14,11 +14,11 @@ def run(args):
     num_classes = args.NUM_CLASSES
 
     print "Loading data"
-    data, weights, arg_maxs, perm, popts = preprocess_data(args)
+    data, weights, argmaxs, perm, popts = preprocess_data(args)
 
     print "Processing data"
     event = A1A1Event(data, args)
-    points = EventDatasets(event, weights, arg_maxs, perm, popts=popts, miniset=args.MINISET, unweighted=args.UNWEIGHTED)
+    points = EventDatasets(event, weights, argmaxs, perm, popts=popts, miniset=args.MINISET, unweighted=args.UNWEIGHTED)
 
     num_features = points.train.x.shape[1]
     print "Prepared %d features" % num_features
@@ -47,5 +47,7 @@ def run(args):
 
 def start(args):
     sess = tf.Session()
+    np.random.seed(781)
+    tf.set_random_seed(781)
     with sess.as_default():
         run(args)

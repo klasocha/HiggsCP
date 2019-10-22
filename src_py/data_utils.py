@@ -2,12 +2,14 @@ import numpy as np
 import random
 
 class Dataset(object):
-    def __init__(self, x, weights, arg_maxs, popts):
+    def __init__(self, x, weights, argmaxs, c012s, hits_argmaxs, hits_c012s):
         self.x = x[:, :-1]
         self.filt = x[:, -1]
         self.weights = weights
-        self.arg_maxs = arg_maxs
-        self.popts = popts
+        self.argmaxs = argmaxs
+        self.c012s = c012s
+        self.hits_argmaxs = hits_argmaxs
+        self.hits_c012s = hits_c012s
 
         self.n = x.shape[0]
         self._next_id = 0
@@ -19,8 +21,10 @@ class Dataset(object):
         np.random.shuffle(perm)
         self.x = self.x[perm]
         self.weights = self.weights[perm]
-        self.arg_maxs = self.arg_maxs[perm]
-        self.popts = self.popts[perm]
+        self.argmaxs = self.argmaxs[perm]
+        self.c012s = self.c012s[perm]
+        self.hits_argmaxs = self.hits_argmaxs[perm]
+        self.hits_c012s = self.hits_c012s[perm]
         self.filt = self.filt[perm]
         self._next_id = 0
 
@@ -31,20 +35,22 @@ class Dataset(object):
         cur_id = self._next_id
         self._next_id += batch_size
         return (self.x[cur_id:cur_id+batch_size],
-                self.weights[cur_id:cur_id+batch_size], self.arg_maxs[cur_id:cur_id+batch_size], self.popts[cur_id:cur_id+batch_size],
-                self.filt[cur_id:cur_id+batch_size])
+                self.weights[cur_id:cur_id+batch_size], self.argmaxs[cur_id:cur_id+batch_size], self.c012s[cur_id:cur_id+batch_size],
+                self.hits_argmaxs[cur_id:cur_id+batch_size], self.hits_c012s[cur_id:cur_id+batch_size], self.filt[cur_id:cur_id+batch_size])
 
 def unweight(x):
     return 0 if x < random.random() * 2 else 1
 
 
 class UnweightedDataset(object):
-    def __init__(self, x, weights, arg_maxs, popts):
+    def __init__(self, x, weights, argmaxs, c012s, hits_argmaxs, hits_c012s):
         self.x = x[:, :-1]
         self.filt = x[:, -1]
         self.weights = weights
-        self.arg_maxs = arg_maxs
-        self.popts = popts
+        self.argmaxs = argmaxs
+        self.c012s = c012s
+        self.hits_argmaxs = hits_argmaxs
+        self.hits_c012s = hits_c012s
 
         self.n = x.shape[0]
         self._next_id = 0
@@ -66,8 +72,10 @@ class UnweightedDataset(object):
         np.random.shuffle(perm)
         self.x = self.x[perm]
         self.weights = self.weights[perm]
-        self.arg_maxs = self.arg_maxs[perm]
-        self.popts = self.popts[perm]
+        self.argmaxs = self.argmaxs[perm]
+        self.c012s = self.c012s[perm]
+        self.hits_argmaxs = self.hits_argmaxs[perm]
+        self.hits_c012s = self.hits_c012s[perm]
         self.filt = self.filt[perm]
         self._next_id = 0
 
@@ -78,7 +86,9 @@ class UnweightedDataset(object):
         cur_id = self._next_id
         self._next_id += batch_size
         return (self.x[self.mask][cur_id:cur_id+batch_size],
-                self.weights[self.mask][cur_id:cur_id+batch_size], self.arg_maxs[self.mask][cur_id:cur_id+batch_size], self.popts[self.mask][cur_id:cur_id+batch_size],
+                self.weights[self.mask][cur_id:cur_id+batch_size], self.argmaxs[self.mask][cur_id:cur_id+batch_size],
+                self.c012s[self.mask][cur_id:cur_id+batch_size],
+                self.hits_argmaxs[self.mask][cur_id:cur_id+batch_size], self.hits_c012s[self.mask][cur_id:cur_id+batch_size],
                 self.filt[self.mask][cur_id:cur_id+batch_size])
 
 
@@ -89,7 +99,7 @@ def read_np(filename):
 
 class EventDatasets(object):
 
-    def __init__(self, event, weights, arg_maxs, perm, popts, filtered=False, raw=False, miniset=False,  unweighted=False):
+    def __init__(self, event, weights, argmaxs, perm, c012s, hits_argmaxs, hits_c012s, filtered=False, raw=False, miniset=False,  unweighted=False):
         data = event.cols[:, :-1]
         filt = event.cols[:, -1]
 
@@ -124,7 +134,7 @@ class EventDatasets(object):
         #     w_a = np.array(map(unweight, w_a))
         #     w_b = np.array(map(unweight, w_b))
 
-        self.train = Dataset(data[train_ids], weights[train_ids, :], arg_maxs[train_ids], popts[train_ids])
-        self.valid = Dataset(data[valid_ids], weights[valid_ids, :], arg_maxs[valid_ids], popts[valid_ids])
-        self.test = Dataset(data[test_ids], weights[test_ids, :], arg_maxs[test_ids], popts[test_ids])
-        self.unweightedtest = UnweightedDataset(data[test_ids], weights[test_ids, :], arg_maxs[test_ids], popts[test_ids])
+        self.train = Dataset(data[train_ids], weights[train_ids, :], argmaxs[train_ids], c012s[train_ids], hits_argmaxs[train_ids], hits_c012s[train_ids])
+        self.valid = Dataset(data[valid_ids], weights[valid_ids, :], argmaxs[valid_ids], c012s[valid_ids], hits_argmaxs[valid_ids], hits_c012s[valid_ids])
+        self.test = Dataset(data[test_ids], weights[test_ids, :], argmaxs[test_ids], c012s[test_ids], hits_argmaxs[test_ids], hits_c012s[test_ids])
+        self.unweightedtest = UnweightedDataset(data[test_ids], weights[test_ids, :], argmaxs[test_ids], c012s[test_ids], hits_argmaxs[test_ids], hits_c012s[test_ids])

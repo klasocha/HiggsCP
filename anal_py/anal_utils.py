@@ -12,12 +12,13 @@ from src_py.metrics_utils import calculate_deltas_unsigned, calculate_deltas_sig
 def weight_fun(x, a, b, c):
     return a + b * np.cos(x) + c * np.sin(x)
 
-def calc_weights(num_classes, popts):
-    x = np.linspace(0, 2, num_classes) * np.pi
-    data_len = popts.shape[0]
+def calc_weights(num_classes, coeffs):
+    k2PI = 2* np.pi
+    x = np.linspace(0, k2PI, num_classes)
+    data_len = coeffs.shape[0]
     weights = np.zeros((data_len, num_classes))
     for i in range(data_len):
-        weights[i] = weight_fun(x, *popts[i])
+        weights[i] = weight_fun(x, *coeffs[i])
     return weights
 
 def calc_argmaxs_distances(pred_arg_maxs, calc_arg_maxs, num_class):
