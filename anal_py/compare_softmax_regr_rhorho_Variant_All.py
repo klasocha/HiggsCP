@@ -7,71 +7,16 @@ import matplotlib.pyplot as plt
 from anal_utils import calculate_metrics_from_file
 from anal_utils import calculate_metrics_regr_c012s_from_file
 
-filelist_rhorho_Variant_All = []
+x_list = list(range(3, 52, 2))
+filelist_rhorho_Variant_All = ['../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_3/monit_npy/' for i in x_list]
 
-
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_3/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_5/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_7/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_9/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_11/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_13/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_15/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_17/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_19/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_21/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_23/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_25/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_27/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_29/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_31/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_33/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_35/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_37/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_39/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_41/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_43/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_45/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_47/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_49/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_soft_Unweighted_False_NO_NUM_CLASSES_51/monit_npy/')
-
-
-metrics_softmax_Variant_All = [calculate_metrics_from_file(filelist_rhorho_Variant_All[0], 3),calculate_metrics_from_file(filelist_rhorho_Variant_All[1], 5),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[2], 7), calculate_metrics_from_file(filelist_rhorho_Variant_All[3], 9),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[4], 11), calculate_metrics_from_file(filelist_rhorho_Variant_All[5], 13),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[6], 15), calculate_metrics_from_file(filelist_rhorho_Variant_All[7], 17),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[8], 19), calculate_metrics_from_file(filelist_rhorho_Variant_All[9], 21),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[10], 23), calculate_metrics_from_file(filelist_rhorho_Variant_All[11], 25),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[12], 27), calculate_metrics_from_file(filelist_rhorho_Variant_All[13], 29),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[14], 31), calculate_metrics_from_file(filelist_rhorho_Variant_All[15], 33),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[16], 35), calculate_metrics_from_file(filelist_rhorho_Variant_All[17], 37),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[18], 39), calculate_metrics_from_file(filelist_rhorho_Variant_All[19], 41),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[20], 43), calculate_metrics_from_file(filelist_rhorho_Variant_All[21], 45),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[22], 47), calculate_metrics_from_file(filelist_rhorho_Variant_All[23], 49),
-                       calculate_metrics_from_file(filelist_rhorho_Variant_All[24], 51)]
-           
+metrics_softmax_Variant_All = [calculate_metrics_from_file(filelist_rhorho_Variant_All[index], x) for index, x in enumerate(x_list)]
 metrics_softmax_Variant_All = np.stack(metrics_softmax_Variant_All)
 
 
-filelist_rhorho_regr_Variant_All=[]
-filelist_rhorho_regr_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_regr_popts_Unweighted_False_NO_NUM_CLASSES_0/monit_npy/')
+filelist_rhorho_regr_Variant_All='../laptop_results/nn_rhorho_Variant-All_regr_popts_Unweighted_False_NO_NUM_CLASSES_0/monit_npy/'
 
-
-metrics_regr_Variant_All = [calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 3), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 5),
-                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 7), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 9),
-                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 11), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 13),
-                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 15), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 17),
-                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 19), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 21),
-                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 23), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 25),
-                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 27), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 29),
-                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 31), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 33),
-                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 35), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 37),
-                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 39), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 41),
-                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 43), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 45),
-                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 47), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 49),
-                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 51)]
-         
+metrics_regr_Variant_All = [calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All, x) for x in x_list]
 metrics_regr_Variant_All = np.stack(metrics_regr_Variant_All)
 
 
@@ -82,7 +27,7 @@ metrics_regr_Variant_All = np.stack(metrics_regr_Variant_All)
 # Should we first convert to histograms (?)
 
 #binning for horisontal axis
-x = np.array([3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51])
+x = np.array(x_list)
 
 #---------------------------------------------------------------------
 
