@@ -1,22 +1,17 @@
 import numpy as np
 import os, errno
+
 import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
-from anal_utils import calculate_metrics_regr_popts
+from anal_utils import calculate_metrics_regr_c012s
 
-filelist_rhorho_Variant_1=[]
-filelist_rhorho_Variant_1.append('npy/nn_rhorho_Variant-1.1_regr_popts_Unweighted_False_NO_NUM_CLASSES_0/monit_npy/')
+filelist_rhorho_Variant_1 = 'npy/nn_rhorho_Variant-4.1_regr_popts_Unweighted_False_NO_NUM_CLASSES_0/monit_npy/'
 
+x_list = list(range(3, 22, 2))
 
-metrics_Variant_1 = [calculate_metrics_regr_popts(filelist_rhorho_Variant_1[0], 3), calculate_metrics_regr_popts(filelist_rhorho_Variant_1[0], 5),
-                       calculate_metrics_regr_popts(filelist_rhorho_Variant_1[0], 7), calculate_metrics_regr_popts(filelist_rhorho_Variant_1[0], 9),
-                       calculate_metrics_regr_popts(filelist_rhorho_Variant_1[0], 11), calculate_metrics_regr_popts(filelist_rhorho_Variant_1[0], 13),
-                       calculate_metrics_regr_popts(filelist_rhorho_Variant_1[0], 15), calculate_metrics_regr_popts(filelist_rhorho_Variant_1[0], 17),
-                       calculate_metrics_regr_popts(filelist_rhorho_Variant_1[0], 19), calculate_metrics_regr_popts(filelist_rhorho_Variant_1[0], 21)]
-
-           
+metrics_Variant_1 = [calculate_metrics_regr_c012s(filelist_rhorho_Variant_1, i) for i in x_list]
 metrics_Variant_1 = np.stack(metrics_Variant_1)
 
 
@@ -27,7 +22,7 @@ metrics_Variant_1 = np.stack(metrics_Variant_1)
 #---------------------------------------------------------------------
 
 pathOUT = "figures/"
-filename = "rhorho_acc_Variant-1.1_regr"
+filename = "rhorho_acc_Variant-4.1_regr"
 x = np.arange(1,11)*2+1
 # example plt.plot(x, metrics_Variant_1[:, 0],'o', label=r'$\sigma$' )
 plt.plot(x, metrics_Variant_1[:, 0],'o', label='Acc0')
@@ -39,7 +34,7 @@ plt.xticks(x)
 plt.legend()
 plt.xlabel('Number of classes')
 plt.ylabel('Accuracy')
-plt.title('Feautures list: Variant-1.1')
+plt.title('Feautures list: Variant-4.1')
 
 ax = plt.gca()
 plt.tight_layout()
@@ -62,7 +57,7 @@ plt.clf()
 #---------------------------------------------------------------------
 
 pathOUT = "figures/"
-filename = "rhorho_meanDelt_class_Variant-1.1_regr"
+filename = "rhorho_meanDelt_class_Variant-4.1_regr"
 
 plt.plot(x, metrics_Variant_1[:, 4],'o', label=r'$<\Delta>$ classes')
 
@@ -71,7 +66,7 @@ plt.xticks(x)
 plt.legend()
 plt.xlabel('Number of classes')
 plt.ylabel(r'$<\Delta>$ classes')
-plt.title('Feautures list: Variant-1.1')
+plt.title('Feautures list: Variant-4.1')
 
 ax = plt.gca()
 plt.tight_layout()
@@ -94,7 +89,7 @@ plt.clf()
 #---------------------------------------------------------------------
 
 pathOUT = "figures/"
-filename = "rhorho_meanDelt_phiCPmix_Variant-1.1_regr"
+filename = "rhorho_meanDelt_phiCPmix_Variant-4.1_regr"
 
 plt.plot(x, metrics_Variant_1[:, 7],'o', label=r'$<\Delta \phi^{CP}>$ ')
 
@@ -103,7 +98,7 @@ plt.xticks(x)
 plt.legend()
 plt.xlabel('Number of classes')
 plt.ylabel(r'$<\Delta \phi^{CP}>$ (rad)')
-plt.title('Feautures list: Variant-1.1')
+plt.title('Feautures list: Variant-4.1')
 
 ax = plt.gca()
 plt.tight_layout()
@@ -126,7 +121,7 @@ plt.clf()
 #---------------------------------------------------------------------
 
 pathOUT = "figures/"
-filename = "rhorho_L1delt_w_Variant-1.1_regr"
+filename = "rhorho_L1delt_w_Variant-4.1_regr"
 
 plt.plot(x, metrics_Variant_1[:, 5],'o', label=r'L1 $<\Delta w>$')
 
@@ -135,7 +130,7 @@ plt.xticks(x)
 plt.legend()
 plt.xlabel('Number of classes')
 plt.ylabel(r'L1 $<\Delta w>$')
-plt.title('Feautures list: Variant-1.1')
+plt.title('Feautures list: Variant-4.1')
 
 ax = plt.gca()
 plt.tight_layout()
@@ -158,7 +153,7 @@ plt.clf()
 #---------------------------------------------------------------------
 
 pathOUT = "figures/"
-filename = "rhorho_L2delt_w_Variant-1.1_regr"
+filename = "rhorho_L2delt_w_Variant-4.1_regr"
 
 plt.plot(x, metrics_Variant_1[:, 6],'o', label=r'L2 $<\Delta w>$')
 
@@ -167,7 +162,7 @@ plt.xticks(x)
 plt.legend()
 plt.xlabel('Number of classes')
 plt.ylabel(r'L2 $<\Delta w>$')
-plt.title('Feautures list: Variant-1.1')
+plt.title('Feautures list: Variant-4.1')
 
 ax = plt.gca()
 plt.tight_layout()

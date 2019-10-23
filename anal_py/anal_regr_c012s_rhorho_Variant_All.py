@@ -4,31 +4,17 @@ import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
-from anal_utils import calculate_metrics_regr_popts_from_file
+from anal_utils import calculate_metrics_regr_c012s_from_file
 
-filelist_rhorho_Variant_All=[]
-filelist_rhorho_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_regr_popts_Unweighted_False_NO_NUM_CLASSES_0/monit_npy/')
+filename_rhorho_Variant_All = 'npy/nn_rhorho_Variant-All_regr_c012s_Unweighted_False_NUM_CLASSES_10/monit_npy/'
 
+x_list = list(range(3, 52, 2))
 
-metrics_Variant_All = [calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 3),calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 5),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 7), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 9),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 11), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 13),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 15), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 17),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 19), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 21),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 23), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 25),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 27), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 29),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 31), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 33),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 35), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 37),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 39), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 41),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 43), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 45),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 47), calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 49),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_Variant_All[0], 51)]
-
-           
+metrics_Variant_All = [calculate_metrics_regr_c012s_from_file(filename_rhorho_Variant_All, i) for i in x_list]
 metrics_Variant_All = np.stack(metrics_Variant_All)
 
 #binning for horisontal axis
-x = np.array([3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51])
+x = np.array(x_list)
 
 
 # Now start plotting metrics

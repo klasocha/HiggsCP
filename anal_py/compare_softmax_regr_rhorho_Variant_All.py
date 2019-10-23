@@ -5,7 +5,7 @@ matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
 from anal_utils import calculate_metrics_from_file
-from anal_utils import calculate_metrics_regr_popts_from_file
+from anal_utils import calculate_metrics_regr_c012s_from_file
 
 filelist_rhorho_Variant_All = []
 
@@ -58,19 +58,19 @@ filelist_rhorho_regr_Variant_All=[]
 filelist_rhorho_regr_Variant_All.append('../laptop_results/nn_rhorho_Variant-All_regr_popts_Unweighted_False_NO_NUM_CLASSES_0/monit_npy/')
 
 
-metrics_regr_Variant_All = [calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 3),calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 5),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 7), calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 9),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 11), calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 13),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 15), calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 17),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 19), calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 21),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 23), calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 25),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 27), calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 29),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 31), calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 33),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 35), calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 37),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 39), calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 41),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 43), calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 45),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 47), calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 49),
-                       calculate_metrics_regr_popts_from_file(filelist_rhorho_regr_Variant_All[0], 51)]
+metrics_regr_Variant_All = [calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 3), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 5),
+                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 7), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 9),
+                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 11), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 13),
+                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 15), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 17),
+                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 19), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 21),
+                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 23), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 25),
+                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 27), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 29),
+                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 31), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 33),
+                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 35), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 37),
+                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 39), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 41),
+                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 43), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 45),
+                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 47), calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 49),
+                            calculate_metrics_regr_c012s_from_file(filelist_rhorho_regr_Variant_All[0], 51)]
          
 metrics_regr_Variant_All = np.stack(metrics_regr_Variant_All)
 

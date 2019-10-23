@@ -71,14 +71,14 @@ def calculate_metrics(calc_w, preds_w, num_classes):
          acc3_rad, l1_delta_w_norm, l2_delta_w_norm, mean_deltas_err, mean_deltas_err_rad, ])
 
 
-def calculate_metrics_regr_popts_from_file(directory, num_classes):
-    calc_popts = np.load(os.path.join(directory, 'test_regr_calc_popts.npy'))
-    pred_popts = np.load(os.path.join(directory, 'test_regr_preds_popts.npy'))
+def calculate_metrics_regr_c012s_from_file(directory, num_classes):
+    calc_popts = np.load(os.path.join(directory, 'test_regr_calc_c012s.npy'))
+    pred_popts = np.load(os.path.join(directory, 'test_regr_preds_c012s.npy'))
 
-    return calculate_metrics_regr_popts(calc_popts, pred_popts, num_classes)
+    return calculate_metrics_regr_c012s(calc_popts, pred_popts, num_classes)
 
 
-def calculate_metrics_regr_popts(calc_popts, pred_popts, num_classes):
+def calculate_metrics_regr_c012s(calc_popts, pred_popts, num_classes):
     calc_w = calc_weights(num_classes, calc_popts)
     preds_w = calc_weights(num_classes, pred_popts)
 
