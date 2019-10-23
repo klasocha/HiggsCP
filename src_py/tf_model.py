@@ -112,8 +112,8 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
                 # print calc_w
                 # print "ERW test on softmax: preds_w \n"
                 # print preds_w
-                np.save(pathOUT + 'softmax_calc_w.npy', calc_w)
-                np.save(pathOUT + 'softmax_preds_w.npy', preds_w)
+                np.save(os.path.join(pathOUT, 'softmax_calc_w.npy'), calc_w)
+                np.save(os.path.join(pathOUT, 'softmax_preds_w.npy'), preds_w)
 
 
         if model.tloss == 'soft_c012s':
@@ -123,16 +123,16 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             print msg_str
 
             train_calc_c012s, train_pred_c012s = soft_c012s_predictions(emodel, data.valid, filtered=True)
-            np.save(pathOUT + 'train_soft_calc_hits_c012s.npy', train_calc_c012s)
-            np.save(pathOUT + 'train_soft_preds_hits_c012s.npy', train_pred_c012s)
+            np.save(os.path.join(pathOUT, 'train_soft_calc_hits_c012s.npy'), train_calc_c012s)
+            np.save(os.path.join(pathOUT, 'train_soft_preds_hits_c012s.npy'), train_pred_c012s)
 
             valid_calc_c012s, valid_pred_c012s = soft_c012s_predictions(emodel, data.valid, filtered=True)
-            np.save(pathOUT + 'valid_soft_calc_c012s.npy', valid_calc_c012s)
-            np.save(pathOUT + 'valid_soft_preds_c012s.npy', valid_pred_c012s)
+            np.save(os.path.join(pathOUT, 'valid_soft_calc_c012s.npy'), valid_calc_c012s)
+            np.save(os.path.join(pathOUT, 'valid_soft_preds_c012s.npy'), valid_pred_c012s)
 
             test_calc_c012s, test_pred_c012s = soft_c012s_predictions(emodel, data.test, filtered=True)
-            np.save(pathOUT + 'test_soft_calc_c012s.npy', test_calc_c012s)
-            np.save(pathOUT + 'test_soft_preds_c012s.npy', test_pred_c012s)
+            np.save(os.path.join(pathOUT, 'test_soft_calc_c012s.npy'), test_calc_c012s)
+            np.save(os.path.join(pathOUT, 'test_soft_preds_c012s.npy'), test_pred_c012s)
 
         if model.tloss == 'regr_c012s':
 
@@ -141,12 +141,12 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             print msg_str
 
             valid_calc_c012s, valid_pred_c012s = regr_c012s_predictions(emodel, data.valid, filtered=True)
-            np.save(pathOUT + 'valid_regr_calc_c012s.npy', valid_calc_c012s)
-            np.save(pathOUT + 'valid_regr_preds_c012s.npy', valid_pred_c012s)
+            np.save(os.path.join(pathOUT, 'valid_regr_calc_c012s.npy'), valid_calc_c012s)
+            np.save(os.path.join(pathOUT, 'valid_regr_preds_c012s.npy'), valid_pred_c012s)
 
             test_calc_c012s, test_pred_c012s = regr_c012s_predictions(emodel, data.test, filtered=True)
-            np.save(pathOUT + 'test_regr_calc_c012s.npy', test_calc_c012s)
-            np.save(pathOUT + 'test_regr_preds_c012s.npy', test_pred_c012s)
+            np.save(os.path.join(pathOUT, 'test_regr_calc_c012s.npy'), test_calc_c012s)
+            np.save(os.path.join(pathOUT, 'test_regr_preds_c012s.npy'), test_pred_c012s)
 
         if model.tloss == 'regr_argmaxs':
 
@@ -155,12 +155,12 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             print msg_str
 
             valid_calc_argmaxs, valid_pred_argmaxs = regr_argmaxs_predictions(emodel, data.valid, filtered=True)
-            np.save(pathOUT + 'valid_regr_calc_argmaxs.npy', valid_calc_argmaxs)
-            np.save(pathOUT + 'valid_regr_preds_argmaxs.npy', valid_pred_argmaxs)
+            np.save(os.path.join(pathOUT, 'valid_regr_calc_argmaxs.npy'), valid_calc_argmaxs)
+            np.save(os.path.join(pathOUT, 'valid_regr_preds_argmaxs.npy'), valid_pred_argmaxs)
 
             test_calc_argmaxs, test_pred_argmaxs = regr_argmaxs_predictions(emodel, data.test, filtered=True)
-            np.save(pathOUT + 'test_regr_calc_argmaxs.npy', test_calc_argmaxs)
-            np.save(pathOUT + 'test_regr_preds_argmaxs.npy', test_pred_argmaxs)
+            np.save(os.path.join(pathOUT, 'test_regr_calc_argmaxs.npy'), test_calc_argmaxs)
+            np.save(os.path.join(pathOUT, 'test_regr_preds_argmaxs.npy'), test_pred_argmaxs)
 
         if model.tloss == 'soft_argmaxs':
 
@@ -169,16 +169,16 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             print msg_str
 
             train_calc_argmaxs, train_pred_argmaxs = soft_argmaxs_predictions(emodel, data.train, filtered=True)
-            np.save(pathOUT + 'train_soft_calc_hits_argmaxs.npy', train_calc_argmaxs)
-            np.save(pathOUT + 'train_soft_preds_hits_argmaxs.npy', train_pred_argmaxs)
+            np.save(os.path.join(pathOUT, 'train_soft_calc_hits_argmaxs.npy'), train_calc_argmaxs)
+            np.save(os.path.join(pathOUT, 'train_soft_preds_hits_argmaxs.npy'), train_pred_argmaxs)
 
             valid_calc_argmaxs, valid_pred_argmaxs = soft_argmaxs_predictions(emodel, data.valid, filtered=True)
-            np.save(pathOUT + 'valid_soft_calc_hits_argmaxs.npy', valid_calc_argmaxs)
-            np.save(pathOUT + 'valid_soft_preds_hits_argmaxs.npy', valid_pred_argmaxs)
+            np.save(os.path.join(pathOUT, 'valid_soft_calc_hits_argmaxs.npy'), valid_calc_argmaxs)
+            np.save(os.path.join(pathOUT, 'valid_soft_preds_hits_argmaxs.npy'), valid_pred_argmaxs)
 
             test_calc_argmaxs, test_pred_argmaxs = soft_argmaxs_predictions(emodel, data.test, filtered=True)
-            np.save(pathOUT + 'test_soft_calc_hits_argmaxs.npy', test_calc_argmaxs)
-            np.save(pathOUT + 'test_soft_preds_hits_argmaxs.npy', test_pred_argmaxs)
+            np.save(os.path.join(pathOUT, 'test_soft_calc_hits_argmaxs.npy'), test_calc_argmaxs)
+            np.save(os.path.join(pathOUT, 'test_soft_preds_hits_argmaxs.npy'), test_pred_argmaxs)
 
         if model.tloss == 'regr_weights':
 
@@ -187,72 +187,72 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             print msg_str
 
             valid_calc_weights, valid_pred_weights = regr_weights_predictions(emodel, data.valid, filtered=True)
-            np.save(pathOUT + 'valid_regr_calc_weights.npy', valid_calc_weights)
-            np.save(pathOUT + 'valid_regr_preds_weights.npy', valid_pred_weights)
+            np.save(os.path.join(pathOUT, 'valid_regr_calc_weights.npy'), valid_calc_weights)
+            np.save(os.path.join(pathOUT, 'valid_regr_preds_weights.npy'), valid_pred_weights)
 
             test_calc_weights, test_pred_weights = regr_weights_predictions(emodel, data.test, filtered=True)
-            np.save(pathOUT + 'test_regr_calc_weights.npy', test_calc_weights)
-            np.save(pathOUT + 'test_regr_preds_weights.npy', test_pred_weights)
+            np.save(os.path.join(pathOUT, 'test_regr_calc_weights.npy'), test_calc_weights)
+            np.save(os.path.join(pathOUT, 'test_regr_preds_weights.npy'), test_pred_weights)
 
                 
     if model.tloss == 'soft_weights':
         test_roc_auc(preds_w, calc_w)             
 
         # storing history of training            
-        np.save(pathOUT + 'train_losses.npy', train_losses)
+        np.save(os.path.join(pathOUT, 'train_losses.npy'), train_losses)
         print "train_losses", train_losses
 
-        np.save(pathOUT + 'train_accs.npy', train_accs)
+        np.save(os.path.join(pathOUT, 'train_accs.npy'), train_accs)
         print "train_accs", train_accs
-        np.save(pathOUT + 'valid_accs.npy', valid_accs)
+        np.save(os.path.join(pathOUT, 'valid_accs.npy'), valid_accs)
         print "valid_accs", valid_accs
-        np.save(pathOUT + 'test_accs.npy', test_accs)
+        np.save(os.path.join(pathOUT, 'test_accs.npy'), test_accs)
         print "test_accs", test_accs
 
-        np.save(pathOUT + 'train_L1_deltas.npy', train_L1_deltas)
+        np.save(os.path.join(pathOUT, 'train_L1_deltas.npy'), train_L1_deltas)
         print "train_L1_deltas", train_L1_deltas
-        np.save(pathOUT + 'valid_L1_deltas.npy', valid_L1_deltas)
+        np.save(os.path.join(pathOUT, 'valid_L1_deltas.npy'), valid_L1_deltas)
         print "valid_L1_deltas", valid_L1_deltas
-        np.save(pathOUT + 'test_L1_deltas.npy', test_L1_deltas)
+        np.save(os.path.join(pathOUT, 'test_L1_deltas.npy'), test_L1_deltas)
         print "test_L1_deltas", test_L1_deltas
 
-        np.save(pathOUT + 'train_L2_deltas.npy', train_L2_deltas)
+        np.save(os.path.join(pathOUT, 'train_L2_deltas.npy'), train_L2_deltas)
         print "train_L2_deltas", train_L2_deltas
-        np.save(pathOUT + 'valid_L2_deltas.npy', valid_L2_deltas)
+        np.save(os.path.join(pathOUT, 'valid_L2_deltas.npy'), valid_L2_deltas)
         print "valid_L2_deltas", valid_L2_deltas
-        np.save(pathOUT + 'test_L2_deltas.npy', test_L2_deltas)
+        np.save(os.path.join(pathOUT, 'test_L2_deltas.npy'), test_L2_deltas)
         print "test_L2_deltas", test_L2_deltas
 
 
     if model.tloss == 'soft_c012s':
 
         # storing history of training
-        np.save(pathOUT + 'train_losses_soft_c012s.npy', train_losses)
+        np.save(os.path.join(pathOUT, 'train_losses_soft_c012s.npy'), train_losses)
         print "train_losses_soft_c012s", train_losses
 
     if model.tloss == 'regr_argmaxs':
 
         # storing history of training
-        np.save(pathOUT+'train_losses_regr_argmaxs.npy', train_losses)
+        np.save(os.path.join(pathOUT, 'train_losses_regr_argmaxs.npy'), train_losses)
         print "train_losses_regr_argmaxs", train_losses
 
     if model.tloss == 'soft_argmaxs':
 
         # storing history of training
-        np.save(pathOUT+'train_losses_soft_argmaxs.npy', train_losses)
+        np.save(os.path.join(pathOUT, 'train_losses_soft_argmaxs.npy'), train_losses)
         print "train_losses_soft_argmaxs", train_losses
 
 
     if model.tloss == 'regr_c012s':
 
         # storing history of training
-        np.save(pathOUT+'train_losses_regr_c012s.npy', train_losses)
+        np.save(os.path.join(pathOUT, 'train_losses_regr_c012s.npy'), train_losses)
         print "train_losses_c012s", train_losses
 
     if model.tloss == 'regr_weights':
 
         # storing history of training
-        np.save(pathOUT+'train_losses_weights.npy', train_losses)
+        np.save(os.path.join(pathOUT, 'train_losses_weights.npy'), train_losses)
         print "train_losses_weights", train_losses
    
     return train_accs, valid_accs, test_accs
