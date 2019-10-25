@@ -4,9 +4,7 @@ matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
 
-from anal_utils import weight_fun
-
-
+from anal_utils import weight_fun, save_plot_file
 
 pathIN  = "npy/nn_rhorho_Variant-1.1_regr_popts_Unweighted_False_NO_NUM_CLASSES_0/monit_npy/"
 pathOUT = "figures/"
@@ -31,19 +29,8 @@ plt.xticks(x)
 plt.ylabel('w')
 plt.title('Features list: Variant-1.1')
     
-if filename:
-    try:
-        os.makedirs(pathOUT)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    plt.savefig(pathOUT + filename+".eps")
-    print('Saved '+pathOUT + filename+".eps")
-    plt.savefig(pathOUT + filename+".pdf")
-    print('Saved '+pathOUT + filename+".pdf")
-else:
-    plt.show()
-plt.clf()
+save_plot_file(plt, pathOUT, filename)
+
 
 #----------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------
@@ -62,19 +49,8 @@ plt.xlabel(r'$\alpha^{CP}$ [rad]')
 plt.ylabel('w')
 plt.title('Features list: Variant-1.1')
     
-if filename:
-    try:
-        os.makedirs(pathOUT)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    plt.savefig(pathOUT + filename+".eps")
-    print('Saved '+pathOUT + filename+".eps")
-    plt.savefig(pathOUT + filename+".pdf")
-    print('Saved '+pathOUT + filename+".pdf")
-else:
-    plt.show()
-plt.clf()
+save_plot_file(plt, pathOUT, filename)
+
 
 #----------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------
@@ -93,19 +69,8 @@ plt.xlabel(r'$\alpha^{CP}$ [rad]')
 plt.ylabel('w')
 plt.title('Features list: Variant-1.1')
     
-if filename:
-    try:
-        os.makedirs(pathOUT)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    plt.savefig(pathOUT + filename+".eps")
-    print('Saved '+pathOUT + filename+".eps")
-    plt.savefig(pathOUT + filename+".pdf")
-    print('Saved '+pathOUT + filename+".pdf")
-else:
-    plt.show()
-plt.clf()
+save_plot_file(plt, pathOUT, filename)
+
 
 #----------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------
@@ -129,20 +94,8 @@ ax.annotate("Mean = {:0.3f} \nSTD =  {:1.3f}".format(mean, std), xy=(0.65, 0.85)
 
 plt.tight_layout()
 
-if filename:
-    try:
-        os.makedirs(pathOUT)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    plt.savefig(pathOUT + filename+".eps")
-    print('Saved '+pathOUT + filename+".eps")
-    plt.savefig(pathOUT + filename+".pdf")
-    print('Saved '+pathOUT + filename+".pdf")
-else:
-    plt.show()
+save_plot_file(plt, pathOUT, filename)
 
-plt.clf()
 #----------------------------------------------------------------------------------
 
 delt_popts= calc_popts - preds_popts
@@ -172,20 +125,8 @@ ax.annotate("Preds: mean = {:0.3f}, \n           std =  {:1.3f}".format(preds_me
 
 plt.tight_layout()
 
-if filename:
-    try:
-        os.makedirs(pathOUT)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    plt.savefig(pathOUT + filename+".eps")
-    print('Saved '+pathOUT + filename+".eps")
-    plt.savefig(pathOUT + filename+".pdf")
-    print('Saved '+pathOUT + filename+".pdf")
-else:
-    plt.show()
+save_plot_file(plt, pathOUT, filename)
 
-plt.clf()
 #----------------------------------------------------------------------------------
 print calc_popts[:,1]
 print delt_popts[:,1]
@@ -209,20 +150,8 @@ ax.annotate("Preds: mean = {:0.3f}, \n           std =  {:1.3f}".format(preds_me
 
 plt.tight_layout()
 
-if filename:
-    try:
-        os.makedirs(pathOUT)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    plt.savefig(pathOUT + filename+".eps")
-    print('Saved '+pathOUT + filename+".eps")
-    plt.savefig(pathOUT + filename+".pdf")
-    print('Saved '+pathOUT + filename+".pdf")
-else:
-    plt.show()
+save_plot_file(plt, pathOUT, filename)
 
-plt.clf()
 #----------------------------------------------------------------------------------
 
 filename = "delt_popts_B_rhorho_Variant-1.1"
@@ -239,20 +168,8 @@ ax.annotate("Mean = {:0.3f} \nSTD =  {:1.3f}".format(mean, std), xy=(0.65, 0.85)
 
 plt.tight_layout()
 
-if filename:
-    try:
-        os.makedirs(pathOUT)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    plt.savefig(pathOUT + filename+".eps")
-    print('Saved '+pathOUT + filename+".eps")
-    plt.savefig(pathOUT + filename+".pdf")
-    print('Saved '+pathOUT + filename+".pdf")
-else:
-    plt.show()
+save_plot_file(plt, pathOUT, filename)
 
-plt.clf()
 #----------------------------------------------------------------------------------
 print calc_popts[:,2]
 print delt_popts[:,2]
@@ -276,20 +193,8 @@ ax.annotate("Preds: mean = {:0.3f}, \n           std =  {:1.3f}".format(preds_me
 
 plt.tight_layout()
 
-if filename:
-    try:
-        os.makedirs(pathOUT)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    plt.savefig(pathOUT + filename+".eps")
-    print('Saved '+pathOUT + filename+".eps")
-    plt.savefig(pathOUT + filename+".pdf")
-    print('Saved '+pathOUT + filename+".pdf")
-else:
-    plt.show()
+save_plot_file(plt, pathOUT, filename)
 
-plt.clf()
 #----------------------------------------------------------------------------------
 
 filename = "delt_popts_C_rhorho_Variant-1.1"
@@ -305,18 +210,6 @@ ax.annotate("Mean = {:0.3f} \nSTD =  {:1.3f}".format(mean, std), xy=(0.65, 0.85)
 
 plt.tight_layout()
 
-if filename:
-    try:
-        os.makedirs(pathOUT)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    plt.savefig(pathOUT + filename+".eps")
-    print('Saved '+pathOUT + filename+".eps")
-    plt.savefig(pathOUT + filename+".pdf")
-    print('Saved '+pathOUT + filename+".pdf")
-else:
-    plt.show()
+save_plot_file(plt, pathOUT, filename)
 
-plt.clf()
 #----------------------------------------------------------------------------------

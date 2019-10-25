@@ -4,7 +4,7 @@ import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
-from anal_utils import calculate_metrics_regr_c012s_from_file
+from anal_utils import calculate_metrics_regr_c012s_from_file, save_plot_file
 
 filename_rhorho_Variant_All = 'npy/nn_rhorho_Variant-All_regr_c012s_Unweighted_False_NUM_CLASSES_10/monit_npy/'
 
@@ -40,21 +40,8 @@ plt.title('Feautures list: Variant-All')
 ax = plt.gca()
 plt.tight_layout()
 
-if filename:
-    try:
-        os.makedirs(pathOUT)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    plt.savefig(pathOUT + filename+".eps")
-    print('Saved '+pathOUT + filename+".eps")
-    plt.savefig(pathOUT + filename+".pdf")
-    print('Saved '+pathOUT + filename+".pdf")
-else:
-    plt.show()
+save_plot_file(plt, pathOUT, filename)
 
-#---------------------------------------------------------------------
-plt.clf()
 #---------------------------------------------------------------------
 
 pathOUT = "figures/"
@@ -75,21 +62,8 @@ plt.title('Feautures list: Variant-All')
 ax = plt.gca()
 plt.tight_layout()
 
-if filename:
-    try:
-        os.makedirs(pathOUT)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    plt.savefig(pathOUT + filename+".eps")
-    print('Saved '+pathOUT + filename+".eps")
-    plt.savefig(pathOUT + filename+".pdf")
-    print('Saved '+pathOUT + filename+".pdf")
-else:
-    plt.show()
+save_plot_file(plt, pathOUT, filename)
 
-#---------------------------------------------------------------------
-plt.clf()
 #---------------------------------------------------------------------
 
 pathOUT = "figures/"
@@ -108,21 +82,8 @@ plt.title('Feautures list: Variant-All')
 ax = plt.gca()
 plt.tight_layout()
 
-if filename:
-    try:
-        os.makedirs(pathOUT)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    plt.savefig(pathOUT + filename+".eps")
-    print('Saved '+pathOUT + filename+".eps")
-    plt.savefig(pathOUT + filename+".pdf")
-    print('Saved '+pathOUT + filename+".pdf")
-else:
-    plt.show()
+save_plot_file(plt, pathOUT, filename)
 
-#---------------------------------------------------------------------
-plt.clf()
 #---------------------------------------------------------------------
 
 pathOUT = "figures/"
@@ -143,21 +104,8 @@ plt.title('Feautures list: Variant-All')
 ax = plt.gca()
 plt.tight_layout()
 
-if filename:
-    try:
-        os.makedirs(pathOUT)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    plt.savefig(pathOUT + filename+".eps")
-    print('Saved '+pathOUT + filename+".eps")
-    plt.savefig(pathOUT + filename+".pdf")
-    print('Saved '+pathOUT + filename+".pdf")
-else:
-    plt.show()
+save_plot_file(plt, pathOUT, filename)
 
-#---------------------------------------------------------------------
-plt.clf()
 #---------------------------------------------------------------------
 
 pathOUT = "figures/"
@@ -177,21 +125,8 @@ plt.title('Feautures list: Variant-All')
 ax = plt.gca()
 plt.tight_layout()
 
-if filename:
-    try:
-        os.makedirs(pathOUT)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    plt.savefig(pathOUT + filename+".eps")
-    print('Saved '+pathOUT + filename+".eps")
-    plt.savefig(pathOUT + filename+".pdf")
-    print('Saved '+pathOUT + filename+".pdf")
-else:
-    plt.show()
-    
-#---------------------------------------------------------------------
-plt.clf()
+save_plot_file(plt, pathOUT, filename)
+
 #---------------------------------------------------------------------
 
 
@@ -211,19 +146,7 @@ plt.title('Feautures list: Variant-All')
 ax = plt.gca()
 plt.tight_layout()
 
-if filename:
-    try:
-        os.makedirs(pathOUT)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    plt.savefig(pathOUT + filename+".eps")
-    print('Saved '+pathOUT + filename+".eps")
-    plt.savefig(pathOUT + filename+".pdf")
-    print('Saved '+pathOUT + filename+".pdf")
-else:
-    plt.show()
-#---------------------------------------------------------------------
-plt.clf()
+save_plot_file(plt, pathOUT, filename)
+
 #---------------------------------------------------------------------
  

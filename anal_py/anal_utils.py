@@ -1,3 +1,5 @@
+import errno
+
 import numpy as np
 import os
 
@@ -135,3 +137,18 @@ def test_roc_auc(directory, num_class):
               'preds_roc_auc: {}'.format(calculate_roc_auc(preds_w, calc_w, 0, i)))
 
     return oracle_roc_auc, preds_roc_auc
+
+def save_plot_file(plt, pathOUT, filename):
+    if filename:
+        try:
+            os.makedirs(pathOUT)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
+        plt.savefig(pathOUT + filename+".eps")
+        print('Saved '+pathOUT + filename+".eps")
+        plt.savefig(pathOUT + filename+".pdf")
+        print('Saved '+pathOUT + filename+".pdf")
+    else:
+        plt.show()
+    plt.clf()
