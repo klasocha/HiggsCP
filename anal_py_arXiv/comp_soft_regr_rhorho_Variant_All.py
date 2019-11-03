@@ -10,33 +10,8 @@ from anal_utils import calculate_metrics_regr_c012s_from_file
 
 filelist_rhorho_Variant_All = []
 
-
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_3/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_5/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_7/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_9/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_11/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_13/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_15/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_17/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_19/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_21/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_23/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_25/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_27/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_29/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_31/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_33/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_35/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_37/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_39/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_41/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_43/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_45/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_47/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_49/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_51/monit_npy/')
-
+for i in range(3, 52, 2):
+    filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_{}/monit_npy/'.format(i))
 
 metrics_softmax_Variant_All = [calculate_metrics_from_file(filelist_rhorho_Variant_All[0], 3),calculate_metrics_from_file(filelist_rhorho_Variant_All[1], 5),
                        calculate_metrics_from_file(filelist_rhorho_Variant_All[2], 7), calculate_metrics_from_file(filelist_rhorho_Variant_All[3], 9),
@@ -90,23 +65,32 @@ x = np.array([3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,4
 pathOUT = "figures/"
 filename = "comp_soft_regr_acc_wt_rhorho_Variant-All_nc"
 
-plt.plot(x, metrics_softmax_Variant_All[:, 0],'o', label=r'$|\Delta_{class}| < 1$, multi-class')
-plt.plot(x, metrics_softmax_Variant_All[:, 1],'x', label=r'$|\Delta_{class}| < 2$, multi-class')
-plt.plot(x, metrics_softmax_Variant_All[:, 2],'d', label=r'$|\Delta_{class}| < 3$, multi-class')
-plt.plot(x, metrics_softmax_Variant_All[:, 3],'v', label=r'$|\Delta_{class}| < 4$, multi-class')
-plt.plot(x, metrics_regr_Variant_All[:, 0],'o', label=r'$|\Delta_{class}| < 1$, regresion')
-plt.plot(x, metrics_regr_Variant_All[:, 1],'x', label=r'$|\Delta_{class}| < 2$, regresion')
-plt.plot(x, metrics_regr_Variant_All[:, 2],'d', label=r'$|\Delta_{class}| < 3$, regresion')
-plt.plot(x, metrics_regr_Variant_All[:, 3],'v', label=r'$|\Delta_{class}| < 4$, regresion')
-plt.legend(loc='upper right')
-plt.ylim([0.0, 2.2])
-plt.xticks(x)
+plt.plot([0], marker='None',
+           linestyle='None', label='Multiclass')
+plt.plot(x, metrics_softmax_Variant_All[:, 0],'o', label=r'$|\Delta_{class}| < 1$')
+plt.plot(x, metrics_softmax_Variant_All[:, 1],'x', label=r'$|\Delta_{class}| < 2$')
+plt.plot(x, metrics_softmax_Variant_All[:, 2],'d', label=r'$|\Delta_{class}| < 3$')
+plt.plot(x, metrics_softmax_Variant_All[:, 3],'v', label=r'$|\Delta_{class}| < 4$')
+plt.plot([0], marker='None',
+         linestyle='None', label=' ')
+plt.plot([0], marker='None',
+         linestyle='None', label='Regression')
+plt.plot(x, metrics_regr_Variant_All[:, 0],'o', label=r'$|\Delta_{class}| < 1$')
+plt.plot(x, metrics_regr_Variant_All[:, 1],'x', label=r'$|\Delta_{class}| < 2$')
+plt.plot(x, metrics_regr_Variant_All[:, 2],'d', label=r'$|\Delta_{class}| < 3$')
+plt.plot(x, metrics_regr_Variant_All[:, 3],'v', label=r'$|\Delta_{class}| < 4$')
+plt.legend(loc='upper right', ncol=1)
+plt.ylim([0.1, 1.1])
+plt.yticks(np.arange(0.2, 1.1, 0.2))
+plt.xticks(np.arange(3, 52, 6))
+plt.xlim([1, 53])
 plt.xlabel(r'$N_{class}$')
 plt.ylabel('Probability')
 #plt.title('Feautures list: Variant-All')
 
 ax = plt.gca()
-plt.tight_layout()
+
+lgd = ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
 if filename:
     try:
@@ -114,9 +98,9 @@ if filename:
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
-    plt.savefig(pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".eps", bbox_extra_artists=(lgd,), bbox_inches='tight')
     print('Saved '+pathOUT + filename+".eps")
-    plt.savefig(pathOUT + filename+".pdf")
+    plt.savefig(pathOUT + filename+".pdf", bbox_extra_artists=(lgd,), bbox_inches='tight')
     print('Saved '+pathOUT + filename+".pdf")
 else:
     plt.show()
@@ -132,8 +116,9 @@ filename = "comp_soft_regr_L1delt_wt_rhorho_Variant-All_nc"
 plt.plot(x, metrics_softmax_Variant_All[:, 5],'o', label=r'$l_1$ with $wt^{norm}$, multi-class')
 plt.plot(x, metrics_regr_Variant_All[:, 12],'d', label=r'$l_1$ with $wt^{norm}$, regression')
 
-plt.ylim([0.0, 0.1])
-plt.xticks(x)
+plt.yticks(np.arange(0.0, 0.09, 0.02))
+plt.ylim([-0.01, 0.09])
+plt.xticks(np.arange(3, 52, 6))
 plt.legend()
 plt.xlabel(r'$N_{class}$')
 plt.ylabel(r'$l_1$')
@@ -167,8 +152,9 @@ filename = "comp_soft_regr_L2delt_wt_rhorho_Variant-All_nc"
 plt.plot(x, metrics_softmax_Variant_All[:, 6],'o', label=r'$l_2$ with $wt^{norm}$, multi-class')
 plt.plot(x, metrics_regr_Variant_All[:, 13],'d', label=r'$l_2$ with $wt^{norm}$, regression')
 
-plt.ylim([0.0, 0.1])
-plt.xticks(x)
+plt.yticks(np.arange(0.0, 0.09, 0.02))
+plt.ylim([-0.01, 0.09])
+plt.xticks(np.arange(3, 52, 6))
 plt.legend()
 plt.xlabel(r'$N_{class}$')
 plt.ylabel(r'$l_2$')
