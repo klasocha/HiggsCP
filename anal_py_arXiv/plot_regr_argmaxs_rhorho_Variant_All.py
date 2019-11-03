@@ -31,32 +31,7 @@ k2PI = 2 * np.pi
 #print calc_argmaxs
 
 #----------------------------------------------------------------------------------
-filename = "calc_argmaxs_rhorho_Variant-All"
-
-plt.hist(calc_argmaxs, histtype='step', bins=50,  color = 'black')
-plt.xlim([0, k2PI])
-plt.ylim([0, 1200])
-plt.xlabel(r'$\alpha^{CP}_{max}$')
-#plt.title('Features list: Variant-All')
-
-plt.tight_layout()
-
-if filename:
-    try:
-        os.makedirs(pathOUT)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    plt.savefig(pathOUT + filename+".eps")
-    print('Saved '+pathOUT + filename+".eps")
-    plt.savefig(pathOUT + filename+".pdf")
-    print('Saved '+pathOUT + filename+".pdf")
-else:
-    plt.show()
-
-plt.clf()
-#----------------------------------------------------------------------------------
-filename = "preds_argmaxs_rhorho_Variant-All"
+filename = "regr_argmaxs_calc_preds_argmax_rhorho_Variant-All"
 
 plt.hist(calc_argmaxs, histtype='step', bins=50,  color = 'black', label="generated")
 plt.hist(preds_argmaxs, histtype='step', bins=50, color = 'red', label="predicted")
@@ -83,7 +58,7 @@ else:
 
 plt.clf()
 #----------------------------------------------------------------------------------
-filename = "delt_regr_argmaxs_rhorho_Variant-All"
+filename = "regr_argmaxs_delt_argmax_rhorho_Variant-All"
 
 plt.hist(delt_argmaxs, histtype='step', bins=50,  color = 'black')
 plt.xlim([-k2PI, k2PI])

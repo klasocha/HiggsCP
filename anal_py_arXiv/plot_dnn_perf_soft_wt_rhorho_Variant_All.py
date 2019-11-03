@@ -27,7 +27,7 @@ valid_l2_deltas = np.load(pathIN+'valid_L2_deltas.npy')
 
 #----------------------------------------------------------------------------------
 
-filename = "dnn_train_loss_rhorho_Variant-All_nc_21"
+filename = "soft_wt_dnn_train_loss_rhorho_Variant-All_nc_21"
 x = np.arange(1,len(train_accs)+1)
 plt.plot(x,train_losses, 'o', label='training')
 plt.legend()
@@ -54,7 +54,7 @@ plt.clf()
 
 #----------------------------------------------------------------------------------
 
-filename = "dnn_train_accs_rhorho_Variant-All_nc_21"
+filename = "soft_wt_dnn_train_accs_rhorho_Variant-All_nc_21"
 x = np.arange(1,len(train_accs)+1)
 plt.plot(x,train_accs, 'o', label='training')
 plt.plot(x,valid_accs, 'd', label='validation')
@@ -82,7 +82,7 @@ plt.clf()
 
 #----------------------------------------------------------------------------------
 
-filename = "dnn_train_l1_deltas_rhorho_Variant-All_nc_21"
+filename = "soft_wt_dnn_train_l1_deltas_rhorho_Variant-All_nc_21"
 x = np.arange(1,len(train_l1_deltas)+1)
 plt.plot(x,train_l1_deltas, 'o', label='training')
 plt.plot(x,valid_l1_deltas, 'd', label='validation')
@@ -109,7 +109,7 @@ plt.clf()
 
 #----------------------------------------------------------------------------------
 
-filename = "dnn_train_l2_deltas_rhorho_Variant-All_nc_21"
+filename = "soft_wt_dnn_train_l2_deltas_rhorho_Variant-All_nc_21"
 x = np.arange(1,len(train_l2_deltas)+1)
 plt.plot(x,train_l2_deltas, 'o', label='training')
 plt.plot(x,valid_l2_deltas, 'd', label='validation')
@@ -136,7 +136,7 @@ plt.clf()
 
 #----------------------------------------------------------------------------------
 
-filename = "dnn_test_l2_deltas_rhorho_Variant-All_nc_21"
+filename = "soft_wt_dnn_test_l2_deltas_rhorho_Variant-All_nc_21"
 plt.plot(test_l2_deltas, 'o', label='testing')
 plt.legend()
 #plt.ylim([0.0, 0.005])

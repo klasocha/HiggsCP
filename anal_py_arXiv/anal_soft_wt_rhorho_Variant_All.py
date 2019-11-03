@@ -61,7 +61,7 @@ x = np.array([3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,4
 #---------------------------------------------------------------------
 
 pathOUT = "figures/"
-filename = "rhorho_acc_Variant-All_nc"
+filename = "soft_wt_acc_rhorho_Variant-All_nc"
 # example plt.plot(x, metrics_Variant_All[:, 0],'o', label=r'$\sigma$' )
 plt.plot(x, metrics_Variant_All[:, 0],'o', label=r'$|\Delta_{class}| < 1$')
 plt.plot(x, metrics_Variant_All[:, 1],'x', label=r'$|\Delta_{class}| < 2$')
@@ -95,7 +95,7 @@ plt.clf()
 #---------------------------------------------------------------------
 
 pathOUT = "figures/"
-filename = "rhorho_acc_alphaCP_Variant-All_nc"
+filename = "soft_wt_acc_alphaCP_rhorho_Variant-All_nc"
 
 # example plt.plot(x, metrics_Variant_All[:, 0],'o', label=r'$\sigma$' )
 plt.plot(x, metrics_Variant_All[:, 8],'o', label=r'$|\Delta\alpha^{CP}| < 0.25[rad]$')
@@ -130,7 +130,7 @@ plt.clf()
 #---------------------------------------------------------------------
 
 pathOUT = "figures/"
-filename = "rhorho_meanDelt_class_Variant-All_nc"
+filename = "soft_wt_meanDelt_class_rhorho_Variant-All_nc"
 
 plt.errorbar(x, metrics_Variant_All[:,4], yerr=metrics_Variant_All[:,14], label=r'$<\Delta_{class}> [idx]$', linestyle = '', marker = 'o')
 plt.plot([3,51],[0,0],linestyle = "--", color = "black")
@@ -162,7 +162,7 @@ plt.clf()
 #---------------------------------------------------------------------
 
 pathOUT = "figures/"
-filename = "rhorho_meanDelt_alphaCP_Variant-All_nc"
+filename = "soft_wt_meanDelt_alphaCP_rhorho_Variant-All_nc"
 
 plt.errorbar(x, metrics_Variant_All[:,7], yerr=metrics_Variant_All[:,15], label=r'$<\Delta \alpha^{CP}> [rad]$', linestyle = '', marker = 'o')
 plt.plot([3,51],[0,0],linestyle = "--", color = "black")
@@ -197,7 +197,7 @@ plt.clf()
 #---------------------------------------------------------------------
 
 pathOUT = "figures/"
-filename = "rhorho_L1delt_w_Variant_All_nc"
+filename = "soft_wt_L1delt_rhorho_Variant_All_nc"
 
 plt.plot(x, metrics_Variant_All[:, 12],'o', label=r'$l_1$ with $wt^{norm}$')
 
@@ -229,7 +229,7 @@ plt.clf()
 #---------------------------------------------------------------------
 
 pathOUT = "figures/"
-filename = "rhorho_L2delt_w_Variant_All_nc"
+filename = "soft_wt_L2delt_rhorho_Variant_All_nc"
 
 plt.plot(x, metrics_Variant_All[:, 13],'o', label=r'$l_2$ with $wt^{norm}$')
 

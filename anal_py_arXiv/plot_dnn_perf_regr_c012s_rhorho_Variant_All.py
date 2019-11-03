@@ -8,19 +8,19 @@ import tensorflow as tf
 from scipy import optimize
 
 
-pathIN  = "../laptop_results/nn_rhorho_Variant-All_regr_popts_Unweighted_False_NO_NUM_CLASSES_0/monit_npy/"
+pathIN  = "../laptop_results_dropout=0/nn_rhorho_Variant-All_regr_c012s_hits_c0s_Unweighted_False_NO_NUM_CLASSES_0/monit_npy/"
 pathOUT = "figures/"
 
-train_losses    = np.load(pathIN+'train_losses.npy')
+train_losses    = np.load(pathIN+'train_losses_regr_c012s.npy')
 
 
 #----------------------------------------------------------------------------------
 
-filename = "dnn_train_loss_rhorho_Variant-All_regr"
+filename = "regr_c012s_dnn_train_loss_rhorho_Variant-All"
 x = np.arange(1,len(train_losses)+1)
 plt.plot(x,train_losses, 'o', label='training')
 plt.legend()
-plt.ylim([0.10, 0.20])
+plt.ylim([0.0, 0.10])
 plt.xlabel('Number of epochs')
 plt.xticks(x)
 plt.ylabel('Loss')

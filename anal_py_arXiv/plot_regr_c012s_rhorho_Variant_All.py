@@ -25,7 +25,7 @@ k2PI = 2 * np.pi
 # should normalise to same area which is not the case for now
                            
 i = 1
-filename = "regr_preds_c012s_rhorho_Variant-All_event_1"
+filename = "regr_c012s_calc_preds_rhorho_Variant-All_event_1"
 x = np.linspace(0, k2PI, 100)
 plt.plot(x,weight_fun(x, *calc_c012s[i]), 'o', label='generated')
 plt.plot(x,weight_fun(x, *preds_c012s[i]), 'd', label='predicted')
@@ -56,7 +56,7 @@ plt.clf()
 # should normalise to same area which is not the case for now
                            
 i = 10
-filename = "regr_preds_c012s_rhorho_Variant-All_event_10"
+filename = "regr_c012s_calc_preds_rhorho_Variant-All_event_10"
 x = np.linspace(0, k2PI, 100)
 plt.plot(x,weight_fun(x, *calc_c012s[i]), 'o', label='generated')
 plt.plot(x,weight_fun(x, *preds_c012s[i]), 'd', label='predicted')
@@ -87,7 +87,7 @@ plt.clf()
 # should normalise to same area which is not the case for now
                            
 i = 100
-filename = "regr_preds_c012s_rhorho_Variant-All_event_100"
+filename = "regr_c012s_calc_preds_rhorho_Variant-All_event_100"
 x = np.linspace(0, k2PI, 100)
 plt.plot(x,weight_fun(x, *calc_c012s[i]), 'o', label='generated')
 plt.plot(x,weight_fun(x, *preds_c012s[i]), 'd', label='predicted')
@@ -122,7 +122,7 @@ print preds_c012s[:,0]
 print delt_c012s[:,0]
 #----------------------------------------------------------------------------------
 
-filename = "delt_c012s_C0_rhorho_Variant-All"
+filename = "regr_c012s_delt_C0_rhorho_Variant-All"
 plt.hist(delt_c012s[:,0], histtype='step', bins=50,  color = 'black')
 plt.xlim([-1.5, 1.5])
 plt.xlabel(r'$\Delta C_{0}$')
@@ -151,7 +151,7 @@ else:
 plt.clf()
 #----------------------------------------------------------------------------------
 
-filename = "c012s_C0_rhorho_Variant-All"
+filename = "regr_c012s_C0_rhorho_Variant-All"
 plt.hist(calc_c012s[:,0], histtype='step', color = 'black', linestyle='--', bins=50)
 plt.hist(preds_c012s[:,0], histtype='step', color = 'red', bins=50)
 plt.xlim([-0.0, 2.0])
@@ -189,7 +189,7 @@ print preds_c012s[:,1]
 print delt_c012s[:,1]
 #----------------------------------------------------------------------------------
 
-filename = "c012s_C1_rhorho_Variant-All"
+filename = "regr_c012s_C1_rhorho_Variant-All"
 plt.hist(calc_c012s[:,1], histtype='step', bins=50, linestyle='--', color = 'black')
 plt.hist(preds_c012s[:,1], histtype='step', bins=50, color = 'red')
 plt.xlim([-2.0, 2.0])
@@ -222,7 +222,7 @@ else:
 plt.clf()
 #----------------------------------------------------------------------------------
 
-filename = "delt_c012s_C1_rhorho_Variant-All"
+filename = "regr_c012s_delt_C1_rhorho_Variant-All"
 plt.hist(delt_c012s[:,1], histtype='step', bins=50,  color = 'black')
 plt.xlim([-1.5, 1.5])
 plt.xlabel(r'$\Delta C_{1}$')
@@ -256,7 +256,7 @@ print preds_c012s[:,2]
 print delt_c012s[:,2]
 #----------------------------------------------------------------------------------
 
-filename = "c012s_C2_rhorho_Variant-All"
+filename = "regr_c012s_C2_rhorho_Variant-All"
 plt.hist(calc_c012s[:,2], histtype='step', color = 'black', linestyle='--', bins=50)
 plt.hist(preds_c012s[:,2], histtype='step',  color = 'red', bins=50)
 plt.xlim([-2.0, 2.0])
@@ -289,7 +289,7 @@ else:
 plt.clf()
 #----------------------------------------------------------------------------------
 
-filename = "delt_c012s_C2_rhorho_Variant-All"
+filename = "regr_c012s_delt_C2_rhorho_Variant-All"
 plt.hist(delt_c012s[:,2], histtype='step', bins=50,  color = 'black')
 plt.xlim([-1.5, 1.5])
 plt.xlabel(r'$\Delta C_{2}$')
@@ -323,7 +323,7 @@ preds_w_nc5 =  calc_weights(5, preds_c012s)
 delt_argmax_nc5 =  calculate_deltas_signed(np.argmax(preds_w_nc5[:], axis=1), np.argmax(calc_w_nc5[:], axis=1), 5)      
 nc5=5.0
 
-filename = "delt_argmax_rhorho_Variant-All_nc_5_regr"
+filename = "regr_c012s_delt_argmax_rhorho_Variant-All_nc_5"
 plt.hist(delt_argmax_nc5, histtype='step', bins=5)
 plt.xlabel(r'$\Delta_{class}$')
 #plt.title('Features list: Variant-All')
@@ -355,7 +355,7 @@ calc_w_nc11  =  calc_weights(11, calc_c012s)
 preds_w_nc11 =  calc_weights(11, preds_c012s)
 delt_argmax_nc11 =  calculate_deltas_signed(np.argmax(preds_w_nc11[:], axis=1), np.argmax(calc_w_nc11[:], axis=1), 11)      
 
-filename = "delt_argmax_rhorho_Variant-All_nc_11_regr"
+filename = "regr_c012s_delt_argmax_rhorho_Variant-All_nc_11"
 plt.hist(delt_argmax_nc11, histtype='step', bins=100)
 plt.ylabel('Entries')
 plt.xlabel(r'$\Delta_{class}$')
@@ -392,7 +392,7 @@ preds_w_nc11 =  calc_weights(11, preds_c012s)
 preds_argmax_nc11 =  np.argmax(preds_w_nc11[:], axis=1) * k2PI/11.0    
 calc_argmax_nc11  =  np.argmax(calc_w_nc11[:], axis=1) * k2PI/11.0    
 
-filename = "calc_argmax_rhorho_Variant-All_nc_11_regr_c012s"
+filename = "regr_c012s_calc_argmax_rhorho_Variant-All_nc_11"
 plt.hist(calc_argmax_nc11, histtype='step', color = "black", bins=100, label = "generated")
 plt.hist(preds_argmax_nc11, histtype='step', color = "red", bins=100, label = "predicted")
 plt.ylabel('Entries')
@@ -421,7 +421,7 @@ calc_w_nc21  =  calc_weights(21, calc_c012s)
 preds_w_nc21 =  calc_weights(21, preds_c012s)
 delt_argmax_nc21 =  calculate_deltas_signed(np.argmax(preds_w_nc21[:], axis=1), np.argmax(calc_w_nc21[:], axis=1), 21)      
 
-filename = "delt_argmax_rhorho_Variant-All_nc_21_regr"
+filename = "regr_c012s_delt_argmax_rhorho_Variant-All_nc_21"
 plt.hist(delt_argmax_nc21, histtype='step', bins=21)
 plt.xlabel(r'$\Delta_{class}$')
 #plt.title('Features list: Variant-All')
@@ -454,7 +454,7 @@ calc_w_nc25  =  calc_weights(25, calc_c012s)
 preds_w_nc25 =  calc_weights(25, preds_c012s)
 delt_argmax_nc25 =  calculate_deltas_signed(np.argmax(preds_w_nc25[:], axis=1), np.argmax(calc_w_nc25[:], axis=1), 25)      
 
-filename = "delt_argmax_rhorho_Variant-All_nc_25_regr"
+filename = "regr_c012s_delt_argmax_rhorho_Variant-All_nc_25"
 plt.hist(delt_argmax_nc25, histtype='step', bins=25)
 plt.xlabel(r'$\Delta_{class}$')
 #plt.title('Features list: Variant-All')
@@ -483,47 +483,11 @@ plt.clf()
 
 #----------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------
-calc_w_nc50  =  calc_weights(50, calc_c012s)
-preds_w_nc50 =  calc_weights(50, preds_c012s)
-delt_argmax_nc50 =  calculate_deltas_signed(np.argmax(preds_w_nc50[:], axis=1), np.argmax(calc_w_nc50[:], axis=1), 50)      
-
-filename = "delt_argmax_rhorho_Variant-All_nc_50_regr"
-plt.hist(delt_argmax_nc50, histtype='step', bins=50)
-plt.ylabel('Entries')
-plt.xlabel(r'$\Delta_{class}$')
-#plt.title('Features list: Variant-All')
-
-ax = plt.gca()
-mean = np.mean(delt_argmax_nc50)
-std  = np.std(delt_argmax_nc50)
-meanrad = np.mean(delt_argmax_nc50) * k2PI/50.0
-stdrad  = np.std(delt_argmax_nc50) * k2PI/50.0
-ax.annotate("mean = {:0.3f} [idx] \nstd =  {:1.3f} [idx]".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
-ax.annotate("mean = {:0.3f} [rad] \nstd =  {:1.3f} [rad]".format(meanrad, stdrad), xy=(0.65, 0.65), xycoords='axes fraction', fontsize=12)
-
-plt.tight_layout()
-
-if filename:
-    try:
-        os.makedirs(pathOUT)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-    plt.savefig(pathOUT + filename+".eps")
-    print('Saved '+pathOUT + filename+".eps")
-    plt.savefig(pathOUT + filename+".pdf")
-    print('Saved '+pathOUT + filename+".pdf")
-else:
-    plt.show()
-
-plt.clf()
-#----------------------------------------------------------------------------------
-#----------------------------------------------------------------------------------
 calc_w_nc51  =  calc_weights(51, calc_c012s)
 preds_w_nc51 =  calc_weights(51, preds_c012s)
 delt_argmax_nc51 =  calculate_deltas_signed(np.argmax(preds_w_nc51[:], axis=1), np.argmax(calc_w_nc51[:], axis=1), 51)      
 
-filename = "delt_argmax_rhorho_Variant-All_nc_51_regr"
+filename = "regr_c012s_delt_argmax_rhorho_Variant-All_nc_51"
 plt.hist(delt_argmax_nc51, histtype='step', bins=51)
 plt.ylabel('Entries')
 plt.xlabel(r'$\Delta_{class}$')
@@ -561,7 +525,7 @@ preds_w_nc101 =  calc_weights(101, preds_c012s)
 preds_argmax_nc101 =  np.argmax(preds_w_nc101[:], axis=1) * k2PI/101.0    
 calc_argmax_nc101 =  np.argmax(calc_w_nc101[:], axis=1) * k2PI/101.0    
 
-filename = "preds_argmax_rhorho_Variant-All_nc_101_regr"
+filename = "regr_c012s_calc_argmax_rhorho_Variant-All_nc_101"
 plt.hist(preds_argmax_nc101, histtype='step', bins=101)
 plt.ylabel('Entries')
 plt.xlabel(r'$\alpha^{CP}_{max}$')
@@ -584,7 +548,7 @@ else:
 
 plt.clf()
 
-filename = "calc_argmax_rhorho_Variant-All_nc_101_regr"
+filename = "regr_c012s_calc_preds_argmax_rhorho_Variant-All_nc_101"
 plt.hist(calc_argmax_nc101, histtype='step', color = "black", bins=50, label = "generated")
 plt.hist(preds_argmax_nc101, histtype='step', color = "red", bins=50, label = "predicted")
 #plt.ylim([0, 800])
@@ -614,7 +578,7 @@ calc_w_nc101  =  calc_weights(101, calc_c012s)
 preds_w_nc101 =  calc_weights(101, preds_c012s)
 delt_argmax_nc101 =  calculate_deltas_signed(np.argmax(preds_w_nc101[:], axis=1), np.argmax(calc_w_nc101[:], axis=1), 101)      
 
-filename = "delt_argmax_rhorho_Variant-All_nc_101_regr"
+filename = "regr_c012s_delt_argmax_rhorho_Variant-All_nc_101"
 plt.hist(delt_argmax_nc101, histtype='step', bins=101)
 plt.xlabel(r'$\Delta_{class}$')
 #plt.title('Features list: Variant-All')

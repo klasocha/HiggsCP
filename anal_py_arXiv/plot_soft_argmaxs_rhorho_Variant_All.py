@@ -30,7 +30,7 @@ delt_argmaxs =  calculate_deltas_signed(np.argmax(preds_hits_argmaxs[:], axis=1)
 
 k2PI= 2* np.pi
 #----------------------------------------------------------------------------------
-filename = "soft_calc_argmaxs_rhorho_Variant-All"
+filename = "soft_argmaxs_rhorho_Variant-All"
 
 plt.hist(calc_argmaxs, histtype='step', bins=50,  color = 'black', label = "generated")
 plt.hist(preds_argmaxs, histtype='step', bins=50,  color = 'red', label = "predicted")
@@ -57,7 +57,7 @@ else:
 plt.clf()
 
 #----------------------------------------------------------------------------------
-filename = "delt_soft_argmaxs_rhorho_Variant-All"
+filename = "soft_argmaxs_delt_rhorho_Variant-All"
 
 plt.hist(delt_argmaxs, histtype='step', bins=51,  color = 'black')
 plt.xlabel(r'$\Delta_{class}$')

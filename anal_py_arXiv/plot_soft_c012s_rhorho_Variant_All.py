@@ -66,7 +66,7 @@ delt_c2s =  calculate_deltas_signed(np.argmax(preds_hits_c2s[:], axis=1), np.arg
 
 k2PI= 2* np.pi
 #----------------------------------------------------------------------------------
-filename = "soft_calc_c0s_rhorho_Variant-All_nc51"
+filename = "soft_c012s_c0s_rhorho_Variant-All_nc51"
 
 plt.hist(calc_c0s, histtype='step', bins=50,  color = 'black', label = "generated")
 plt.hist(preds_c0s, histtype='step', bins=50,  color = 'red', label = "predicted")
@@ -94,7 +94,7 @@ else:
 plt.clf()
 
 #----------------------------------------------------------------------------------
-filename = "delt_soft_c0s_rhorho_Variant-All_nc51"
+filename = "soft_c012s_delt_c0s_rhorho_Variant-All_nc51"
 
 plt.hist(delt_c0s, histtype='step', bins=51,  color = 'black')
 plt.xlabel(r'$\Delta_{class}$')
@@ -126,7 +126,7 @@ else:
 plt.clf()
 
 #----------------------------------------------------------------------------------
-filename = "soft_calc_c1s_rhorho_Variant-All_nc51"
+filename = "soft_c012s_c1s_rhorho_Variant-All_nc51"
 
 plt.hist(calc_c1s, histtype='step', bins=50,  color = 'black', label = "generated")
 plt.hist(preds_c1s, histtype='step', bins=50,  color = 'red', label = "predicted")
@@ -154,7 +154,7 @@ else:
 plt.clf()
 
 #----------------------------------------------------------------------------------
-filename = "delt_soft_c1s_rhorho_Variant-All_nc51"
+filename = "soft_c012s_delt_c1s_rhorho_Variant-All_nc51"
 
 plt.hist(delt_c1s, histtype='step', bins=51,  color = 'black')
 plt.xlabel(r'$\Delta_{class}$')
@@ -186,7 +186,7 @@ else:
 plt.clf()
 
 #----------------------------------------------------------------------------------
-filename = "soft_calc_c2s_rhorho_Variant-All_nc51"
+filename = "soft_c012s_c2s_rhorho_Variant-All_nc51"
 
 plt.hist(calc_c2s, histtype='step', bins=50,  color = 'black', label = "generated")
 plt.hist(preds_c2s, histtype='step', bins=50,  color = 'red', label = "predicted")
@@ -214,7 +214,7 @@ else:
 plt.clf()
 
 #----------------------------------------------------------------------------------
-filename = "delt_soft_c2s_rhorho_Variant-All_nc51"
+filename = "soft_c012s_delt_c2s_rhorho_Variant-All_nc51"
 
 plt.hist(delt_c2s, histtype='step', bins=51,  color = 'black')
 plt.xlabel(r'$\Delta_{class}$')

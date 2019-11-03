@@ -87,7 +87,7 @@ x = np.array([3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,4
 #---------------------------------------------------------------------
 
 pathOUT = "figures/"
-filename = "rhorho_acc_compared_Variant-All_nc"
+filename = "comp_soft_regr_acc_wt_rhorho_Variant-All_nc"
 
 plt.plot(x, metrics_softmax_Variant_All[:, 0],'o', label=r'$|\Delta_{class}| < 1$, multi-class')
 plt.plot(x, metrics_softmax_Variant_All[:, 1],'x', label=r'$|\Delta_{class}| < 2$, multi-class')
@@ -126,7 +126,7 @@ plt.clf()
 
 
 pathOUT = "figures/"
-filename = "rhorho_L1delt_compared_Variant_All_nc"
+filename = "comp_soft_regr_L1delt_wt_rhorho_Variant-All_nc"
 
 plt.plot(x, metrics_softmax_Variant_All[:, 5],'o', label=r'$l_1$ with $wt^{norm}$, multi-class')
 plt.plot(x, metrics_regr_Variant_All[:, 12],'d', label=r'$l_1$ with $wt^{norm}$, regression')
@@ -161,7 +161,7 @@ plt.clf()
 
 
 pathOUT = "figures/"
-filename = "rhorho_L2delt_compared_Variant_All_nc"
+filename = "comp_soft_regr_L2delt_wt_rhorho_Variant-All_nc"
 
 plt.plot(x, metrics_softmax_Variant_All[:, 6],'o', label=r'$l_2$ with $wt^{norm}$, multi-class')
 plt.plot(x, metrics_regr_Variant_All[:, 13],'d', label=r'$l_2$ with $wt^{norm}$, regression')
