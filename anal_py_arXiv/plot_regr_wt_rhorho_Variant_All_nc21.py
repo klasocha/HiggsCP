@@ -152,8 +152,10 @@ meanerr = stats.sem(delt_argmax_nc21)
 meanrad = np.mean(delt_argmax_nc21, dtype=np.float64) * k2PI/nc21
 stdrad  = np.std(delt_argmax_nc21, dtype=np.float64) * k2PI/nc21
 meanerrrad = stats.sem(delt_argmax_nc21) * k2PI/nc21
-ax.annotate("mean = {:0.3f}+- {:1.3f}[idx] \nstd =  {:1.3f} [idx]".format(mean,meanerr, std ), xy=(0.56, 0.85), xycoords='axes fraction', fontsize=12)
-ax.annotate("mean = {:0.3f}+- {:1.3f}[rad] \nstd =  {:1.3f} [rad]".format(meanrad,meanerrrad, stdrad ), xy=(0.56, 0.70), xycoords='axes fraction', fontsize=12)
+ax.annotate(r"$mean = {:0.3f}\pm {:1.3f}[idx]$".format(mean,meanerr), xy=(0.56, 0.85), xycoords='axes fraction', fontsize=12)
+ax.annotate(r"$std =  {:1.3f} [idx]$".format(std), xy=(0.56, 0.80), xycoords='axes fraction', fontsize=12)
+ax.annotate(r"$mean = {:0.3f}\pm {:1.3f}[rad]$".format(meanrad,meanerrrad), xy=(0.56, 0.70), xycoords='axes fraction', fontsize=12)
+ax.annotate(r"$std =  {:1.3f} [rad]$".format(stdrad ), xy=(0.56, 0.65), xycoords='axes fraction', fontsize=12)
 
 plt.tight_layout()
 
