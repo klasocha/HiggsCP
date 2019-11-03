@@ -1,11 +1,8 @@
-import sys
 import os, errno
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
-import tensorflow as tf
-
-
-from scipy import optimize
 
 from anal_utils import weight_fun, calc_weights
 from src_py.metrics_utils import  calculate_deltas_signed

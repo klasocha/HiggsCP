@@ -1,11 +1,9 @@
-import sys
 import os, errno
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
-import tensorflow as tf
 
-
-from scipy import optimize
 from src_py.metrics_utils import  calculate_deltas_signed
 
 pathIN  = "../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_c012s_hits_c0s_Unweighted_False_NO_NUM_CLASSES_51/monit_npy/"

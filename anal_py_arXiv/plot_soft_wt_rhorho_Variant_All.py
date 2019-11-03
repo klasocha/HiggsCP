@@ -1,5 +1,7 @@
 import sys
 import os, errno
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
