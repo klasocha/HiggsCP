@@ -63,7 +63,19 @@ plt.xlabel(r'$\Delta \alpha^{CP}_{max}$')
 ax = plt.gca()
 mean = np.mean(delt_argmaxs)
 std  = np.std(delt_argmaxs)
-ax.annotate("mean = {:0.3f}[rad] \nstd =  {:1.3f} [rad]".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+
+table_vals=[["mean", "= {:0.3f} [rad]".format(mean)],
+            ["std", "= {:1.3f} [rad]".format(std)]
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.10, 0.22],
+                  cellLoc="left",
+                  loc='upper right')
+table.set_fontsize(12)
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
 
 plt.tight_layout()
 
