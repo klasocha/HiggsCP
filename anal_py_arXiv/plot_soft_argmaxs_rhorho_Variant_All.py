@@ -66,8 +66,24 @@ mean = np.mean(delt_argmaxs)
 std  = np.std(delt_argmaxs)
 meanrad = np.mean(delt_argmaxs) * k2PI/51.0
 stdrad  = np.std(delt_argmaxs) * k2PI/51.0
-ax.annotate("mean = {:0.3f}[idx] \nstd =  {:1.3f}[idx]".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
-ax.annotate("mean = {:0.3f} [rad] \nstd =  {:1.3f} [rad]".format(meanrad, stdrad), xy=(0.65, 0.65), xycoords='axes fraction', fontsize=12)
+
+table_vals=[["mean", "= {:0.3f} [idx]".format(mean)],
+            ["std", "= {:1.3f} [idx]".format(std)],
+            ["", ""],
+            ["mean", "= {:0.3f} [rad]".format(meanrad)],
+            ["std", "= {:1.3f} [rad]".format(stdrad)]
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.10, 0.22],
+                  cellLoc="left",
+                  loc='upper right')
+table.set_fontsize(12)
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
+
+plt.tight_layout()
 
 plt.tight_layout()
 
