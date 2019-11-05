@@ -8,7 +8,8 @@ import tensorflow as tf
 from scipy import optimize, stats
 from src_py.metrics_utils import  calculate_deltas_signed
 
-pathIN  = "../laptop_results/nn_rhorho_Variant-All_regr_weights_Unweighted_False_NO_NUM_CLASSES_21/monit_npy/"
+# pathIN  = "../laptop_results/nn_rhorho_Variant-All_regr_weights_Unweighted_False_NO_NUM_CLASSES_21/monit_npy/"
+pathIN = "../temp_results/nn_rhorho_Variant-All_regr_weights_hits_c0s_Unweighted_False_FILTER_NUM_CLASSES_21/monit_npy/"
 pathOUT = "figures/"
 
 calc_w  = np.load(pathIN+'test_regr_calc_weights.npy')
@@ -16,8 +17,24 @@ preds_w = np.load(pathIN+'test_regr_preds_weights.npy')
 
 k2PI = 6.28
 #----------------------------------------------------------------------------------
-                           
+
+
 i = 1
+# Normalization of preds and calc
+calc_w -= np.mean(calc_w, axis=1).reshape((-1, 1))
+preds_w -= np.mean(preds_w, axis=1).reshape((-1, 1))
+calc_w /= np.mean(np.abs(calc_w), axis=1).reshape((-1, 1))
+preds_w /= np.mean(np.abs(preds_w), axis=1).reshape((-1, 1))
+
+# Maximum distance kek.
+
+calc_max = np.argmax(calc_w, axis=1)
+pred_max = np.argmax(preds_w, axis=1)
+
+print "BITCH WE HAVE", np.mean(np.minimum(np.abs(calc_max - pred_max), 21 - np.abs(calc_max - pred_max)))
+
+print calc_w
+print preds_w
 filename = "calc_preds_regr_w_rhorho_Variant-All_nc_21_event_1"
 x = np.arange(1,22)
 plt.plot(x,calc_w[i], 'o', label='generated')

@@ -112,7 +112,7 @@ def preprocess_data(args):
             or not os.path.exists(os.path.join(data_path, 'argmaxs.npy')) \
             or not os.path.exists(os.path.join(data_path, 'hits_argmaxs.npy')) \
             or np.load(os.path.join(data_path, 'weights.npy')).shape[1] != num_classes \
-            or np.load(os.path.join(data_path, 'hits_argmaxs')).shape[1] != num_classes:
+            or np.load(os.path.join(data_path, 'hits_argmaxs.npy')).shape[1] != num_classes:
         classes = np.linspace(0, 2, num_classes) * np.pi
         weights, argmaxs,  hits_argmaxs = calc_weights_and_argmaxs(classes, c012s, data_len, num_classes)
         np.save(os.path.join(data_path, 'weights.npy'), weights)

@@ -20,7 +20,7 @@ parser.add_argument("-d", "--dropout", dest="DROPOUT", type=float, default=0.2)
 parser.add_argument("-e", "--epochs", dest="EPOCHS", type=int, default=3)
 parser.add_argument("-f", "--features", dest="FEAT", help="Features",
         choices= ["Variant-All", "Variant-1.0", "Variant-1.1", "Variant-2.0", "Variant-2.1",
-                  "Variant-2.2", "Variant-3.0", "Variant-3.1", "Variant-4.0", "Variant-4.1"], default="Variant-All")
+                  "Variant-2.2", "Variant-3.0", "Variant-Q.1", "Variant-4.0", "Variant-4.1"], default="Variant-All")
 parser.add_argument("--miniset", dest="MINISET", type=lambda s: s.lower() in ['true', 't', 'yes', '1'], default=False)
 parser.add_argument("--z_noise_fraction", dest="Z_NOISE_FRACTION", type=float, default=0.5)
 
