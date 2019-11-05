@@ -152,10 +152,22 @@ meanerr = stats.sem(delt_argmax_nc51)
 meanrad = np.mean(delt_argmax_nc51, dtype=np.float64) * k2PI/nc51
 stdrad  = np.std(delt_argmax_nc51, dtype=np.float64) * k2PI/nc51
 meanerrrad = stats.sem(delt_argmax_nc51) * k2PI/nc51
-ax.annotate(r"$mean = {:0.3f}\pm {:1.3f}[idx]$".format(mean,meanerr), xy=(0.56, 0.85), xycoords='axes fraction', fontsize=12)
-ax.annotate(r"$std =  {:1.3f} [idx]$".format(std), xy=(0.56, 0.80), xycoords='axes fraction', fontsize=12)
-ax.annotate(r"$mean = {:0.3f}\pm {:1.3f}[rad]$".format(meanrad,meanerrrad), xy=(0.56, 0.70), xycoords='axes fraction', fontsize=12)
-ax.annotate(r"$std =  {:1.3f} [rad]$".format(stdrad ), xy=(0.56, 0.65), xycoords='axes fraction', fontsize=12)
+
+table_vals=[[r"mean", r"= {:0.3f} $\pm$ {:1.3f}[idx] ".format(mean, meanerr)],
+            ["std", "= {:1.3f} [idx]".format(std)],
+            ["", ""],
+            ["mean", r"= {:0.3f} $\pm$ {:1.3f}[rad]".format(meanrad, meanerrrad)],
+            ["std", "= {:1.3f} [rad]".format(stdrad)]
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.08, 0.28],
+                  cellLoc="left",
+                  loc='upper right')
+table.set_fontsize(12)
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
 
 plt.tight_layout()
 
