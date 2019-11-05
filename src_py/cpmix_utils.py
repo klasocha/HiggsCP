@@ -137,6 +137,11 @@ def preprocess_data(args):
     # this optimisation does not help, revisit, maybe not correctly implemented?
     if args.NORMALIZE_WEIGHTS:
         weights = weights/np.reshape(c012s[:, 0], (-1, 1))
+
+    # JK
+    # Highly experimental idea, removal of C
+    if args.DELETE_C:
+        weights -= np.mean(weights, axis=1).reshape((-1, 1))
         
     # ERW    
     # here weights and argmaxs are calculated at value of CPmix representing given class

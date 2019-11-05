@@ -21,17 +21,17 @@ k2PI = 6.28
 
 i = 1
 # Normalization of preds and calc
-calc_w -= np.mean(calc_w, axis=1).reshape((-1, 1))
-preds_w -= np.mean(preds_w, axis=1).reshape((-1, 1))
-calc_w /= np.mean(np.abs(calc_w), axis=1).reshape((-1, 1))
-preds_w /= np.mean(np.abs(preds_w), axis=1).reshape((-1, 1))
+# calc_w -= np.mean(calc_w, axis=1).reshape((-1, 1))
+# preds_w -= np.mean(preds_w, axis=1).reshape((-1, 1))
+# calc_w /= np.mean(np.abs(calc_w), axis=1).reshape((-1, 1))
+# preds_w /= np.mean(np.abs(preds_w), axis=1).reshape((-1, 1))
 
 # Maximum distance kek.
 
 calc_max = np.argmax(calc_w, axis=1)
 pred_max = np.argmax(preds_w, axis=1)
 
-print "BITCH WE HAVE", np.mean(np.minimum(np.abs(calc_max - pred_max), 21 - np.abs(calc_max - pred_max)))
+print "MEAN ERROR", np.mean(np.minimum(np.abs(calc_max - pred_max), 21 - np.abs(calc_max - pred_max)))
 
 print calc_w
 print preds_w

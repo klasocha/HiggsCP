@@ -562,6 +562,7 @@ class NeuralNetwork(object):
             self.p = sx
             self.loss = loss = tf.losses.mean_squared_error(self.weights, sx)
 
+
         else:
             raise ValueError("tloss unrecognized: %s" % tloss)
 

@@ -33,7 +33,7 @@ parser.add_argument("--reuse_weights", dest="REUSE_WEIGHTS", type=bool, default=
 parser.add_argument("--restrict_most_probable_angle", dest="RESTRICT_MOST_PROBABLE_ANGLE", type=bool, default=False)
 parser.add_argument("--force_download", dest="FORCE_DOWNLOAD", type=bool, default=False)
 parser.add_argument("--normalize_weights", dest="NORMALIZE_WEIGHTS", type=bool, default=False)
-
+parser.add_argument("--delete-c", dest="DELETE_C", type=bool, default=False)
 
 parser.add_argument("--beta",  type=float, dest="BETA", help="value of beta parameter for polynomial smearing", default=0.0)
 parser.add_argument("--pol_b", type=float, dest="pol_b", help="value of b parameter for polynomial smearing", default=0.0)
