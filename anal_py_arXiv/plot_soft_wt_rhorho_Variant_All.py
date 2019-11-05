@@ -143,6 +143,7 @@ delt_argmax_nc5 =  calculate_deltas_signed(np.argmax(preds_w_nc5[:], axis=1), np
 filename = "soft_wt_delt_argmax_rhorho_Variant-All_nc_5"
 plt.hist(delt_argmax_nc5, histtype='step', bins=5)
 plt.xlabel(r'$\Delta_{class}$')
+plt.ylabel('Entries')
 #plt.title('Features list: Variant-All')
 
 ax = plt.gca()
@@ -153,8 +154,22 @@ meanerr = stats.sem(delt_argmax_nc5)
 meanrad = np.mean(delt_argmax_nc5, dtype=np.float64) * 6.28/nc5
 stdrad  = np.std(delt_argmax_nc5, dtype=np.float64) * 6.28/nc5
 meanerrrad = stats.sem(delt_argmax_nc5) * 6.28/nc5
-ax.annotate("mean = {:0.3f}[idx] \n        +- {:1.3f}[idx] \nstd =  {:1.3f} [idx] ".format(mean,meanerr, std ), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
-ax.annotate("mean = {:0.3f}[rad] \n        +- {:1.3f}[rad] \nstd =  {:1.3f} [rad] ".format(meanrad,meanerrrad, stdrad ), xy=(0.65, 0.65), xycoords='axes fraction', fontsize=12)
+
+table_vals=[[r"mean", r"= {:0.3f} $\pm$ {:1.3f}[idx] ".format(mean, meanerr)],
+            ["std", "= {:1.3f} [idx]".format(std)],
+            ["", ""],
+            ["mean", r"= {:0.3f} $\pm$ {:1.3f}[rad]".format(meanrad, meanerrrad)],
+            ["std", "= {:1.3f} [rad]".format(stdrad)]
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.08, 0.28],
+                  cellLoc="left",
+                  loc='upper right')
+table.set_fontsize(12)
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
 
 plt.tight_layout()
 
@@ -226,9 +241,22 @@ meanerr = stats.sem(delt_argmax_nc11)
 meanrad = np.mean(delt_argmax_nc11, dtype=np.float64) * 6.28/11.0
 stdrad  = np.std(delt_argmax_nc11, dtype=np.float64) * 6.28/11.0
 meanerrrad = stats.sem(delt_argmax_nc11) * 6.28/11
-ax.annotate("mean = {:0.3f}[idx] \n        +- {:1.3f}[idx] \nstd =  {:1.3f} [idx] ".format(mean,meanerr, std ), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
-ax.annotate("mean = {:0.3f}[rad] \n        +- {:1.3f}[rad] \nstd =  {:1.3f} [rad] ".format(meanrad,meanerrrad, stdrad ), xy=(0.65, 0.65), xycoords='axes fraction', fontsize=12)
 
+table_vals=[[r"mean", r"= {:0.3f} $\pm$ {:1.3f}[idx] ".format(mean, meanerr)],
+            ["std", "= {:1.3f} [idx]".format(std)],
+            ["", ""],
+            ["mean", r"= {:0.3f} $\pm$ {:1.3f}[rad]".format(meanrad, meanerrrad)],
+            ["std", "= {:1.3f} [rad]".format(stdrad)]
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.08, 0.28],
+                  cellLoc="left",
+                  loc='upper right')
+table.set_fontsize(12)
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
 
 plt.tight_layout()
 
@@ -269,8 +297,22 @@ meanerr = stats.sem(delt_argmax_nc21)
 meanrad = np.mean(delt_argmax_nc21, dtype=np.float64) * 6.28/21.0
 stdrad  = np.std(delt_argmax_nc21, dtype=np.float64) * 6.28/21.0
 meanerrrad = stats.sem(delt_argmax_nc21) * 6.28/21
-ax.annotate("mean = {:0.3f}[idx] \n        +- {:1.3f}[idx] \nstd =  {:1.3f} [idx] ".format(mean,meanerr, std ), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
-ax.annotate("mean = {:0.3f}[rad] \n        +- {:1.3f}[rad] \nstd =  {:1.3f} [rad] ".format(meanrad,meanerrrad, stdrad ), xy=(0.65, 0.65), xycoords='axes fraction', fontsize=12)
+
+table_vals=[[r"mean", r"= {:0.3f} $\pm$ {:1.3f}[idx] ".format(mean, meanerr)],
+            ["std", "= {:1.3f} [idx]".format(std)],
+            ["", ""],
+            ["mean", r"= {:0.3f} $\pm$ {:1.3f}[rad]".format(meanrad, meanerrrad)],
+            ["std", "= {:1.3f} [rad]".format(stdrad)]
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.08, 0.28],
+                  cellLoc="left",
+                  loc='upper right')
+table.set_fontsize(12)
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
 
 plt.tight_layout()
 
@@ -302,6 +344,7 @@ delt_argmax_nc25 =  calculate_deltas_signed(np.argmax(preds_w_nc25[:], axis=1), 
 filename = "soft_wt_delt_argmax_rhorho_Variant-All_nc_25"
 plt.hist(delt_argmax_nc25, histtype='step', bins=50)
 plt.xlabel(r'$\Delta_{class}$')
+plt.ylabel('Entries')
 #plt.title('Features list: Variant-All')
 
 ax = plt.gca()
@@ -312,8 +355,22 @@ meanerr = stats.sem(delt_argmax_nc25)
 meanrad = np.mean(delt_argmax_nc25, dtype=np.float64) * 6.28/25.0
 stdrad  = np.std(delt_argmax_nc25, dtype=np.float64) * 6.28/25.0
 meanerrrad = stats.sem(delt_argmax_nc25) * 6.28/25
-ax.annotate("mean = {:0.3f}[idx] \n        +- {:1.3f}[idx] \nstd =  {:1.3f} [idx] ".format(mean,meanerr, std ), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
-ax.annotate("mean = {:0.3f}[rad] \n        +- {:1.3f}[rad] \nstd =  {:1.3f} [rad] ".format(meanrad,meanerrrad, stdrad ), xy=(0.65, 0.65), xycoords='axes fraction', fontsize=12)
+
+table_vals=[[r"mean", r"= {:0.3f} $\pm$ {:1.3f}[idx] ".format(mean, meanerr)],
+            ["std", "= {:1.3f} [idx]".format(std)],
+            ["", ""],
+            ["mean", r"= {:0.3f} $\pm$ {:1.3f}[rad]".format(meanrad, meanerrrad)],
+            ["std", "= {:1.3f} [rad]".format(stdrad)]
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.08, 0.28],
+                  cellLoc="left",
+                  loc='upper right')
+table.set_fontsize(12)
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
 
 plt.tight_layout()
 
@@ -344,8 +401,8 @@ delt_argmax_nc51 =  calculate_deltas_signed(np.argmax(preds_w_nc51[:], axis=1), 
 
 filename = "soft_wt_delt_argmax_rhorho_Variant-All_nc_51"
 plt.hist(delt_argmax_nc51, histtype='step', bins=51)
-plt.ylabel('Entries')
 plt.xlabel(r'$\Delta_{class}$')
+plt.ylabel('Entries')
 #plt.title('Features list: Variant-All')
 
 ax = plt.gca()
@@ -356,9 +413,22 @@ meanerr = stats.sem(delt_argmax_nc51)
 meanrad = np.mean(delt_argmax_nc51, dtype=np.float64) * 6.28/51.0
 stdrad  = np.std(delt_argmax_nc51, dtype=np.float64) * 6.28/51.0
 meanerrrad = stats.sem(delt_argmax_nc51) * 6.28/51
-ax.annotate("mean = {:0.3f}[idx] \n        +- {:1.3f}[idx] \nstd =  {:1.3f} [idx] ".format(mean,meanerr, std ), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
-ax.annotate("mean = {:0.3f}[rad] \n        +- {:1.3f}[rad] \nstd =  {:1.3f} [rad] ".format(meanrad,meanerrrad, stdrad ), xy=(0.65, 0.65), xycoords='axes fraction', fontsize=12)
 
+table_vals=[[r"mean", r"= {:0.3f} $\pm$ {:1.3f}[idx] ".format(mean, meanerr)],
+            ["std", "= {:1.3f} [idx]".format(std)],
+            ["", ""],
+            ["mean", r"= {:0.3f} $\pm$ {:1.3f}[rad]".format(meanrad, meanerrrad)],
+            ["std", "= {:1.3f} [rad]".format(stdrad)]
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.08, 0.28],
+                  cellLoc="left",
+                  loc='upper right')
+table.set_fontsize(12)
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
 
 plt.tight_layout()
 
@@ -395,6 +465,7 @@ for i in range (len(delt_argmax_nc101)):
 filename = "soft_wt_delt_argmax_rhorho_Variant-All_nc_101"
 plt.hist(delt_argmax_nc101, histtype='step', bins=101)
 plt.xlabel(r'$\Delta_{class}$')
+plt.ylabel('Entries')
 #plt.title('Features list: Variant-All')
 
 ax = plt.gca()
@@ -405,8 +476,22 @@ meanerr = stats.sem(delt_argmax_nc101)
 meanrad = np.mean(delt_argmax_nc101, dtype=np.float64) * 6.28/101.0
 stdrad  = np.std(delt_argmax_nc101, dtype=np.float64) * 6.28/101.0
 meanerrrad = stats.sem(delt_argmax_nc101) * 6.28/101
-ax.annotate("mean = {:0.3f}[idx] \n        +- {:1.3f}[idx] \nstd =  {:1.3f} [idx] ".format(mean,meanerr, std ), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
-ax.annotate("mean = {:0.3f}[rad] \n        +- {:1.3f}[rad] \nstd =  {:1.3f} [rad] ".format(meanrad,meanerrrad, stdrad ), xy=(0.65, 0.65), xycoords='axes fraction', fontsize=12)
+
+table_vals=[[r"mean", r"= {:0.3f} $\pm$ {:1.3f}[idx] ".format(mean, meanerr)],
+            ["std", "= {:1.3f} [idx]".format(std)],
+            ["", ""],
+            ["mean", r"= {:0.3f} $\pm$ {:1.3f}[rad]".format(meanrad, meanerrrad)],
+            ["std", "= {:1.3f} [rad]".format(stdrad)]
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.08, 0.28],
+                  cellLoc="left",
+                  loc='upper right')
+table.set_fontsize(12)
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
 
 plt.tight_layout()
 
