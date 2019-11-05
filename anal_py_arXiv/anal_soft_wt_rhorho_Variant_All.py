@@ -9,31 +9,8 @@ from anal_utils import calculate_metrics_from_file
 
 filelist_rhorho_Variant_All = []
 
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_3/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_5/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_7/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_9/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_11/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_13/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_15/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_17/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_19/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_21/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_23/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_25/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_27/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_29/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_31/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_33/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_35/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_37/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_39/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_41/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_43/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_45/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_47/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_49/monit_npy/')
-filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_51/monit_npy/')
+for i in range(3, 52, 2):
+    filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_3/monit_npy/')
 
 
 metrics_Variant_All = [calculate_metrics_from_file(filelist_rhorho_Variant_All[0], 3), calculate_metrics_from_file(filelist_rhorho_Variant_All[1], 5),
@@ -69,7 +46,9 @@ plt.plot(x, metrics_Variant_All[:, 1],'x', label=r'$|\Delta_{class}| < 2$')
 plt.plot(x, metrics_Variant_All[:, 2],'d', label=r'$|\Delta_{class}| < 3$')
 plt.plot(x, metrics_Variant_All[:, 3],'v', label=r'$|\Delta_{class}| < 4$')
 plt.ylim([0.0, 1.5])
-plt.xticks(x)
+plt.xticks(np.arange(3, 52, 6))
+plt.xlim([1, 53])
+
 plt.legend()
 plt.xlabel(r'$N_{class}$')
 plt.ylabel('Probability')
@@ -104,7 +83,9 @@ plt.plot(x, metrics_Variant_All[:, 9],'x', label=r'$|\Delta\alpha^{CP}| < 0.50[r
 plt.plot(x, metrics_Variant_All[:, 10],'d', label=r'$|\Delta\alpha^{CP}| < 0.75[rad]$')
 plt.plot(x, metrics_Variant_All[:, 11],'v', label=r'$|\Delta\alpha^{CP}| < 1.0[rad]$')
 plt.ylim([0.0, 1.5])
-plt.xticks(x)
+plt.xticks(np.arange(3, 52, 6))
+plt.xlim([1, 53])
+
 plt.legend()
 plt.xlabel(r'$N_{class}$')
 plt.ylabel('Probability')
@@ -136,9 +117,11 @@ filename = "soft_wt_meanDelt_class_rhorho_Variant-All_nc"
 plt.errorbar(x, metrics_Variant_All[:,4], yerr=metrics_Variant_All[:,14], label=r'$<\Delta_{class}> [idx]$', linestyle = '', marker = 'o')
 plt.plot([3,51],[0,0],linestyle = "--", color = "black")
 plt.ylim([-0.5, 0.5])
-plt.xticks(x)
+plt.xticks(np.arange(3, 52, 6))
+plt.xlim([1, 53])
+
 plt.legend()
-plt.xlabel('Number of classes')
+plt.xlabel(r'$N_{class}$')
 plt.ylabel(r'$<\Delta_{class}>$')
 #plt.title('Feautures list: Variant-All')
 
@@ -169,7 +152,8 @@ plt.errorbar(x, metrics_Variant_All[:,7], yerr=metrics_Variant_All[:,15], label=
 plt.plot([3,51],[0,0],linestyle = "--", color = "black")
 
 #plt.ylim([0.0, 0.5])
-plt.xticks(x)
+plt.xticks(np.arange(3, 52, 6))
+plt.xlim([1, 53])
 plt.legend()
 #plt.ylim([-0.5, 0.5])
 plt.ylim([-0.3, 0.3])
@@ -203,7 +187,8 @@ filename = "soft_wt_L1delt_rhorho_Variant_All_nc"
 plt.plot(x, metrics_Variant_All[:, 12],'o', label=r'$l_1$ with $wt^{norm}$')
 
 plt.ylim([0.0, 0.1])
-plt.xticks(x)
+plt.xticks(np.arange(3, 52, 6))
+plt.xlim([1, 53])
 plt.legend()
 plt.xlabel(r'$N_{class}$')
 plt.ylabel(r'$l_1$')
@@ -235,7 +220,9 @@ filename = "soft_wt_L2delt_rhorho_Variant_All_nc"
 plt.plot(x, metrics_Variant_All[:, 13],'o', label=r'$l_2$ with $wt^{norm}$')
 
 plt.ylim([0.0, 0.1])
-plt.xticks(x)
+plt.xticks(np.arange(3, 52, 6))
+plt.xlim([1, 53])
+
 plt.legend()
 plt.xlabel(r'$N_{class}$')
 plt.ylabel(r'$l_2$')
