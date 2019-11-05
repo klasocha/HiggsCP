@@ -85,8 +85,6 @@ for key, cell in table.get_celld().items():
 
 plt.tight_layout()
 
-plt.tight_layout()
-
 if filename:
     try:
         os.makedirs(pathOUT)
