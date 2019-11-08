@@ -10,7 +10,7 @@ from anal_utils import calculate_metrics_from_file
 filelist_rhorho_Variant_All = []
 
 for i in range(3, 52, 2):
-    filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_3/monit_npy/')
+    filelist_rhorho_Variant_All.append('../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_weights_hits_c0s_Unweighted_False_NO_NUM_CLASSES_{}/monit_npy/'.format(i))
 
 
 metrics_Variant_All = [calculate_metrics_from_file(filelist_rhorho_Variant_All[0], 3), calculate_metrics_from_file(filelist_rhorho_Variant_All[1], 5),
