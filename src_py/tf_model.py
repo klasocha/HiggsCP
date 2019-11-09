@@ -117,18 +117,22 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             np.save(pathOUT + 'train_soft_preds_hits_c012s.npy', train_pred_c012s)
 
             valid_calc_c012s, valid_pred_c012s = soft_c012s_predictions(emodel, data.valid, filtered=True)
-            np.save(pathOUT + 'valid_soft_calc_c012s.npy', valid_calc_c012s)
-            np.save(pathOUT + 'valid_soft_preds_c012s.npy', valid_pred_c012s)
+            np.save(pathOUT + 'valid_soft_calc_hits_c012s.npy', valid_calc_c012s)
+            np.save(pathOUT + 'valid_soft_preds_hits_c012s.npy', valid_pred_c012s)
 
             test_calc_c012s, test_pred_c012s = soft_c012s_predictions(emodel, data.test, filtered=True)
-            np.save(pathOUT + 'test_soft_calc_c012s.npy', test_calc_c012s)
-            np.save(pathOUT + 'test_soft_preds_c012s.npy', test_pred_c012s)
+            np.save(pathOUT + 'test_soft_calc_hits_c012s.npy', test_calc_c012s)
+            np.save(pathOUT + 'test_soft_preds_hits_c012s.npy', test_pred_c012s)
 
         if model.tloss == 'regr_c012s':
 
             train_losses += [train_loss]
             msg_str = "TRAINING:     LOSS: %.3f \n" % (train_loss)
             print msg_str
+
+            train_calc_c012s, train_pred_c012s = regr_c012s_predictions(emodel, data.train, filtered=True)
+            np.save(pathOUT + 'train_regr_calc_c012s.npy', train_calc_c012s)
+            np.save(pathOUT + 'train_regr_preds_c012s.npy', train_pred_c012s)
 
             valid_calc_c012s, valid_pred_c012s = regr_c012s_predictions(emodel, data.valid, filtered=True)
             np.save(pathOUT + 'valid_regr_calc_c012s.npy', valid_calc_c012s)
@@ -521,8 +525,8 @@ class NeuralNetwork(object):
             if keep_prob < 1.0:
               x = tf.nn.dropout(x, keep_prob)
         #ERW
-        # tloss ==  "soft" is a simple extension of what was implemented
-        # previously as binary classification
+        # tloss ==  "soft_weights", "soft_argmaxs", "soft_c012s"
+        # are simple extension of what was implemented previously as binary classification
         if tloss == "soft_weights":
             sx = linear(x, "classes", num_classes)
             self.preds = tf.nn.softmax(sx)
@@ -545,7 +549,7 @@ class NeuralNetwork(object):
             labels = hits_c012s / tf.tile(tf.reshape(tf.reduce_sum(hits_c012s, axis=1), (-1, 1)), (1,num_classes))
             self.loss = loss = tf.nn.softmax_cross_entropy_with_logits(logits=sx, labels=labels)
         elif tloss == "regr_argmaxs":
-            # not learning close to angle = 0, 2pi
+            # not well learning close to angle = 0, 2pi
             sx = linear(x, "regr", 1)
             self.sx = sx
             self.p = sx
@@ -556,8 +560,7 @@ class NeuralNetwork(object):
             self.p = sx
             self.loss = loss = tf.losses.mean_squared_error(self.c012s, sx)
         elif tloss == "regr_weights":
-            # not learning well
-            sx = linear(x, "classes", num_classes)
+            sx = linear(x, "regr", num_classes)
             self.sx = sx
             self.p = sx
             self.loss = loss = tf.losses.mean_squared_error(self.weights, sx)
