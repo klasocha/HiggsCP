@@ -13,6 +13,7 @@ classes = np.linspace(0, 2, 51) * np.pi
 print classes
 print classes[0], classes[50]
 
+print calculate_deltas_signed(0, 2, 3)
 print calculate_deltas_signed(0, 50, 51)
 print calculate_deltas_signed(0, 49, 51)
 print calculate_deltas_signed(0, 48, 51)
