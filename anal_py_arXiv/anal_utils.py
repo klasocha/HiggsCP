@@ -1,8 +1,7 @@
 import numpy as np
-from glob import glob
-import os, errno
+import os
 
-from scipy import optimize, stats
+from scipy import stats
 
 from sklearn.metrics import roc_auc_score
 

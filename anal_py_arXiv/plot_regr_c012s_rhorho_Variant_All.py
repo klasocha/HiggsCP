@@ -1,13 +1,12 @@
-import sys
 import os, errno
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
-import tensorflow as tf
-
-
-from scipy import optimize
 
 from anal_utils import weight_fun, calc_weights
+
+from scipy import optimize, stats
 from src_py.metrics_utils import  calculate_deltas_signed
 
 
@@ -26,11 +25,12 @@ k2PI = 2 * np.pi
                            
 i = 1
 filename = "regr_c012s_calc_preds_rhorho_Variant-All_event_1"
-x = np.linspace(0, k2PI, 100)
-plt.plot(x,weight_fun(x, *calc_c012s[i]), 'o', label='generated')
-plt.plot(x,weight_fun(x, *preds_c012s[i]), 'd', label='predicted')
-plt.legend()
-plt.ylim([0.0, 3.0])
+x = np.linspace(0, k2PI, 40)
+plt.plot(x,weight_fun(x, *calc_c012s[i]), 'o', label='Generated')
+plt.plot(x,weight_fun(x, *preds_c012s[i]), 'd', label=r'Regression: $C_0, C_1, C_2$')
+plt.legend(loc='upper left')
+plt.ylim([-0.2, 2.2])
+plt.yticks(np.arange(0.0, 2.25, 0.25))
 plt.xlabel(r'$\alpha^{CP}$ [rad]')
 plt.ylabel(r'$wt$')
 #plt.title('Features list: Variant-All')
@@ -57,11 +57,12 @@ plt.clf()
                            
 i = 10
 filename = "regr_c012s_calc_preds_rhorho_Variant-All_event_10"
-x = np.linspace(0, k2PI, 100)
-plt.plot(x,weight_fun(x, *calc_c012s[i]), 'o', label='generated')
-plt.plot(x,weight_fun(x, *preds_c012s[i]), 'd', label='predicted')
-plt.legend()
-plt.ylim([0.0, 3.0])
+x = np.linspace(0, k2PI, 40)
+plt.plot(x,weight_fun(x, *calc_c012s[i]), 'o', label='Generated')
+plt.plot(x,weight_fun(x, *preds_c012s[i]), 'd', label=r'Regression: $C_0, C_1, C_2$')
+plt.legend(loc='upper left')
+plt.ylim([-0.2, 2.2])
+plt.yticks(np.arange(0.0, 2.25, 0.25))
 plt.xlabel(r'$\alpha^{CP}$ [rad]')
 plt.ylabel(r'$wt$')
 #plt.title('Features list: Variant-All')
@@ -88,11 +89,12 @@ plt.clf()
                            
 i = 100
 filename = "regr_c012s_calc_preds_rhorho_Variant-All_event_100"
-x = np.linspace(0, k2PI, 100)
-plt.plot(x,weight_fun(x, *calc_c012s[i]), 'o', label='generated')
-plt.plot(x,weight_fun(x, *preds_c012s[i]), 'd', label='predicted')
+x = np.linspace(0, k2PI, 40)
+plt.plot(x,weight_fun(x, *calc_c012s[i]), 'o', label='Generated')
+plt.plot(x,weight_fun(x, *preds_c012s[i]), 'd', label=r'Regression: $C_0, C_1, C_2$')
 plt.legend()
-plt.ylim([0.0, 3.0])
+plt.ylim([-0.2, 2.2])
+plt.yticks(np.arange(0.0, 2.25, 0.25))
 plt.xlabel(r'$\alpha^{CP}$ [rad]')
 plt.ylabel(r'$wt$')
 #plt.title('Features list: Variant-All')
@@ -129,9 +131,23 @@ plt.xlabel(r'$\Delta C_{0}$')
 #plt.title('Features list: Variant-All')
 
 ax = plt.gca()
-mean = np.mean(delt_c012s[:,0])
-std  = np.std(delt_c012s[:,0])
-ax.annotate("mean = {:0.3f} \nstd =  {:1.3f}".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+mean = np.mean(delt_c012s[:,0],dtype=np.float64)
+std  = np.std(delt_c012s[:,0],dtype=np.float64)
+meanerr = stats.sem(delt_c012s[:,0])
+
+
+table_vals=[[r"mean", r"= {:0.3f}$\pm$ {:1.3f}".format(mean, meanerr)],
+            ["std", "= {:1.3f}".format(std)],
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.10, 0.30],
+                  cellLoc="left",
+                  loc='upper right')
+table.set_fontsize(12)
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
 
 plt.tight_layout()
 
@@ -163,9 +179,23 @@ calc_mean = np.mean(calc_c012s[:,0], dtype=np.float64)
 calc_std  = np.std(calc_c012s[:,0], dtype=np.float64)
 preds_mean = np.mean(preds_c012s[:,0], dtype=np.float64)
 preds_std  = np.std(preds_c012s[:,0], dtype=np.float64)
-ax.annotate("Gener.:  mean = {:0.3f}, \n           std =  {:1.3f}".format(calc_mean, calc_std), xy=(0.60, 0.85), xycoords='axes fraction', fontsize=12, color = 'black')
-ax.annotate("Pred. :  mean = {:0.3f}, \n           std =  {:1.3f}".format(preds_mean, preds_std), xy=(0.60, 0.65), xycoords='axes fraction', fontsize=12, color = 'red')
 
+table_vals=[["Gener.:","mean","= {:0.3f}".format(calc_mean)],
+            ["","std","= {:1.3f}".format(calc_std)],
+            ["", "", ""],
+            ["Pred.:","mean","= {:0.3f}".format(preds_mean)],
+            ["","std","= {:1.3f}".format(preds_std)]
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.15, 0.09, 0.15],
+                  cellLoc="left",
+                  loc='upper right')
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
+    if key[0]>1:
+        cell._text.set_color('red')
 
 plt.tight_layout()
 
@@ -192,7 +222,8 @@ print delt_c012s[:,1]
 filename = "regr_c012s_C1_rhorho_Variant-All"
 plt.hist(calc_c012s[:,1], histtype='step', bins=50, linestyle='--', color = 'black')
 plt.hist(preds_c012s[:,1], histtype='step', bins=50, color = 'red')
-plt.xlim([-2.0, 2.0])
+plt.ylim([0.0, 2000.0])
+plt.xlim([-1.2, 1.2])
 plt.xlabel(r'$C_{1}$')
 #plt.title('Features list: Variant-All')
 
@@ -201,8 +232,23 @@ calc_mean = np.mean(calc_c012s[:,1],dtype=np.float64)
 calc_std  = np.std(calc_c012s[:,1],dtype=np.float64)
 preds_mean = np.mean(preds_c012s[:,1],dtype=np.float64)
 preds_std  = np.std(preds_c012s[:,1],dtype=np.float64)
-ax.annotate("Gener.:  mean = {:0.3f}, \n           std =  {:1.3f}".format(calc_mean, calc_std), xy=(0.60, 0.85), xycoords='axes fraction', fontsize=12, color = 'black')
-ax.annotate("Pred.:   mean = {:0.3f}, \n           std =  {:1.3f}".format(preds_mean, preds_std), xy=(0.60, 0.65), xycoords='axes fraction', fontsize=12, color = 'red')
+
+table_vals=[["Gener.:","mean","= {:0.3f}".format(calc_mean)],
+            ["","std","= {:1.3f}".format(calc_std)],
+            ["", "", ""],
+            ["Pred.:","mean","= {:0.3f}".format(preds_mean)],
+            ["","std","= {:1.3f}".format(preds_std)]
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.15, 0.09, 0.15],
+                  cellLoc="left",
+                  loc='upper right')
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
+    if key[0]>1:
+        cell._text.set_color('red')
 
 plt.tight_layout()
 
@@ -231,8 +277,21 @@ plt.xlabel(r'$\Delta C_{1}$')
 ax = plt.gca()
 mean = np.mean(delt_c012s[:,1],dtype=np.float64)
 std  = np.std(delt_c012s[:,1],dtype=np.float64)
-ax.annotate("mean = {:0.3f} \nstd =  {:1.3f}".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+meanerr = stats.sem(delt_c012s[:,1])
 
+
+table_vals=[[r"mean", r"= {:0.3f}$\pm$ {:1.3f}".format(mean, meanerr)],
+            ["std", "= {:1.3f}".format(std)],
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.10, 0.30],
+                  cellLoc="left",
+                  loc='upper right')
+table.set_fontsize(12)
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
 
 plt.tight_layout()
 
@@ -259,7 +318,8 @@ print delt_c012s[:,2]
 filename = "regr_c012s_C2_rhorho_Variant-All"
 plt.hist(calc_c012s[:,2], histtype='step', color = 'black', linestyle='--', bins=50)
 plt.hist(preds_c012s[:,2], histtype='step',  color = 'red', bins=50)
-plt.xlim([-2.0, 2.0])
+plt.xlim([-1.2, 1.2])
+plt.ylim([0.0, 2000.0])
 plt.xlabel(r'$C_{2}$')
 #plt.title('Features list: Variant-All')
 
@@ -268,8 +328,25 @@ calc_mean = np.mean(calc_c012s[:,2],dtype=np.float64)
 calc_std  = np.std(calc_c012s[:,2],dtype=np.float64)
 preds_mean = np.mean(preds_c012s[:,2],dtype=np.float64)
 preds_std  = np.std(preds_c012s[:,2],dtype=np.float64)
-ax.annotate("Gener.: mean = {:0.3f}, \n           std =  {:1.3f}".format(calc_mean, calc_std), xy=(0.60, 0.85), xycoords='axes fraction', fontsize=12, color = 'black')
-ax.annotate("Pred. : mean = {:0.3f}, \n           std =  {:1.3f}".format(preds_mean, preds_std), xy=(0.60, 0.65), xycoords='axes fraction', fontsize=12, color = 'red')
+
+table_vals=[["Generated:"],
+            ["mean= {:0.3f}".format(calc_mean)],
+            ["std = {:1.3f}".format(calc_std)],
+            [""],
+            [r"Regression: $C_0, C_1, C_2$"],
+            ["mean= {:0.3f}".format(preds_mean)],
+            ["std = {:1.3f}".format(preds_std)]
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.30],
+                  cellLoc="left",
+                  loc='upper right')
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
+    if key[0]>2:
+        cell._text.set_color('red')
 
 plt.tight_layout()
 
@@ -298,7 +375,21 @@ plt.xlabel(r'$\Delta C_{2}$')
 ax = plt.gca()
 mean = np.mean(delt_c012s[:,2],dtype=np.float64)
 std  = np.std(delt_c012s[:,2],dtype=np.float64)
-ax.annotate("mean = {:0.3f} \nstd =  {:1.3f}".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+meanerr = stats.sem(delt_c012s[:,2])
+
+
+table_vals=[[r"mean", r"= {:0.3f}$\pm$ {:1.3f}".format(mean, meanerr)],
+            ["std", "= {:1.3f}".format(std)],
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.10, 0.30],
+                  cellLoc="left",
+                  loc='upper right')
+table.set_fontsize(12)
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
 
 plt.tight_layout()
 
@@ -331,7 +422,19 @@ plt.xlabel(r'$\Delta_{class}$')
 ax = plt.gca()
 mean = np.mean(delt_argmax_nc5) * k2PI/nc5
 std  = np.std(delt_argmax_nc5) * k2PI/nc5
-ax.annotate("mean = {:0.3f} [rad] \nstd =  {:1.3f} [rad]".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+
+table_vals=[["mean", "= {:0.3f} [rad]".format(mean)],
+            ["std", "= {:1.3f} [rad]".format(std)]
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.10, 0.22],
+                  cellLoc="left",
+                  loc='upper right')
+table.set_fontsize(12)
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
 
 plt.tight_layout()
 
@@ -366,10 +469,25 @@ mean = np.mean(delt_argmax_nc11)
 std  = np.std(delt_argmax_nc11)
 meanrad = np.mean(delt_argmax_nc11) * k2PI/11.0
 stdrad  = np.std(delt_argmax_nc11) * k2PI/11.0
-ax.annotate("mean = {:0.3f} [idx] \nstd =  {:1.3f} [idx]".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
-ax.annotate("mean = {:0.3f} [rad] \nstd =  {:1.3f} [rad]".format(meanrad, stdrad), xy=(0.65, 0.65), xycoords='axes fraction', fontsize=12)
+
+table_vals=[["mean", "= {:0.3f} [idx]".format(mean)],
+            ["std", "= {:1.3f} [idx]".format(std)],
+            ["", ""],
+            ["mean", "= {:0.3f} [rad]".format(meanrad)],
+            ["std", "= {:1.3f} [rad]".format(stdrad)]
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.10, 0.22],
+                  cellLoc="left",
+                  loc='upper right')
+table.set_fontsize(12)
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
 
 plt.tight_layout()
+
 
 if filename:
     try:
@@ -393,8 +511,8 @@ preds_argmax_nc11 =  np.argmax(preds_w_nc11[:], axis=1) * k2PI/11.0
 calc_argmax_nc11  =  np.argmax(calc_w_nc11[:], axis=1) * k2PI/11.0    
 
 filename = "regr_c012s_calc_argmax_rhorho_Variant-All_nc_11"
-plt.hist(calc_argmax_nc11, histtype='step', color = "black", bins=100, label = "generated")
-plt.hist(preds_argmax_nc11, histtype='step', color = "red", bins=100, label = "predicted")
+plt.hist(calc_argmax_nc11, histtype='step', color = "black", bins=100, label = "Generated")
+plt.hist(preds_argmax_nc11, histtype='step', color = "red", bins=100, label = r'Regression: $C_0, C_1, C_2$')
 plt.ylabel('Entries')
 plt.xlabel(r'$\alpha^{CP}_{max}$')
 #plt.title('Features list: Variant-All')
@@ -429,7 +547,19 @@ plt.xlabel(r'$\Delta_{class}$')
 ax = plt.gca()
 mean = np.mean(delt_argmax_nc21) * k2PI/21.0
 std  = np.std(delt_argmax_nc21) * k2PI/21.0
-ax.annotate("mean = {:0.3f} [rad] \nstd =  {:1.3f} [rad]".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+
+table_vals=[["mean", "= {:0.3f} [rad]".format(mean)],
+            ["std", "= {:1.3f} [rad]".format(std)]
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.10, 0.22],
+                  cellLoc="left",
+                  loc='upper right')
+table.set_fontsize(12)
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
 
 plt.tight_layout()
 
@@ -462,7 +592,19 @@ plt.xlabel(r'$\Delta_{class}$')
 ax = plt.gca()
 mean = np.mean(delt_argmax_nc25) * k2PI/25.0
 std  = np.std(delt_argmax_nc25) * k2PI/25.0
-ax.annotate("mean = {:0.3f} [rad] \nstd =  {:1.3f} [rad]".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+
+table_vals=[["mean", "= {:0.3f} [rad]".format(mean)],
+            ["std", "= {:1.3f} [rad]".format(std)]
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.10, 0.22],
+                  cellLoc="left",
+                  loc='upper right')
+table.set_fontsize(12)
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
 
 plt.tight_layout()
 
@@ -485,12 +627,67 @@ plt.clf()
 #----------------------------------------------------------------------------------
 calc_w_nc51  =  calc_weights(51, calc_c012s)
 preds_w_nc51 =  calc_weights(51, preds_c012s)
+preds_argmax_nc51 =  np.argmax(preds_w_nc51[:], axis=1) * k2PI/51.0    
+calc_argmax_nc51 =  np.argmax(calc_w_nc51[:], axis=1) * k2PI/51.0    
+
+filename = "regr_c012s_calc_argmax_rhorho_Variant-All_nc_51"
+plt.hist(preds_argmax_nc51, histtype='step', bins=51)
+plt.ylabel('Entries')
+plt.xlabel(r'$\alpha^{CP}_{max}$ [rad]')
+#plt.title('Features list: Variant-All')
+
+plt.tight_layout()
+
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+
+plt.clf()
+
+filename = "regr_c012s_calc_preds_argmax_rhorho_Variant-All_nc_51"
+plt.hist(calc_argmax_nc51, histtype='step', color = "black", bins=50, label = "Generated")
+plt.hist(preds_argmax_nc51, histtype='step', color = "red", bins=50, label = r'Regression: $C_0, C_1, C_2$')
+plt.ylim([0, 1500])
+#plt.xlim([0, k2PI])
+plt.ylabel('Entries')
+plt.xlabel(r'$\alpha^{CP}_{max}$ [rad]')
+#plt.title('Features list: Variant-All')
+plt.legend()
+
+plt.tight_layout()
+
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+
+plt.clf()
+#----------------------------------------------------------------------------------
+calc_w_nc51  =  calc_weights(51, calc_c012s)
+preds_w_nc51 =  calc_weights(51, preds_c012s)
 delt_argmax_nc51 =  calculate_deltas_signed(np.argmax(preds_w_nc51[:], axis=1), np.argmax(calc_w_nc51[:], axis=1), 51)      
 
 filename = "regr_c012s_delt_argmax_rhorho_Variant-All_nc_51"
-plt.hist(delt_argmax_nc51, histtype='step', bins=51)
+plt.hist(delt_argmax_nc51, histtype='step', color = "black", bins=51)
 plt.ylabel('Entries')
-plt.xlabel(r'$\Delta_{class}$')
+plt.xlabel(r'$\alpha^{CP}_{max}: \Delta_{class}$ [idx]')
 #plt.title('Features list: Variant-All')
 
 ax = plt.gca()
@@ -498,8 +695,22 @@ mean = np.mean(delt_argmax_nc51)
 std  = np.std(delt_argmax_nc51)
 meanrad = np.mean(delt_argmax_nc51) * k2PI/51.0
 stdrad  = np.std(delt_argmax_nc51) * k2PI/51.0
-ax.annotate("mean = {:0.3f} [idx] \nstd =  {:1.3f} [idx]".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
-ax.annotate("mean = {:0.3f} [rad] \nstd =  {:1.3f} [rad]".format(meanrad, stdrad), xy=(0.65, 0.65), xycoords='axes fraction', fontsize=12)
+
+table_vals=[["mean", "= {:0.3f} [idx]".format(mean)],
+            ["std", "= {:1.3f} [idx]".format(std)],
+            ["", ""],
+            ["mean", "= {:0.3f} [rad]".format(meanrad)],
+            ["std", "= {:1.3f} [rad]".format(stdrad)]
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.10, 0.22],
+                  cellLoc="left",
+                  loc='upper right')
+table.set_fontsize(12)
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
 
 plt.tight_layout()
 
@@ -528,7 +739,7 @@ calc_argmax_nc101 =  np.argmax(calc_w_nc101[:], axis=1) * k2PI/101.0
 filename = "regr_c012s_calc_argmax_rhorho_Variant-All_nc_101"
 plt.hist(preds_argmax_nc101, histtype='step', bins=101)
 plt.ylabel('Entries')
-plt.xlabel(r'$\alpha^{CP}_{max}$')
+plt.xlabel(r'$\alpha^{CP}_{max}$ [rad]')
 #plt.title('Features list: Variant-All')
 
 plt.tight_layout()
@@ -549,8 +760,8 @@ else:
 plt.clf()
 
 filename = "regr_c012s_calc_preds_argmax_rhorho_Variant-All_nc_101"
-plt.hist(calc_argmax_nc101, histtype='step', color = "black", bins=50, label = "generated")
-plt.hist(preds_argmax_nc101, histtype='step', color = "red", bins=50, label = "predicted")
+plt.hist(calc_argmax_nc101, histtype='step', color = "black", bins=50, label = "Generated")
+plt.hist(preds_argmax_nc101, histtype='step', color = "red", bins=50, label = r'Regression: $C_0, C_1, C_2$')
 #plt.ylim([0, 800])
 plt.ylabel('Entries')
 plt.xlabel(r'$\alpha^{CP}_{max}$')
@@ -580,13 +791,25 @@ delt_argmax_nc101 =  calculate_deltas_signed(np.argmax(preds_w_nc101[:], axis=1)
 
 filename = "regr_c012s_delt_argmax_rhorho_Variant-All_nc_101"
 plt.hist(delt_argmax_nc101, histtype='step', bins=101)
-plt.xlabel(r'$\Delta_{class}$')
+plt.xlabel(r'\alpha^{CP}_{max}: $\Delta_{class}$')
 #plt.title('Features list: Variant-All')
 
 ax = plt.gca()
 mean = np.mean(delt_argmax_nc101) * k2PI/101.0
 std  = np.std(delt_argmax_nc101) * k2PI/101.0
-ax.annotate("mean = {:0.3f} [rad] \nstd =  {:1.3f} [rad]".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+
+table_vals=[["mean", "= {:0.3f} [rad]".format(mean)],
+            ["std", "= {:1.3f} [rad]".format(std)]
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.10, 0.22],
+                  cellLoc="left",
+                  loc='upper right')
+table.set_fontsize(12)
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
 
 plt.tight_layout()
 

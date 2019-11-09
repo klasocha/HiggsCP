@@ -6,17 +6,23 @@ import numpy as np
 
 from scipy import optimize, stats
 
-pathIN  = "../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_c012s_hits_c0s_Unweighted_False_NO_NUM_CLASSES_51/monit_npy/"
-calc_hits_c0s   = np.load(pathIN+'train_soft_calc_hits_c012s.npy')
-preds_hits_c0s  = np.load(pathIN+'train_soft_preds_hits_c012s.npy')
+pathIN  = "../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_c012s_hits_c0s_Unweighted_False_NO_NUM_CLASSES_21/monit_npy/"
+#calc_hits_c0s   = np.load(pathIN+'train_soft_calc_hits_c012s.npy')
+#preds_hits_c0s  = np.load(pathIN+'train_soft_preds_hits_c012s.npy')
+calc_hits_c0s   = np.load(pathIN+'valid_soft_calc_c012s.npy')
+preds_hits_c0s  = np.load(pathIN+'valid_soft_preds_c012s.npy')
 
-pathIN  = "../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_c012s_hits_c1s_Unweighted_False_NO_NUM_CLASSES_51/monit_npy/"
-calc_hits_c1s   = np.load(pathIN+'train_soft_calc_hits_c012s.npy')
-preds_hits_c1s  = np.load(pathIN+'train_soft_preds_hits_c012s.npy')
+pathIN  = "../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_c012s_hits_c1s_Unweighted_False_NO_NUM_CLASSES_21/monit_npy/"
+#calc_hits_c1s   = np.load(pathIN+'train_soft_calc_hits_c012s.npy')
+#preds_hits_c1s  = np.load(pathIN+'train_soft_preds_hits_c012s.npy')
+calc_hits_c1s   = np.load(pathIN+'valid_soft_calc_c012s.npy')
+preds_hits_c1s  = np.load(pathIN+'valid_soft_preds_c012s.npy')
 
-pathIN  = "../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_c012s_hits_c2s_Unweighted_False_NO_NUM_CLASSES_51/monit_npy/"
-calc_hits_c2s   = np.load(pathIN+'train_soft_calc_hits_c012s.npy')
-preds_hits_c2s  = np.load(pathIN+'train_soft_preds_hits_c012s.npy')
+pathIN  = "../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_c012s_hits_c2s_Unweighted_False_NO_NUM_CLASSES_21/monit_npy/"
+#calc_hits_c2s   = np.load(pathIN+'train_soft_calc_hits_c012s.npy')
+#preds_hits_c2s  = np.load(pathIN+'train_soft_preds_hits_c012s.npy')
+calc_hits_c2s   = np.load(pathIN+'valid_soft_calc_c012s.npy')
+preds_hits_c2s  = np.load(pathIN+'valid_soft_preds_c012s.npy')
 
 pathOUT = "figures/"
 
@@ -57,19 +63,19 @@ print preds_hits_c2s[0]
 print preds_c2s[0]
 
 
-delt_c0s =  np.argmax(preds_hits_c0s[:], axis=1) -  np.argmax(calc_hits_c0s[:], axis=1)     
-delt_c1s =  np.argmax(preds_hits_c1s[:], axis=1) -  np.argmax(calc_hits_c1s[:], axis=1)     
-delt_c2s =  np.argmax(preds_hits_c2s[:], axis=1) -  np.argmax(calc_hits_c2s[:], axis=1)     
+delt_c0s =  np.argmax(preds_hits_c0s[:], axis=1) -  np.argmax(calc_hits_c0s[:], axis=1)      
+delt_c1s =  np.argmax(preds_hits_c1s[:], axis=1) -  np.argmax(calc_hits_c1s[:], axis=1)      
+delt_c2s =  np.argmax(preds_hits_c2s[:], axis=1) -  np.argmax(calc_hits_c2s[:], axis=1)      
 
 
 k2PI= 2* np.pi
 #----------------------------------------------------------------------------------
-filename = "soft_c012s_c0s_rhorho_Variant-All_nc51"
+filename = "soft_c012s_c0s_rhorho_Variant-All_nc21"
 
-plt.hist(calc_c0s, histtype='step', bins=50,  color = 'black', label = "Generated")
-plt.hist(preds_c0s, histtype='step', bins=50,  color = 'red', label = r"Classification: $C_0, C_1, C_2$")
-plt.xlim([0, 50.0])
-plt.ylim([0, 8000])
+plt.hist(calc_c0s, histtype='step', bins=20,  color = 'black', linestyle='--', label = "Generated" )
+plt.hist(preds_c0s, histtype='step', bins=20,  color = 'red', label = r"Classification: $C_0, C_1, C_2$")
+#plt.xlim([0, 20.0])
+plt.ylim([0, 12000])
 plt.xlabel(r'$C_0$: Class index [idx]')
 #plt.title('Features list: Variant-All')
 plt.legend()
@@ -92,9 +98,9 @@ else:
 plt.clf()
 
 #----------------------------------------------------------------------------------
-filename = "soft_c012s_delt_c0s_rhorho_Variant-All_nc51"
+filename = "soft_c012s_delt_c0s_rhorho_Variant-All_nc21"
 
-plt.hist(delt_c0s, histtype='step', bins=51,  color = 'black')
+plt.hist(delt_c0s, histtype='step', bins=21,  color = 'black')
 plt.xlabel(r'$C_0: \Delta_{class}$ [idx]')
 #plt.title('Features list: Variant-All')
 
@@ -102,9 +108,9 @@ ax = plt.gca()
 mean = np.mean(delt_c0s)
 std  = np.std(delt_c0s)
 meanerr = stats.sem(delt_c0s)
-meanC = np.mean(delt_c0s) * 2.0/51.0
-stdC  = np.std(delt_c0s) * 2.0/51.0
-meanerrC = meanerr * 2.0/51.0
+meanC = np.mean(delt_c0s) * 2.0/21.0
+stdC  = np.std(delt_c0s) * 2.0/21.0
+meanerrC = meanerr * 2.0/21.0
 
 table_vals=[[r"mean", r"= {:0.3f}$\pm$ {:1.3f} [idx]".format(mean, meanerr)],
             ["std", "= {:1.3f} [idx]".format(std)],
@@ -140,12 +146,12 @@ else:
 plt.clf()
 
 #----------------------------------------------------------------------------------
-filename = "soft_c012s_c1s_rhorho_Variant-All_nc51"
+filename = "soft_c012s_c1s_rhorho_Variant-All_nc21"
 
-plt.hist(calc_c1s, histtype='step', bins=50,  color = 'black', label = "Generated")
-plt.hist(preds_c1s, histtype='step', bins=50,  color = 'red', label = r"Classification: $C_0, C_1, C_2$")
-plt.xlim([0, 50.0])
-plt.ylim([0, 5000])
+plt.hist(calc_c1s, histtype='step', bins=20,  color = 'black', linestyle='--', label = "Generated")
+plt.hist(preds_c1s, histtype='step', bins=20,  color = 'red', label = r"Classification: $C_0, C_1, C_2$")
+#plt.xlim([0, 20.0])
+plt.ylim([0, 6000])
 plt.xlabel(r'$C_1$: Class index [idx]')
 #plt.title('Features list: Variant-All')
 plt.legend()
@@ -168,9 +174,9 @@ else:
 plt.clf()
 
 #----------------------------------------------------------------------------------
-filename = "soft_c012s_delt_c1s_rhorho_Variant-All_nc51"
+filename = "soft_c012s_delt_c1s_rhorho_Variant-All_nc21"
 
-plt.hist(delt_c1s, histtype='step', bins=51,  color = 'black')
+plt.hist(delt_c1s, histtype='step', bins=21,  color = 'black')
 plt.xlabel(r'$C_1: \Delta_{class}$ [idx]')
 #plt.title('Features list: Variant-All')
 
@@ -178,9 +184,9 @@ ax = plt.gca()
 mean = np.mean(delt_c1s)
 std  = np.std(delt_c1s)
 meanerr = stats.sem(delt_c1s)
-meanC = np.mean(delt_c1s) * 2.0/51.0
-stdC  = np.std(delt_c1s) * 2.0/51.0
-meanerrC = meanerr * 2.0/51.0
+meanC = np.mean(delt_c1s) * 2.0/21.0
+stdC  = np.std(delt_c1s) * 2.0/21.0
+meanerrC = meanerr * 2.0/21.0
 
 table_vals=[[r"mean", r"= {:0.3f}$\pm$ {:1.3f} [idx]".format(mean, meanerr)],
             ["std", "= {:1.3f} [idx]".format(std)],
@@ -216,12 +222,12 @@ else:
 plt.clf()
 
 #----------------------------------------------------------------------------------
-filename = "soft_c012s_c2s_rhorho_Variant-All_nc51"
+filename = "soft_c012s_c2s_rhorho_Variant-All_nc21"
 
-plt.hist(calc_c2s, histtype='step', bins=50,  color = 'black', label = "Generated")
-plt.hist(preds_c2s, histtype='step', bins=50,  color = 'red', label = r"Classification: $C_0, C_1, C_2$")
-plt.xlim([0, 50.0])
-plt.ylim([0, 5000])
+plt.hist(calc_c2s, histtype='step', bins=20,  color = 'black',  linestyle='--', label = "Generated")
+plt.hist(preds_c2s, histtype='step', bins=20,  color = 'red', label = r"Classification: $C_0, C_1, C_2$")
+#plt.xlim([0, 20.0])
+plt.ylim([0, 6000])
 plt.xlabel(r'$C_2$: Class index [idx]')
 #plt.title('Features list: Variant-All')
 plt.legend()
@@ -244,9 +250,9 @@ else:
 plt.clf()
 
 #----------------------------------------------------------------------------------
-filename = "soft_c012s_delt_c2s_rhorho_Variant-All_nc51"
+filename = "soft_c012s_delt_c2s_rhorho_Variant-All_nc21"
 
-plt.hist(delt_c2s, histtype='step', bins=51,  color = 'black')
+plt.hist(delt_c2s, histtype='step', bins=21,  color = 'black')
 plt.xlabel(r'$C_2: \Delta_{class}$ [idx]')
 #plt.title('Features list: Variant-All')
 
@@ -254,9 +260,9 @@ ax = plt.gca()
 mean = np.mean(delt_c2s)
 std  = np.std(delt_c2s)
 meanerr = stats.sem(delt_c2s)
-meanC = np.mean(delt_c2s) * 2.0/51.0
-stdC  = np.std(delt_c2s) * 2.0/51.0
-meanerrC = meanerr * 2.0/51.0
+meanC = np.mean(delt_c2s) * 2.0/21.0
+stdC  = np.std(delt_c2s) * 2.0/21.0
+meanerrC = meanerr * 2.0/21.0
 
 table_vals=[[r"mean", r"= {:0.3f}$\pm$ {:1.3f} [idx]".format(mean, meanerr)],
             ["std", "= {:1.3f} [idx]".format(std)],

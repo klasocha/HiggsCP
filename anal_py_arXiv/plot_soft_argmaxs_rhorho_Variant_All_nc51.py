@@ -9,8 +9,8 @@ from src_py.metrics_utils import  calculate_deltas_signed
 pathIN  = "../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_argmaxs_hits_c0s_Unweighted_False_NO_NUM_CLASSES_51/monit_npy/"
 pathOUT = "figures/"
 
-calc_hits_argmaxs  = np.load(pathIN+'train_soft_calc_hits_argmaxs.npy')
-preds_hits_argmaxs  = np.load(pathIN+'train_soft_preds_hits_argmaxs.npy')
+calc_hits_argmaxs  = np.load(pathIN+'valid_soft_calc_hits_argmaxs.npy')
+preds_hits_argmaxs  = np.load(pathIN+'valid_soft_preds_hits_argmaxs.npy')
 
 print calc_hits_argmaxs[0]
 print preds_hits_argmaxs[0]
@@ -28,10 +28,10 @@ delt_argmaxs =  calculate_deltas_signed(np.argmax(preds_hits_argmaxs[:], axis=1)
 
 k2PI= 2* np.pi
 #----------------------------------------------------------------------------------
-filename = "soft_argmaxs_rhorho_Variant-All"
+filename = "soft_argmaxs_rhorho_Variant-All_nc51"
 
 plt.hist(calc_argmaxs, histtype='step', bins=50,  color = 'black', linestyle='--', label = "Generated")
-plt.hist(preds_argmaxs, histtype='step', bins=50,  color = 'red', label = "Classification: \alpha^{CP}_{max}")
+plt.hist(preds_argmaxs, histtype='step', bins=50,  color = 'red', label = r"Classification: $\alpha^{CP}_{max}$")
 #plt.xlim([0, 50])
 plt.xlabel('Class index [idx]')
 #plt.title('Features list: Variant-All')
@@ -55,10 +55,10 @@ else:
 plt.clf()
 
 #----------------------------------------------------------------------------------
-filename = "soft_argmaxs_delt_rhorho_Variant-All"
+filename = "soft_argmaxs_delt_rhorho_Variant-All_nc51"
 
 plt.hist(delt_argmaxs, histtype='step', bins=51,  color = 'black')
-plt.xlabel(r'$\Delta_{class}$')
+plt.xlabel(r'$\Delta_{class}$ [idx]')
 #plt.title('Features list: Variant-All')
 
 ax = plt.gca()

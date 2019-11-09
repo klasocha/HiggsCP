@@ -57,9 +57,9 @@ print preds_hits_c2s[0]
 print preds_c2s[0]
 
 
-delt_c0s =  np.argmax(preds_hits_c0s[:], axis=1) -  np.argmax(calc_hits_c0s[:], axis=1)     
-delt_c1s =  np.argmax(preds_hits_c1s[:], axis=1) -  np.argmax(calc_hits_c1s[:], axis=1)     
-delt_c2s =  np.argmax(preds_hits_c2s[:], axis=1) -  np.argmax(calc_hits_c2s[:], axis=1)     
+delt_c0s =  np.argmax(preds_hits_c0s[:], axis=1)- np.argmax(calc_hits_c0s[:], axis=1)      
+delt_c1s =  np.argmax(preds_hits_c1s[:], axis=1)- np.argmax(calc_hits_c1s[:], axis=1)     
+delt_c2s =  np.argmax(preds_hits_c2s[:], axis=1)- np.argmax(calc_hits_c2s[:], axis=1)     
 
 
 k2PI= 2* np.pi

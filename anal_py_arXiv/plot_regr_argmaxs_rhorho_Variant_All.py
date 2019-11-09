@@ -1,13 +1,8 @@
-import sys
 import os, errno
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
-import tensorflow as tf
-
-
-from scipy import optimize
-
-from anal_utils import weight_fun, calc_weights
 from src_py.metrics_utils import  calculate_deltas_signed
 
 
@@ -33,11 +28,11 @@ k2PI = 2 * np.pi
 #----------------------------------------------------------------------------------
 filename = "regr_argmaxs_calc_preds_argmax_rhorho_Variant-All"
 
-plt.hist(calc_argmaxs, histtype='step', bins=50,  color = 'black', label="generated")
-plt.hist(preds_argmaxs, histtype='step', bins=50, color = 'red', label="predicted")
+plt.hist(calc_argmaxs, histtype='step', bins=50,  color = 'black', linestyle='--', label="Generated")
+plt.hist(preds_argmaxs, histtype='step', bins=50, color = 'red', label=r"Regression: $\alpha^{CP}_{max}$")
 plt.xlim([0, k2PI])
-#plt.ylim([800, 1200])
-plt.xlabel(r'$\alpha^{CP}_{max}$')
+plt.ylim([0, 1700])
+plt.xlabel(r'$\alpha^{CP}_{max}$[rad]')
 #plt.title('Features list: Variant-All')
 plt.legend()
 
@@ -62,13 +57,27 @@ filename = "regr_argmaxs_delt_argmax_rhorho_Variant-All"
 
 plt.hist(delt_argmaxs, histtype='step', bins=50,  color = 'black')
 plt.xlim([-k2PI, k2PI])
-plt.xlabel(r'$\Delta \alpha^{CP}_{max}$')
+plt.xlabel(r'$\Delta \alpha^{CP}_{max}$ [rad]')
 #plt.title('Features list: Variant-All')
 
 ax = plt.gca()
 mean = np.mean(delt_argmaxs)
 std  = np.std(delt_argmaxs)
-ax.annotate("mean = {:0.3f}[rad] \nstd =  {:1.3f} [rad]".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+
+table_vals=[[r"Regression: $\alpha^{CP}_{max}$"],
+            [" "],
+            ["mean = {:0.3f} [rad]".format(mean)],
+            ["std = {:1.3f} [rad]".format(std)]
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.30],
+                  cellLoc="left",
+                  loc='upper right')
+table.set_fontsize(12)
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
 
 plt.tight_layout()
 

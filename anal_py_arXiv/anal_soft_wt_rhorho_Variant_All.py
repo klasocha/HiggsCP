@@ -132,13 +132,13 @@ plt.clf()
 pathOUT = "figures/"
 filename = "soft_wt_meanDelt_class_rhorho_Variant-All_nc"
 
-plt.errorbar(x, metrics_Variant_All[:,4], yerr=metrics_Variant_All[:,14], label=r'$<\Delta_{class}> [idx]$', linestyle = '', marker = 'o')
+plt.errorbar(x, metrics_Variant_All[:,4], yerr=metrics_Variant_All[:,14], label=r'$<\Delta_{class}> [idx]$', linestyle = '', marker = 'o', color = "black")
 plt.plot([3,51],[0,0],linestyle = "--", color = "black")
 plt.ylim([-0.5, 0.5])
 plt.xticks(x)
 plt.legend()
-plt.xlabel('Number of classes')
-plt.ylabel(r'$<\Delta_{class}>$')
+plt.xlabel(r'$N_{class}$')
+plt.ylabel(r'$<\Delta_{class}>$ [idx]')
 #plt.title('Feautures list: Variant-All')
 
 ax = plt.gca()
@@ -164,7 +164,7 @@ plt.clf()
 pathOUT = "figures/"
 filename = "soft_wt_meanDelt_alphaCP_rhorho_Variant-All_nc"
 
-plt.errorbar(x, metrics_Variant_All[:,7], yerr=metrics_Variant_All[:,15], label=r'$<\Delta \alpha^{CP}> [rad]$', linestyle = '', marker = 'o')
+plt.errorbar(x, metrics_Variant_All[:,7], yerr=metrics_Variant_All[:,15], label=r'$<\Delta \alpha^{CP}> [rad]$', linestyle = '', marker = 'o', color = "black")
 plt.plot([3,51],[0,0],linestyle = "--", color = "black")
 
 #plt.ylim([0.0, 0.5])
@@ -173,7 +173,7 @@ plt.legend()
 #plt.ylim([-0.5, 0.5])
 plt.ylim([-0.3, 0.3])
 plt.xlabel(r'$N_{class}$')
-plt.ylabel(r'$<\Delta \alpha^{CP}>$')
+plt.ylabel(r'$<\Delta \alpha^{CP}>$ [rad]')
 #plt.title('Feautures list: Variant-All')
 
 ax = plt.gca()
@@ -199,7 +199,7 @@ plt.clf()
 pathOUT = "figures/"
 filename = "soft_wt_L1delt_rhorho_Variant_All_nc"
 
-plt.plot(x, metrics_Variant_All[:, 12],'o', label=r'$l_1$ with $wt^{norm}$')
+plt.plot(x, metrics_Variant_All[:, 12],'o', label='Classification: wt', color = "black")
 
 plt.ylim([0.0, 0.1])
 plt.xticks(x)
@@ -231,7 +231,7 @@ plt.clf()
 pathOUT = "figures/"
 filename = "soft_wt_L2delt_rhorho_Variant_All_nc"
 
-plt.plot(x, metrics_Variant_All[:, 13],'o', label=r'$l_2$ with $wt^{norm}$')
+plt.plot(x, metrics_Variant_All[:, 13],'o', label='Classification: wt', color = "black")
 
 plt.ylim([0.0, 0.1])
 plt.xticks(x)
