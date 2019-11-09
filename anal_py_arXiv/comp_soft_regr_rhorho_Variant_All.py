@@ -161,15 +161,15 @@ plt.clf()
 pathOUT = "figures/"
 filename = "comp_soft_regr_L1delt_wt_rhorho_Variant-All_nc"
 
-plt.plot(x, metrics_softmax_Variant_All[:, 5],'o', label=r'$l_1$ with $wt^{norm}$, multi-class')
-plt.plot(x, metrics_regr_Variant_All[:, 12],'d', label=r'$l_1$ with $wt^{norm}$, regression')
+plt.plot(x, metrics_softmax_Variant_All[:, 5],'o', label='Classification: wt')
+plt.plot(x, metrics_regr_Variant_All[:, 12],'d', label=r'Regression: $C_0, C_1, C_2$')
 
 plt.yticks(np.arange(0.0, 0.09, 0.02))
 plt.ylim([-0.01, 0.09])
 plt.xticks(np.arange(3, 52, 6))
 plt.legend()
 plt.xlabel(r'$N_{class}$')
-plt.ylabel(r'$l_1$')
+plt.ylabel(r'$l_1$ with $wt^{norm}')
 #plt.title('Feautures list: Variant-All')
 
 ax = plt.gca()
@@ -197,15 +197,15 @@ plt.clf()
 pathOUT = "figures/"
 filename = "comp_soft_regr_L2delt_wt_rhorho_Variant-All_nc"
 
-plt.plot(x, metrics_softmax_Variant_All[:, 6],'o', label=r'$l_2$ with $wt^{norm}$, multi-class')
-plt.plot(x, metrics_regr_Variant_All[:, 13],'d', label=r'$l_2$ with $wt^{norm}$, regression')
+plt.plot(x, metrics_softmax_Variant_All[:, 6],'o', label='Classification: wt')
+plt.plot(x, metrics_regr_Variant_All[:, 13],'d', label=r'Regression: $C_0, C_1, C_2$')
 
 plt.yticks(np.arange(0.0, 0.09, 0.02))
 plt.ylim([-0.01, 0.09])
 plt.xticks(np.arange(3, 52, 6))
 plt.legend()
 plt.xlabel(r'$N_{class}$')
-plt.ylabel(r'$l_2$')
+plt.ylabel(r'$l_2$ with $wt^{norm}$')
 #plt.title('Feautures list: Variant-All')
 
 ax = plt.gca()
@@ -224,6 +224,76 @@ if filename:
 else:
     plt.show()
     
+#---------------------------------------------------------------------
+plt.clf()
+#---------------------------------------------------------------------
+#---------------------------------------------------------------------
+
+pathOUT = "figures/"
+filename = "comp_soft_regr_wt_meanDelt_class_rhorho_Variant-All_nc"
+
+plt.errorbar(x, metrics_softmax_Variant_All[:,4], yerr=metrics_softmax_Variant_All[:,14], label='Classification: wt', linestyle = '', marker = 'o')
+plt.errorbar(x, metrics_regr_Variant_All[:,4], yerr=metrics_regr_Variant_All[:,14], label=r'Regression: $C_0, C_1, C_2$', linestyle = '', marker = 'd')
+plt.plot([3,51],[0,0],linestyle = "--", color = "black")
+plt.ylim([-0.5, 0.5])
+plt.xticks(x)
+plt.legend()
+plt.xlabel(r'$N_{class}$')
+plt.ylabel(r'$<\Delta_{class}>$ [idx]')
+#plt.title('Feautures list: Variant-All')
+
+ax = plt.gca()
+plt.tight_layout()
+
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+
+#---------------------------------------------------------------------
+plt.clf()
+#---------------------------------------------------------------------
+
+pathOUT = "figures/"
+filename = "comp_soft_regr_wt_meanDelt_alphaCP_rhorho_Variant-All_nc"
+
+plt.errorbar(x, metrics_softmax_Variant_All[:,7], yerr=metrics_softmax_Variant_All[:,15], label='Classification: wt', linestyle = '', marker = 'o')
+plt.errorbar(x, metrics_regr_Variant_All[:,7], yerr=metrics_regr_Variant_All[:,15], label=r'Regression: $C_0, C_1, C_2', linestyle = '', marker = 'd')
+plt.plot([3,51],[0,0],linestyle = "--", color = "black")
+
+#plt.ylim([0.0, 0.5])
+plt.xticks(x)
+plt.legend()
+#plt.ylim([-0.5, 0.5])
+plt.ylim([-0.3, 0.3])
+plt.xlabel(r'$N_{class}$')
+plt.ylabel(r'$<\Delta \alpha^{CP}>$ [rad]')
+#plt.title('Feautures list: Variant-All')
+
+ax = plt.gca()
+plt.tight_layout()
+
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+
 #---------------------------------------------------------------------
 plt.clf()
 #---------------------------------------------------------------------
