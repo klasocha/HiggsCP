@@ -8,7 +8,7 @@ import tensorflow as tf
 from scipy import optimize
 
 
-pathIN  = "../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_argmaxs_hits_c0s_Unweighted_False_NO_NUM_CLASSES_21/monit_npy/"
+pathIN  = "../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_argmaxs_hits_c0s_Unweighted_False_NO_NUM_CLASSES_21_25epochs/monit_npy/"
 pathOUT = "figures/"
 
 train_losses    = np.load(pathIN+'train_losses_soft_argmaxs.npy')
