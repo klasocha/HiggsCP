@@ -61,13 +61,13 @@ def run(args):
         model = NeuralNetwork(num_features, num_classes,
                               num_layers=args.LAYERS, size=args.SIZE,
                               keep_prob=(1-args.DROPOUT), optimizer=args.OPT,
-                              tloss=args.TRAINING_METHOD)
+                              tloss=args.TRAINING_METHOD, topology=args.TOPOLOGY)
 
     with tf.variable_scope("model1", reuse=True) as vs:
         emodel = NeuralNetwork(num_features, num_classes,
                                num_layers=args.LAYERS, size=args.SIZE,
                                keep_prob=(1-args.DROPOUT), optimizer=args.OPT,
-                               tloss=args.TRAINING_METHOD)
+                               tloss=args.TRAINING_METHOD, topology=args.TOPOLOGY)
 
     tf.global_variables_initializer().run()
 

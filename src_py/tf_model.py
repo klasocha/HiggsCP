@@ -503,7 +503,7 @@ def batch_norm(x, name):
 class NeuralNetwork(object):
 
     def __init__(self, num_features, num_classes, num_layers=1, size=100, lr=1e-3, keep_prob=1.0,
-                 tloss="soft", activation='linear', input_noise=0.0, optimizer="AdamOptimizer"):
+                 tloss="soft", activation='linear', input_noise=0.0, optimizer="AdamOptimizer", topology=True):
         batch_size = None
         self.x = x = tf.placeholder(tf.float32, [batch_size, num_features])
         self.weights = weights = tf.placeholder(tf.float32, [batch_size, num_classes])
@@ -549,7 +549,11 @@ class NeuralNetwork(object):
             sx = linear(x, "regr", 1)
             self.sx = sx
             self.p = sx
-            self.loss = loss = tf.losses.mean_squared_error(self.argmaxs, sx)
+            if topology:
+                # self.loss = loss = tf.reduce_mean(tf.square(tf.math.minimum(self.argmaxs - sx, 2*np.pi - self.argmaxs + sx)))
+                self.loss = loss = tf.reduce_mean(1 - tf.math.cos(self.argmaxs - sx))
+            else:
+                self.loss = loss = tf.losses.mean_squared_error(self.argmaxs, sx)
         elif tloss == "regr_c012s":
             sx = linear(x, "regr", 3)
             self.sx = sx
