@@ -3,7 +3,7 @@ import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
-from src_py.metrics_utils import  calculate_deltas_signed
+from src_py.metrics_utils import  calculate_deltas_signed_pi
 
 
 
@@ -19,7 +19,8 @@ print preds_argmaxs
 print calc_argmaxs - preds_argmaxs
 
 delt_argmaxs = calc_argmaxs - preds_argmaxs
-delt_argmaxs = calculate_deltas_signed(calc_argmaxs, preds_argmaxs, 10000.)
+#poprawic!!! delta < 3.1415
+delt_argmaxs = calculate_deltas_signed_pi(calc_argmaxs, preds_argmaxs)
 
 k2PI = 2 * np.pi
 #calc_argmaxs= calc_argmaxs/k2PI
@@ -56,7 +57,7 @@ plt.clf()
 filename = "regr_argmaxs_delt_argmax_rhorho_Variant-All"
 
 plt.hist(delt_argmaxs, histtype='step', bins=50,  color = 'black')
-plt.xlim([-k2PI, k2PI])
+plt.xlim([-3.2, 3.2])
 plt.xlabel(r'$\Delta \alpha^{CP}_{max}$ [rad]')
 #plt.title('Features list: Variant-All')
 
