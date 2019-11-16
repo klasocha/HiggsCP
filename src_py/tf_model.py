@@ -149,6 +149,10 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
 
         if model.tloss == 'regr_argmaxs':
 
+            train_calc_argmaxs, train_pred_argmaxs = regr_argmaxs_predictions(emodel, data.train, filtered=True)
+            np.save(os.path.join(pathOUT, 'train_regr_calc_argmaxs.npy'), train_calc_argmaxs)
+            np.save(os.path.join(pathOUT, 'train_regr_preds_argmaxs.npy'), train_pred_argmaxs)
+
             valid_calc_argmaxs, valid_pred_argmaxs = regr_argmaxs_predictions(emodel, data.valid, filtered=True)
             np.save(os.path.join(pathOUT, 'valid_regr_calc_argmaxs.npy'), valid_calc_argmaxs)
             np.save(os.path.join(pathOUT, 'valid_regr_preds_argmaxs.npy'), valid_pred_argmaxs)
@@ -156,6 +160,20 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             test_calc_argmaxs, test_pred_argmaxs = regr_argmaxs_predictions(emodel, data.test, filtered=True)
             np.save(os.path.join(pathOUT, 'test_regr_calc_argmaxs.npy'), test_calc_argmaxs)
             np.save(os.path.join(pathOUT, 'test_regr_preds_argmaxs.npy'), test_pred_argmaxs)
+
+            train_loss = mean_squared_error(train_calc_argmaxs, train_pred_argmaxs)
+            msg_str_train = "TRAINING (2):     LOSS: %.3f \n" % (train_loss)
+            print msg_str_train
+
+            valid_loss = mean_squared_error(valid_calc_argmaxs, valid_pred_argmaxs)
+            valid_losses += [valid_loss]
+            msg_str_valid = "VALIDATION:     LOSS: %.3f \n" % (valid_loss)
+            print msg_str_valid
+
+            test_loss = mean_squared_error(test_calc_argmaxs, test_pred_argmaxs)
+            test_losses += [test_loss]
+            msg_str_test = "TEST:     LOSS: %.3f \n" % (test_loss)
+            print msg_str_test
 
         if model.tloss == 'soft_argmaxs':
 
