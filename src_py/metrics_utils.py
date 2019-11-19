@@ -12,14 +12,15 @@ def calculate_deltas_unsigned(expected, actual, num_classes):
 
 def calculate_deltas_signed(expected, actual, num_classes):
     deltas = actual - expected
-    deltas -= num_classes * (deltas > (num_classes // 2))
-    deltas += num_classes * (deltas <= (-num_classes // 2))
-
-    return deltas
+    unsigned_deltas = np.minimum(np.abs(actual - expected), num_classes - np.abs(actual - expected))
+    # Unsure
+    sign = 1 * ((deltas < num_classes // 2) & (deltas > 0)) - 1 * (deltas >= num_classes // 2) + \
+           1 * (deltas <= -num_classes // 2) - ((deltas < 0) & 1 * (deltas > -num_classes // 2))
+    return unsigned_deltas * sign
 
 
 def calculate_deltas_signed_pi(expected, actual):
     # Unsigned
     deltas = np.minimum(np.abs(actual - expected), 2 * np.pi - np.abs(actual - expected))
-    deltas *= np.sign((np.cos(actual) * np.sin(expected) - np.sin(actual) * np.cos(expected)))
+    deltas *= np.sign(np.sin(expected - actual))
     return deltas

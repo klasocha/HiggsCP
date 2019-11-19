@@ -104,3 +104,34 @@ else:
 
 plt.clf()
 #----------------------------------------------------------------------------------
+
+#----------------------------------------------------------------------------------
+filename = "delt_regr_argmaxs_rhorho_Variant-All"
+
+plt.hist(delt_argmaxs, histtype='step', bins=50,  color = 'black')
+plt.xlim([-np.pi, np.pi])
+plt.xlabel(r'$\Delta \alpha^{CP}_{max}$')
+plt.title('Features list: Variant-All')
+
+ax = plt.gca()
+mean = np.mean(delt_argmaxs)
+std  = np.std(delt_argmaxs)
+ax.annotate("mean = {:0.3f}[rad] \nstd =  {:1.3f} [rad]".format(mean, std), xy=(0.65, 0.85), xycoords='axes fraction', fontsize=12)
+
+plt.tight_layout()
+
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+
+plt.clf()
+#----------------------------------------------------------------------------------
