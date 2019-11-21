@@ -74,7 +74,6 @@ def preprocess_data(args):
         ccovs  = np.zeros((data_len, 3, 3))
         # here x correspond to values of CPmix at thich data were generated
         # coeffs is an array for C0, C1, C2 coefficients (per event)
-        # c012 is an array for  C0, C1, C2 coefficients shifted by+1.0, to avoid negative values
         # being inputs to regression or softmax 
         x = np.array([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0]) * np.pi
         for i in range(data_len):
