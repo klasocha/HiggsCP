@@ -4,7 +4,10 @@ matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
 
+from anal_utils import weight_fun, calc_weights
+
 from scipy import optimize, stats
+from src_py.metrics_utils import  calculate_deltas_signed
 
 pathIN  = "../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_c012s_hits_c0s_Unweighted_False_NO_NUM_CLASSES_21/monit_npy/"
 #calc_hits_c0s   = np.load(pathIN+'train_soft_calc_hits_c012s.npy')
@@ -67,8 +70,100 @@ delt_c0s =  np.argmax(preds_hits_c0s[:], axis=1) -  np.argmax(calc_hits_c0s[:], 
 delt_c1s =  np.argmax(preds_hits_c1s[:], axis=1) -  np.argmax(calc_hits_c1s[:], axis=1)      
 delt_c2s =  np.argmax(preds_hits_c2s[:], axis=1) -  np.argmax(calc_hits_c2s[:], axis=1)      
 
+calc_c012s   = np.zeros((data_len, 3))
+preds_c012s   = np.zeros((data_len, 3))
+for i in range(data_len):
+    calc_c012s[i][0] = calc_c0s[i] * (2./21.)
+    calc_c012s[i][1] = calc_c1s[i] * (2./21.) -1.0
+    calc_c012s[i][2] = calc_c2s[i] * (2./21.) -1.0
+
+    preds_c012s[i][0] = preds_c0s[i] * (2./21.)
+    preds_c012s[i][1] = preds_c1s[i] * (2./21.) -1.0
+    preds_c012s[i][2] = preds_c2s[i] * (2./21.) -1.0
+
+print calc_c012s[1:]
+print "tu jestem"
 
 k2PI= 2* np.pi
+
+
+#----------------------------------------------------------------------------------
+                           
+i = 1
+filename = "soft_c012s_calc_preds_rhorho_Variant-All_nc_21_event_1"
+x = np.linspace(0, k2PI, 21)
+plt.plot(x,weight_fun(x, *calc_c012s[i]), 'o', label='Generated')
+plt.plot(x,weight_fun(x, *preds_c012s[i]), 'd', label=r'Classification: $C_0, C_1, C_2$')
+plt.legend(loc='upper left')
+plt.ylim([1.0, 2.2])
+plt.xlim([-0.2, k2PI+0.2])
+#plt.yticks(np.arange(0.0, 2.25, 0.25))
+plt.xlabel(r'$\alpha^{CP}$ [rad]')
+plt.ylabel(r'$wt$')
+#plt.title('Features list: Variant-All')
+    
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+plt.clf()
+
+
+calc_w_nc21  =  calc_weights(21, calc_c012s)
+preds_w_nc21 =  calc_weights(21, preds_c012s)
+delt_argmax_nc21 =  calculate_deltas_signed(np.argmax(preds_w_nc21[:], axis=1), np.argmax(calc_w_nc21[:], axis=1), 21)      
+nc21=21.0
+
+
+filename = "soft_c012s_delt_argmax_rhorho_Variant-All_nc_21"
+plt.hist(delt_argmax_nc21, histtype='step', bins=21)
+plt.xlabel(r'$\Delta_{class}$')
+#plt.title('Features list: Variant-All')
+
+ax = plt.gca()
+mean = np.mean(delt_argmax_nc21) * k2PI/21.0
+std  = np.std(delt_argmax_nc21) * k2PI/21.0
+meanerr = stats.sem(delt_argmax_nc21) * k2PI/21.0
+
+table_vals=[["mean", "= {:0.3f}$\pm$ {:1.3f} [rad]".format(mean, meanerr)],
+            ["std", "= {:1.3f} [rad]".format(std)]
+            ]
+
+table = plt.table(cellText=table_vals,
+                  colWidths = [0.10, 0.32],
+                  cellLoc="left",
+                  loc='upper right')
+table.set_fontsize(12)
+
+for key, cell in table.get_celld().items():
+    cell.set_linewidth(0)
+
+plt.tight_layout()
+
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+
+plt.clf()
+
+#----------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------
 filename = "soft_c012s_c0s_rhorho_Variant-All_nc21"
 
