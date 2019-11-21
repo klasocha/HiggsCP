@@ -553,7 +553,10 @@ class NeuralNetwork(object):
             sx = linear(x, "regr", 1)
             self.sx = sx
             self.p = sx
+            # old implementation
             self.loss = loss = tf.losses.mean_squared_error(self.argmaxs, sx)
+            # new proposal by J. Kurek, does not work
+            # self.loss = loss = tf.reduce_mean(1 - tf.math.cos(self.argmaxs - sx))
         elif tloss == "regr_c012s":
             sx = linear(x, "regr", 3)
             self.sx = sx

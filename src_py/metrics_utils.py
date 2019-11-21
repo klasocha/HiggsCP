@@ -19,9 +19,17 @@ def calculate_deltas_signed(expected, actual, num_classes):
 
     return deltas
 
+# by ERW
 def calculate_deltas_signed_pi(expected, actual):
     deltas = actual - expected
     deltas -= np.pi * (deltas > np.pi)
     deltas += np.pi * (deltas <= -np.pi)
 
+    return deltas
+
+# by J.Kurek
+def calculate_deltas_signed_pi_topo(expected, actual):
+    # Unsigned
+    deltas = np.minimum(np.abs(actual - expected), 2 * np.pi - np.abs(actual - expected))
+    deltas *= np.sign(np.sin(expected - actual))
     return deltas
