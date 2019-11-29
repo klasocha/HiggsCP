@@ -119,7 +119,7 @@ nc51=51.0
 
 
 filename = "soft_c012s_delt_argmax_rhorho_Variant-All_nc_51"
-plt.hist(delt_argmax_nc51, histtype='step', bins=51)
+plt.hist(delt_argmax_nc51, histtype='step', bins=51, color='black')
 plt.xlabel(r'$\Delta_{class}$')
 #plt.title('Features list: Variant-All')
 
@@ -128,15 +128,17 @@ mean = np.mean(delt_argmax_nc51) * k2PI/51.0
 std  = np.std(delt_argmax_nc51) * k2PI/51.0
 meanerr = stats.sem(delt_argmax_nc51) * k2PI/51.0
 
-table_vals=[["mean", "= {:0.3f}$\pm$ {:1.3f} [rad]".format(mean, meanerr)],
-            ["std", "= {:1.3f} [rad]".format(std)]
+table_vals=[[r'Classification:$C_0, C_1, C_2$'],
+            [" "],
+            [r"mean = {:0.3f}$\pm$ {:1.3f} [rad]".format(mean, meanerr)],
+            ["std = {:1.3f} [rad]".format(std)]
             ]
 
 table = plt.table(cellText=table_vals,
-                  colWidths = [0.10, 0.32],
+                  colWidths = [0.40],
                   cellLoc="left",
                   loc='upper right')
-table.set_fontsize(12)
+table.set_fontsize(14)
 
 for key, cell in table.get_celld().items():
     cell.set_linewidth(0)

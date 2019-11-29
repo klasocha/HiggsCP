@@ -124,7 +124,7 @@ nc21=21.0
 
 
 filename = "soft_c012s_delt_argmax_rhorho_Variant-All_nc_21"
-plt.hist(delt_argmax_nc21, histtype='step', bins=21)
+plt.hist(delt_argmax_nc21, histtype='step', bins=21, color = 'black')
 plt.xlabel(r'$\Delta_{class}$')
 #plt.title('Features list: Variant-All')
 
@@ -133,15 +133,17 @@ mean = np.mean(delt_argmax_nc21) * k2PI/21.0
 std  = np.std(delt_argmax_nc21) * k2PI/21.0
 meanerr = stats.sem(delt_argmax_nc21) * k2PI/21.0
 
-table_vals=[["mean", "= {:0.3f}$\pm$ {:1.3f} [rad]".format(mean, meanerr)],
-            ["std", "= {:1.3f} [rad]".format(std)]
+table_vals=[[r'Classification:$C_0, C_1, C_2$'],
+            [" "],
+            [r"mean = {:0.3f}$\pm$ {:1.3f} [rad]".format(mean, meanerr)],
+            ["std = {:1.3f} [rad]".format(std)]
             ]
 
 table = plt.table(cellText=table_vals,
-                  colWidths = [0.10, 0.32],
+                  colWidths = [0.40],
                   cellLoc="left",
                   loc='upper right')
-table.set_fontsize(12)
+table.set_fontsize(14)
 
 for key, cell in table.get_celld().items():
     cell.set_linewidth(0)
@@ -194,8 +196,8 @@ plt.clf()
 
 #----------------------------------------------------------------------------------
 filename = "soft_c012s_delt_c0s_rhorho_Variant-All_nc21"
-
-plt.hist(delt_c0s, histtype='step', bins=21,  color = 'black')
+plt.hist(delt_c0s, histtype='step', bins=30,  color = 'black')
+plt.xlim([-15.0, 15.0])
 plt.xlabel(r'$C_0: \Delta_{class}$ [idx]')
 #plt.title('Features list: Variant-All')
 
@@ -207,18 +209,20 @@ meanC = np.mean(delt_c0s) * 2.0/21.0
 stdC  = np.std(delt_c0s) * 2.0/21.0
 meanerrC = meanerr * 2.0/21.0
 
-table_vals=[[r"mean", r"= {:0.3f}$\pm$ {:1.3f} [idx]".format(mean, meanerr)],
-            ["std", "= {:1.3f} [idx]".format(std)],
-            ["", ""],
-            [r"mean", r"= {:0.3f}$\pm$ {:1.3f}".format(meanC, meanerrC)],
-            ["std", "= {:1.3f}".format(stdC)]
+table_vals=[[r'Classification: $C_0, C_1, C_2$'],
+            [" "],
+            [r"mean = {:0.3f}$\pm$ {:1.3f} [idx]".format(mean, meanerr)],
+            ["std = {:1.3f} [idx]".format(std)],
+            [" "],
+            [r"mean = {:0.3f}$\pm$ {:1.3f}".format(meanC, meanerrC)],
+            ["std = {:1.3f}".format(stdC)]
             ]
 
 table = plt.table(cellText=table_vals,
-                  colWidths = [0.10, 0.30],
+                  colWidths = [0.40],
                   cellLoc="left",
                   loc='upper right')
-table.set_fontsize(12)
+table.set_fontsize(14)
 
 for key, cell in table.get_celld().items():
     cell.set_linewidth(0)
@@ -271,7 +275,8 @@ plt.clf()
 #----------------------------------------------------------------------------------
 filename = "soft_c012s_delt_c1s_rhorho_Variant-All_nc21"
 
-plt.hist(delt_c1s, histtype='step', bins=21,  color = 'black')
+plt.hist(delt_c1s, histtype='step', bins=30,  color = 'black')
+plt.xlim([-15.0, 15.0])
 plt.xlabel(r'$C_1: \Delta_{class}$ [idx]')
 #plt.title('Features list: Variant-All')
 
@@ -283,18 +288,22 @@ meanC = np.mean(delt_c1s) * 2.0/21.0
 stdC  = np.std(delt_c1s) * 2.0/21.0
 meanerrC = meanerr * 2.0/21.0
 
-table_vals=[[r"mean", r"= {:0.3f}$\pm$ {:1.3f} [idx]".format(mean, meanerr)],
-            ["std", "= {:1.3f} [idx]".format(std)],
-            ["", ""],
-            ["mean", "= {:0.3f}$\pm$ {:1.3f}".format(meanC, meanerrC)],
-            ["std", "= {:1.3f}".format(stdC)]
+
+table_vals=[[r'Classification: $C_0, C_1, C_2$'],
+            [" "],
+            [r"mean = {:0.3f}$\pm$ {:1.3f} [idx]".format(mean, meanerr)],
+            ["std = {:1.3f} [idx]".format(std)],
+            [" "],
+            [r"mean = {:0.3f}$\pm$ {:1.3f}".format(meanC, meanerrC)],
+            ["std = {:1.3f}".format(stdC)]
             ]
 
 table = plt.table(cellText=table_vals,
-                  colWidths = [0.10, 0.30],
+                  colWidths = [0.40],
                   cellLoc="left",
                   loc='upper right')
-table.set_fontsize(12)
+table.set_fontsize(14)
+
 
 for key, cell in table.get_celld().items():
     cell.set_linewidth(0)
@@ -347,7 +356,8 @@ plt.clf()
 #----------------------------------------------------------------------------------
 filename = "soft_c012s_delt_c2s_rhorho_Variant-All_nc21"
 
-plt.hist(delt_c2s, histtype='step', bins=21,  color = 'black')
+plt.hist(delt_c2s, histtype='step', bins=30,  color = 'black')
+plt.xlim([-15.0, 15.0])
 plt.xlabel(r'$C_2: \Delta_{class}$ [idx]')
 #plt.title('Features list: Variant-All')
 
@@ -359,18 +369,22 @@ meanC = np.mean(delt_c2s) * 2.0/21.0
 stdC  = np.std(delt_c2s) * 2.0/21.0
 meanerrC = meanerr * 2.0/21.0
 
-table_vals=[[r"mean", r"= {:0.3f}$\pm$ {:1.3f} [idx]".format(mean, meanerr)],
-            ["std", "= {:1.3f} [idx]".format(std)],
-            ["", ""],
-            [r"mean", r"= {:0.3f}$\pm$ {:1.3f}".format(meanC, meanerrC)],
-            ["std", "= {:1.3f}".format(stdC)]
+
+
+table_vals=[[r'Classification: $C_0, C_1, C_2$'],
+            [" "],
+            [r"mean = {:0.3f}$\pm$ {:1.3f} [idx]".format(mean, meanerr)],
+            ["std = {:1.3f} [idx]".format(std)],
+            [" "],
+            [r"mean = {:0.3f}$\pm$ {:1.3f}".format(meanC, meanerrC)],
+            ["std = {:1.3f}".format(stdC)]
             ]
 
 table = plt.table(cellText=table_vals,
-                  colWidths = [0.10, 0.30],
+                  colWidths = [0.40],
                   cellLoc="left",
                   loc='upper right')
-table.set_fontsize(12)
+table.set_fontsize(14)
 
 for key, cell in table.get_celld().items():
     cell.set_linewidth(0)

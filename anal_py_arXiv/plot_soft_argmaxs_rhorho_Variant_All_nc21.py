@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from src_py.metrics_utils import  calculate_deltas_signed
+from scipy import optimize, stats
 
 pathIN  = "../laptop_results_dropout=0/nn_rhorho_Variant-All_soft_argmaxs_hits_c0s_Unweighted_False_NO_NUM_CLASSES_21/monit_npy/"
 pathOUT = "figures/"
@@ -66,21 +67,25 @@ plt.xlabel(r'$\Delta_{class}$ [idx]')
 ax = plt.gca()
 mean = np.mean(delt_argmaxs)
 std  = np.std(delt_argmaxs)
+meanerr = stats.sem(delt_argmaxs) 
 meanrad = np.mean(delt_argmaxs) * k2PI/21.0
 stdrad  = np.std(delt_argmaxs) * k2PI/21.0
+meanerrrad = stats.sem(delt_argmaxs)* k2PI/21.0 
 
-table_vals=[["mean", "= {:0.3f} [idx]".format(mean)],
-            ["std", "= {:1.3f} [idx]".format(std)],
-            ["", ""],
-            ["mean", "= {:0.3f} [rad]".format(meanrad)],
-            ["std", "= {:1.3f} [rad]".format(stdrad)]
+table_vals=[[r'Classification:$\alpha^{CP}_{max}$'],
+            [" "],
+            [r"mean = {:0.3f}$\pm$ {:1.3f} [idx]".format(mean, meanerr)],
+            ["std = {:1.3f} [idx]".format(std)],
+            [" "],
+            [r"mean = {:0.3f}$\pm$ {:1.3f} [rad]".format(meanrad, meanerrrad)],
+            ["std = {:1.3f} [rad]".format(stdrad)]
             ]
 
 table = plt.table(cellText=table_vals,
-                  colWidths = [0.10, 0.22],
+                  colWidths = [0.40],
                   cellLoc="left",
                   loc='upper right')
-table.set_fontsize(12)
+table.set_fontsize(14)
 
 for key, cell in table.get_celld().items():
     cell.set_linewidth(0)
