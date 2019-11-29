@@ -4,8 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import optimize
 
-popts = np.load('../../HiggsCP_data/rhorho/popts.npy')
-pcovs = np.load('../../HiggsCP_data/rhorho/pcovs.npy')
+popts = np.load('../../HiggsCP_data/rhorho/c012s.npy')
+pcovs = np.load('../../HiggsCP_data/rhorho/ccovs.npy')
 
 weights = np.load('../../HiggsCP_data/rhorho/rhorho_raw.w.npy')
 
@@ -23,12 +23,12 @@ x_fit = np.linspace(0, 2*np.pi)
 # fit error should be printed in the legend
 
 i = 0
-filename = "popts_rhorho_event_1"
+filename = "c012s_rhorho_event_1"
 
 chi2 = np.sqrt(np.diag(pcovs[i]))
 
-plt.plot(x_weights, weights[:,i], 'o', label='generated')
-plt.plot(x_fit, weight_fun(x_fit, *popts[i]),label='function')
+plt.plot(x_weights, weights[:,i], 'o', label='Generated')
+plt.plot(x_fit, weight_fun(x_fit, *popts[i]),label='Functional form')
 plt.ylim([0.0, 2.0])
 plt.xlabel(r'$\alpha^{CP}$ [rad]')
 plt.ylabel('wt')
@@ -60,9 +60,9 @@ plt.clf()
 #---------------------------------
 
 i = 2000 
-filename = "popts_rhorho_event_2000"
-plt.plot(x_weights, weights[:,i], 'o', label='generated')
-plt.plot(x_fit, weight_fun(x_fit, *popts[i]),label='function')
+filename = "c012s_rhorho_event_2000"
+plt.plot(x_weights, weights[:,i], 'o', label='Generated')
+plt.plot(x_fit, weight_fun(x_fit, *popts[i]),label='Functional form')
 plt.ylim([0.0, 2.0])
 plt.xlabel(r'$\alpha^{CP}$ [rad]')
 plt.ylabel('wt')
