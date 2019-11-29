@@ -35,7 +35,7 @@ plt.ylim([0.5, 0.85])
 plt.legend()
 plt.xlabel(r'$\alpha^{CP}$ [rad]')
 plt.ylabel(r'AUC vs $\alpha^{CP}$ = 0.0')
-plt.title(r'$\rho^\pm-\rho^\mp$ channel')
+#plt.title(r'$\rho^\pm-\rho^\mp$ channel')
 
 ax = plt.gca()
 plt.tight_layout()
