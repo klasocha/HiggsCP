@@ -30,6 +30,19 @@ def train(model, dataset, batch_size=128):
     return np.mean(losses)
 
 
+def get_loss(model, dataset, batch_size=128):
+    batches = dataset.n / batch_size
+    losses = []
+    sess = tf.get_default_session()
+    for i in range(batches):
+        x, weights, argmaxs, c012s, hits_argmaxs, hits_c012s, filt, = dataset.next_batch(batch_size)
+        loss = sess.run([model.loss],
+                           {model.x: x, model.weights: weights, model.argmaxs: argmaxs, model.c012s: c012s,
+                            model.hits_argmaxs: hits_argmaxs, model.hits_c012s: hits_c012s})
+        losses.append(loss)
+    return np.mean(losses)
+
+
 # ERW
 # tf_model knows nothing about classes <-->angle relations
 # operates on arrays which has dimention of num_classes
@@ -63,11 +76,19 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
 
     for i in range(epochs):
         sys.stdout.write("\nEPOCH: %d \n" % (i + 1))
-        train_loss = train(model, data.train, batch_size)
+        _ = train(model, data.train, batch_size)
+
+        train_loss = get_loss(model, data.train, batch_size=128)
+        valid_loss = get_loss(model, data.valid, batch_size=128)
+        test_loss = get_loss(model, data.test, batch_size=128)
 
         train_losses += [train_loss]
-        msg_str = "TRAINING:     LOSS: %.3f \n" % (train_loss)
-        print msg_str
+        valid_losses += [valid_loss]
+        test_losses += [test_loss]
+
+        print("TRAINING:    LOSS: %.3f \n" % (train_loss))
+        print("VALIDATION:  LOSS: %.3f \n" % (valid_loss))
+        print("TEST:        LOSS: %.3f \n" % (test_loss))
 
 
         if model.tloss == 'soft_weights':
@@ -81,7 +102,6 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             valid_acc, valid_mean, valid_l1_delta_w, valid_l2_delta_w)
             print msg_str_1
             print msg_str_2
-            tf.logging.info(msg_str)
             tf.logging.info(msg_str_1)
             tf.logging.info(msg_str_2)
 
@@ -161,20 +181,6 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             np.save(os.path.join(pathOUT, 'test_regr_calc_argmaxs.npy'), test_calc_argmaxs)
             np.save(os.path.join(pathOUT, 'test_regr_preds_argmaxs.npy'), test_pred_argmaxs)
 
-            train_loss = mean_squared_error(train_calc_argmaxs, train_pred_argmaxs)
-            msg_str_train = "TRAINING (2):     LOSS: %.3f \n" % (train_loss)
-            print msg_str_train
-
-            valid_loss = mean_squared_error(valid_calc_argmaxs, valid_pred_argmaxs)
-            valid_losses += [valid_loss]
-            msg_str_valid = "VALIDATION:     LOSS: %.3f \n" % (valid_loss)
-            print msg_str_valid
-
-            test_loss = mean_squared_error(test_calc_argmaxs, test_pred_argmaxs)
-            test_losses += [test_loss]
-            msg_str_test = "TEST:     LOSS: %.3f \n" % (test_loss)
-            print msg_str_test
-
         if model.tloss == 'soft_argmaxs':
 
             train_calc_argmaxs, train_pred_argmaxs = soft_argmaxs_predictions(emodel, data.train, filtered=True)
@@ -202,20 +208,6 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             test_calc_weights, test_pred_weights = regr_weights_predictions(emodel, data.test, filtered=True)
             np.save(os.path.join(pathOUT, 'test_regr_calc_weights.npy'), test_calc_weights)
             np.save(os.path.join(pathOUT, 'test_regr_preds_weights.npy'), test_pred_weights)
-
-            train_loss = mean_squared_error(train_calc_weights, train_pred_weights)
-            msg_str_train = "TRAINING (2):     LOSS: %.3f \n" % (train_loss)
-            print msg_str_train
-
-            valid_loss = mean_squared_error(valid_calc_weights, valid_pred_weights)
-            valid_losses += [valid_loss]
-            msg_str_valid = "VALIDATION:     LOSS: %.3f \n" % (valid_loss)
-            print msg_str_valid
-
-            test_loss = mean_squared_error(test_calc_weights, test_pred_weights)
-            test_losses += [test_loss]
-            msg_str_test = "TEST:     LOSS: %.3f \n" % (test_loss)
-            print msg_str_test
 
     if model.tloss == 'soft_weights':
         test_roc_auc(preds_w, calc_w)             
