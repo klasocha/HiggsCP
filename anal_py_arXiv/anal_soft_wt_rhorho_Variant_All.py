@@ -172,7 +172,7 @@ filename = "soft_wt_meanDelt_alphaCP_rhorho_Variant-All_nc"
 
 plt.plot([0], marker='None',
            linestyle='None', label=r'Classification: wt')
-plt.errorbar(x, metrics_Variant_All[:,7], yerr=metrics_Variant_All[:,15], label=r'$<\Delta \alpha^{CP}>$ [rad]', linestyle = '', marker = 'o', color = "black")
+plt.errorbar(x, metrics_Variant_All[:,7], yerr=metrics_Variant_All[:,15], label=r'$<\Delta \alpha^{CP}_{max}>$ [rad]', linestyle = '', marker = 'o', color = "black")
 plt.plot([3,51],[0,0],linestyle = "--", color = "black")
 
 #plt.ylim([0.0, 0.5])
@@ -181,7 +181,7 @@ plt.legend()
 #plt.ylim([-0.5, 0.5])
 plt.ylim([-0.2, 0.2])
 plt.xlabel(r'$N_{class}$')
-plt.ylabel(r'$<\Delta \alpha^{CP}>$ [rad]')
+plt.ylabel(r'$<\Delta \alpha^{CP}_{max}>$ [rad]')
 #plt.title('Feautures list: Variant-All')
 
 ax = plt.gca()

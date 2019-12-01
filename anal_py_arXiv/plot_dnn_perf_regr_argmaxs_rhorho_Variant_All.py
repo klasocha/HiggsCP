@@ -8,10 +8,13 @@ import tensorflow as tf
 from scipy import optimize
 
 
-pathIN  = "../laptop_results_dropout=0/nn_rhorho_Variant-All_regr_argmaxs_hits_c0s_Unweighted_False_NO_NUM_CLASSES_0_25epochs/monit_npy/"
+pathIN  = "../laptop_results_dropout=0/nn_rhorho_Variant-All_regr_argmaxs_hits_c0s_Unweighted_False_NO_NUM_CLASSES_0_epochs25/monit_npy/"
 pathOUT = "figures/"
 
 train_losses    = np.load(pathIN+'train_losses_regr_argmaxs.npy')
+valid_losses    = np.load(pathIN+'valid_losses_regr_argmax.npy')
+print train_losses
+print valid_losses
 
 #----------------------------------------------------------------------------------
 
@@ -20,8 +23,9 @@ x = np.arange(1,len(train_losses)+1)
 plt.plot([0], marker='None',
            linestyle='None', label=r'Regression: $\alpha^{CP}_{max}$')
 plt.plot(x,train_losses, 'o', color = 'black', label='Training')
+plt.plot(x,valid_losses, 'd', color = 'orange', label='Validation')
 plt.legend()
-plt.ylim([0.0, 3.0])
+plt.ylim([1.0, 2.0])
 plt.xlabel('Number of epochs')
 plt.xticks(x)
 plt.ylabel('Loss')

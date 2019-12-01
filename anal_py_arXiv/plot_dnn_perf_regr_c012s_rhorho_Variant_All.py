@@ -12,6 +12,7 @@ pathIN  = "../laptop_results_dropout=0/nn_rhorho_Variant-All_regr_c012s_hits_c0s
 pathOUT = "figures/"
 
 train_losses    = np.load(pathIN+'train_losses_regr_c012s.npy')
+valid_losses    = np.load(pathIN+'valid_losses_regr_c012ss.npy')
 
 
 #----------------------------------------------------------------------------------
@@ -21,8 +22,9 @@ x = np.arange(1,len(train_losses)+1)
 plt.plot([0], marker='None',
            linestyle='None', label=r'Regression: $C_0, C_1, C_2$')
 plt.plot(x,train_losses, 'o', color = 'black', label='Training')
+plt.plot(x,valid_losses, 'd', color = 'orange', label='Validation')
 plt.legend()
-plt.ylim([0.0, 0.10])
+plt.ylim([0.01, 0.06])
 plt.xlabel('Number of epochs')
 plt.xticks(x)
 plt.ylabel('Loss')
