@@ -18,13 +18,11 @@ k2PI = 2*np.pi
                            
 i = 1
 filename = "regr_wt_calc_preds_rhorho_Variant-All_nc_51_event_1"
-x = np.arange(1,52)
+x = np.linspace(0, k2PI, 51)
 plt.plot(x,calc_w[i], 'o', label='Generated')
 plt.plot(x,preds_w[i], 'd', label='Regression: wt')
 plt.legend()
-#plt.ylim([0.0, 0.125])
-plt.xlabel('Class index [idx]')
-plt.xticks(np.arange(1, 52, 5))
+plt.xlabel(r'$\alpha^{CP}$ [rad]')
 plt.ylabel(r'$wt$')
 #plt.title('Features list: Variant-All')
     
@@ -45,13 +43,13 @@ plt.clf()
                            
 i = 10
 filename = "regr_wt_calc_preds_rhorho_Variant-All_nc_51_event_10"
-x = np.arange(1,52)
+x = np.linspace(0, k2PI, 51)
 plt.plot(x,calc_w[i], 'o', label='Generated')
 plt.plot(x,preds_w[i], 'd', label='Regression: wt')
 plt.legend()
 #plt.ylim([0.0, 0.125])
-plt.xlabel('Class index [idx]')
-plt.xticks(np.arange(1, 52, 5))
+plt.xlabel(r'$\alpha^{CP}$ [rad]')
+#plt.xticks(np.arange(1, 52, 5))
 plt.ylabel(r'$wt$')
 #plt.title('Features list: Variant-All')
     
@@ -73,13 +71,13 @@ plt.clf()
                            
 i = 1000
 filename = "regr_wt_calc_preds_rhorho_Variant-All_nc_51_event_1000"
-x = np.arange(1,52)
+x = np.linspace(0, k2PI, 51)
 plt.plot(x,calc_w[i], 'o', label='Generated')
 plt.plot(x,preds_w[i], 'd', label='Regresion: wt')
 plt.legend()
 #plt.ylim([0.0, 0.1])
-plt.xlabel('Class index [idx]')
-plt.xticks(np.arange(1, 52, 5))
+plt.xlabel(r'$\alpha^{CP}$ [rad]')
+#plt.xticks(np.arange(1, 52, 5))
 plt.ylabel(r'$wt$')
 #plt.title('Features list: Variant-All')
     
@@ -102,13 +100,13 @@ plt.clf()
                            
 i = 2000
 filename = "regr_wt_calc_preds_rhorho_Variant-All_nc_51_event_2000"
-x = np.arange(1,52)
+x = np.linspace(0, k2PI, 51)
 plt.plot(x,calc_w[i], 'o', label='Generated')
 plt.plot(x,preds_w[i], 'd', label='Regression: wt')
 plt.legend()
 #plt.ylim([0.0, 0.1])
-plt.xlabel('Class index [idx]')
-plt.xticks(np.arange(1, 52, 5))
+plt.xlabel(r'$\alpha^{CP}$ [rad]')
+#plt.xticks(np.arange(1, 52, 5))
 plt.ylabel(r'$wt$')
 #plt.title('Features list: Variant-All')
     
@@ -153,18 +151,22 @@ meanrad = np.mean(delt_argmax_nc51, dtype=np.float64) * k2PI/nc51
 stdrad  = np.std(delt_argmax_nc51, dtype=np.float64) * k2PI/nc51
 meanerrrad = stats.sem(delt_argmax_nc51) * k2PI/nc51
 
-table_vals=[[r"mean", r"= {:0.3f} $\pm$ {:1.3f}[idx] ".format(mean, meanerr)],
-            ["std", "= {:1.3f} [idx]".format(std)],
-            ["", ""],
-            ["mean", r"= {:0.3f} $\pm$ {:1.3f}[rad]".format(meanrad, meanerrrad)],
-            ["std", "= {:1.3f} [rad]".format(stdrad)]
+
+table_vals=[[r"Regression: $wt$"],
+            [" "],
+            [r"mean = {:0.3f} $\pm$ {:1.3f}[idx] ".format(mean, meanerr)],
+            ["std = {:1.3f} [idx]".format(std)],
+            [" "],
+            [r"mean = {:0.3f} $\pm$ {:1.3f}[rad]".format(meanrad, meanerrrad)],
+            ["std = {:1.3f} [rad]".format(stdrad)]
             ]
 
 table = plt.table(cellText=table_vals,
-                  colWidths = [0.08, 0.28],
+                  colWidths = [0.40],
                   cellLoc="left",
                   loc='upper right')
-table.set_fontsize(12)
+
+table.set_fontsize(14)
 
 for key, cell in table.get_celld().items():
     cell.set_linewidth(0)

@@ -115,18 +115,18 @@ filename = "comp_soft_regr_acc_alphaCP_rhorho_Variant-All_nc"
 
 plt.plot([0], marker='None',
            linestyle='None', label='Classification: wt')
-plt.plot(x, metrics_softmax_Variant_All[:, 8],'o', label=r'$|\Delta\alpha^{CP}| < 0.25[rad]$')
-plt.plot(x, metrics_softmax_Variant_All[:, 9],'x', label=r'$|\Delta\alpha^{CP}| < 0.50[rad]$')
-plt.plot(x, metrics_softmax_Variant_All[:,10],'d', label=r'$|\Delta\alpha^{CP}| < 0.75[rad]$')
-plt.plot(x, metrics_softmax_Variant_All[:,11],'v', label=r'$|\Delta\alpha^{CP}| < 1.0[rad]$')
+plt.plot(x, metrics_softmax_Variant_All[:, 8],'o', label=r'$|\Delta\alpha^{CP}_{max}| < 0.25[rad]$')
+plt.plot(x, metrics_softmax_Variant_All[:, 9],'x', label=r'$|\Delta\alpha^{CP}_{max}| < 0.50[rad]$')
+plt.plot(x, metrics_softmax_Variant_All[:,10],'d', label=r'$|\Delta\alpha^{CP}_{max}| < 0.75[rad]$')
+plt.plot(x, metrics_softmax_Variant_All[:,11],'v', label=r'$|\Delta\alpha^{CP}_{max}| < 1.0[rad]$')
 plt.plot([0], marker='None',
          linestyle='None', label=' ')
 plt.plot([0], marker='None',
          linestyle='None', label=r'Regression: $C_0, C_1, C_2$')
-plt.plot(x, metrics_regr_Variant_All[:, 8],'o', label=r'$|\Delta\alpha^{CP}| < 0.25[rad]$')
-plt.plot(x, metrics_regr_Variant_All[:, 9],'x', label=r'$|\Delta\alpha^{CP}| < 0.50[rad]$')
-plt.plot(x, metrics_regr_Variant_All[:,10],'d', label=r'$|\Delta\alpha^{CP}| < 0.75[rad]$')
-plt.plot(x, metrics_regr_Variant_All[:,11],'v', label=r'$|\Delta\alpha^{CP}| < 1.0[rad]$')
+plt.plot(x, metrics_regr_Variant_All[:, 8],'o', label=r'$|\Delta\alpha^{CP}_{max}| < 0.25[rad]$')
+plt.plot(x, metrics_regr_Variant_All[:, 9],'x', label=r'$|\Delta\alpha^{CP}_{max}| < 0.50[rad]$')
+plt.plot(x, metrics_regr_Variant_All[:,10],'d', label=r'$|\Delta\alpha^{CP}_{max}| < 0.75[rad]$')
+plt.plot(x, metrics_regr_Variant_All[:,11],'v', label=r'$|\Delta\alpha^{CP}_{max}| < 1.0[rad]$')
 plt.legend(loc='upper right', ncol=1)
 plt.ylim([0.1, 1.1])
 plt.yticks(np.arange(0.2, 1.1, 0.2))
@@ -266,16 +266,16 @@ pathOUT = "figures/"
 filename = "comp_soft_regr_wt_meanDelt_alphaCP_rhorho_Variant-All_nc"
 
 plt.errorbar(x, metrics_softmax_Variant_All[:,7], yerr=metrics_softmax_Variant_All[:,15], label='Classification: wt', linestyle = '', marker = 'o')
-plt.errorbar(x, metrics_regr_Variant_All[:,7], yerr=metrics_regr_Variant_All[:,15], label=r'Regression: $C_0, C_1, C_2', linestyle = '', marker = 'd')
+plt.errorbar(x, metrics_regr_Variant_All[:,7], yerr=metrics_regr_Variant_All[:,15], label=r'Regression: $C_0, C_1, C_2$', linestyle = '', marker = 'd')
 plt.plot([3,51],[0,0],linestyle = "--", color = "black")
 
 #plt.ylim([0.0, 0.5])
 plt.xticks(x)
 plt.legend()
 #plt.ylim([-0.5, 0.5])
-plt.ylim([-0.3, 0.3])
+plt.ylim([-0.2, 0.2])
 plt.xlabel(r'$N_{class}$')
-plt.ylabel(r'$<\Delta \alpha^{CP}>$ [rad]')
+plt.ylabel(r'$<\Delta \alpha^{CP}_{max}>$ [rad]')
 #plt.title('Feautures list: Variant-All')
 
 ax = plt.gca()

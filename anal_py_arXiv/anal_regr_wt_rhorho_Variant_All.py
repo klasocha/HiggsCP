@@ -40,11 +40,13 @@ x = np.array([3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,4
 pathOUT = "figures/"
 filename = "regr_wt_acc_rhorho_Variant-All_nc"
 # example plt.plot(x, metrics_regr_Variant_All[:, 0],'o', label=r'$\sigma$' )
+plt.plot([0], marker='None',
+           linestyle='None', label=r'Regression: wt')
 plt.plot(x, metrics_regr_Variant_All[:, 0],'o', label=r'$|\Delta_{class}| < 1$')
 plt.plot(x, metrics_regr_Variant_All[:, 1],'x', label=r'$|\Delta_{class}| < 2$')
 plt.plot(x, metrics_regr_Variant_All[:, 2],'d', label=r'$|\Delta_{class}| < 3$')
 plt.plot(x, metrics_regr_Variant_All[:, 3],'v', label=r'$|\Delta_{class}| < 4$')
-plt.ylim([0.0, 1.5])
+plt.ylim([0.0, 1.6])
 plt.xticks(x)
 plt.legend()
 plt.xlabel(r'$N_{class}$')
@@ -75,11 +77,13 @@ pathOUT = "figures/"
 filename = "regr_wt_acc_alphaCP_rhorho_Variant-All_nc"
 
 # example plt.plot(x, metrics_regr_Variant_All[:, 0],'o', label=r'$\sigma$' )
-plt.plot(x, metrics_regr_Variant_All[:, 8],'o', label=r'$|\Delta\alpha^{CP}| < 0.25[rad]$')
-plt.plot(x, metrics_regr_Variant_All[:, 9],'x', label=r'$|\Delta\alpha^{CP}| < 0.50[rad]$')
-plt.plot(x, metrics_regr_Variant_All[:, 10],'d', label=r'$|\Delta\alpha^{CP}| < 0.75[rad]$')
-plt.plot(x, metrics_regr_Variant_All[:, 11],'v', label=r'$|\Delta\alpha^{CP}| < 1.0[rad]$')
-plt.ylim([0.0, 1.5])
+plt.plot([0], marker='None',
+           linestyle='None', label=r'Regression: wt')
+plt.plot(x, metrics_regr_Variant_All[:, 8],'o', label=r'$|\Delta\alpha^{CP}_{max}| < 0.25[rad]$')
+plt.plot(x, metrics_regr_Variant_All[:, 9],'x', label=r'$|\Delta\alpha^{CP}_{max}| < 0.50[rad]$')
+plt.plot(x, metrics_regr_Variant_All[:, 10],'d', label=r'$|\Delta\alpha^{CP}_{max}| < 0.75[rad]$')
+plt.plot(x, metrics_regr_Variant_All[:, 11],'v', label=r'$|\Delta\alpha^{CP}_{max}| < 1.0[rad]$')
+plt.ylim([0.0, 1.6])
 plt.xticks(x)
 plt.legend()
 plt.xlabel(r'$N_{class}$')
@@ -109,6 +113,8 @@ plt.clf()
 pathOUT = "figures/"
 filename = "regr_wt_meanDelt_class_rhorho_Variant-All_nc"
 
+plt.plot([0], marker='None',
+           linestyle='None', label=r'Regression: wt')
 plt.errorbar(x, metrics_regr_Variant_All[:,4], yerr=metrics_regr_Variant_All[:,14], label=r'$<\Delta_{class}> [idx]$', linestyle = '', marker = 'o', color = "black")
 plt.plot([3,51],[0,0],linestyle = "--", color = "black")
 plt.ylim([-0.5, 0.5])
@@ -141,7 +147,9 @@ plt.clf()
 pathOUT = "figures/"
 filename = "regr_wt_meanDelt_alphaCP_rhorho_Variant-All_nc"
 
-plt.errorbar(x, metrics_regr_Variant_All[:,7], yerr=metrics_regr_Variant_All[:,15], label=r'$<\Delta \alpha^{CP}> [rad]$', linestyle = '', marker = 'o', color = "black")
+plt.plot([0], marker='None',
+           linestyle='None', label=r'Regression: wt')
+plt.errorbar(x, metrics_regr_Variant_All[:,7], yerr=metrics_regr_Variant_All[:,15], label=r'$<\Delta \alpha^{CP}_{max}> [rad]$', linestyle = '', marker = 'o', color = "black")
 plt.plot([3,51],[0,0],linestyle = "--", color = "black")
 
 #plt.ylim([0.0, 0.5])
@@ -150,7 +158,7 @@ plt.legend()
 #plt.ylim([-0.5, 0.5])
 plt.ylim([-0.3, 0.3])
 plt.xlabel(r'$N_{class}$')
-plt.ylabel(r'$<\Delta \alpha^{CP}>$')
+plt.ylabel(r'$<\Delta \alpha^{CP}_{max}>$')
 #plt.title('Feautures list: Variant-All')
 
 ax = plt.gca()
@@ -208,6 +216,15 @@ plt.clf()
 
 pathOUT = "figures/"
 filename = "regr_wt_L2delt_rhorho_Variant_All_nc"
+
+#print metrics_regr_Variant_All[:,13]
+#print metrics_regr_Variant_All[:,17]
+
+plt.plot([0], marker='None',
+           linestyle='None', label=r'Regression: wt')
+# problem with format, should not be array
+# plt.errorbar(x, metrics_regr_Variant_All[:,13], yerr=metrics_regr_Variant_All[:,17], label=r'$l_2$ with $wt^{norm}$', linestyle = '', marker = 'o', color = "black")
+# plt.errorbar(x, metrics_regr_Variant_All[:,6], yerr=metrics_regr_Variant_All[:,16], label=r'$l_2$ with $wt$', linestyle = '', marker = 'o', color = "orange")
 
 plt.plot(x, metrics_regr_Variant_All[:, 13],'o', label=r'$l_2$ with $wt^{norm}$', color = "black")
 plt.plot(x, metrics_regr_Variant_All[:, 6],'d', label=r'$l_2$ with $wt$', color = "orange")

@@ -153,18 +153,22 @@ meanrad = np.mean(delt_argmax_nc21, dtype=np.float64) * k2PI/nc21
 stdrad  = np.std(delt_argmax_nc21, dtype=np.float64) * k2PI/nc21
 meanerrrad = stats.sem(delt_argmax_nc21) * k2PI/nc21
 
-table_vals=[[r"mean", r"= {:0.3f} $\pm$ {:1.3f}[idx] ".format(mean, meanerr)],
-            ["std", "= {:1.3f} [idx]".format(std)],
-            ["", ""],
-            ["mean", r"= {:0.3f} $\pm$ {:1.3f}[rad]".format(meanrad, meanerrrad)],
-            ["std", "= {:1.3f} [rad]".format(stdrad)]
+
+table_vals=[[r"Regression: $wt$"],
+            [" "],
+            [r"mean = {:0.3f} $\pm$ {:1.3f}[idx] ".format(mean, meanerr)],
+            ["std = {:1.3f} [idx]".format(std)],
+            [" "],
+            [r"mean = {:0.3f} $\pm$ {:1.3f}[rad]".format(meanrad, meanerrrad)],
+            ["std = {:1.3f} [rad]".format(stdrad)]
             ]
 
 table = plt.table(cellText=table_vals,
-                  colWidths = [0.08, 0.28],
+                  colWidths = [0.40],
                   cellLoc="left",
                   loc='upper right')
-table.set_fontsize(12)
+
+table.set_fontsize(14)
 
 for key, cell in table.get_celld().items():
     cell.set_linewidth(0)

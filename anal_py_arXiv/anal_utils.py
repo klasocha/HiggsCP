@@ -56,6 +56,8 @@ def calculate_metrics(calc_w, preds_w, num_classes):
 
     l1_delta_w = np.mean(np.abs(calc_w - preds_w), dtype=np.float64)
     l2_delta_w = np.sqrt(np.mean((calc_w - preds_w)**2), dtype=np.float64)
+    # problem with format, should not be array
+    l2_delta_w_err = stats.sem((calc_w - preds_w)**2)
 
     # calc_w, preds_w normalisation to probability
     calc_w_norm = calc_w / np.sum(calc_w, axis=1)[:, np.newaxis]
@@ -63,9 +65,11 @@ def calculate_metrics(calc_w, preds_w, num_classes):
  
     l1_delta_w_norm = np.mean(np.abs(calc_w_norm - preds_w_norm), dtype=np.float64)
     l2_delta_w_norm = np.sqrt(np.mean((calc_w_norm - preds_w_norm)**2), dtype=np.float64)
+    # problem with format, should not be array
+    l2_delta_w_norm_err = stats.sem((calc_w_norm - preds_w_norm)**2)
   
     
-    return np.array([acc0, acc1, acc2, acc3, mean_deltas, l1_delta_w, l2_delta_w, mean_deltas_rad, acc0_rad, acc1_rad, acc2_rad, acc3_rad,l1_delta_w_norm, l2_delta_w_norm, mean_deltas_err, mean_deltas_err_rad, ]) 
+    return np.array([acc0, acc1, acc2, acc3, mean_deltas, l1_delta_w, l2_delta_w, mean_deltas_rad, acc0_rad, acc1_rad, acc2_rad, acc3_rad,l1_delta_w_norm, l2_delta_w_norm, mean_deltas_err, mean_deltas_err_rad, l2_delta_w_err, l2_delta_w_norm_err ]) 
 
 
 def calculate_metrics_regr_c012s_from_file(directory, num_classes):

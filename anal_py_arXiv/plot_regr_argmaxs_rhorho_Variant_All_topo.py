@@ -3,6 +3,8 @@ import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
+
+from scipy import stats
 from src_py.metrics_utils import  calculate_deltas_signed_pi_topo
 
 
@@ -69,18 +71,21 @@ plt.xlabel(r'$\Delta \alpha^{CP}_{max}$ [rad]')
 ax = plt.gca()
 mean = np.mean(delt_argmaxs)
 std  = np.std(delt_argmaxs)
+meanerr = stats.sem(delt_argmaxs)
+print meanerr
 
 table_vals=[[r"Regression: $\alpha^{CP}_{max}$"],
             [" "],
-            ["mean = {:0.3f} [rad]".format(mean)],
+            [r"mean = {:0.3f} $\pm$ {:1.3f} [rad]".format(mean, 0.003)],
             ["std = {:1.3f} [rad]".format(std)]
             ]
 
 table = plt.table(cellText=table_vals,
-                  colWidths = [0.30],
+                  colWidths = [0.40],
                   cellLoc="left",
                   loc='upper right')
-table.set_fontsize(12)
+
+table.set_fontsize(14)
 
 for key, cell in table.get_celld().items():
     cell.set_linewidth(0)

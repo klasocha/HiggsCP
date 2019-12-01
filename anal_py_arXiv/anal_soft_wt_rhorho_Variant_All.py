@@ -69,7 +69,7 @@ plt.plot(x, metrics_Variant_All[:, 0],'o', label=r'$|\Delta_{class}| < 1$')
 plt.plot(x, metrics_Variant_All[:, 1],'x', label=r'$|\Delta_{class}| < 2$')
 plt.plot(x, metrics_Variant_All[:, 2],'d', label=r'$|\Delta_{class}| < 3$')
 plt.plot(x, metrics_Variant_All[:, 3],'v', label=r'$|\Delta_{class}| < 4$')
-plt.ylim([0.0, 1.5])
+plt.ylim([0.0, 1.6])
 plt.xticks(x)
 plt.legend()
 plt.xlabel(r'$N_{class}$')
@@ -102,11 +102,11 @@ filename = "soft_wt_acc_alphaCP_rhorho_Variant-All_nc"
 # example plt.plot(x, metrics_Variant_All[:, 0],'o', label=r'$\sigma$' )
 plt.plot([0], marker='None',
            linestyle='None', label=r'Classification: wt')
-plt.plot(x, metrics_Variant_All[:, 8],'o', label=r'$|\Delta\alpha^{CP}| < 0.25[rad]$')
-plt.plot(x, metrics_Variant_All[:, 9],'x', label=r'$|\Delta\alpha^{CP}| < 0.50[rad]$')
-plt.plot(x, metrics_Variant_All[:, 10],'d', label=r'$|\Delta\alpha^{CP}| < 0.75[rad]$')
-plt.plot(x, metrics_Variant_All[:, 11],'v', label=r'$|\Delta\alpha^{CP}| < 1.0[rad]$')
-plt.ylim([0.0, 1.5])
+plt.plot(x, metrics_Variant_All[:, 8],'o', label=r'$|\Delta\alpha^{CP}_{max}| < 0.25[rad]$')
+plt.plot(x, metrics_Variant_All[:, 9],'x', label=r'$|\Delta\alpha^{CP}_{max}| < 0.50[rad]$')
+plt.plot(x, metrics_Variant_All[:, 10],'d', label=r'$|\Delta\alpha^{CP}_{max}| < 0.75[rad]$')
+plt.plot(x, metrics_Variant_All[:, 11],'v', label=r'$|\Delta\alpha^{CP}_{max}| < 1.0[rad]$')
+plt.ylim([0.0, 1.6])
 plt.xticks(x)
 plt.legend()
 plt.xlabel(r'$N_{class}$')
@@ -136,7 +136,9 @@ plt.clf()
 pathOUT = "figures/"
 filename = "soft_wt_meanDelt_class_rhorho_Variant-All_nc"
 
-plt.errorbar(x, metrics_Variant_All[:,4], yerr=metrics_Variant_All[:,14], label='Classification: wt', linestyle = '', marker = 'o', color = "black")
+plt.plot([0], marker='None',
+           linestyle='None', label=r'Classification: wt')
+plt.errorbar(x, metrics_Variant_All[:,4], yerr=metrics_Variant_All[:,14], label=r'$<\Delta_{class}>$ [idx]', linestyle = '', marker = 'o', color = "black")
 plt.plot([3,51],[0,0],linestyle = "--", color = "black")
 plt.ylim([-0.5, 0.5])
 plt.xticks(x)
@@ -168,7 +170,9 @@ plt.clf()
 pathOUT = "figures/"
 filename = "soft_wt_meanDelt_alphaCP_rhorho_Variant-All_nc"
 
-plt.errorbar(x, metrics_Variant_All[:,7], yerr=metrics_Variant_All[:,15], label='Classification: wt', linestyle = '', marker = 'o', color = "black")
+plt.plot([0], marker='None',
+           linestyle='None', label=r'Classification: wt')
+plt.errorbar(x, metrics_Variant_All[:,7], yerr=metrics_Variant_All[:,15], label=r'$<\Delta \alpha^{CP}>$ [rad]', linestyle = '', marker = 'o', color = "black")
 plt.plot([3,51],[0,0],linestyle = "--", color = "black")
 
 #plt.ylim([0.0, 0.5])
@@ -235,7 +239,10 @@ plt.clf()
 pathOUT = "figures/"
 filename = "soft_wt_L2delt_rhorho_Variant_All_nc"
 
-plt.plot(x, metrics_Variant_All[:, 13],'o', label='Classification: wt', color = "black")
+print metrics_Variant_All[:, 13]
+plt.plot([0], marker='None',
+           linestyle='None', label=r'Classification: wt')
+plt.plot(x, metrics_Variant_All[:, 13],'o', label=r'$l_2$ with $wt^{norm}$', color = "black")
 
 plt.ylim([0.0, 0.1])
 plt.xticks(x)

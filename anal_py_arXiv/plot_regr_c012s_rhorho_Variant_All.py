@@ -18,6 +18,7 @@ calc_c012s  = np.load(pathIN+'test_regr_calc_c012s.npy')
 preds_c012s = np.load(pathIN+'test_regr_preds_c012s.npy')
 
         
+kPI = np.pi
 k2PI = 2 * np.pi
 #----------------------------------------------------------------------------------
 # ERW
@@ -136,15 +137,18 @@ std  = np.std(delt_c012s[:,0],dtype=np.float64)
 meanerr = stats.sem(delt_c012s[:,0])
 
 
-table_vals=[[r"mean", r"= {:0.3f}$\pm$ {:1.3f}".format(mean, meanerr)],
-            ["std", "= {:1.3f}".format(std)],
+table_vals=[[r"Regression: $C_0, C_1, C_2$"],
+            [" "],
+            [r"mean = {:0.3f} $\pm$ {:1.3f} ".format(mean, meanerr)],
+            ["std = {:1.3f}".format(std)]
             ]
 
 table = plt.table(cellText=table_vals,
-                  colWidths = [0.10, 0.30],
+                  colWidths = [0.40],
                   cellLoc="left",
                   loc='upper right')
-table.set_fontsize(12)
+
+table.set_fontsize(14)
 
 for key, cell in table.get_celld().items():
     cell.set_linewidth(0)
@@ -180,21 +184,25 @@ calc_std  = np.std(calc_c012s[:,0], dtype=np.float64)
 preds_mean = np.mean(preds_c012s[:,0], dtype=np.float64)
 preds_std  = np.std(preds_c012s[:,0], dtype=np.float64)
 
-table_vals=[["Gener.:","mean","= {:0.3f}".format(calc_mean)],
-            ["","std","= {:1.3f}".format(calc_std)],
-            ["", "", ""],
-            ["Pred.:","mean","= {:0.3f}".format(preds_mean)],
-            ["","std","= {:1.3f}".format(preds_std)]
+table_vals=[["Generated:"],
+            ["mean= {:0.3f}".format(calc_mean)],
+            ["std = {:1.3f}".format(calc_std)],
+            [""],
+            [r"Regression: $C_0, C_1, C_2$"],
+            ["mean= {:0.3f}".format(preds_mean)],
+            ["std = {:1.3f}".format(preds_std)]
             ]
 
 table = plt.table(cellText=table_vals,
-                  colWidths = [0.15, 0.09, 0.15],
+                  colWidths = [0.40],
                   cellLoc="left",
                   loc='upper right')
 
+table.set_fontsize(14)
+
 for key, cell in table.get_celld().items():
     cell.set_linewidth(0)
-    if key[0]>1:
+    if key[0]>2:
         cell._text.set_color('red')
 
 plt.tight_layout()
@@ -222,7 +230,7 @@ print delt_c012s[:,1]
 filename = "regr_c012s_C1_rhorho_Variant-All"
 plt.hist(calc_c012s[:,1], histtype='step', bins=50, linestyle='--', color = 'black')
 plt.hist(preds_c012s[:,1], histtype='step', bins=50, color = 'red')
-plt.ylim([0.0, 2000.0])
+plt.ylim([0.0, 2400.0])
 plt.xlim([-1.2, 1.2])
 plt.xlabel(r'$C_{1}$')
 #plt.title('Features list: Variant-All')
@@ -233,21 +241,25 @@ calc_std  = np.std(calc_c012s[:,1],dtype=np.float64)
 preds_mean = np.mean(preds_c012s[:,1],dtype=np.float64)
 preds_std  = np.std(preds_c012s[:,1],dtype=np.float64)
 
-table_vals=[["Gener.:","mean","= {:0.3f}".format(calc_mean)],
-            ["","std","= {:1.3f}".format(calc_std)],
-            ["", "", ""],
-            ["Pred.:","mean","= {:0.3f}".format(preds_mean)],
-            ["","std","= {:1.3f}".format(preds_std)]
+table_vals=[["Generated:"],
+            ["mean= {:0.3f}".format(calc_mean)],
+            ["std = {:1.3f}".format(calc_std)],
+            [""],
+            [r"Regression: $C_0, C_1, C_2$"],
+            ["mean= {:0.3f}".format(preds_mean)],
+            ["std = {:1.3f}".format(preds_std)]
             ]
 
 table = plt.table(cellText=table_vals,
-                  colWidths = [0.15, 0.09, 0.15],
+                  colWidths = [0.40],
                   cellLoc="left",
                   loc='upper right')
 
+table.set_fontsize(14)
+
 for key, cell in table.get_celld().items():
     cell.set_linewidth(0)
-    if key[0]>1:
+    if key[0]>2:
         cell._text.set_color('red')
 
 plt.tight_layout()
@@ -280,15 +292,18 @@ std  = np.std(delt_c012s[:,1],dtype=np.float64)
 meanerr = stats.sem(delt_c012s[:,1])
 
 
-table_vals=[[r"mean", r"= {:0.3f}$\pm$ {:1.3f}".format(mean, meanerr)],
-            ["std", "= {:1.3f}".format(std)],
+table_vals=[[r"Regression: $C_0, C_1, C_2$"],
+            [" "],
+            [r"mean = {:0.3f} $\pm$ {:1.3f} ".format(mean, meanerr)],
+            ["std = {:1.3f} ".format(std)]
             ]
 
 table = plt.table(cellText=table_vals,
-                  colWidths = [0.10, 0.30],
+                  colWidths = [0.40],
                   cellLoc="left",
                   loc='upper right')
-table.set_fontsize(12)
+
+table.set_fontsize(14)
 
 for key, cell in table.get_celld().items():
     cell.set_linewidth(0)
@@ -319,7 +334,7 @@ filename = "regr_c012s_C2_rhorho_Variant-All"
 plt.hist(calc_c012s[:,2], histtype='step', color = 'black', linestyle='--', bins=50)
 plt.hist(preds_c012s[:,2], histtype='step',  color = 'red', bins=50)
 plt.xlim([-1.2, 1.2])
-plt.ylim([0.0, 2000.0])
+plt.ylim([0.0, 2400.0])
 plt.xlabel(r'$C_{2}$')
 #plt.title('Features list: Variant-All')
 
@@ -339,9 +354,11 @@ table_vals=[["Generated:"],
             ]
 
 table = plt.table(cellText=table_vals,
-                  colWidths = [0.30],
+                  colWidths = [0.40],
                   cellLoc="left",
                   loc='upper right')
+
+table.set_fontsize(14)
 
 for key, cell in table.get_celld().items():
     cell.set_linewidth(0)
@@ -378,15 +395,18 @@ std  = np.std(delt_c012s[:,2],dtype=np.float64)
 meanerr = stats.sem(delt_c012s[:,2])
 
 
-table_vals=[[r"mean", r"= {:0.3f}$\pm$ {:1.3f}".format(mean, meanerr)],
-            ["std", "= {:1.3f}".format(std)],
+table_vals=[[r"Regression: $C_0, C_1, C_2$"],
+            [" "],
+            [r"mean = {:0.3f} $\pm$ {:1.3f}".format(mean, meanerr)],
+            ["std = {:1.3f}".format(std)]
             ]
 
 table = plt.table(cellText=table_vals,
-                  colWidths = [0.10, 0.30],
+                  colWidths = [0.40],
                   cellLoc="left",
                   loc='upper right')
-table.set_fontsize(12)
+
+table.set_fontsize(14)
 
 for key, cell in table.get_celld().items():
     cell.set_linewidth(0)
@@ -654,7 +674,7 @@ else:
 plt.clf()
 
 filename = "regr_c012s_calc_preds_argmax_rhorho_Variant-All_nc_51"
-plt.hist(calc_argmax_nc51, histtype='step', color = "black", bins=50, label = "Generated")
+plt.hist(calc_argmax_nc51, histtype='step', color = "black", bins=50, linestyle='--', label = "Generated")
 plt.hist(preds_argmax_nc51, histtype='step', color = "red", bins=50, label = r'Regression: $C_0, C_1, C_2$')
 plt.ylim([0, 1500])
 #plt.xlim([0, k2PI])
@@ -682,32 +702,34 @@ plt.clf()
 #----------------------------------------------------------------------------------
 calc_w_nc51  =  calc_weights(51, calc_c012s)
 preds_w_nc51 =  calc_weights(51, preds_c012s)
-delt_argmax_nc51 =  calculate_deltas_signed(np.argmax(preds_w_nc51[:], axis=1), np.argmax(calc_w_nc51[:], axis=1), 51)      
+delt_argmax_nc51 =  calculate_deltas_signed(np.argmax(preds_w_nc51[:], axis=1), np.argmax(calc_w_nc51[:], axis=1), 51)
+delt_argmax_nc51_pi =  delt_argmax_nc51*kPI/51.0
 
 filename = "regr_c012s_delt_argmax_rhorho_Variant-All_nc_51"
-plt.hist(delt_argmax_nc51, histtype='step', color = "black", bins=51)
+plt.hist(delt_argmax_nc51_pi, histtype='step', color = "black", bins = 51)
 plt.ylabel('Entries')
-plt.xlabel(r'$\alpha^{CP}_{max}: \Delta_{class}$ [idx]')
-#plt.title('Features list: Variant-All')
+plt.xlabel(r'$\Delta \alpha^{CP}_{max}$ [rad]')
 
 ax = plt.gca()
 mean = np.mean(delt_argmax_nc51)
 std  = np.std(delt_argmax_nc51)
+meanerr = stats.sem(delt_argmax_nc51)
 meanrad = np.mean(delt_argmax_nc51) * k2PI/51.0
 stdrad  = np.std(delt_argmax_nc51) * k2PI/51.0
+meanerrrad = stats.sem(delt_argmax_nc51) * k2PI/51.0
 
-table_vals=[["mean", "= {:0.3f} [idx]".format(mean)],
-            ["std", "= {:1.3f} [idx]".format(std)],
-            ["", ""],
-            ["mean", "= {:0.3f} [rad]".format(meanrad)],
-            ["std", "= {:1.3f} [rad]".format(stdrad)]
+table_vals=[[r"Regression: $C_0, C_1, C_2$"],
+            [" "],
+            [r"mean = {:0.3f} $\pm$ {:1.3f}[rad]".format(meanrad, meanerrrad)],
+            ["std = {:1.3f} [rad]".format(stdrad)]
             ]
 
 table = plt.table(cellText=table_vals,
-                  colWidths = [0.10, 0.22],
+                  colWidths = [0.40],
                   cellLoc="left",
                   loc='upper right')
-table.set_fontsize(12)
+
+table.set_fontsize(14)
 
 for key, cell in table.get_celld().items():
     cell.set_linewidth(0)
