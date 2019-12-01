@@ -27,6 +27,19 @@ def train(model, dataset, batch_size=128):
     sys.stdout.write("\n")
     return np.mean(losses)
 
+def get_loss(model, dataset, batch_size=128):
+    batches = dataset.n / batch_size
+    losses = []
+    sess = tf.get_default_session()
+    for i in range(batches):
+        x, weights, argmaxs, c012s, hits_argmaxs, hits_c012s, filt, = dataset.next_batch(batch_size)
+        loss = sess.run([model.loss],
+                           {model.x: x, model.weights: weights, model.argmaxs: argmaxs, model.c012s: c012s,
+                            model.hits_argmaxs: hits_argmaxs, model.hits_c012s: hits_c012s})
+        losses.append(loss)
+    return np.mean(losses)
+
+
 # ERW
 # tf_model knows nothing about classes <-->angle relations
 # operates on arrays which has dimention of num_classes
@@ -38,6 +51,8 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
     valid_accs   = []
     test_accs    = []
     train_losses = []
+    valid_losses = []
+    test_losses  = []
     train_L1_deltas = []
     train_L2_deltas = []
     valid_L1_deltas = []
@@ -56,8 +71,23 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
 
     for i in range(epochs):
         sys.stdout.write("\nEPOCH: %d \n" % (i + 1))
-        train_loss = train(model, data.train, batch_size)
-                
+        _ = train(model, data.train, batch_size)
+
+
+        train_loss = get_loss(model, data.train, batch_size=128)
+        valid_loss = get_loss(model, data.valid, batch_size=128)
+        test_loss  = get_loss(model, data.test, batch_size=128)
+
+        train_losses += [train_loss]
+        valid_losses += [valid_loss]
+        test_losses  += [test_loss]
+
+
+        print("TRAINING:    LOSS: %.3f \n" % (train_loss))
+        print("VALIDATION:  LOSS: %.3f \n" % (valid_loss))
+        print("TEST:        LOSS: %.3f \n" % (test_loss))
+
+        
         if model.tloss == 'soft_weights':
             train_acc, train_mean, train_l1_delta_w, train_l2_delta_w = evaluate(emodel, data.train, args, 100000, filtered=True)
             valid_acc, valid_mean, valid_l1_delta_w, valid_l2_delta_w = evaluate(emodel, data.valid, args, filtered=True)
@@ -73,7 +103,6 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             
             train_accs   += [train_acc]
             valid_accs   += [valid_acc]
-            train_losses += [train_loss]
             
             train_L1_deltas += [train_l1_delta_w]
             train_L2_deltas += [train_l2_delta_w]
@@ -108,10 +137,6 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
 
         if model.tloss == 'soft_c012s':
 
-            train_losses += [train_loss]
-            msg_str = "TRAINING:     LOSS: %.3f \n" % (train_loss)
-            print msg_str
-
             train_calc_c012s, train_pred_c012s = soft_c012s_predictions(emodel, data.valid, filtered=True)
             np.save(pathOUT + 'train_soft_calc_hits_c012s.npy', train_calc_c012s)
             np.save(pathOUT + 'train_soft_preds_hits_c012s.npy', train_pred_c012s)
@@ -125,10 +150,6 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             np.save(pathOUT + 'test_soft_preds_hits_c012s.npy', test_pred_c012s)
 
         if model.tloss == 'regr_c012s':
-
-            train_losses += [train_loss]
-            msg_str = "TRAINING:     LOSS: %.3f \n" % (train_loss)
-            print msg_str
 
             train_calc_c012s, train_pred_c012s = regr_c012s_predictions(emodel, data.train, filtered=True)
             np.save(pathOUT + 'train_regr_calc_c012s.npy', train_calc_c012s)
@@ -144,9 +165,9 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
 
         if model.tloss == 'regr_argmaxs':
 
-            train_losses += [train_loss]
-            msg_str = "TRAINING:     LOSS: %.3f \n" % (train_loss)
-            print msg_str
+            train_calc_argmaxs, train_pred_argmaxs = regr_argmaxs_predictions(emodel, data.train, filtered=True)
+            np.save(pathOUT + 'train_regr_calc_argmaxs.npy', train_calc_argmaxs)
+            np.save(pathOUT + 'train_regr_preds_argmaxs.npy', train_pred_argmaxs)
 
             valid_calc_argmaxs, valid_pred_argmaxs = regr_argmaxs_predictions(emodel, data.valid, filtered=True)
             np.save(pathOUT + 'valid_regr_calc_argmaxs.npy', valid_calc_argmaxs)
@@ -157,10 +178,6 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             np.save(pathOUT + 'test_regr_preds_argmaxs.npy', test_pred_argmaxs)
 
         if model.tloss == 'soft_argmaxs':
-
-            train_losses += [train_loss]
-            msg_str = "TRAINING:     LOSS: %.3f \n" % (train_loss)
-            print msg_str
 
             train_calc_argmaxs, train_pred_argmaxs = soft_argmaxs_predictions(emodel, data.train, filtered=True)
             np.save(pathOUT + 'train_soft_calc_hits_argmaxs.npy', train_calc_argmaxs)
@@ -176,9 +193,9 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
 
         if model.tloss == 'regr_weights':
 
-            train_losses += [train_loss]
-            msg_str = "TRAINING:     LOSS: %.3f \n" % (train_loss)
-            print msg_str
+            train_calc_weights, train_pred_weights = regr_weights_predictions(emodel, data.train, filtered=True)
+            np.save(pathOUT + 'train_regr_calc_weights.npy', train_calc_weights)
+            np.save(pathOUT + 'train_regr_preds_weights.npy', train_pred_weights)
 
             valid_calc_weights, valid_pred_weights = regr_weights_predictions(emodel, data.valid, filtered=True)
             np.save(pathOUT + 'valid_regr_calc_weights.npy', valid_calc_weights)
@@ -195,6 +212,10 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
         # storing history of training            
         np.save(pathOUT+'train_losses.npy', train_losses)
         print "train_losses", train_losses
+        np.save(pathOUT+'valid_losses.npy', valid_losses)
+        print "valid_losses", valid_losses
+        np.save(pathOUT+'test_losses.npy',  test_losses)
+        print "tets_losses", test_losses
 
         np.save(pathOUT+'train_accs.npy', train_accs )
         print "train_accs", train_accs
@@ -223,31 +244,51 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
         # storing history of training            
         np.save(pathOUT+'train_losses_soft_c012s.npy', train_losses)
         print "train_losses_soft_c012s", train_losses
+        np.save(pathOUT+'valid_losses_soft_c012s.npy', valid_losses)
+        print "valid_losses_soft_c012s", valid_losses
+        np.save(pathOUT+'test_losses_soft_c012s.npy',  test_losses)
+        print "tets_losses_soft_c012s", test_losses
                 
     if model.tloss == 'regr_argmaxs':
 
         # storing history of training            
         np.save(pathOUT+'train_losses_regr_argmaxs.npy', train_losses)
         print "train_losses_regr_argmaxs", train_losses
+        np.save(pathOUT+'valid_losses_regr_argmax.npy', valid_losses)
+        print "valid_losses_regr_argmax", valid_losses
+        np.save(pathOUT+'test_losses_regr_argmax.npy',  test_losses)
+        print "test_losses_regr_argmax", test_losses
                 
     if model.tloss == 'soft_argmaxs':
 
         # storing history of training            
         np.save(pathOUT+'train_losses_soft_argmaxs.npy', train_losses)
         print "train_losses_soft_argmaxs", train_losses
+        np.save(pathOUT+'valid_losses_soft_argmaxs.npy', valid_losses)
+        print "valid_losses_soft_argmaxs", valid_losses
+        np.save(pathOUT+'test_losses_soft_argmaxs.npy',  test_losses)
+        print "test_losses_soft_argmaxs", test_losses
 
                  
     if model.tloss == 'regr_c012s':
 
         # storing history of training            
         np.save(pathOUT+'train_losses_regr_c012s.npy', train_losses)
-        print "train_losses_c012s", train_losses
+        print "train_losses_regr_c012s", train_losses
+        np.save(pathOUT+'valid_losses_regr_c012ss.npy', valid_losses)
+        print "valid_losses_regr_c012s", valid_losses
+        np.save(pathOUT+'test_losses_regr_c012s.npy',  test_losses)
+        print "test_losses_regr_c012s", test_losses
                  
     if model.tloss == 'regr_weights':
 
         # storing history of training            
         np.save(pathOUT+'train_losses_weights.npy', train_losses)
         print "train_losses_weights", train_losses
+        np.save(pathOUT+'valid_losses_weights.npy', valid_losses)
+        print "valid_losses_weights", valid_losses
+        np.save(pathOUT+'test_losses_weights.npy',  test_losses)
+        print "test_losses_weights", test_losses
    
     return train_accs, valid_accs, test_accs
 
