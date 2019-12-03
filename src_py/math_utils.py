@@ -1,6 +1,17 @@
 import numpy as np
 
 
+def mod_2pi(arr):
+    result = arr
+    while np.any(result < 0):
+        result += 2 * np.pi * (result < 0)
+
+    while np.any(result >= 2 * np.pi):
+        result -= 2 * np.pi * (result >= 2 * np.pi)
+
+    return result
+
+
 def p_norm_cross_product(v1, v2):
     v1 = v1.vec[:, :3]
     v2 = v2.vec[:, :3]

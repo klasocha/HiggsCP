@@ -3,6 +3,7 @@ import tensorflow as tf
 from sklearn.metrics import roc_auc_score, accuracy_score
 import sys
 
+from src_py.math_utils import mod_2pi
 from src_py.metrics_utils import calculate_deltas_unsigned, calculate_deltas_signed
 
 # Issue with regr_c012s, not learning well after modifications of last weeks, last
@@ -146,10 +147,14 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
 
             valid_calc_argmaxs, valid_pred_argmaxs = regr_argmaxs_predictions(emodel, data.valid, filtered=True)
             np.save(pathOUT + 'valid_regr_calc_argmaxs.npy', valid_calc_argmaxs)
+            if args.TOPOLOGY:
+                valid_pred_argmaxs = mod_2pi(valid_pred_argmaxs)
             np.save(pathOUT + 'valid_regr_preds_argmaxs.npy', valid_pred_argmaxs)
 
             test_calc_argmaxs, test_pred_argmaxs = regr_argmaxs_predictions(emodel, data.test, filtered=True)
             np.save(pathOUT + 'test_regr_calc_argmaxs.npy', test_calc_argmaxs)
+            if args.TOPOLOGY:
+                test_pred_argmaxs = mod_2pi(test_pred_argmaxs)
             np.save(pathOUT + 'test_regr_preds_argmaxs.npy', test_pred_argmaxs)
 
         if model.tloss == 'soft_argmaxs':
@@ -545,12 +550,11 @@ class NeuralNetwork(object):
             labels = hits_c012s / tf.tile(tf.reshape(tf.reduce_sum(hits_c012s, axis=1), (-1, 1)), (1,num_classes))
             self.loss = loss = tf.nn.softmax_cross_entropy_with_logits(logits=sx, labels=labels)
         elif tloss == "regr_argmaxs":
-            # not learning close to angle = 0, 2pi
+            # not learning close to angle = 0, 2pi without "topology" trait
             sx = linear(x, "regr", 1)
             self.sx = sx
             self.p = sx
             if topology:
-                # self.loss = loss = tf.reduce_mean(tf.square(tf.math.minimum(self.argmaxs - sx, 2*np.pi - self.argmaxs + sx)))
                 self.loss = loss = tf.reduce_mean(1 - tf.math.cos(self.argmaxs - sx))
             else:
                 self.loss = loss = tf.losses.mean_squared_error(self.argmaxs, sx)

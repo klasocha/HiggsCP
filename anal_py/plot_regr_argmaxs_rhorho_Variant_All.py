@@ -9,16 +9,11 @@ from scipy import optimize
 from anal_utils import weight_fun, calc_weights
 from src_py.metrics_utils import calculate_deltas_signed_pi
 
-pathIN = "../temp_results/nn_rhorho_Variant-All_regr_argmaxs_hits_c0s_Unweighted_False_FILTER_NUM_CLASSES_21/monit_npy/"
+pathIN = "../temp_results/nn_rhorho_Variant-All_regr_argmaxs_hits_c0s_Unweighted_False_FILTER_NUM_CLASSES_51/monit_npy/"
 pathOUT = "figures/"
 
 calc_argmaxs = np.load(pathIN + 'test_regr_calc_argmaxs.npy')
 preds_argmaxs = np.load(pathIN + 'test_regr_preds_argmaxs.npy')
-
-preds_argmaxs += ((preds_argmaxs < 0) * 2 * np.pi)
-preds_argmaxs += ((preds_argmaxs < 0) * 2 * np.pi)
-
-preds_argmaxs -= ((preds_argmaxs > (2 * np.pi)) * 2 * np.pi)
 
 print calc_argmaxs
 print preds_argmaxs
