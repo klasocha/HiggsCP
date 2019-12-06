@@ -29,7 +29,7 @@ https://github.com/klasocha/HiggsCP/blob/erichter-CPmix/main.py
 tshis script is only managing configuration and activates required channel of analysis
 
 example
-python main.py -e 5 -t nn_rhorho -i $RHORHO_DATA -f Variant-All --num_classes 10
+python main.py -e 5 -t nn_rhorho -i $RHORHO_DATA -f Variant-All --num_classes 11
 
 Components:
 ------------
@@ -39,7 +39,7 @@ https://github.com/klasocha/HiggsCP/blob/erichter-CPmix/train_rhorho.py
 
 what is done
 
-  --> fitted are A, B, C coefficients of the functional form and stored in the popts.npy file
+  --> fitted are C_0, C_1, C_2 coefficients of the functional form and stored in the popts.npy file
   
   --> calculated are weights (based on the functional form) for required number of classes,
       stored in the weights.npy file
