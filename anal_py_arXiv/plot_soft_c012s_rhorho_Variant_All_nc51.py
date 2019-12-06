@@ -120,18 +120,24 @@ nc51=51.0
 
 filename = "soft_c012s_delt_argmax_rhorho_Variant-All_nc_51"
 plt.hist(delt_argmax_nc51, histtype='step', bins=51, color='black')
-plt.xlabel(r'$\Delta_{class}$')
+plt.xlabel(r'$\Delta_{class} [idx]$')
 #plt.title('Features list: Variant-All')
 
 ax = plt.gca()
-mean = np.mean(delt_argmax_nc51) * k2PI/51.0
-std  = np.std(delt_argmax_nc51) * k2PI/51.0
-meanerr = stats.sem(delt_argmax_nc51) * k2PI/51.0
+mean = np.mean(delt_argmax_nc51) 
+std  = np.std(delt_argmax_nc51) 
+meanerr = stats.sem(delt_argmax_nc51)
+meanrad = np.mean(delt_argmax_nc51) * k2PI/51.0
+stdrad  = np.std(delt_argmax_nc51) * k2PI/51.0
+meanraderr = stats.sem(delt_argmax_nc51) * k2PI/51.0
 
 table_vals=[[r'Classification:$C_0, C_1, C_2$'],
             [" "],
-            [r"mean = {:0.3f}$\pm$ {:1.3f} [rad]".format(mean, meanerr)],
-            ["std = {:1.3f} [rad]".format(std)]
+            [r"mean = {:0.3f}$\pm$ {:1.3f} [idx]".format(mean, meanerr)],
+            ["std = {:1.3f} [idx]".format(std)],
+            [" "],
+            [r"meanrad = {:0.3f}$\pm$ {:1.3f} [rad]".format(meanrad, meanraderr)],
+            ["stdrad = {:1.3f} [rad]".format(stdrad)]
             ]
 
 table = plt.table(cellText=table_vals,
