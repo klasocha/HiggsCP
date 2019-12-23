@@ -209,7 +209,7 @@ if filename:
     print('Saved '+pathOUT + filename+".pdf")
 else:
     plt.show()
-    
+
 #---------------------------------------------------------------------
 plt.clf()
 #---------------------------------------------------------------------
@@ -246,4 +246,136 @@ else:
 #---------------------------------------------------------------------
 plt.clf()
 #---------------------------------------------------------------------
- 
+
+pathOUT = "figures/"
+filename = "soft_wt_L1_rhorho_Variant_All_nc"
+
+plt.plot(x, metrics_Variant_All[:, 16],'o', label=r'$l_1$')
+
+plt.xticks(np.arange(3, 52, 6))
+plt.xlim([1, 53])
+
+plt.errorbar(x, metrics_Variant_All[:, 16], yerr=metrics_Variant_All[:, 17], linestyle = '', capsize=2)
+
+plt.legend()
+plt.xlabel(r'$N_{class}$')
+plt.ylabel(r'$l_1$')
+
+ax = plt.gca()
+plt.tight_layout()
+
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+#---------------------------------------------------------------------
+plt.clf()
+#---------------------------------------------------------------------
+
+pathOUT = "figures/"
+filename = "soft_wt_L1_wtnorm_rhorho_Variant_All_nc"
+
+plt.plot(x, metrics_Variant_All[:, 18],'o', label=r'$l_1$ with $wt^{norm}$')
+
+plt.xticks(np.arange(3, 52, 6))
+plt.xlim([1, 53])
+
+plt.errorbar(x, metrics_Variant_All[:, 18], yerr=metrics_Variant_All[:, 19], linestyle = '', capsize=2)
+
+plt.legend()
+plt.xlabel(r'$N_{class}$')
+plt.ylabel(r'$l_1$')
+
+ax = plt.gca()
+plt.tight_layout()
+
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+#---------------------------------------------------------------------
+plt.clf()
+#---------------------------------------------------------------------
+
+pathOUT = "figures/"
+filename = "soft_wt_L2_rhorho_Variant_All_nc"
+
+plt.plot(x, metrics_Variant_All[:, 20],'o', label=r'$l_2$')
+
+plt.xticks(np.arange(3, 52, 6))
+plt.xlim([1, 53])
+
+plt.errorbar(x, metrics_Variant_All[:, 20], yerr=metrics_Variant_All[:, 21], linestyle = '', capsize=2)
+
+plt.legend()
+plt.xlabel(r'$N_{class}$')
+plt.ylabel(r'$l_2$')
+
+ax = plt.gca()
+plt.tight_layout()
+
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+#---------------------------------------------------------------------
+plt.clf()
+#---------------------------------------------------------------------
+
+pathOUT = "figures/"
+filename = "soft_wt_L2_wtnorm_rhorho_Variant_All_nc"
+
+plt.plot(x, metrics_Variant_All[:, 22],'o', label=r'$l_2$ with $wt^{norm}$')
+
+plt.xticks(np.arange(3, 52, 6))
+plt.xlim([1, 53])
+
+plt.errorbar(x, metrics_Variant_All[:, 22], yerr=metrics_Variant_All[:, 23], linestyle = '', capsize=2)
+
+plt.legend()
+plt.xlabel(r'$N_{class}$')
+plt.ylabel(r'$l_2$')
+
+ax = plt.gca()
+plt.tight_layout()
+
+if filename:
+    try:
+        os.makedirs(pathOUT)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    plt.savefig(pathOUT + filename+".eps")
+    print('Saved '+pathOUT + filename+".eps")
+    plt.savefig(pathOUT + filename+".pdf")
+    print('Saved '+pathOUT + filename+".pdf")
+else:
+    plt.show()
+#---------------------------------------------------------------------
+plt.clf()
+#---------------------------------------------------------------------
+

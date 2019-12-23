@@ -60,12 +60,30 @@ def calculate_metrics(calc_w, preds_w, num_classes):
     # calc_w, preds_w normalisation to probability
     calc_w_norm = calc_w / np.sum(calc_w, axis=1)[:, np.newaxis]
     preds_w_norm = preds_w / np.sum(preds_w, axis=1)[:, np.newaxis]
- 
+
     l1_delta_w_norm = np.mean(np.abs(calc_w_norm - preds_w_norm), dtype=np.float64)
     l2_delta_w_norm = np.sqrt(np.mean((calc_w_norm - preds_w_norm)**2), dtype=np.float64)
-  
-    
-    return np.array([acc0, acc1, acc2, acc3, mean_deltas, l1_delta_w, l2_delta_w, mean_deltas_rad, acc0_rad, acc1_rad, acc2_rad, acc3_rad,l1_delta_w_norm, l2_delta_w_norm, mean_deltas_err, mean_deltas_err_rad, ]) 
+
+    l1 = [np.sum(np.abs(row)) for row in calc_w - preds_w]
+    l1_avg = np.average(l1)
+    l1_stddev = np.std(l1)
+
+    l1_norm = [np.sum(np.abs(row)) for row in calc_w_norm - preds_w_norm]
+    l1_norm_avg = np.average(l1_norm)
+    l1_norm_stddev = np.std(l1_norm)
+
+    l2 = [np.sqrt(np.sum(row**2)) for row in calc_w - preds_w]
+    l2_avg = np.average(l2)
+    l2_stddev = np.std(l2)
+
+    l2_norm = [np.sqrt(np.sum(row**2)) for row in calc_w_norm - preds_w_norm]
+    l2_norm_avg = np.average(l2_norm)
+    l2_norm_stddev = np.std(l2_norm)
+
+    return np.array([acc0, acc1, acc2, acc3, mean_deltas, l1_delta_w, l2_delta_w, mean_deltas_rad, acc0_rad, acc1_rad,
+                     acc2_rad, acc3_rad,l1_delta_w_norm, l2_delta_w_norm, mean_deltas_err, mean_deltas_err_rad,
+                     l1_avg, l1_stddev, l1_norm_avg, l1_norm_stddev,
+                     l2_avg, l2_stddev, l2_norm_avg, l2_norm_stddev])
 
 
 def calculate_metrics_regr_c012s_from_file(directory, num_classes):
