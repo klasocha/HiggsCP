@@ -647,8 +647,8 @@ plt.clf()
 #----------------------------------------------------------------------------------
 calc_w_nc51  =  calc_weights(51, calc_c012s)
 preds_w_nc51 =  calc_weights(51, preds_c012s)
-preds_argmax_nc51 =  np.argmax(preds_w_nc51[:], axis=1) * k2PI/51.0    
-calc_argmax_nc51 =  np.argmax(calc_w_nc51[:], axis=1) * k2PI/51.0    
+preds_argmax_nc51 =  np.argmax(preds_w_nc51[:], axis=1) * k2PI/50.0    
+calc_argmax_nc51 =  np.argmax(calc_w_nc51[:], axis=1) * k2PI/50.0    
 
 filename = "regr_c012s_calc_argmax_rhorho_Variant-All_nc_51"
 plt.hist(preds_argmax_nc51, histtype='step', bins=51)
@@ -659,7 +659,7 @@ plt.xlabel(r'$\alpha^{CP}_{max}$ [rad]')
 plt.tight_layout()
 
 if filename:
-    try:
+    try:f
         os.makedirs(pathOUT)
     except OSError as e:
         if e.errno != errno.EEXIST:
@@ -675,7 +675,7 @@ plt.clf()
 
 filename = "regr_c012s_calc_preds_argmax_rhorho_Variant-All_nc_51"
 plt.hist(calc_argmax_nc51, histtype='step', color = "black", bins=50, linestyle='--', label = "Generated")
-plt.hist(preds_argmax_nc51, histtype='step', color = "red", bins=50, label = r'Regression: $C_0, C_1, C_2$')
+plt.hist(preds_argmax_nc51, histtype='step', color = "orange", bins=50, label = r'Regression: $C_0, C_1, C_2$')
 plt.ylim([0, 1500])
 #plt.xlim([0, k2PI])
 plt.ylabel('Entries')

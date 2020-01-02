@@ -131,13 +131,13 @@ meanrad = np.mean(delt_argmax_nc51) * k2PI/51.0
 stdrad  = np.std(delt_argmax_nc51) * k2PI/51.0
 meanraderr = stats.sem(delt_argmax_nc51) * k2PI/51.0
 
-table_vals=[[r'Classification:$C_0, C_1, C_2$'],
+table_vals=[[r'Classification: $C_0, C_1, C_2$'],
             [" "],
             [r"mean = {:0.3f}$\pm$ {:1.3f} [idx]".format(mean, meanerr)],
             ["std = {:1.3f} [idx]".format(std)],
             [" "],
-            [r"meanrad = {:0.3f}$\pm$ {:1.3f} [rad]".format(meanrad, meanraderr)],
-            ["stdrad = {:1.3f} [rad]".format(stdrad)]
+            [r"mean = {:0.3f}$\pm$ {:1.3f} [rad]".format(meanrad, meanraderr)],
+            ["std = {:1.3f} [rad]".format(stdrad)]
             ]
 
 table = plt.table(cellText=table_vals,

@@ -66,7 +66,7 @@ plt.legend()
 #plt.ylim([0.0, 0.4])
 plt.xlabel('Number of epochs')
 plt.xticks(x)
-plt.ylabel(r'Probability $|\Delta_{class}|$ = 0')
+plt.ylabel(r'Fraction $|\Delta_{class}|$ = 0')
 #plt.title('Features list: Variant-All')
     
 if filename:

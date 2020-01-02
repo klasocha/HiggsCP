@@ -13,7 +13,10 @@ def hits_fun(classes, x, num_classes):
     for i in range(num_classes-1):
         if x >= classes[i] and  x < classes[i+1]:
              hits[i] = 1.0
-
+#   fix for filling the last bin (?)             
+    if( x >=  classes[i+1]):
+       hits[i] = 1.0
+       
     return hits
 
 

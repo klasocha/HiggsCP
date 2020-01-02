@@ -24,8 +24,8 @@ filename = "rhorho_roc_auc_w_nc_21"
 
 k2PI=2* np.pi
 x = np.linspace(0, k2PI, 21)
-plt.plot(x, oracle_roc_auc_Variant_All,'o', color='black', label='Oracle')
-plt.plot(x, roc_auc_Variant_All,'x', color='red', label='Variant-All')
+plt.plot(x, oracle_roc_auc_Variant_All,'o', color='black', label='Oracle predictions')
+plt.plot(x, roc_auc_Variant_All,'d', color='orange', label='Binary classification')
 ##plt.plot(x, roc_auc_Variant_4,'d', label='Variant-4.1')
 ##plt.plot(x, roc_auc_Variant_1,'v', label='Variant-1.1')
 

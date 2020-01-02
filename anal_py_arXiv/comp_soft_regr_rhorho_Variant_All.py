@@ -82,10 +82,10 @@ plt.plot(x, metrics_regr_Variant_All[:, 3],'v', label=r'$|\Delta_{class}| < 4$')
 plt.legend(loc='upper right', ncol=1)
 plt.ylim([0.1, 1.1])
 plt.yticks(np.arange(0.2, 1.1, 0.2))
-plt.xticks(np.arange(3, 52, 6))
+#plt.xticks(np.arange(3, 52, 6))
 plt.xlim([1, 53])
 plt.xlabel(r'$N_{class}$')
-plt.ylabel('Probability')
+plt.ylabel('Fraction')
 #plt.title('Feautures list: Variant-All')
 
 ax = plt.gca()
@@ -130,10 +130,10 @@ plt.plot(x, metrics_regr_Variant_All[:,11],'v', label=r'$|\Delta\alpha^{CP}_{max
 plt.legend(loc='upper right', ncol=1)
 plt.ylim([0.1, 1.1])
 plt.yticks(np.arange(0.2, 1.1, 0.2))
-plt.xticks(np.arange(3, 52, 6))
+#plt.xticks(np.arange(3, 52, 6))
 plt.xlim([1, 53])
 plt.xlabel(r'$N_{class}$')
-plt.ylabel('Probability')
+plt.ylabel('Fraction')
 #plt.title('Feautures list: Variant-All')
 
 ax = plt.gca()
@@ -166,7 +166,7 @@ plt.plot(x, metrics_regr_Variant_All[:, 12],'d', label=r'Regression: $C_0, C_1, 
 
 plt.yticks(np.arange(0.0, 0.09, 0.02))
 plt.ylim([-0.01, 0.09])
-plt.xticks(np.arange(3, 52, 6))
+#plt.xticks(np.arange(3, 52, 6))
 plt.legend()
 plt.xlabel(r'$N_{class}$')
 plt.ylabel(r'$l_1$ with $wt^{norm}')
@@ -192,17 +192,21 @@ else:
 plt.clf()
 #---------------------------------------------------------------------
 
+#binning for horisontal axis
+x = np.array([3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51])
 
 
 pathOUT = "figures/"
 filename = "comp_soft_regr_L2delt_wt_rhorho_Variant-All_nc"
 
-plt.plot(x, metrics_softmax_Variant_All[:, 6],'o', label='Classification: wt')
-plt.plot(x, metrics_regr_Variant_All[:, 13],'d', label=r'Regression: $C_0, C_1, C_2$')
+plt.plot(x, metrics_softmax_Variant_All[:, 13]*x,'o', label='Classification: wt')
+plt.plot([3,51],[0.2,0.2],linestyle = "--", color = "black")
+plt.plot(x, metrics_regr_Variant_All[:, 13]*x,'d', label=r'Regression: $C_0, C_1, C_2$')
 
-plt.yticks(np.arange(0.0, 0.09, 0.02))
-plt.ylim([-0.01, 0.09])
-plt.xticks(np.arange(3, 52, 6))
+
+#plt.yticks(np.arange(0.0, 0.09, 0.02))
+plt.ylim([-0.0, 0.40])
+plt.xticks(x)
 plt.legend()
 plt.xlabel(r'$N_{class}$')
 plt.ylabel(r'$l_2$ with $wt^{norm}$')

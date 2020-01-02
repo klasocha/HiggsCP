@@ -48,7 +48,7 @@ plt.ylim([0.0, 1.5])
 plt.xticks(x)
 plt.legend()
 plt.xlabel(r'$N_{class}$')
-plt.ylabel('Probability')
+plt.ylabel('Fraction')
 plt.title('Feautures list: Variant-All')
 
 ax = plt.gca()
@@ -83,7 +83,7 @@ plt.ylim([0.0, 1.5])
 plt.xticks(x)
 plt.legend()
 plt.xlabel(r'$N_{class}$')
-plt.ylabel('Probability')
+plt.ylabel('Fraction')
 plt.title('Feautures list: Variant-All')
 
 ax = plt.gca()
@@ -176,7 +176,6 @@ plt.clf()
 
 pathOUT = "figures/"
 filename = "regr_c012s_L1delt_w_rhorho_Variant_All"
-
 plt.plot(x, metrics_Variant_All[:, 12],'o', label=r'$l_1$ with $wt^{norm}$')
 plt.plot(x, metrics_Variant_All[:, 5],'d', label=r'$l_1$ with $wt$')
 
@@ -212,15 +211,18 @@ plt.clf()
 pathOUT = "figures/"
 filename = "regr_c012s_L2delt_w_rhorho_Variant_All"
 
-plt.plot(x, metrics_Variant_All[:, 13],'o', label=r'$l_2$ with $wt^{norm}$')
-plt.plot(x, metrics_Variant_All[:, 6],'d', label=r'$l_2$ with $wt$')
+plt.plot([0], marker='None',
+           linestyle='None', label=r'Regression: $C_0, C_1, C_2$')
+plt.plot(x, metrics_Variant_All[:, 13]*x,'o', color = "black", label=r'$l_2$ with $wt^{norm}$')
+plt.plot([3,51],[0.2,0.2],linestyle = "--", color = "black")
+plt.plot(x, metrics_Variant_All[:, 6],'d', color = "orange", label=r'$l_2$ with $wt$')
 
-plt.ylim([0.0, 0.3])
+plt.ylim([0.0, 0.4])
 plt.xticks(x)
 plt.legend()
 plt.xlabel(r'$N_{class}$')
 plt.ylabel(r'$l_2$')
-plt.title('Feautures list: Variant-All')
+#plt.title('Feautures list: Variant-All')
 
 ax = plt.gca()
 plt.tight_layout()

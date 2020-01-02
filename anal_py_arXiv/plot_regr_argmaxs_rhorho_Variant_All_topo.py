@@ -37,8 +37,8 @@ k2PI = 2 * np.pi
 filename = "regr_argmaxs_calc_preds_argmax_rhorho_Variant-All_topo"
 
 plt.hist(calc_argmaxs, histtype='step', bins=50,  color = 'black', linestyle='--', label="Generated")
-plt.hist(preds_argmaxs, histtype='step', bins=50, color = 'red', label=r"Regression: $\alpha^{CP}_{max}$")
-plt.xlim([-0.25, k2PI+0.25])
+plt.hist(preds_argmaxs, histtype='step', bins=50, color = 'orange', label=r"Regression: $\alpha^{CP}_{max}$")
+#plt.xlim([-0.25, k2PI+0.25])
 plt.ylim([0, 1700])
 plt.xlabel(r'$\alpha^{CP}_{max}$[rad]')
 #plt.title('Features list: Variant-All')

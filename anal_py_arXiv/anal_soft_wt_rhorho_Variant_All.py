@@ -73,7 +73,7 @@ plt.ylim([0.0, 1.6])
 plt.xticks(x)
 plt.legend()
 plt.xlabel(r'$N_{class}$')
-plt.ylabel('Probability')
+plt.ylabel('Fraction')
 #plt.title('Feautures list: Variant-All')
 
 ax = plt.gca()
@@ -110,7 +110,7 @@ plt.ylim([0.0, 1.6])
 plt.xticks(x)
 plt.legend()
 plt.xlabel(r'$N_{class}$')
-plt.ylabel('Probability')
+plt.ylabel('Fraction')
 #plt.title('Feautures list: Variant-All')
 
 ax = plt.gca()
@@ -242,9 +242,10 @@ filename = "soft_wt_L2delt_rhorho_Variant_All_nc"
 print metrics_Variant_All[:, 13]
 plt.plot([0], marker='None',
            linestyle='None', label=r'Classification: wt')
-plt.plot(x, metrics_Variant_All[:, 13],'o', label=r'$l_2$ with $wt^{norm}$', color = "black")
+plt.plot(x, metrics_Variant_All[:, 13]*x,'o', label=r'$l_2$ with $wt^{norm}$', color = "black")
+plt.plot([3,51],[0.2,0.2],linestyle = "--", color = "black")
 
-plt.ylim([0.0, 0.1])
+plt.ylim([0.0, 0.4])
 plt.xticks(x)
 plt.legend()
 plt.xlabel(r'$N_{class}$')
