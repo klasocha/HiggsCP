@@ -595,9 +595,10 @@ class NeuralNetwork(object):
             self.sx = sx
             self.p = sx
             # old implementation
-            self.loss = loss = tf.losses.mean_squared_error(self.argmaxs, sx)
+            # self.loss = loss = tf.losses.mean_squared_error(self.argmaxs, sx)
             # new proposal by J. Kurek, does not work without correcting at analysis step
-            # self.loss = loss = tf.reduce_mean(1 - tf.math.cos(self.argmaxs - sx))
+            # use for plotting script with "_topo" extension
+            self.loss = loss = tf.reduce_mean(1 - tf.math.cos(self.argmaxs - sx))
         elif tloss == "regr_c012s":
             sx = linear(x, "regr", 3)
             self.sx = sx
