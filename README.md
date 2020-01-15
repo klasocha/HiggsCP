@@ -1,5 +1,7 @@
 How to prepare data: case of rho-rho
 
+Problem solving raport by Jacek Kurek: https://www.overleaf.com/read/nxbjfrqzmxfs
+
 Prepare data: step 1:
 ---------------------
 Original data are in the files
