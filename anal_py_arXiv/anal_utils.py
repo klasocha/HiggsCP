@@ -24,6 +24,12 @@ def calc_argmaxs_distances(pred_arg_maxs, calc_arg_maxs, num_class):
     return calculate_deltas_signed(calc_arg_maxs, pred_arg_maxs, num_class)
 
 
+def calculate_regr_metrics_from_file(directory, num_classes):
+    calc_w = np.load(os.path.join(directory, 'test_regr_calc_weights.npy'))
+    preds_w = np.load(os.path.join(directory, 'test_regr_preds_weights.npy'))
+    return calculate_metrics(calc_w, preds_w, num_classes)
+
+
 def calculate_metrics_from_file(directory, num_classes):
     calc_w = np.load(os.path.join(directory, 'softmax_calc_w.npy'))
     preds_w = np.load(os.path.join(directory, 'softmax_preds_w.npy'))
