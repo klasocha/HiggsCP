@@ -109,7 +109,7 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
             valid_L1_deltas += [valid_l1_delta_w]
             valid_L2_deltas += [valid_l2_delta_w]
 
-            if valid_acc == np.max(valid_accs):
+            if valid_loss == np.min(valid_losses):
                 test_acc, test_mean, test_l1_delta_w, test_l2_delta_w = evaluate(emodel, data.test, args, filtered=True)
                 msg_str_3 = "TESTING:      acc: %.3f mean  %.3f L1_delta_w: %.3f, L2_delta_w: %.3f \n" % (test_acc, test_mean, test_l1_delta_w, test_l2_delta_w)
                 print msg_str_3
@@ -122,6 +122,8 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
                 calc_w, preds_w = softmax_predictions(emodel, data.test, filtered=True)
 
                 # calc_w, preds_w normalisation to probability
+
+                np.save(pathOUT+'softmax_calc_wpre.npy', calc_w)
                 calc_w = calc_w / np.sum(calc_w, axis=1)[:, np.newaxis]
                 preds_w = preds_w / np.sum(preds_w, axis=1)[:, np.newaxis]
 
@@ -133,6 +135,10 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
                 # print preds_w
                 np.save(pathOUT+'softmax_calc_w.npy', calc_w)
                 np.save(pathOUT+'softmax_preds_w.npy', preds_w)
+                np.save(pathOUT+'c012s.npy', data.test.c012s)
+                np.save(pathOUT+'x.npy', data.test.x[data.test.mask])
+                #print data.test.kacper
+                
 
 
         if model.tloss == 'soft_c012s':
@@ -495,6 +501,9 @@ def evaluate(model, dataset, args, at_most=None, filtered=True):
     num_classes = calc_w.shape[1]
     calc_w = calc_w / np.tile(np.reshape(np.sum(calc_w, axis=1), (-1, 1)), (1, num_classes))
 
+    #print calc_w
+    #print pred_w
+
     pred_argmaxs = np.argmax(pred_w, axis=1)
     calc_argmaxs = np.argmax(calc_w, axis=1)
     calc_pred_argmaxs_abs_distances = calculate_deltas_unsigned(pred_argmaxs, calc_argmaxs, num_classes)
@@ -508,8 +517,8 @@ def evaluate(model, dataset, args, at_most=None, filtered=True):
     acc = (calc_pred_argmaxs_abs_distances <= delt_max).mean()
       
     l1_delt_w = np.mean(np.abs(calc_w - pred_w))
-    l2_delt_w = np.sqrt(np.mean((calc_w - pred_w)**2))
-    
+    l2_delt_w = np.sqrt(np.mean((calc_w - pred_w)**2)) 
+
     return acc, mean, l1_delt_w, l2_delt_w
 
 # ERW

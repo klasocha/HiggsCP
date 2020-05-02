@@ -1,5 +1,5 @@
 import numpy as np
-from src_py.prepare_utils import read_raw_root
+from prepare_utils import read_raw_root
 import argparse
 import os
 
