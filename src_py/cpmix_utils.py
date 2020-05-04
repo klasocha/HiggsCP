@@ -13,8 +13,8 @@ def hits_fun(classes, x, num_classes):
     for i in range(num_classes-1):
         if x >= classes[i]*num_classes/(num_classes+1) and  x < classes[i+1]*num_classes/(num_classes+1):
              hits[i] = 1.0            
-    if( x >=  classes[i+1]*num_classes/(num_classes+1)):
-        hits[i+1] = 1.0
+    if(sum(hits) == 0):
+        hits[-1] = 1.0
        
     return hits
 
@@ -95,7 +95,7 @@ def preprocess_data(args):
        or np.load(os.path.join(data_path, 'hits_c0s.npy')).shape[1] != num_classes \
        or np.load(os.path.join(data_path, 'hits_c1s.npy')).shape[1] != num_classes \
        or np.load(os.path.join(data_path, 'hits_c2s.npy')).shape[1] != num_classes :
-        classes = np.linspace(0, 2, num_classes) 
+        classes = np.linspace(0, 2, num_classes)*np.pi 
         hits_c0s, hits_c1s, hits_c2s = calc_hits_c012s(classes, c012s, data_len, num_classes)
         np.save(os.path.join(data_path, 'hits_c0s.npy'), hits_c0s)
         np.save(os.path.join(data_path, 'hits_c1s.npy'), hits_c1s)

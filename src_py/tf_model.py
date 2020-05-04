@@ -129,10 +129,10 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
 
                 # ERW
                 # control print
-                # print "ERW test on softmax: calc_w \n"
-                # print calc_w
-                # print "ERW test on softmax: preds_w \n"
-                # print preds_w
+                #print "ERW test on softmax: calc_w \n"
+                #print calc_w
+                #print "ERW test on softmax: preds_w \n"
+                #print preds_w
                 np.save(pathOUT+'softmax_calc_w.npy', calc_w)
                 np.save(pathOUT+'softmax_preds_w.npy', preds_w)
                 np.save(pathOUT+'c012s.npy', data.test.c012s)
