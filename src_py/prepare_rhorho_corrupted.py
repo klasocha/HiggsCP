@@ -2,15 +2,13 @@ import numpy as np
 from prepare_utils import read_raw_root
 import argparse
 import os
+from scipy import optimize
 
 def weight_fun(x, a, b, c):
     return a + b * np.cos(x) + c * np.sin(x)
 
 
 def read_raw_all(kinds, args, letters):
-    print "Reading %s" % kind
-
-    
 
     data_path = args.IN
 
@@ -33,29 +31,36 @@ if __name__ == "__main__":
     parser.add_argument("-i", "--input", dest="IN", default=os.environ["RHORHO_DATA"])
     args = parser.parse_args()
 
-    data_1, weights_1 = read_raw_all(["00","00","00","00","00","00","06","00","00","04",], args, ["a","b","c","d","e","f","g","h","i","k",])
-    data_2, weights_2 = read_raw_all(["04","04","04","06","06","06","10","04","04","10",], args, ["a","b","c","d","e","f","g","h","i","k",])
-    data_3, weights_3 = read_raw_all(["10","10","10","10","12","10","20","10","10","20",], args, ["a","b","c","d","e","f","g","h","i","k",])
+    #data_1, weights_1 = read_raw_all(["00","00","00","00","00","00","06","00","00","04",], args, ["a","b","c","d","e"])#,"f","g","h","i","k",])
+    #data_2, weights_2 = read_raw_all(["04","04","04","06","06","06","10","04","04","10",], args, ["a","b","c","d","e"])#,"f","g","h","i","k",])
+    #data_3, weights_3 = read_raw_all(["10","10","10","10","12","10","20","10","10","20",], args, ["a","b","c","d","e"])#,"f","g","h","i","k",])
+    data, weights_1 = read_raw_all(["00","00","00","00","00"], args, ["a","b","c","d","e"])#,"f","g","h","i","k",])
+    data, weights_2 = read_raw_all(["04","04","04","06","06"], args, ["a","b","c","d","e"])#,"f","g","h","i","k",])
+    data, weights_3 = read_raw_all(["10","10","10","10","12"], args, ["a","b","c","d","e"])#,"f","g","h","i","k",])
 
     x = np.array([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0]) * np.pi
-    xs = [[0,0.4,1], [0,0.4,1], [0,0.4,1], [0,0.6,1], [0,0.6,1.2], [0,0.6,1], [0.6,1,2], [0,0.4,1], [0,0.4,1], [0.4,1,2]]
-    weights = np.zeros(len(weights_1), 11)
+    #xs = [[0,0.4,1], [0,0.4,1], [0,0.4,1], [0,0.6,1], [0,0.6,1.2], [0,0.6,1], [0.6,1,2], [0,0.4,1], [0,0.4,1], [0.4,1,2]]
+    xs = [[0,0.4,1], [0,0.4,1], [0,0.4,1], [0,0.6,1], [0,0.6,1.2]]
+    weights = np.zeros((len(weights_1), 11))
     
-    for j in range(10):
-        for i in range(len(weights_1)//10):
-            coeff, ccov = optimize.curve_fit(weight_fun, np.array(xs[j])*2*np.pi, [weights_1[(len(weights_1)//10)*j + i], weights_2[(len(weights_1)//10)*j + i], weights_3[(len(weights_1)//10)*j + i]], p0=[1, 1, 1])
-            weights[(len(weights_1)//10)*j + i,:] = weight_fun(x, *coeff)
+    for j in range(5):
+        for i in range(len(weights_1)//5):
+            coeff, ccov = optimize.curve_fit(weight_fun, np.array(xs[j])*np.pi, [weights_1[(len(weights_1)//5)*j + i], weights_2[(len(weights_1)//5)*j + i], weights_3[(len(weights_1)//5)*j + i]], p0=[1, 1, 1])
+            weights[(len(weights_1)//5)*j + i,:] = weight_fun(x, *coeff)
 
     print "In total: prepared %d events." % len(weights_1)
-    np.testing.assert_array_almost_equal(data_1, data_2)
-    np.testing.assert_array_almost_equal(data_1, data_3)
+    #np.testing.assert_array_almost_equal(data_1, data_2)
+    #np.testing.assert_array_almost_equal(data_1, data_3)
 
     np.random.seed(123)
     perm = np.random.permutation(len(weights_1))
 
     data_path = args.IN
 
-    np.save(os.path.join(data_path, "rhorho_raw.data.npy"), data_1)
+    np.save(os.path.join(data_path, "rhorho_raw.data.npy"), data)
+    #np.save(os.path.join(data_path, "rhorho_raw.data2.npy"), data_2)
+    #np.save(os.path.join(data_path, "rhorho_raw.data3.npy"), data_3)    
+    np.save(os.path.join(data_path, "rhorho_raw.w.npy"), weights.T)
     np.save(os.path.join(data_path, "rhorho_raw.w_00.npy"), weights[:,0])
     np.save(os.path.join(data_path, "rhorho_raw.w_02.npy"), weights[:,1])
     np.save(os.path.join(data_path, "rhorho_raw.w_04.npy"), weights[:,2])
@@ -68,3 +73,4 @@ if __name__ == "__main__":
     np.save(os.path.join(data_path, "rhorho_raw.w_18.npy"), weights[:,9])
     np.save(os.path.join(data_path, "rhorho_raw.w_20.npy"), weights[:,10])
     np.save(os.path.join(data_path, "rhorho_raw.perm.npy"), perm)
+
