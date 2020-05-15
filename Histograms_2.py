@@ -26,6 +26,9 @@ def pT(particle_array: np.ndarray) -> np.ndarray:
 
     return np.linalg.norm(particle_array[:,:2],axis = 1).reshape((particle_array.shape[0],1))
 
+def calculate_inv(particle_array: np.ndarray) -> np.ndarray:
+    particle_array *= particle_array
+    return np.sqrt(particle_array[:,3] - np.sum(particle_array[:,0:2],axis=1)).reshape((particle_array.shape[0],1))
 
 # Reading data from .npy files
 data = np.load("Data/rhorho_raw.data.npy")
@@ -35,8 +38,7 @@ data_H_hist = data.reshape((data.shape[0]*6,5))
 data_Z_hist = data_Z.reshape((data_Z.shape[0]*6,5))
 data_conc_hist = np.concatenate((data_H_hist,data_Z_hist),axis = 0)
 
-def fill_histograms(data_hist: np.ndarray,mother_particle: str) ->None:
-    # Extracting data about each particle to fill histograms
+def prepare_to_hist(data_hist: np.ndarray) ->list:
     pi_plus = particle_picker(data_hist,211)
     pi_minus = particle_picker(data_hist,-211)
     pi_0= particle_picker(data_hist,111)
@@ -47,39 +49,60 @@ def fill_histograms(data_hist: np.ndarray,mother_particle: str) ->None:
     nu_minus= particle_picker(data_hist,-16)
     rho_plus= pi_plus + pi_0_plus
     rho_minus= pi_minus + pi_0_minus
-    rho_inv_minus = np.linalg.norm(rho_minus,axis = 1).reshape((rho_minus.shape[0],1))
-    rho_inv_plus = np.linalg.norm(rho_plus,axis = 1).reshape((rho_plus.shape[0],1))
+    rho_inv_minus = calculate_inv(rho_minus)
+    rho_inv_plus = calculate_inv(rho_plus)
     tau_plus = rho_plus + nu_plus
     tau_minus = rho_minus + nu_minus
     rhorho = rho_plus + rho_minus
-    rhorho_inv= np.linalg.norm(rhorho,axis = 1).reshape((rho_minus.shape[0],1))
+    rhorho_inv= calculate_inv(rhorho)
     tautau = tau_minus + tau_plus
-    tautau_inv= np.linalg.norm(tautau,axis = 1).reshape((rho_minus.shape[0],1))
+    tautau_inv= calculate_inv(tautau)
     nunu = nu_minus + nu_plus
-    nunu_inv= np.linalg.norm(nunu,axis = 1).reshape((rho_minus.shape[0],1))
-    variables = list((pi_plus,pi_minus,pi_0,nu_plus,nu_minus,rho_plus,rho_minus,rho_inv_minus,rho_inv_plus,
-                 tau_plus,tau_minus,rhorho,nunu,tautau,rhorho_inv,tautau_inv, nunu_inv))
-    names = ("pi_plus","pi_minus","pi_0","nu_plus","nu_minus","rho_plus","rho_minus",
-                 "tau_plus","tau_minus","rhorho","nunu","tautau","rho_inv_minus","rho_inv_plus","rhorho_inv","tautau_inv","nunu_inv")
-    u = 0
+    nunu_inv= calculate_inv(nunu)
+    variables = list((pi_plus,pi_minus,pi_0,nu_plus,nu_minus,rho_plus,rho_minus,
+                 tau_plus,tau_minus,rhorho,nunu,tautau,rho_inv_minus,rho_inv_plus,rhorho_inv,tautau_inv, nunu_inv))
+    return variables
 
+def fill_histograms(data_hist_H: np.ndarray,data_hist_Z: np.ndarray) ->None:
+    # Extracting data about each particle to fill histograms
+    variables_H = prepare_to_hist(data_hist_H)
+    variables_Z = prepare_to_hist(data_hist_Z)
+    names = ("pi_plus","pi_minus","pi_0","nu_plus","nu_minus","rho_plus","rho_minus",
+                 "tau_plus","tau_minus","rhorho","nunu","tautau","rho_inv_minus",
+             "rho_inv_plus","rhorho_inv","tautau_inv","nunu_inv")
+    u = 0
+    ranges = {"pT" : np.linspace(0,100,50), "tautau_inv" : np.linspace(0,500e3,50), "rhorho_inv" : np.linspace(0,250e3,50),
+              "rho_inv_minus" : np.linspace(0,500,50), "rho_inv_plus" : np.linspace(0,500,50),"nunu_inv" : np.linspace(0,500,50)}
     # Drawing and exporting histograms
-    for i in variables:
+    for i in range(len(variables_H)):
         if (u < len(names) - 5):
             plt.figure()
-            plt.hist(pT(i), bins=80)
-            plt.title(label=names[u] + mother_particle +  "pT")
-            plt.yscale('log')
-            plt.savefig(fname="figs/" + names[u] + mother_particle + "pT")
-        for j in range(i.shape[1]):
+            if (names[u] in ("tautau","rhorho")):
+                bins = np.linspace(0,1e6,50)
+                plt.hist(pT(variables_H[i]), bins=bins,histtype = 'step',color = "black",density=True)
+                plt.hist(pT(variables_Z[i]), bins=bins, histtype='step', color="red", density=True)
+            else:
+                plt.hist(pT(variables_H[i]), bins=ranges["pT"], histtype='step', color="black", density=True)
+                plt.hist(pT(variables_Z[i]), bins=ranges["pT"], histtype='step', color="red", density=True)
+            plt.title(label=names[u] + "_pT")
+            print("Exporting " + names[u] + "_pT")
+            plt.savefig(fname="figs/" + names[u] + "_pT")
+        for j in range(variables_H[i].shape[1]):
             plt.figure()
-            plt.hist(i[:,j],bins = 80)
-            plt.title(label = names[u] + mother_particle + str(j))
-            plt.yscale('log')
-            plt.savefig(fname = "figs/" + names[u] + mother_particle + str(j))
+            if(names[u] in ranges):
+                plt.hist(variables_H[i][:, j], bins= ranges[names[u]],histtype = 'step',color = "black",density=True)
+                plt.hist(variables_Z[i][:, j], bins= ranges[names[u]], histtype='step', color="red",
+                         density=True)
+            else:
+                bins = np.linspace(np.amin(variables_H[i][:, j]),np.amax(variables_H[i][:, j]),50)
+                plt.hist(variables_H[i][:, j], bins=bins,histtype = 'step',color = "black",density=True)
+                plt.hist(variables_Z[i][:, j], bins=bins, histtype='step', color="red", density=True)
+            plt.title(label=names[u] + str(j))
+            if(variables_H[i].shape[1] > 1):
+                plt.yscale('log')
+            print("Exporting " + names[u] + str(j))
+            plt.savefig(fname = "figs/" + names[u] + str(j))
     #        plt.show()
         u += 1
 
-fill_histograms(data_H_hist,"_H_")
-fill_histograms(data_Z_hist,"_Z_")
-fill_histograms(data_conc_hist,"_conc_")
+fill_histograms(data_H_hist,data_Z_hist)
