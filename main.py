@@ -1,10 +1,12 @@
 import argparse
 
-import train_rhorho, train_a1rho, train_a1a1, train_boostedtrees, train_svm, train_randomforest, train_rhorhoZ
+#import train_rhorho, train_a1rho, train_a1a1, train_boostedtrees, train_svm, train_randomforest, train_rhorhoZ, train_higgs_z_rhorho
+import train_rhorho, train_rhorhoZ, train_higgs_z_rhorho
 
-types = {"nn_rhorho": train_rhorho.start, "nn_a1rho": train_a1rho.start, "nn_a1a1": train_a1a1.start, 
-"boosted_trees": train_boostedtrees.start, "svm": train_svm.start, "random_forest": train_randomforest.start,
-"nn_rhorhoZ": train_rhorhoZ.start}
+types = {"nn_rhorho": train_rhorho.start,
+#"nn_a1rho": train_a1rho.start, "nn_a1a1": train_a1a1.start, 
+#"boosted_trees": train_boostedtrees.start, "svm": train_svm.start, "random_forest": train_randomforest.start,
+"nn_rhorhoZ": train_rhorhoZ.start, "nn_higgs_z_rhorho": train_higgs_z_rhorho.start}
 
 parser = argparse.ArgumentParser(description='Train classifier')
 parser.add_argument("-t", "--type", dest="TYPE", choices=types.keys(), default='nn_rhorho')

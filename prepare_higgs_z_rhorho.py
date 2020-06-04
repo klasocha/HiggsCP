@@ -36,9 +36,9 @@ def read_raw_all(kind, args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train classifier')
-    parser.add_argument("-z", "--Zdatasets", dest="ZDATASETS", default='2', type=int, help="number of Z datasets to prepare")
-    parser.add_argument("-higgs", "--Hdatasets", dest="HDATASETS", default='2', type=int, help="number of H datasets to prepare")
-    parser.add_argument("-i", "--input", dest="IN", default=os.environ["RHORHO_DATA"])
+    parser.add_argument("-z", "--Zdatasets", dest="ZDATASETS", default='1', type=int, help="number of Z datasets to prepare")
+    parser.add_argument("-higgs", "--Hdatasets", dest="HDATASETS", default='1', type=int, help="number of H datasets to prepare")
+    parser.add_argument("-i", "--input", dest="IN", default=os.environ["RHORHO_DATA_org"])
     args = parser.parse_args()
 
     data_H, weights_aH, weights_bH = read_raw_all("Higgs", args)
@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     data_path = args.IN
 
-    np.save(os.path.join(data_path, "rhorho_Z_raw.data.npy"), data)
-    np.save(os.path.join(data_path, "rhorho_Z_raw.w_a.npy"), weights_a)
-    np.save(os.path.join(data_path, "rhorho_Z_raw.w_b.npy"), weights_b)
-    np.save(os.path.join(data_path, "rhorho_Z_raw.perm.npy"), perm)
+    np.save(os.path.join(data_path, "rhorho_Higgs_Z_raw.data.npy"), data)
+    np.save(os.path.join(data_path, "rhorho_Higgs_Z_raw.w_a.npy"), weights_a)
+    np.save(os.path.join(data_path, "rhorho_Higgs_Z_raw.w_b.npy"), weights_b)
+    np.save(os.path.join(data_path, "rhorho_Higgs_Z_raw.perm.npy"), perm)

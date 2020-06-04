@@ -36,7 +36,8 @@ class RhoRhoEvent(object):
 
         # all particles boosted & rotated
         for i, idx in enumerate([0, 1, 2, 3, 4, 5]):
-            part = boost_and_rotate(p[idx], PHI, THETA, rho_rho)
+            part = p[idx]
+#            part = boost_and_rotate(p[idx], PHI, THETA, rho_rho)
             if args.FEAT in ["Variant-1.0", "Variant-1.1", "Variant-2.0", "Variant-2.1", "Variant-2.2", "Variant-3.0", "Variant-3.1", "Variant-3.2", "Variant-4.0", "Variant-4.1"]:
                 if idx not in [0, 3]:
                     cols.append(part.vec)
