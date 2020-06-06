@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-from sklearn.metrics import roc_auc_score, average_precision_score
+from sklearn.metrics import roc_auc_score, average_precision_score, roc_curve
 import sys
 
 def train(model, dataset, batch_size=128):
@@ -18,30 +18,94 @@ def train(model, dataset, batch_size=128):
           sys.stdout.flush()
     return np.mean(losses)
 
+def get_loss(model, dataset, batch_size=128):
+    epoch_size = dataset.n / batch_size
+    losses = []
+    sess = tf.get_default_session()
+    for i in range(epoch_size):
+        x, wa, wb, filt = dataset.next_batch(batch_size)
+        loss = sess.run([model.loss],
+                           {model.x: x, model.wa: wa, model.wb: wb})
+        losses.append(loss)
+    return np.mean(losses)
 
-def total_train(model, data, emodel=None, batch_size=128, epochs=25, metric = "roc_auc"):
+
+def total_train(pathOUT, model, data, emodel=None, batch_size=128, epochs=25, metric = "roc_auc"):
     if emodel is None:
         emodel = model
+        
     train_aucs = []
     valid_aucs = []
+    test_aucs  = []
+
+    train_losses = []
+    valid_losses = []
+    test_losses  = []
+
     max_perf = evaluate2(emodel, data.valid, filtered=True, metric = metric)
-    print max_perf
+    print  "max perf: ", max_perf
     
     test_auc = 0
     for i in range(epochs):
         sys.stdout.write("EPOCH: %d " % (i + 1))
-        loss = train(model, data.train, batch_size)
+        
+        _ = train(model, data.train, batch_size)
+
+        train_loss = get_loss(model, data.train, batch_size=128)
+        valid_loss = get_loss(model, data.valid, batch_size=128)
+        test_loss  = get_loss(model, data.test, batch_size=128)
+
+        train_losses += [train_loss]
+        valid_losses += [valid_loss]
+        test_losses  += [test_loss]
+        
         train_auc = evaluate(emodel, data.train, 100000, filtered=True, metric = metric)
         valid_auc = evaluate(emodel, data.valid, filtered=True, metric = metric)
-        msg_str = "TRAIN LOSS: %.3f AUC: %.3f VALID AUC: %.3f" % (loss, train_auc, valid_auc)
+        msg_str = "TRAIN LOSS: %.3f TRAIN AUC: %.3f VALID AUC: %.3f" % (train_loss, train_auc, valid_auc)
         print msg_str
         tf.logging.info(msg_str)
+        
         train_aucs += [train_auc]
         valid_aucs += [valid_auc]
         if valid_auc == np.max(valid_aucs):
             test_auc = evaluate(emodel, data.test, filtered=True, metric = metric)
-    print test_auc	
-    return train_aucs, valid_aucs
+            test_aucs += [test_auc]
+
+            x, pred_wa, true_wa, true_wb  = predictions(emodel, data.test, filtered=True)
+
+            np.save(pathOUT+'event_pred_wa.npy', pred_wa)
+            np.save(pathOUT+'event_true_wa.npy', true_wa)
+            np.save(pathOUT+'event_true_wb.npy', true_wb)
+
+            roc_curve_data = get_roc(emodel, data.test, filtered=True)
+            
+            np.save(pathOUT+'roc_curve_data.npy', roc_curve_data)
+
+            
+    print "TEST AUC: ", test_auc
+    
+    # storing history of training
+
+    np.save(pathOUT+'train_losses.npy', train_losses)
+    np.save(pathOUT+'valid_losses.npy', valid_losses)
+    np.save(pathOUT+'test_losses.npy',  test_losses)
+    
+    np.save(pathOUT+'train_aucs.npy', train_aucs)
+    np.save(pathOUT+'valid_aucs.npy', valid_aucs)
+    np.save(pathOUT+'test_aucs.npy', test_aucs)
+
+    return train_aucs, valid_aucs, test_aucs
+
+
+def get_roc(model, dataset, at_most=None, filtered=False):
+    _, ps, was, wbs = predictions(model, dataset, at_most, filtered)
+
+    n = len(ps)
+    true_labels = np.concatenate([np.ones(n), np.zeros(n)])
+    preds = np.concatenate([ps, ps])
+    weights = np.concatenate([was, wbs])
+
+    return roc_curve(true_labels, preds, sample_weight=weights)
 
 
 def predictions(model, dataset, at_most=None, filtered=False):

@@ -2,7 +2,7 @@ import tensorflow as tf
 from rhorho import RhoRhoEvent
 from data_utils import read_np, EventDatasets
 from tf_model import total_train, NeuralNetwork
-import os
+import os, errno
 
 
 def run(args):
@@ -31,8 +31,16 @@ def run(args):
 
     tf.global_variables_initializer().run()
 
+    pathOUT = "temp_results/"+ args.TYPE + "_" + args.FEAT + "/"
+    if pathOUT:
+        try:
+            os.makedirs(pathOUT)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
+
     print "Training"
-    total_train(model, points, emodel=emodel, batch_size=128, epochs=args.EPOCHS, metric = args.METRIC)
+    total_train(pathOUT, model, points, emodel=emodel, batch_size=128, epochs=args.EPOCHS, metric = args.METRIC)
 
 
 def start(args):
