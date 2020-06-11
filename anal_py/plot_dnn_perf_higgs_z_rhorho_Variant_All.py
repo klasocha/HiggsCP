@@ -58,10 +58,10 @@ plt.plot([0], marker='None',
 plt.plot(x,train_aucs, 'o', color = 'black', label='Variant-All: training')
 plt.plot(x,valid_aucs, 'd', color = 'orange', label='Variant-All: validation')
 plt.legend()
-#plt.ylim([0.0, 0.4])
+plt.ylim([0.90, 1.0])
 plt.xlabel('Number of epochs')
 plt.xticks(x)
-plt.ylabel(r'aucs')
+plt.ylabel(r'ROC AUC')
 #plt.title('Features list: Variant-All')
     
 if filename:
