@@ -17,7 +17,7 @@ def run(args):
 
     print "Processing data"
     event = RhoRhoEvent(data, args)
-    points = EventDatasets(event, w_a, w_b, perm, miniset=args.MINISET, unweighted=args.UNWEIGHTED, smear_polynomial=(args.BETA>0), filtered=True)
+    points = EventDatasets(event, w_a, w_b, perm, miniset=args.MINISET, unweighted=args.UNWEIGHTED, filtered=True)
 
     num_features = points.train.x.shape[1]
     print "Generated %d features" % num_features

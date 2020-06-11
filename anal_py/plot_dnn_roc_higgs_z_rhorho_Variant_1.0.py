@@ -20,7 +20,7 @@ filename = "dnn_roc_curve_higgs_z_rhorho_Variant-1.0"
 plt.figure()
 lw = 2
 plt.plot(fpr, tpr, color='darkorange',
-         lw=lw, label='ROC curve (area = %0.2f)' % auc_score)
+         lw=lw, label='Variant-1.0 (ROC AUC = %0.2f)' % auc_score)
 plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
 plt.xlim([0.0, 1.0])
 plt.ylim([0.0, 1.05])

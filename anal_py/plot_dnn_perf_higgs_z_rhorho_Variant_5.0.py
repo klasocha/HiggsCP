@@ -8,7 +8,7 @@ import tensorflow as tf
 from scipy import optimize
 
 
-pathIN  = "../laptop_results/nn_higgs_z_rhorho_Variant-All/"
+pathIN  = "../laptop_results/nn_higgs_z_rhorho_Variant-5.0/"
 pathOUT = "figures/"
 
 train_losses    = np.load(pathIN+'train_losses.npy')
@@ -21,14 +21,14 @@ valid_aucs      = np.load(pathIN+'valid_aucs.npy')
 
 #----------------------------------------------------------------------------------
 
-filename = "dnn_train_loss_higgs_z_rhorho_Variant-All"
+filename = "dnn_train_loss_higgs_z_rhorho_Variant-5.0"
 x = np.arange(1,len(train_losses)+1)
 plt.plot([0], marker='None',
            linestyle='None', label=r'Classification: Higgs vs Z')
-plt.plot(x,train_losses, 'o', color = 'black', label='Variant-All: training')
-plt.plot(x,valid_losses, 'd', color = 'orange', label='Variant-All: validation')
+plt.plot(x,train_losses, 'o', color = 'black', label='Variant-5.0: training')
+plt.plot(x,valid_losses, 'd', color = 'orange', label='Variant-5.0: validation')
 plt.legend()
-plt.ylim([0.725, 0.800])
+plt.ylim([0.800,1.000])
 plt.xlabel('Number of epochs')
 plt.xticks(x)
 plt.ylabel('Loss')
@@ -51,18 +51,18 @@ plt.clf()
 
 #----------------------------------------------------------------------------------
 
-filename = "dnn_train_aucs_higgs_z_rhorho_Variant-All"
+filename = "dnn_train_aucs_higgs_z_rhorho_Variant-5.0"
 x = np.arange(1,len(train_aucs)+1)
 plt.plot([0], marker='None',
            linestyle='None', label=r'Classification: Higgs vs Z')
-plt.plot(x,train_aucs, 'o', color = 'black', label='Variant-All: training')
-plt.plot(x,valid_aucs, 'd', color = 'orange', label='Variant-All: validation')
+plt.plot(x,train_aucs, 'o', color = 'black', label='Variant-5.0: training')
+plt.plot(x,valid_aucs, 'd', color = 'orange', label='Variant-5.0: validation')
 plt.legend()
-#plt.ylim([0.0, 0.4])
+plt.ylim([0.75, 0.95])
 plt.xlabel('Number of epochs')
 plt.xticks(x)
-plt.ylabel(r'aucs')
-#plt.title('Features list: Variant-All')
+plt.ylabel(r'ROC AUC')
+#plt.title('Features list: Variant-5.0')
     
 if filename:
     try:

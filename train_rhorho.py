@@ -10,14 +10,14 @@ def run(args):
 
     print "Loading data"
     data = read_np(os.path.join(data_path, "rhorho_raw.data.npy"))
-    w_a = read_np(os.path.join(data_path, "rhorho_raw.w_a.npy"))
-    w_b = read_np(os.path.join(data_path, "rhorho_raw.w_b.npy"))
+    w_a = read_np(os.path.join(data_path,  "rhorho_raw.w_a.npy"))
+    w_b = read_np(os.path.join(data_path,  "rhorho_raw.w_b.npy"))
     perm = read_np(os.path.join(data_path, "rhorho_raw.perm.npy"))
     print "Read %d events" % data.shape[0]
 
     print "Processing data"
     event = RhoRhoEvent(data, args)
-    points = EventDatasets(event, w_a, w_b, perm, miniset=args.MINISET, unweighted=args.UNWEIGHTED, smear_polynomial=(args.BETA>0), filtered=True)
+    points = EventDatasets(event, w_a, w_b, perm, miniset=args.MINISET, unweighted=args.UNWEIGHTED, filtered=True)
 
     num_features = points.train.x.shape[1]
     print "Generated %d features" % num_features

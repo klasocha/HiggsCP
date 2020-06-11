@@ -41,7 +41,7 @@ def read_np(filename):
 
 class EventDatasets(object):
 
-    def __init__(self, event, w_a, w_b, perm, filtered=False, raw=False, miniset=False,  unweighted=False, smear_polynomial=False):
+    def __init__(self, event, w_a, w_b, perm, filtered=False, raw=False, miniset=False,  unweighted=False):
         data = event.cols[:, :-1]
         filt = event.cols[:, -1]
 
@@ -79,9 +79,3 @@ class EventDatasets(object):
         self.train = Dataset(data[train_ids], w_a[train_ids], w_b[train_ids])
         self.valid = Dataset(data[valid_ids], w_a[valid_ids], w_b[valid_ids])
         self.test = Dataset(data[test_ids], w_a[test_ids], w_b[test_ids])
-
-	if smear_polynomial:
-
-		data[:,-5:-1]=np.transpose(event.valid_cols)
-		self.valid = Dataset(data[valid_ids], w_a[valid_ids], w_b[valid_ids])
-		self.test = Dataset(data[test_ids], w_a[test_ids], w_b[test_ids])

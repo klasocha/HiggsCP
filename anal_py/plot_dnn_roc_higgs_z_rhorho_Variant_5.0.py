@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import auc
 
-pathIN  =  "../laptop_results/nn_higgs_z_rhorho_Variant-All/"
+pathIN  =  "../laptop_results/nn_higgs_z_rhorho_Variant-5.0/"
 pathOUT =  "figures/"
 
 roc_curve_data = np.load(pathIN+'roc_curve_data.npy')
@@ -15,12 +15,12 @@ auc_score =  auc(fpr, tpr)
 
 #----------------------------------------------------------------------------------
 
-filename = "dnn_roc_curve_higgs_z_rhorho_Variant-All"
+filename = "dnn_roc_curve_higgs_z_rhorho_Variant-5.0"
 
 plt.figure()
 lw = 2
 plt.plot(fpr, tpr, color='darkorange',
-         lw=lw, label='Variant-All (ROC AUC = %0.2f)' % auc_score)
+         lw=lw, label='Variant-5.0 (ROC AUC = %0.2f)' % auc_score)
 plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
 plt.xlim([0.0, 1.0])
 plt.ylim([0.0, 1.05])

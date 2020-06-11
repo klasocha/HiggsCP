@@ -73,14 +73,15 @@ def total_train(pathOUT, model, data, emodel=None, batch_size=128, epochs=25, me
 
             x, pred_wa, true_wa, true_wb  = predictions(emodel, data.test, filtered=True)
 
-            np.save(pathOUT+'event_raw.npy', x)
+            pred_wb = 1 -pred_wa
+            np.save(pathOUT+'event_colls.npy', x)
             np.save(pathOUT+'event_pred_wa.npy', pred_wa)
+            np.save(pathOUT+'event_pred_wb.npy', pred_wb)
             np.save(pathOUT+'event_true_wa.npy', true_wa)
             np.save(pathOUT+'event_true_wb.npy', true_wb)
 
             roc_curve_data = get_roc(emodel, data.test, filtered=True)
 
-            print roc_curve_data
             np.save(pathOUT+'roc_curve_data.npy', roc_curve_data)
 
             
