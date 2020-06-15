@@ -9,10 +9,16 @@ def run(args):
     data_path = args.IN
 
     print "Loading data"
-    data = read_np(os.path.join(data_path, "rhorho_Higgs_Z_raw.data.npy"))
-    w_a = read_np(os.path.join(data_path, "rhorho_Higgs_Z_raw.w_a.npy"))
-    w_b = read_np(os.path.join(data_path, "rhorho_Higgs_Z_raw.w_b.npy"))
-    perm = read_np(os.path.join(data_path, "rhorho_Higgs_Z_raw.perm.npy"))
+    if args.Zsample == "z65":
+        data = read_np(os.path.join(data_path, "rhorho_Higgs_Z_raw.data.npy"))
+        w_a  = read_np(os.path.join(data_path, "rhorho_Higgs_Z_raw.w_a.npy"))
+        w_b  = read_np(os.path.join(data_path, "rhorho_Higgs_Z_raw.w_b.npy"))
+        perm = read_np(os.path.join(data_path, "rhorho_Higgs_Z_raw.perm.npy"))
+    if args.Zsample == "z115":
+        data = read_np(os.path.join(data_path, "rhorho_Higgs_Z115_raw.data.npy"))
+        w_a  = read_np(os.path.join(data_path, "rhorho_Higgs_Z115_raw.w_a.npy"))
+        w_b  = read_np(os.path.join(data_path, "rhorho_Higgs_Z115_raw.w_b.npy"))
+        perm = read_np(os.path.join(data_path, "rhorho_Higgs_Z115_raw.perm.npy"))
     print "Read %d events" % data.shape[0]
 
     print "Processing data"
@@ -31,7 +37,7 @@ def run(args):
 
     tf.global_variables_initializer().run()
 
-    pathOUT = "temp_results/"+ args.TYPE + "_" + args.FEAT + "/"
+    pathOUT = "temp_results/"+ args.TYPE + "_" + args.Zsample + "_" + args.FEAT + "/"
     if pathOUT:
         try:
             os.makedirs(pathOUT)

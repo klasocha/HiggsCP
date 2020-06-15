@@ -23,6 +23,7 @@ parser.add_argument("--z_noise_fraction", dest="Z_NOISE_FRACTION", type=float, d
 parser.add_argument("--unweighted", dest="UNWEIGHTED", type=lambda s: s.lower() in ['true', 't', 'yes', '1'], default=False)
 
 parser.add_argument("--metric", dest="METRIC",  choices=["roc_auc", "prec_score"], default="roc_auc")
+parser.add_argument("--Zsample", dest="Zsample",  choices=["z65", "z115"], default="z65")
 
 args = parser.parse_args()
 
