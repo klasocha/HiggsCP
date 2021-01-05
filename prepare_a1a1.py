@@ -11,7 +11,7 @@ def read_raw_all(kind, args):
 
     all_data = []
     all_weights = []
-    for letter in ["b","a","c","d","e","f","g","h","i","k"][:args.DATASETS]:
+    for letter in ["b","c","d","e","f","g","h","i","k"][:args.DATASETS]:
         name = os.path.join(data_path, "pythia.H.a1a1.1M.%s.%s.outTUPLE_labFrame" % (letter, kind))
         print letter, name
         data, weights = read_raw_root(name, num_particles=9)
@@ -24,7 +24,7 @@ def read_raw_all(kind, args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train classifier')
-    parser.add_argument("-d", "--datasets", dest="DATASETS", default=1, type=int, help="number of datasets to prepare")
+    parser.add_argument("-d", "--datasets", dest="DATASETS", default=9, type=int, help="number of datasets to prepare")
     parser.add_argument("-i", "--input", dest="IN", default=os.environ["A1A1_DATA"])
     args = parser.parse_args()
 

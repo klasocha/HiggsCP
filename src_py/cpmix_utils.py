@@ -53,7 +53,6 @@ def calc_weights_and_argmaxs(classes, c012s, data_len, num_classes):
 
         argmaxs[i] = arg_max
         hits_argmaxs[i] = hits_fun(classes, arg_max, num_classes)
-
     return weights, argmaxs, hits_argmaxs
 
 
@@ -89,39 +88,39 @@ def preprocess_data(args):
     c012s = np.load(os.path.join(data_path, 'c012s.npy'))
    
 
-    if not os.path.exists(os.path.join(data_path, 'hits_c0s.npy')) \
-       or not os.path.exists(os.path.join(data_path, 'hits_c1s.npy')) \
-       or not os.path.exists(os.path.join(data_path, 'hits_c2s.npy')) \
-       or np.load(os.path.join(data_path, 'hits_c0s.npy')).shape[1] != num_classes \
-       or np.load(os.path.join(data_path, 'hits_c1s.npy')).shape[1] != num_classes \
-       or np.load(os.path.join(data_path, 'hits_c2s.npy')).shape[1] != num_classes :
-        classes = np.linspace(0, 2, num_classes)*np.pi 
+    if not os.path.exists(os.path.join(data_path, str(num_classes)+'hits_c0s.npy')) \
+       or not os.path.exists(os.path.join(data_path, str(num_classes)+'hits_c1s.npy')) \
+       or not os.path.exists(os.path.join(data_path, str(num_classes)+'hits_c2s.npy')) \
+       or np.load(os.path.join(data_path, str(num_classes)+'hits_c0s.npy')).shape[1] != num_classes \
+       or np.load(os.path.join(data_path, str(num_classes)+'hits_c1s.npy')).shape[1] != num_classes \
+       or np.load(os.path.join(data_path, str(num_classes)+'hits_c2s.npy')).shape[1] != num_classes :
+        classes = np.linspace(0, 2, num_classes)
         hits_c0s, hits_c1s, hits_c2s = calc_hits_c012s(classes, c012s, data_len, num_classes)
-        np.save(os.path.join(data_path, 'hits_c0s.npy'), hits_c0s)
-        np.save(os.path.join(data_path, 'hits_c1s.npy'), hits_c1s)
-        np.save(os.path.join(data_path, 'hits_c2s.npy'), hits_c2s)
+        np.save(os.path.join(data_path, str(num_classes)+'hits_c0s.npy'), hits_c0s)
+        np.save(os.path.join(data_path, str(num_classes)+'hits_c1s.npy'), hits_c1s)
+        np.save(os.path.join(data_path, str(num_classes)+'hits_c2s.npy'), hits_c2s)
 
     if args.HITS_C012s == "hits_c0s" :
-        hits_c012s = np.load(os.path.join(data_path, 'hits_c0s.npy'))
+        hits_c012s = np.load(os.path.join(data_path, str(num_classes)+'hits_c0s.npy'))
     elif args.HITS_C012s == "hits_c1s" :   
-        hits_c012s = np.load(os.path.join(data_path, 'hits_c1s.npy'))
+        hits_c012s = np.load(os.path.join(data_path, str(num_classes)+'hits_c1s.npy'))
     elif args.HITS_C012s == "hits_c2s" :   
-        hits_c012s = np.load(os.path.join(data_path, 'hits_c2s.npy'))
+        hits_c012s = np.load(os.path.join(data_path, str(num_classes)+'hits_c2s.npy'))
 
 
-    if not reuse_weights or not os.path.exists(os.path.join(data_path, 'weights.npy')) \
-            or not os.path.exists(os.path.join(data_path, 'argmaxs.npy')) \
-            or not os.path.exists(os.path.join(data_path, 'hits_argmaxs.npy')) \
-            or np.load(os.path.join(data_path, 'weights.npy')).shape[1] != num_classes \
-            or np.load(os.path.join(data_path, 'hits_argmaxs')).shape[1] != num_classes:
+    if not reuse_weights or not os.path.exists(os.path.join(data_path, str(num_classes)+'weights.npy')) \
+            or not os.path.exists(os.path.join(data_path, str(num_classes)+'argmaxs.npy')) \
+            or not os.path.exists(os.path.join(data_path, str(num_classes)+'hits_argmaxs.npy')) \
+            or np.load(os.path.join(data_path, str(num_classes)+'weights.npy')).shape[1] != num_classes \
+            or np.load(os.path.join(data_path, str(num_classes)+'hits_argmaxs.npy')).shape[1] != num_classes:
         classes = np.linspace(0, 2, num_classes) * np.pi
         weights, argmaxs,  hits_argmaxs = calc_weights_and_argmaxs(classes, c012s, data_len, num_classes)
-        np.save(os.path.join(data_path, 'weights.npy'), weights)
-        np.save(os.path.join(data_path, 'argmaxs.npy'), argmaxs)
-        np.save(os.path.join(data_path, 'hits_argmaxs.npy'), hits_argmaxs)
-    weights  = np.load(os.path.join(data_path, 'weights.npy'))
-    argmaxs = np.load(os.path.join(data_path, 'argmaxs.npy'))
-    hits_argmaxs = np.load(os.path.join(data_path, 'hits_argmaxs.npy'))
+        np.save(os.path.join(data_path, str(num_classes)+'weights.npy'), weights)
+        np.save(os.path.join(data_path, str(num_classes)+'argmaxs.npy'), argmaxs)
+        np.save(os.path.join(data_path, str(num_classes)+'hits_argmaxs.npy'), hits_argmaxs)
+    weights  = np.load(os.path.join(data_path, str(num_classes)+'weights.npy'))
+    argmaxs = np.load(os.path.join(data_path, str(num_classes)+'argmaxs.npy'))
+    hits_argmaxs = np.load(os.path.join(data_path, str(num_classes)+'hits_argmaxs.npy'))
 
     #ERW
     # here argmaxs are in fraction of pi, not in the class index
@@ -143,4 +142,39 @@ def preprocess_data(args):
     # here weights and argmaxs are calculated at value of CPmix representing given class
     # in training, class is expressed as integer, not fraction pf pi.
 
-    return data, weights, argmaxs, perm, c012s, hits_argmaxs, hits_c012s
+    if args.Z_NOISE_FRACTION > 0:
+        Z_len = int(args.Z_NOISE_FRACTION*data_len)
+        Z_data = read_np(os.path.join(data_path, suffix + "Z_raw.data.npy"))[:Z_len]
+        Z_weights = np.zeros((Z_len, num_classes))
+        Z_argmaxs = np.zeros((Z_len, 1))
+        Z_c012s   = np.zeros((Z_len, 3))
+        Z_c012s[:,0] = 1
+       	Z_c012s[:,1] = 0
+       	Z_c012s[:,2] = 0
+        Z_hits_c0s = np.zeros((data_len, num_classes))
+        Z_hits_c1s = np.zeros((data_len, num_classes))
+        Z_hits_c2s = np.zeros((data_len, num_classes))
+        Z_hits_c0s[:,num_classes//2] = 1
+        Z_hits_c1s[:,num_classes//2] = 1
+        Z_hits_c2s[:,num_classes//2] = 1
+        Z_hits_argmaxs = np.zeros((data_len, num_classes))
+
+         
+        data = np.vstack([data,Z_data])
+        weights = np.vstack([weights,Z_weights])
+        argmaxs = np.vstack([argmaxs,Z_argmaxs])
+       	c012s = np.vstack([c012s,Z_c012s])
+        if args.HITS_C012s == "hits_c0s" :
+            hits_c012s = np.vstack([hits_c012s,Z_hits_c0s])
+        elif args.HITS_C012s == "hits_c1s" :
+            hits_c012s = np.vstack([hits_c012s,Z_hits_c1s])
+        elif args.HITS_C012s == "hits_c2s" :
+            hits_c012s = np.vstack([hits_c012s,Z_hits_c2s])
+        hits_argmaxs = np.vstack([hits_argmaxs, Z_hits_argmaxs])
+        perm = np.random.permutation(data_len + Z_len)
+        print("Events including background: %d" % (Z_len + data_len))
+        return data, weights, argmaxs, perm, c012s, hits_argmaxs, hits_c012s
+
+    else:
+        return data, weights, argmaxs, perm, c012s, hits_argmaxs, hits_c012s
+

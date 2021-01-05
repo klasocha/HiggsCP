@@ -8,7 +8,6 @@ import numpy as np
 
 def download_data(args):
     data_path = args.IN
-    data_path = "/home/erichter/Athena19/HiggsCPmix/branch-erichter-CPmix/HiggsCP_data/a1rho/"
     if os.path.exists(data_path) is False:
         os.mkdir(data_path)
     download_weights(args)
@@ -17,7 +16,6 @@ def download_data(args):
 
 def download_weights(args):
     data_path = args.IN
-    data_path = "/home/erichter/Athena19/HiggsCPmix/branch-erichter-CPmix/HiggsCP_data/a1rho/"
     print data_path
     # CPmix_index = 0 (scalar), 10 (pseudoscalar), 20 (scalar)
     CPmix_index = ['00', '02', '04', '06', '08', '10', '12', '14', '16', '18', '20']
@@ -39,7 +37,6 @@ def download_weights(args):
 
 def download_data_files(args):
     data_path = args.IN
-    data_path = "/home/erichter/Athena19/HiggsCPmix/branch-erichter-CPmix/HiggsCP_data/a1rho/"
     files = ['a1rho_raw.data.npy', 'a1rho_raw.perm.npy']
     for file in files:
         file_path = os.path.join(data_path, file)

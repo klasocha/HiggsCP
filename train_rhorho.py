@@ -1,3 +1,4 @@
+from scipy import optimize
 import numpy as np
 import tensorflow as tf
 import os, errno
@@ -7,7 +8,7 @@ from src_py.download_data_rhorho import download_data
 from src_py.rhorho import RhoRhoEvent
 from src_py.data_utils import read_np, EventDatasets
 from src_py.tf_model import total_train, NeuralNetwork
-from src_py.monit_utils import monit_plots
+#from src_py.monit_utils import monit_plots
 
 
 def run(args):
@@ -26,7 +27,7 @@ def run(args):
     print("Prepared %d features" % num_features)
 
 
-    pathOUT = "temp_results/"+ args.TYPE + "_" + args.FEAT + "_" + args.TRAINING_METHOD +  "_" + args.HITS_C012s + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "_NUM_CLASSES_" + str(args.NUM_CLASSES) + "/"
+    pathOUT = "temp_results/"+ args.TYPE + "_" + args.FEAT + "_" + args.TRAINING_METHOD +  "_" + args.HITS_C012s + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + args.PLOT_FEATURES + "_NUM_CLASSES_" + str(args.NUM_CLASSES) + "_SIZE_" + str(args.SIZE) + "_LAYERS_" + str(args.LAYERS) + "_ZNOISE_" + str(args.Z_NOISE_FRACTION) + "/"
     if pathOUT:
         try:
             os.makedirs(pathOUT)
