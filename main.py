@@ -15,7 +15,7 @@ parser.add_argument("-o", "--optimizer", dest="OPT",
 	choices=["GradientDescentOptimizer", "AdadeltaOptimizer", "AdagradOptimizer",
 	 "ProximalAdagradOptimizer", "AdamOptimizer", "FtrlOptimizer",
 	 "ProximalGradientDescentOptimizer", "RMSPropOptimizer"], default="AdamOptimizer")
-parser.add_argument("-i", "--input", dest="IN", default=os.environ["RHORHO_DATA"])
+parser.add_argument("-i", "--input", dest="IN", default='./data')
 parser.add_argument("-d", "--dropout", dest="DROPOUT", type=float, default=0.0)
 parser.add_argument("-e", "--epochs", dest="EPOCHS", type=int, default=3)
 parser.add_argument("-f", "--features", dest="FEAT", help="Features",

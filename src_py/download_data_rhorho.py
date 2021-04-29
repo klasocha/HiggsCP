@@ -1,5 +1,5 @@
 import os
-import urllib
+import urllib.request
 
 import numpy as np
 
@@ -21,14 +21,14 @@ def download_weights(args):
     weights = []
     output_weight_file = os.path.join(data_path, 'rhorho_raw.w.npy')
     if os.path.exists(output_weight_file) and not args.FORCE_DOWNLOAD:
-        print 'Output weights file exists. Downloading data cancelled. ' \
-              'If you want to force download use --force_download option'
+        print('Output weights file exists. Downloading data cancelled. '
+              'If you want to force download use --force_download option')
         return
     for index in CPmix_index:
         filename = 'rhorho_raw.w_' + index + '.npy'
-        print 'Donwloading ' + filename
+        print('Donwloading ' + filename)
         filepath = os.path.join(data_path, filename)
-        urllib.urlretrieve(DATA_URL + filename, filepath)
+        urllib.request.urlretrieve(DATA_URL + filename, filepath)
         weights.append(np.load(filepath))
     weights = np.stack(weights)
     np.save(output_weight_file, weights)
@@ -40,8 +40,8 @@ def download_data_files(args):
     for file in files:
         file_path = os.path.join(data_path, file)
         if os.path.exists(file_path) and not args.FORCE_DOWNLOAD:
-            print 'File ' + file_path + ' exists. Downloading data cancelled. ' \
-                  'If you want to force download use --force_download option'
+            print('File ' + file_path + ' exists. Downloading data cancelled. '
+                                        'If you want to force download use --force_download option')
         else:
-            print 'Donwloading ' + file
-            urllib.urlretrieve(DATA_URL + file, file_path)
+            print('Donwloading ' + file)
+            urllib.request.urlretrieve(DATA_URL + file, file_path)

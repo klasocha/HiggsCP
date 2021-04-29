@@ -1,6 +1,6 @@
 import numpy as np
 import os
-from data_utils import read_np
+from src_py.data_utils import read_np
 from scipy import optimize
 
 
@@ -61,12 +61,12 @@ def preprocess_data(args):
     num_classes = args.NUM_CLASSES
     reuse_weights = args.REUSE_WEIGHTS  # Set this flag to true if you want reuse calculated weights
 
-    print "Loading data"
-    suffix = (args.TYPE).split("_")[-1] #-1 to indeks ostatniego elementu 
+    print("Loading data")
+    suffix = (args.TYPE).split("_")[-1] #-1 to indeks ostatniego elementu
     data = read_np(os.path.join(data_path, suffix + "_raw.data.npy"))
     w = read_np(os.path.join(data_path, suffix + "_raw.w.npy")).swapaxes(0, 1)
     perm = read_np(os.path.join(data_path, suffix + "_raw.perm.npy"))
-    print "Read %d events" % data.shape[0]
+    print(f"Read {data.shape[0]} events" )
 
     data_len = data.shape[0]
 
