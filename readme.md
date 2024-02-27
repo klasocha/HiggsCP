@@ -20,4 +20,3 @@ Some of the files aiming not used anymore are stored in `archived/` folder.
 ---
 
 *February 2024*
-
