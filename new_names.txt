@@ -1,0 +1,37 @@
+Old variable names:			New variable names:
+=========================================================================
+a, b, c 				c0, c1, c2
+x 					alphaCP
+hits					encoded_vector
+...argmaxs...				...argmaxes...
+c012s					c_coefficients
+ccovs					c_covariance
+hits_argmaxs				ohe_argmaxes
+hits_c012s				ohe_coefficients
+was, wbs				W_a, W_b
+wa, wb					w_a, w_b                          
+	
+
+Old function names:			New function names:
+=========================================================================
+wight_fun() 				weight_function()
+hits_fun()				one_hot_encode()
+calc_weights_and_argmaxs()		calculate_weights_and_argmaxes()	
+calc_hits_c012s()			one_hot_encode_c_coefficients()
+
+
+Old file names:				New file names:
+=========================================================================
+rhorho_raw.w.npy			rhorho_raw.weights.npy
+argmaxs.npy				argmaxes.npy
+c012s.npy				c_coefficients.npy
+ccovs.npy				c_covariance.npy
+hits_argmaxs.npy			one_hot_encoded_argmaxes.npy
+hits_c0s.npy				one_hot_encoded_c0.npy
+hits_c1s.npy				one_hot_encoded_c1.npy
+hits_c2s.npy				one_hot_encoded_c2.npy
+
+
+Old command-line parameters:		New command-line parameters:
+=========================================================================
+==hits_c012s				--ohe_c_coefficients
