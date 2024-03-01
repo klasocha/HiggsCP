@@ -1,7 +1,6 @@
-import matplotlib.pyplot as plt
-from plot_utils import plot_one_TH1D, plot_two_TH1D
-import os, errno
 import numpy as np
+from .plot_utils import plot_one_TH1D, plot_two_TH1D
+
 
 def is_nan(x):
     return (x is np.nan or x != x)
@@ -14,6 +13,7 @@ def monit_plots(pathOUT, args, event, w_a, w_b):
         w_a = w_a[filt]
         w_b = w_b[filt]
     else:
+        # TODO: "data" is not defined
         filt = [not is_nan(x) for x in data]
         w_a = w_a[filt]
         w_b = w_b[filt]
@@ -23,7 +23,6 @@ def monit_plots(pathOUT, args, event, w_a, w_b):
     for i in range(len(event.cols[0,:])-1):
         plot_two_TH1D(event.cols[:,i], filedir, filename = event.labels[i], w_a = w_a, w_b = w_b, filt = filt)
 
-        
     if args.FEAT == "Variant-1.1" and args.TYPE == "nn_rhorho": #acoangle depending on y1y2 sign
         y1y2_pos = np.array(event.cols[:,-3][filt]*event.cols[:,-2][filt] >= 0)
         y1y2_neg = np.array([not i for i in y1y2_pos])
@@ -47,8 +46,6 @@ def monit_plots(pathOUT, args, event, w_a, w_b):
         y1y2_neg = np.array([not i for i in y1y2_pos])
         plot_two_TH1D(event.cols[:,-5], filedir, filename = "aco_angle_4_y1y2_pos", w_a = w_a*y1y2_pos, w_b = w_b*y1y2_pos, filt = filt)
         plot_two_TH1D(event.cols[:,-5], filedir, filename = "aco_angle_4_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
-
-
         
     if args.FEAT == "Variant-1.1" and args.TYPE == "nn_a1a1": #acoangle depending on y1y2 sign
         y1y2_pos = np.array(event.cols[:,-45][filt]*event.cols[:,-44][filt] >= 0)
@@ -120,5 +117,5 @@ def monit_plots(pathOUT, args, event, w_a, w_b):
         plot_two_TH1D(event.cols[:,-10], filedir, filename = "aco_angle_16_y1y2_neg", w_a = w_a*y1y2_neg, w_b = w_b*y1y2_neg, filt = filt)
 
     if args.FEAT == "Variant-4.1": 
-	for i in range(len(event.labels_suppl)):
-	    plot_one_TH1D(event.cols_suppl[:,i], filedir, filename = event.labels_suppl[i], w = w_a, filt = filt)
+        for i in range(len(event.labels_suppl)):
+            plot_one_TH1D(event.cols_suppl[:,i], filedir, filename = event.labels_suppl[i], w = w_a, filt = filt)
