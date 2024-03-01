@@ -1,7 +1,7 @@
 import numpy as np
 import os
 from scipy import optimize
-from data_utils import read_np
+from .data_utils import read_np
 
 
 def weight_fun(alphaCP, c0, c1, c2):
