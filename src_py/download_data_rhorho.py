@@ -1,47 +1,68 @@
-import os
-import urllib
-
 import numpy as np
+from os import mkdir, path, linesep
+from urllib.request import urlretrieve 
 
-DATA_URL = 'http://th-www.if.uj.edu.pl/~erichter/forHiggsCP/HiggsCP_data/rhorho/'
+# The directory to which the following link leads is supposed to have a structure
+# that follows a specific convention in terms of the data file names:
+DATA_URL = "http://th-www.if.uj.edu.pl/~erichter/forHiggsCP/HiggsCP_data_org/rhorho/"
 
 
 def download_data(args):
+    """ Download all the data (weights and data files) in a raw NPY format. """
     data_path = args.IN
-    if os.path.exists(data_path) is False:
-        os.mkdir(data_path)
+    if not path.exists(data_path):
+        mkdir(data_path)
     download_weights(args)
     download_data_files(args)
 
 
 def download_weights(args):
+    """Download the weights: load the data files being retrieved via the given
+    URL address one by one and then save all of them in a single file called
+    rhorho_raw.w.npy"""
+
+    # Preparing the arguments needing to identify files and directories
     data_path = args.IN
-    # CPmix_index = 0 (scalar), 10 (pseudoscalar), 20 (scalar)
-    CPmix_index = ['00', '02', '04', '06', '08', '10', '12', '14', '16', '18', '20']
-    weights = []
-    output_weight_file = os.path.join(data_path, 'rhorho_raw.w.npy')
-    if os.path.exists(output_weight_file) and not args.FORCE_DOWNLOAD:
-        print 'Output weights file exists. Downloading data cancelled. ' \
-              'If you want to force download use --force_download option'
+    output_weight_file = path.join(data_path, "rhorho_raw.w.npy")
+
+    # Checking whether there is already the file in a destination directory
+    if path.exists(output_weight_file) and not args.FORCE_DOWNLOAD:
+        print("The output weights file already exists. Downloading has been cancelled.",
+              "If you want to force download, use \"-force_download\" (True/False) option.", 
+              sep=linesep)
         return
+    
+    # Downloading files containing the weights one by one
+    weights = []
+    CPmix_index = ["00", # scalar
+                "02", "04", "06", "08", 
+                "10", # pseudoscalar
+                "12", "14", "16", "18", 
+                "20"] # scalar
+    
     for index in CPmix_index:
         filename = 'rhorho_raw.w_' + index + '.npy'
-        print 'Donwloading ' + filename
-        filepath = os.path.join(data_path, filename)
-        urllib.urlretrieve(DATA_URL + filename, filepath)
+        print(f"Downloading {filename}")
+        filepath = path.join(data_path, filename)
+        urlretrieve(DATA_URL + filename, filepath)
         weights.append(np.load(filepath))
+   
+    # Joining and then saving all the parts together in a single file
     weights = np.stack(weights)
     np.save(output_weight_file, weights)
 
 
 def download_data_files(args):
+    """ Download the data files """
     data_path = args.IN
     files = ['rhorho_raw.data.npy', 'rhorho_raw.perm.npy']
+
     for file in files:
-        file_path = os.path.join(data_path, file)
-        if os.path.exists(file_path) and not args.FORCE_DOWNLOAD:
-            print 'File ' + file_path + ' exists. Downloading data cancelled. ' \
-                  'If you want to force download use --force_download option'
+        file_path = path.join(data_path, file)
+        if path.exists(file_path) and not args.FORCE_DOWNLOAD:
+            print(f"File {file_path} already exists. Downloading has been cancelled.",
+                  "If you want to force download, use \"-force_download\" (True/False) option.", 
+                  sep=linesep)
         else:
-            print 'Donwloading ' + file
-            urllib.urlretrieve(DATA_URL + file, file_path)
+            print(f'Downloading {file}')
+            urlretrieve(DATA_URL + file, file_path)
