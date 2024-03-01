@@ -2,6 +2,9 @@ import numpy as np
 import random
 
 class Dataset(object):
+    """ Represent a dataset with features, weights, and additional attributes.
+    Provide methods for shuffling the dataset and retrieving batches of data. """
+
     def __init__(self, x, weights, argmaxs, c012s, hits_argmaxs, hits_c012s):
         self.x = x[:, :-1]
         self.filt = x[:, -1]
@@ -37,6 +40,7 @@ class Dataset(object):
         return (self.x[cur_id:cur_id+batch_size],
                 self.weights[cur_id:cur_id+batch_size], self.argmaxs[cur_id:cur_id+batch_size], self.c012s[cur_id:cur_id+batch_size],
                 self.hits_argmaxs[cur_id:cur_id+batch_size], self.hits_c012s[cur_id:cur_id+batch_size], self.filt[cur_id:cur_id+batch_size])
+
 
 def unweight(x):
     return 0 if x < random.random() * 2 else 1
@@ -98,13 +102,12 @@ def read_np(filename):
 
 
 class EventDatasets(object):
-
     def __init__(self, event, weights, argmaxs, perm, c012s, hits_argmaxs, hits_c012s, filtered=False, raw=False, miniset=False,  unweighted=False):
         data = event.cols[:, :-1]
         filt = event.cols[:, -1]
 
         if miniset:
-            print("Miniset")
+            print("The mini version of the training data set will be used.")
             train_ids = perm[-300000:-200000]
             print(len(train_ids))
             valid_ids = perm[-200000:-100000]
@@ -115,7 +118,7 @@ class EventDatasets(object):
             test_ids = perm[-100000:]
 
         if not raw:
-            print "SCALE!!"
+            print("Training data will be standardised.")
             means = data[train_ids].mean(0)
             stds = data[train_ids].std(0)
             data = (data - means) / stds
@@ -127,14 +130,24 @@ class EventDatasets(object):
 
         data = np.concatenate([data, filt.reshape([-1, 1])], 1)
 
-        def unweight(x):
-            return 0 if x < random.random()*2 else 1
+        # Optional: "unweighting" the events to resemble real data
+        # Description: ¶ 5.4. Real data - 
+        # Master's Thesis: "Machine Learning application in High Energy Physics:
+        # case of Higgs boson CP state in H ⇾ ττ decay at LHC" by Paulina Winkowska
+        # ============================================================================
+        if unweighted:
+            w_a = np.array(map(unweight, w_a))
+            w_b = np.array(map(unweight, w_b))
+        # ============================================================================
 
-        # if unweighted:
-        #     w_a = np.array(map(unweight, w_a))
-        #     w_b = np.array(map(unweight, w_b))
-
-        self.train = Dataset(data[train_ids], weights[train_ids, :], argmaxs[train_ids], c012s[train_ids], hits_argmaxs[train_ids], hits_c012s[train_ids])
-        self.valid = Dataset(data[valid_ids], weights[valid_ids, :], argmaxs[valid_ids], c012s[valid_ids], hits_argmaxs[valid_ids], hits_c012s[valid_ids])
-        self.test = Dataset(data[test_ids], weights[test_ids, :], argmaxs[test_ids], c012s[test_ids], hits_argmaxs[test_ids], hits_c012s[test_ids])
-        self.unweightedtest = UnweightedDataset(data[test_ids], weights[test_ids, :], argmaxs[test_ids], c012s[test_ids], hits_argmaxs[test_ids], hits_c012s[test_ids])
+        self.train = Dataset(data[train_ids], weights[train_ids, :], argmaxs[train_ids], c012s[train_ids], 
+                             hits_argmaxs[train_ids], hits_c012s[train_ids])
+        
+        self.valid = Dataset(data[valid_ids], weights[valid_ids, :], argmaxs[valid_ids], c012s[valid_ids], 
+                             hits_argmaxs[valid_ids], hits_c012s[valid_ids])
+        
+        self.test = Dataset(data[test_ids], weights[test_ids, :], argmaxs[test_ids], c012s[test_ids], 
+                            hits_argmaxs[test_ids], hits_c012s[test_ids])
+        
+        self.unweightedtest = UnweightedDataset(data[test_ids], weights[test_ids, :], argmaxs[test_ids], 
+                                                c012s[test_ids], hits_argmaxs[test_ids], hits_c012s[test_ids])
