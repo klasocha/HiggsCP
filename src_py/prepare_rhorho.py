@@ -1,72 +1,73 @@
+""" This program read the dowloaded original raw data, parse all the records and then
+saved them as prepared "rhorho_raw.*.npy: files """
 import numpy as np
-from src_py.prepare_utils import read_raw_root
+from prepare_utils import read_raw_root
 import argparse
 import os
+from pathlib import Path
 
 
 def read_raw_all(kind, args):
-    print "Reading %s" % kind
+    """ Read the original raw data and use src_py.prepare_utils.read_raw_root to parse it
+    as data and weights ready for being saved as "rhorho_raw.*.npy files". """
+    print(f"Reading and parsing the raw data containing {kind}")
 
     data_path = args.IN
-
     all_data = []
     all_weights = []
+
     for letter in ["a"][:args.DATASETS]:
         name = os.path.join(data_path, "pythia.H.rhorho.1M.%s.%s.outTUPLE_labFrame" % (letter, kind))
-        print letter, name
+        print(f"  ==> {letter}, {name}")
         data, weights = read_raw_root(name, num_particles=7)
         all_data += [data]
         all_weights += [weights]
     all_data = np.concatenate(all_data)
     all_weights = np.concatenate(all_weights)
+    
     return all_data, all_weights
 
 
 if __name__ == "__main__":
+    
+    # Command line arguments needed for running the program independently
     parser = argparse.ArgumentParser(description='Train classifier')
     parser.add_argument("-d", "--datasets", dest="DATASETS", default=2, type=int, help="number of datasets to prepare")
-    parser.add_argument("-i", "--input", dest="IN", default=os.environ["RHORHO_DATA"])
+    parser.add_argument("-i", "--input", dest="IN", type=Path, help="data path", default="temp_data")
     args = parser.parse_args()
-
-    data_00, weights_00 = read_raw_all("CPmix_00", args)
-    data_02, weights_02 = read_raw_all("CPmix_02", args)
-    data_04, weights_04 = read_raw_all("CPmix_04", args)
-    data_06, weights_06 = read_raw_all("CPmix_06", args)
-    data_08, weights_08 = read_raw_all("CPmix_08", args)
-    data_10, weights_10 = read_raw_all("CPmix_10", args)
-    data_12, weights_12 = read_raw_all("CPmix_12", args)
-    data_14, weights_14 = read_raw_all("CPmix_14", args)
-    data_16, weights_16 = read_raw_all("CPmix_16", args)
-    data_18, weights_18 = read_raw_all("CPmix_18", args)
-    data_20, weights_20 = read_raw_all("CPmix_20", args)
-
-    print "In total: prepared %d events." % len(weights_00)
-    np.testing.assert_array_almost_equal(data_00, data_02)
-    np.testing.assert_array_almost_equal(data_00, data_04)
-    np.testing.assert_array_almost_equal(data_00, data_06)
-    np.testing.assert_array_almost_equal(data_00, data_08)
-    np.testing.assert_array_almost_equal(data_00, data_10)
-    np.testing.assert_array_almost_equal(data_00, data_12)
-    np.testing.assert_array_almost_equal(data_00, data_14)
-    np.testing.assert_array_almost_equal(data_00, data_16)
-    np.testing.assert_array_almost_equal(data_00, data_18)
-    np.testing.assert_array_almost_equal(data_00, data_20)
-
-    np.random.seed(123)
-    perm = np.random.permutation(len(weights_00))
-
+    
     data_path = args.IN
+    data_copy = []
+    n_events = 0
 
-    np.save(os.path.join(data_path, "rhorho_raw.data.npy"), data_00)
-    np.save(os.path.join(data_path, "rhorho_raw.w_00.npy"), weights_00)
-    np.save(os.path.join(data_path, "rhorho_raw.w_02.npy"), weights_02)
-    np.save(os.path.join(data_path, "rhorho_raw.w_04.npy"), weights_04)
-    np.save(os.path.join(data_path, "rhorho_raw.w_06.npy"), weights_06)
-    np.save(os.path.join(data_path, "rhorho_raw.w_08.npy"), weights_08)
-    np.save(os.path.join(data_path, "rhorho_raw.w_10.npy"), weights_10)
-    np.save(os.path.join(data_path, "rhorho_raw.w_12.npy"), weights_12)
-    np.save(os.path.join(data_path, "rhorho_raw.w_14.npy"), weights_14)
-    np.save(os.path.join(data_path, "rhorho_raw.w_16.npy"), weights_16)
-    np.save(os.path.join(data_path, "rhorho_raw.w_18.npy"), weights_18)
-    np.save(os.path.join(data_path, "rhorho_raw.w_20.npy"), weights_20)
+    for i in range(0, 21):
+        if i < 10:
+            filename = f"CPmix_0{i}"
+        else:
+            filename = f"CPmix_{i}"
+        
+        # Loading data and parsing it to data and weights
+        data, weights = read_raw_all(filename, args)
+
+        # Verifying data, as it should be the same for all the CPmix_CLASS_INDEX cases
+        if i == 0:
+            data_copy = data
+            n_events = len(weights)
+        np.testing.assert_almost_equal(data_copy, data)
+
+        # Saving the weights
+        if i < 10:
+            weights_path = f"rhorho_raw.w_0{i}.npy"
+        else:
+            weights_path = f"rhorho_raw.w_{i}.npy"
+        np.save(os.path.join(data_path, weights_path), weights)
+
+    # Preparing permutations for data shuffling
+    np.random.seed(123)
+    perm = np.random.permutation(n_events)
+
+    # Saving the data and permutations
+    np.save(os.path.join(data_path, "rhorho_raw.data.npy"), data_copy)
     np.save(os.path.join(data_path, "rhorho_raw.perm.npy"), perm)
+
+    print(f"In total: prepared {len(weights)} events.")
