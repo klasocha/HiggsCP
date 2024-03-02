@@ -1,3 +1,9 @@
+"""
+This Python module contains a collection of functions primarily designed for calculations 
+and manipulations related to particle physics experiments. These functions facilitate 
+operations such as vector computations, angle calculations, boosting and rotating particles, 
+adding statistical noise to data, and approximating parameters for specific physics scenarios.
+"""
 import numpy as np
 
 
@@ -19,10 +25,12 @@ def get_costheta(v1, v2, v3, v4, frame):
             v1.boost(frame), v2.boost(frame),
             v3.boost(frame), v4.boost(frame))
 
+
 def get_y(v1, v2, frame):
     v1 = v1.boost(frame)
     v2 = v2.boost(frame)
     return (v1.e - v2.e) / (v1.e + v2.e)
+
 
 def get_y2(a1, rho, other_pi, frame):
     rho = rho.boost(frame)
@@ -31,6 +39,7 @@ def get_y2(a1, rho, other_pi, frame):
     x1 = (np.power(a1.recalculated_mass, 2) - np.power(other_pi.recalculated_mass, 2) + np.power(rho.recalculated_mass, 2)) / (2 * np.power(a1.recalculated_mass, 2))
     y1 = np.where(y1 > x1, -y1, y1)
     return y1
+
 
 def compute_acoplanar_angle(v1, v2, v3, v4):
     normal1 = p_norm_cross_product(v1, v2)
@@ -49,6 +58,7 @@ def get_acoplanar_angle(v1, v2, v3, v4, frame):
             v1.boost(frame), v2.boost(frame),
             v3.boost(frame), v4.boost(frame))
 
+
 def compute_sintheta(v1, v2, v3, v4):
     normal1 = p_norm_cross_product(v1, v2)
     normal2 = p_norm_cross_product(v3, v4)
@@ -66,16 +76,19 @@ def get_sintheta(v1, v2, v3, v4, frame):
             v1.boost(frame), v2.boost(frame),
             v3.boost(frame), v4.boost(frame))
 
+
 def boost_and_rotate(particle, phi, theta, ref_part):
     particle = particle.boost(ref_part)
     particle = particle.rotate_xy(-phi)
     particle = particle.rotate_xz(np.pi - theta)
     return particle
 
+
 def rotate_xy(x, y, phi):
     cos_phi = np.cos(phi)
     sin_phi = np.sin(phi)
     return (cos_phi*x - sin_phi*y, sin_phi*x + cos_phi*y)
+
 
 def calc_angles(part, ref_part):
     b_part = part.boost(ref_part)
@@ -84,16 +97,21 @@ def calc_angles(part, ref_part):
     theta = b_part.angle_theta
     return phi, theta
 
+
 def smear_exp(x, lambd):
     noise = np.random.exponential(scale=lambd, size=x.shape)
     sign = np.random.choice(np.array([-1,1]), size=x.shape)
     return x + sign*noise
 
+
 def smear_log(x):
     rn = np.random.random()
     return x * (- np.log(rn))
 
-def polynomial_density(x, beta, b, c): return np.exp(-(1/beta)*x) * (1 + (b**2)*(x**2) + (c**2)*(x**4))
+
+def polynomial_density(x, beta, b, c): 
+    return np.exp(-(1/beta)*x) * (1 + (b**2)*(x**2) + (c**2)*(x**4))
+
 
 def smear_polynomial(x, beta, b, c):
 	s = x.size	
@@ -109,6 +127,7 @@ def smear_polynomial(x, beta, b, c):
 	sign = np.random.choice(np.array([-1,1]), size=s)
 	return x + sign*noise
 
+
 def approx_alpha_A(v_ETmiss_x, v_ETmiss_y, p_tau1_h, p_tau2_h):
     c1 = v_ETmiss_x*p_tau1_h.y
     c2 = v_ETmiss_y*p_tau1_h.x
@@ -121,6 +140,7 @@ def approx_alpha_A(v_ETmiss_x, v_ETmiss_y, p_tau1_h, p_tau2_h):
     d1 = p_tau1_h.x
     alpha1 = (c1 - c2) / d1
     return alpha1, alpha2
+
 
 def approx_alpha_B(v_ETmiss_x, v_ETmiss_y, p_tau1_h, p_tau2_h):
     M_H = 125.0
@@ -140,6 +160,7 @@ def approx_alpha_B(v_ETmiss_x, v_ETmiss_y, p_tau1_h, p_tau2_h):
     alpha1 = (alpha1 / d2) - 1
     return alpha1, alpha2
 
+
 def approx_alpha_C(v_ETmiss_x, v_ETmiss_y, p_tau1_h, p_tau2_h):
     M_H = 125.0
     M_TAU = 1.77
@@ -157,6 +178,7 @@ def approx_alpha_C(v_ETmiss_x, v_ETmiss_y, p_tau1_h, p_tau2_h):
     alpha2 = (c1 - c2) / d1
     alpha2 = (alpha2 / d2) - 1
     return alpha1, alpha2
+
 
 def approx_E_nu(p_tau_h, v_tau_nu_z):
     M_H = 125.0
