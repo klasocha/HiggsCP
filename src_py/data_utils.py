@@ -97,7 +97,8 @@ class UnweightedDataset(object):
 
 
 def read_np(filename):
-    with open(filename) as f:
+    """ Return the data loaded from a NPY file """
+    with open(filename, 'rb') as f:
         return np.load(f)
 
 
