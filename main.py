@@ -1,7 +1,7 @@
 import argparse
-import os
 import train_rhorho, train_a1rho, train_a1a1
 from pathlib import Path
+from src_py.download_original_data import download as download_original_data
 
 # =============================== GETTING ALL THE ARGUMENTS ============================================
 # Specifiying the model and its function responsible for running the training process
@@ -72,6 +72,10 @@ parser.add_argument("--delt_classes", dest="DELT_CLASSES", type=int, default=0,
                     help=("Maximum allowed difference between the predicted class" + 
                     "and the true class for an event to be considered correctly classified."))
 
+# Adding the arguments downloading the original data
+parser.add_argument("--download_original_data", dest="DOWNLOAD_ORIGINAL", help="downloading the original data",
+                    type=bool, default=False)
+
 # Adding other arguments
 parser.add_argument("-lambda", "--lambda", type=float, dest="LAMBDA", help="value of lambda parameter", default=0.0)
 parser.add_argument("--z_noise_fraction", dest="Z_NOISE_FRACTION", type=float, default=0.5)
@@ -83,9 +87,15 @@ parser.add_argument("--w2", dest="W2")
 # Parsing the command-line arguments 
 args = parser.parse_args()
 
-# =================================== TRAINING THE MODEL ===============================================
-# Calling the main function of the specified model (rhorho model by default)
-types[args.TYPE](args)
+# ================================= DOWNLOADING ORIGINAL DATA =========================================
+if args.DOWNLOAD_ORIGINAL:
+    # TEST (Downloading original data:
+    # $ python main.py --input "data_original" --download_original True
+    download_original_data(args)
+else:
+    # =================================== TRAINING THE MODEL ===============================================
+    # Calling the main function of the specified model (rhorho model by default)
+    types[args.TYPE](args)
 
-# TEST (Downloading and preprocessing data, training the model):
-# $ python .\main.py --input "data" --type nn_rhorho --epochs 5 --features Variant-All --num_classes 11
+    # TEST (Downloading and preprocessing data, training the model):
+    # $ python main.py --input "data" --type nn_rhorho --epochs 5 --features Variant-All --num_classes 11
