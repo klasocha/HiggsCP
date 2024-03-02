@@ -1,11 +1,11 @@
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 import os, errno
 
 from src_py.cpmix_utils import preprocess_data
 from src_py.download_data_rhorho import download_data
 from src_py.rhorho import RhoRhoEvent
-from src_py.data_utils import read_np, EventDatasets
+from src_py.data_utils import EventDatasets
 from src_py.tf_model import total_train, NeuralNetwork
 from src_py.monit_utils import monit_plots
 
