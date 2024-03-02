@@ -13,7 +13,7 @@ parser = argparse.ArgumentParser(
   description='Download data and train the classifier for the Higgs Boson CP problem')
 
 # Adding the arguments used by src_py/download_data_rhorho.py
-parser.add_argument("-i", "--input", dest="IN", type=Path, help="data path")
+parser.add_argument("-i", "--input", dest="IN", type=Path, help="data path", default="temp_data")
 parser.add_argument("--force_download", dest="FORCE_DOWNLOAD", type=bool, 
                     default=False, help="overwriting existing data")
 
