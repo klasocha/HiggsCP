@@ -25,7 +25,7 @@ parser.add_argument("--reuse_weights", dest="REUSE_WEIGHTS", type=bool, default=
 parser.add_argument("-t", "--type", dest="TYPE", choices=types.keys(), default='nn_rhorho',
                     help="decay mode for training")
 parser.add_argument("--hits_c012s", dest="HITS_C012s", 
-                    choices=["hits_c0s", "hits_c1s",  "hits_c2s"], default="hits_c0s"
+                    choices=["hits_c0s", "hits_c1s",  "hits_c2s"], default="hits_c0s",
                     help="?") # TODO: Add a help message
 
 # TODO: Those two have been so far unclear to the project team
