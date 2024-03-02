@@ -79,7 +79,6 @@ parser.add_argument("--pol_b", type=float, dest="pol_b", help="value of b parame
 parser.add_argument("--pol_c", type=float, dest="pol_c", help="value of c parameter for polynomial smearing", default=0.0)
 parser.add_argument("--w1", dest="W1")
 parser.add_argument("--w2", dest="W2")
-parser.add_argument("--training_method", dest="TRAINING_METHOD", choices=["soft_weights", "soft_c012s",  "soft_argmaxs", "regr_c012s", "regr_weights", "regr_argmaxs"], default="soft_weights")
 parser.add_argument("--hits_c012s", dest="HITS_C012s", choices=["hits_c0s", "hits_c1s",  "hits_c2s"], default="hits_c0s")
 
 # Parsing the command-line arguments 

@@ -1,6 +1,6 @@
 import numpy as np
-from particle import Particle
-from math_utils import * 
+from .particle import Particle
+from .math_utils import * 
 
 class A1A1Event(object):
     def __init__(self, data, args, debug=False):
