@@ -33,10 +33,12 @@ def calc_hits_c012s(classes, c012s, data_len, num_classes):
     hits_c2s = np.zeros((data_len, num_classes))
 
     for i in range(data_len):
+        if i % 10000 == 0:
+            print(f"{i} events have been processed...", end='\r')
         hits_c0s[i] = hits_fun(classes, c012s[i][0], num_classes)
         hits_c1s[i] = hits_fun(classes, c012s[i][1] + 1.0, num_classes)
         hits_c2s[i] = hits_fun(classes, c012s[i][2] + 1.0, num_classes)
-
+    print()
     return hits_c0s, hits_c1s, hits_c2s
 
 
@@ -46,7 +48,7 @@ def calc_weights_and_argmaxs(classes, c012s, data_len, num_classes):
     weights      = np.zeros((data_len, num_classes))
     hits_argmaxs = np.zeros((data_len, num_classes))
 
-    print("Calculating weights and argmax values from continuum distributions\n")    
+    print("Calculating weights and argmax values from continuum distributions")    
     for i in range(data_len):
         if i % 10000 == 0:
             print(f"{i} events have been processed...", end='\r')
@@ -67,7 +69,7 @@ def calc_weights_and_argmaxs(classes, c012s, data_len, num_classes):
 
         argmaxs[i] = arg_max
         hits_argmaxs[i] = hits_fun(classes, arg_max, num_classes)
-
+    print()
     return weights, argmaxs, hits_argmaxs
 
 

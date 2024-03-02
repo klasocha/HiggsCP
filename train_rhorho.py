@@ -36,7 +36,6 @@ def run(args):
     
     # TEST: Input data shape: 
     """    
-    print(f"{num_features} features have been prepared.")
     print('x:\n', points.train.x[0:1])
     print('x:\n', points.train.x.shape)
     print('filt:\n', points.train.filt[0:1])
@@ -86,7 +85,7 @@ def run(args):
 
     # ====================================== OPTIONAL PLOTTING =========================================
     # Plotting the weights distribution (scalar/pseudoscalar)
-    if args.PLOT_FEATURES is not "NO":
+    if args.PLOT_FEATURES != "NO":
         w_a = weights[:,0]
         w_b = weights[:,num_classes/2]
         monit_plots(pathOUT_plots, args, event, w_a, w_b)
