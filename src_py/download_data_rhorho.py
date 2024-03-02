@@ -1,11 +1,7 @@
 import numpy as np
 from os import mkdir, path, linesep
 from urllib.request import urlretrieve 
-
-# The directory to which the following link leads is supposed to have a structure
-# that follows a specific convention in terms of the data file names:
-DATA_URL = "http://th-www.if.uj.edu.pl/~erichter/forHiggsCP/HiggsCP_data_org/rhorho/"
-
+import config
 
 def download_data(args):
     """ Download all the data (weights and data files) in a raw NPY format. """
@@ -44,7 +40,7 @@ def download_weights(args):
         filename = 'rhorho_raw.w_' + index + '.npy'
         print(f"Downloading {filename}")
         filepath = path.join(data_path, filename)
-        urlretrieve(DATA_URL + filename, filepath)
+        urlretrieve(config.DATA_URL + filename, filepath)
         weights.append(np.load(filepath))
    
     # Joining and then saving all the parts together in a single file
@@ -65,4 +61,4 @@ def download_data_files(args):
                   sep=linesep)
         else:
             print(f'Downloading {file}')
-            urlretrieve(DATA_URL + file, file_path)
+            urlretrieve(config.DATA_URL + file, file_path)
