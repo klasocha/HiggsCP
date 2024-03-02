@@ -46,7 +46,7 @@ def calc_weights_and_argmaxs(classes, c012s, data_len, num_classes):
     weights      = np.zeros((data_len, num_classes))
     hits_argmaxs = np.zeros((data_len, num_classes))
 
-    print("Calculating weights and argmax values from continuum distributions")    
+    print("Calculating weights and argmax values from continuum distributions\n")    
     for i in range(data_len):
         if i % 10000 == 0:
             print(f"{i} events have been processed...", end='\r')
@@ -153,7 +153,7 @@ def preprocess_data(args):
         and np.load(weights_path).shape[1] == num_classes \
         and np.load(hits_argmaxs_path).shape[1] == num_classes):
         classes = np.linspace(0, 2, num_classes) * np.pi
-        weights, argmaxs, hits_argmaxs = calc_weights_and_argmaxs(classes, c012s, data_len)
+        weights, argmaxs, hits_argmaxs = calc_weights_and_argmaxs(classes, c012s, data_len, num_classes)
 
         np.save(weights_path, weights)
         np.save(argmaxs_path, argmaxs)
