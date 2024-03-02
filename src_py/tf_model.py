@@ -4,6 +4,7 @@ import numpy as np
 import tensorflow.compat.v1 as tf
 from sklearn.metrics import roc_auc_score
 import sys
+from math import floor
 from .metrics_utils import calculate_deltas_unsigned, calculate_deltas_signed
 
 # TODO (comment, probably from ERW): 
@@ -15,7 +16,7 @@ def train(model, dataset, batch_size=128):
     to process the whole data volume (and thus, not the number of epochs) taken into account 
     the "batch_size" defining the way the data itself is supplied in little portions (mini-batches). """
     sess = tf.get_default_session()
-    epoch_size = dataset.n / batch_size
+    epoch_size = floor(dataset.n / batch_size)
     losses = []
 
     sys.stdout.write("<losses>):")
@@ -33,7 +34,7 @@ def train(model, dataset, batch_size=128):
     return np.mean(losses)
 
 def get_loss(model, dataset, batch_size=128):
-    batches = dataset.n / batch_size
+    batches = floor(dataset.n / batch_size)
     losses = []
     sess = tf.get_default_session()
     for i in range(batches):
