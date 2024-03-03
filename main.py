@@ -88,14 +88,14 @@ parser.add_argument("--w2", dest="W2")
 args = parser.parse_args()
 
 # ================================= DOWNLOADING ORIGINAL DATA =========================================
-if args.DOWNLOAD_ORIGINAL:
-    # TEST (Downloading original data:
-    # $ python main.py --input "data_original" --download_original True
-    download_original_data(args)
-else:
-    # =================================== TRAINING THE MODEL ===============================================
-    # Calling the main function of the specified model (rhorho model by default)
-    types[args.TYPE](args)
+# if args.DOWNLOAD_ORIGINAL:
+#     # TEST (Downloading original data:
+#     # $ python main.py --input "data_original" --download_original True
+#     download_original_data(args)
+# else:
+#     # =================================== TRAINING THE MODEL ===============================================
+#     # Calling the main function of the specified model (rhorho model by default)
+#     types[args.TYPE](args)
 
-    # TEST (Downloading and preprocessing data, training the model):
-    # $ python main.py --input "data" --type nn_rhorho --epochs 5 --features Variant-All --num_classes 11
+#     # TEST (Downloading and preprocessing data, training the model):
+#     # $ python main.py --input "data" --type nn_rhorho --epochs 5 --features Variant-All --num_classes 11
