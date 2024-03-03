@@ -144,7 +144,7 @@ def preprocess_data(args):
     elif args.HITS_C012s == "hits_c2s" :   
         hits_c012s = np.load(c012s_paths[2])
 
-     # Calculating the weights and argmaxes (one-hot encoded) and saving them
+    # Calculating the weights and argmaxes (one-hot encoded) and saving them
     weights_path = os.path.join(data_path, 'weights.npy')
     argmaxs_path = os.path.join(data_path, 'argmaxs.npy')
     hits_argmaxs_path = os.path.join(data_path, 'hits_argmaxs.npy')

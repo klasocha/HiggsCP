@@ -8,8 +8,7 @@ and you want to save the results in "plot_py/figures/"):
     $ python plot_py/plot_calc_c012s.py --input "data" --output "plot_py/figures" --show True --format "png"
 """
 
-import os, errno
-import argparse
+import os, errno, argparse
 from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
