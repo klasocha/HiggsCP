@@ -8,7 +8,7 @@ Try to run it as the following (let us suppose the coefficients are stored in "d
 and the covariance values are stored in "data/ccovs.npy", so you want to save the results in "plot_py/figures/"): 
     $ python plot_py/plot_popts_rhorho.py --input "data" --output "plot_py/figures" --show True --format "png"
 """
-import argparse, os, errno
+import argparse, os
 from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
