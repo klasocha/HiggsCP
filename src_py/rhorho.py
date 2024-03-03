@@ -10,7 +10,8 @@ class RhoRhoEvent(object):
     high-energy physics experiments. """
 
     def __init__(self, data, args):
-        # [n, pi-, pi0, an, pi+, pi0]
+        # p = [[n, pi-, pi0, an, pi+, pi0], ...]
+        # Therefore we have 6 vectors in the original data per event
 
         p = [Particle(data[:, 5 * i:5 * i + 4]) for i in range(6)]
         cols = []
@@ -87,9 +88,14 @@ class RhoRhoEvent(object):
                 cols.append(rho.vec)
                 cols.append(rho.recalculated_mass)
 
-        if args.FEAT == "Variant-1.1":
-            cols += [get_acoplanar_angle(p[1], p[2], p[4], p[5], rho_rho)]
-            cols += [get_y(p[1], p[2], rho_rho), get_y(p[4], p[5], rho_rho)]
+            # As part of "data exploration" we would like to plot the distributions 
+            # of these variables using weights for different hypotheses of alphaCP, 
+            # without conditioning on the sign of y1*y2, and separately grouping y1*y1>0, y1*y2<0.            
+            phistar = get_acoplanar_angle(p[1], p[2], p[4], p[5], rho_rho)
+            y1 = get_y(p[1], p[2], rho_rho)
+            y2 = get_y(p[4], p[5], rho_rho)
+            cols += [phistar]
+            cols += [y1, y2]
 
         #------------------------------------------------------------
 
@@ -309,3 +315,6 @@ class RhoRhoEvent(object):
                         "tau1_pi_px", "tau1_pi_py", "tau1_pi_pz", "tau1_pi_e", "tau1_pi0_px", "tau1_pi0_py", "tau1_pi0_pz", "tau1_pi0_e",
                         "tau2_nu_px", "tau2_nu_py", "tau2_nu_pz", "tau2_nu_e", 
                         "tau2_pi_px", "tau2_pi_py", "tau2_pi_pz", "tau2_pi_e", "tau2_pi0_px", "tau2_pi0_py", "tau2_pi0_pz", "tau2_pi0_e"]                         
+        
+        # Dictionary mapping the features labels to indices useful for accessing the features in "self.cols"
+        self.feature_index_dict = {label: index for index, label in enumerate(self.labels)}

@@ -10,6 +10,8 @@ from src_py.rhorho import RhoRhoEvent
 from src_py.data_utils import EventDatasets
 from src_py.tf_model import total_train, NeuralNetwork
 from src_py.monit_utils import monit_plots
+import os
+import pickle
 
 
 def run(args):
@@ -28,9 +30,21 @@ def run(args):
     # TEST: python .\main.py --num_classes 25 --type "nn_rhorho" --input "data/raw_npy" 
     # --reuse_weights True --miniset "yes"
     print("\033[1mProcessing data...\033[0m")
+   
+    # Saving the RhoRhoEvent object as a pickle binary file for the later analysis 
+    # of its attributes (e.g. drawing the distribution of the phistar depending on y1 and y2)
     event = RhoRhoEvent(data, args)
+    event_path = os.path.join(args.IN, "rhorho_event.obj")
+    with open(event_path, 'wb') as f:
+        pickle.dump(event, f)
+
+    # Saving additionally the EventDatasets object as a pickle binary file
     points = EventDatasets(event, weights, argmaxs, perm, c012s=c012s, hits_argmaxs=hits_argmaxs,  
                            hits_c012s=hits_c012s, miniset=args.MINISET, unweighted=args.UNWEIGHTED)
+    points_path = os.path.join(args.IN, "event_datasets.obj")
+    with open(points_path, 'wb') as f:
+        pickle.dump(points, f)
+
     num_features = points.train.x.shape[1]
     print(f"{num_features} features have been prepared.")
     
