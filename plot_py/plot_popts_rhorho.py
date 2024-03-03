@@ -45,7 +45,7 @@ ccovs = read_np(ccovs_path)
 discrete_weights = read_np(discrete_weights_path)
 
 
-def draw_weights(c012s, ccovs, discrete_weights, event_index):
+def draw_weights_to_compare(c012s, ccovs, discrete_weights, event_index):
     """ Draw the computed values and the true values of the weight(alphaCP) function """
 
     # Drawing the true values (generated with an algorithm using Monte Carlo methods)
@@ -67,16 +67,17 @@ def draw_weights(c012s, ccovs, discrete_weights, event_index):
     plt.tight_layout()
 
     # Showing and saving the diagrams
+    plt.savefig(os.path.join(args.OUT, f"calc_vs_gen_weights_event_{event_index}.{args.FORMAT}"))
     if args.SHOW:
         plt.show()
-    plt.savefig(os.path.join(args.OUT, f"calc_vs_gen_weights_event_{event_index}.{args.FORMAT}"))
 
 
 # Calling the main drawing function for some sample events
-draw_weights(c012s, ccovs, discrete_weights, 0)
-draw_weights(c012s, ccovs, discrete_weights, 10)
-draw_weights(c012s, ccovs, discrete_weights, 1000)
-draw_weights(c012s, ccovs, discrete_weights, 2000)
+draw_weights_to_compare(c012s, ccovs, discrete_weights, 0)
+draw_weights_to_compare(c012s, ccovs, discrete_weights, 10)
+draw_weights_to_compare(c012s, ccovs, discrete_weights, 1000)
+draw_weights_to_compare(c012s, ccovs, discrete_weights, 2000)
+
 
 # TODO: find out what the purpose of the below lines was 
 # Comment from ERW
