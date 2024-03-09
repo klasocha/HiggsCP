@@ -48,7 +48,7 @@ def run(args):
             if e.errno != errno.EEXIST:
                 raise
     
-    if args.PLOT_FEATURES is not "NO":
+    if args.PLOT_FEATURES != "NO":
         w_a = weights[:,0]
         w_b = weights[:,num_classes/2]
         monit_plots(pathOUT_plots, args, event, w_a, w_b)
