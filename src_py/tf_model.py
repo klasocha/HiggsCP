@@ -366,7 +366,7 @@ def softmax_predictions(model, dataset, at_most=None, filtered=True):
     
     Moreover, it is literaly the EXACT COPY of regr_weights_predictions().
     The main difference in terms of the output of the model is visible not inside
-    any of these two functions but in the match-case block of the neural network 
+    any of these two functions but in the elif block of the neural network 
     class which describes the way of computing the loss function, as well as the
     choice of the appropriate labels. """
     sess = tf.get_default_session()

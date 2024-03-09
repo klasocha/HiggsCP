@@ -20,25 +20,25 @@ import matplotlib.pyplot as plt
 
 
 def draw_distribution(variable, label, args):
-        """ Draw the distribution of the given variable """
-        plt.hist(variable, histtype='step', bins=50, color = 'black', label=f"{label} distribution")
-        plt.xlabel(label)
-        plt.tight_layout()
+    """ Draw the distribution of the given variable """
+    plt.hist(variable, histtype='step', bins=50, color = 'black', label=f"{label} distribution")
+    plt.xlabel(label)
+    plt.tight_layout()
 
-        # Creating the output folder
-        output_path = args.OUT
-        try:
-            os.makedirs(output_path)
-        except OSError as e:
-            if e.errno != errno.EEXIST:
-                raise
+    # Creating the output folder
+    output_path = args.OUT
+    try:
+        os.makedirs(output_path)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
 
-        # Saving the diagram
-        plt.savefig(os.path.join(output_path, f"{label}_distribution.{args.FORMAT}"))
+    # Saving the diagram
+    plt.savefig(os.path.join(output_path, f"{label}_distribution.{args.FORMAT}"))
 
-        # Showing the diagram
-        if args.SHOW:
-            plt.show()
+    # Showing the diagram
+    if args.SHOW:
+        plt.show()
 
 
 def draw(args):
