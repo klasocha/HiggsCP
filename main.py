@@ -87,7 +87,7 @@ parser.add_argument("--w2", dest="W2")
 # Parsing the command-line arguments 
 args = parser.parse_args()
 
-================================= DOWNLOADING ORIGINAL DATA =========================================
+# ================================= DOWNLOADING ORIGINAL DATA =========================================
 if args.DOWNLOAD_ORIGINAL:
     # TEST (Downloading original data:
     # $ python main.py --input "data_original" --download_original True
