@@ -123,7 +123,7 @@ def preprocess_data(args):
     for i in range(3):
         c012s_paths.append(os.path.join(data_path, f'hits_c{i}s.npy'))
 
-    if not (os.path.exists(c012s_paths[0]) \
+    if args.FORCE_DOWNLOAD or not (os.path.exists(c012s_paths[0]) \
         and os.path.exists(c012s_paths[1]) \
         and os.path.exists(c012s_paths[2]) \
         and np.load(c012s_paths[0]).shape[1] == num_classes \
@@ -149,7 +149,7 @@ def preprocess_data(args):
     argmaxs_path = os.path.join(data_path, 'argmaxs.npy')
     hits_argmaxs_path = os.path.join(data_path, 'hits_argmaxs.npy')
 
-    if not (reuse_weights and os.path.exists(weights_path) \
+    if args.FORCE_DOWNLOAD or not (reuse_weights and os.path.exists(weights_path) \
         and os.path.exists(argmaxs_path) \
         and os.path.exists(hits_argmaxs_path) \
         and np.load(weights_path).shape[1] == num_classes \
