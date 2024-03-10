@@ -75,9 +75,3 @@ def draw(args):
     draw_weights_to_compare(c012s, ccovs, discrete_weights, 10, args)
     draw_weights_to_compare(c012s, ccovs, discrete_weights, 1000, args)
     draw_weights_to_compare(c012s, ccovs, discrete_weights, 2000, args)
-
-    # TODO: find out what the purpose of the below lines was 
-    # Comment from ERW
-    # ax = plt.gca()
-    # what is wrong with line below?
-    # ax.annotate("chi2/Ndof = {%0.3f}\n".format(chi2), xy=(0.7, 0.85), xycoords='axes fraction', fontsize=12)
