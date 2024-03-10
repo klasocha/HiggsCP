@@ -1,11 +1,11 @@
 import argparse
-import train_rhorho, train_a1rho, train_a1a1
+import train_rhorho
 from pathlib import Path
 from src_py.download_original_data import download as download_original_data
 
 # =============================== GETTING ALL THE ARGUMENTS ============================================
 # Specifiying the model and its function responsible for running the training process
-types = {"nn_rhorho": train_rhorho.start,"nn_a1rho": train_a1rho.start,"nn_a1a1": train_a1a1.start}
+types = {"nn_rhorho": train_rhorho.start}
 
 # Initialising a parser handling all the commaind-line arguments and options
 parser = argparse.ArgumentParser(
