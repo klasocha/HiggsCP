@@ -1,14 +1,14 @@
 """ This program read the dowloaded original raw data, parse all the records and then
 saved them as prepared "rhorho_raw.*.npy: files """
 import numpy as np
-from prepare_utils import read_raw_root
+from prepare_utils import read_raw_asci
 import argparse
 import os
 from pathlib import Path
 
 
 def read_raw_all(kind, args):
-    """ Read the original raw data and use src_py.prepare_utils.read_raw_root to parse it
+    """ Read the original raw data and use src_py.prepare_utils.read_raw_asci to parse it
     as data and weights ready for being saved as "rhorho_raw.*.npy files". """
     print(f"Reading and parsing the raw data containing {kind}")
 
@@ -19,7 +19,7 @@ def read_raw_all(kind, args):
     for letter in ["a"][:args.DATASETS]:
         name = os.path.join(data_path, "pythia.H.rhorho.1M.%s.%s.outTUPLE_labFrame" % (letter, kind))
         print(f"  ==> {letter}, {name}")
-        data, weights = read_raw_root(name, num_particles=7)
+        data, weights = read_raw_asci(name, num_particles=7)
         all_data += [data]
         all_weights += [weights]
     all_data = np.concatenate(all_data)

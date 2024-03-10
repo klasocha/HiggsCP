@@ -1,5 +1,5 @@
 """ 
-This program generates diagrams depicting the distribution of the calculated 
+This program generates the plots depicting the distribution of the calculated 
 (ideal, not predicted) C0/C1/C2 coefficients stored in a file named "c012s.npy" located
 in the directory specified by the command line argument. 
 
@@ -28,10 +28,10 @@ def draw_distribution(calc_c012s, type, args):
         if e.errno != errno.EEXIST:
             raise
 
-    # Saving the diagram
+    # Saving the plot
     plt.savefig(os.path.join(output_path, f"c{type}_distribution.{args.FORMAT}"))
 
-    # Showing the diagram
+    # Showing the plot
     if args.SHOW:
         plt.show()
 
@@ -43,6 +43,6 @@ def draw(args):
     with open(filepath, 'rb') as f:
         calc_c012s = np.load(f)
 
-    # Generating the diagrams showing C0/C1/C2 distribution
+    # Generating the plot showing C0/C1/C2 distribution
     for i in range(3):
         draw_distribution(calc_c012s, i, args)

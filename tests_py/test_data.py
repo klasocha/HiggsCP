@@ -25,7 +25,7 @@ def test_parsed_data(args):
             filename = f"rhorho_raw.w_{i}.npy"
         compare_two_files(args, filename)
 
-    # Comparing the values without weights
+    # Comparing 4 momenta and particles ID
     compare_two_files(args, f"rhorho_raw.data.npy")
     
     # Comparing the permutations
