@@ -2,7 +2,7 @@
 
 ## Downloading the original data
 ```
-$ python .\main.py --input "data" --type nn_rhorho --epochs 5 --features Variant-All --num_classes 11
+$ python main.py --input "data" --type nn_rhorho --epochs 5 --features Variant-All --num_classes 11
 ```
 
 
