@@ -94,7 +94,7 @@ def preprocess_data(args):
     data_len = data.shape[0]
 
     # Calculating and saving the C coefficients
-    if not os.path.exists(os.path.join(data_path, 'c012s.npy')):
+    if args.FORCE_DOWNLOAD or not os.path.exists(os.path.join(data_path, 'c012s.npy')):
         # Array to store C0, C1, and C2 coefficients (per event) 
         # It will be the input for the regression or softmax
         c012s   = np.zeros((data_len, 3))
