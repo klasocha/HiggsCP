@@ -20,5 +20,7 @@ parser.add_argument("-s", "--show", dest="SHOW", type=bool,
                     help='set to False to save the diagrams without showing them', default=True)
 parser.add_argument("--option", dest="OPTION", choices=types.keys(), default="PHISTAR-DISTRIBUTION",
                     help='specify what script for drawing the diagrams you want to run', required=True)
+parser.add_argument("--hypothesis", dest="HYPOTHESIS", default="None", 
+                    help="Hypothesis: the alphaCP class (e.g. 02)")
 args = parser.parse_args()
 types[args.OPTION](args)
