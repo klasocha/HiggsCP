@@ -92,7 +92,7 @@ def draw(args):
         draw_distribution(variable=variables, 
                           output_name=f"phistar_y1y2_positive_alphaCP_{args.HYPOTHESIS}", 
                           args=args, weights=weights, colors=['black', 'red'],
-                          labels=[r"$\boldsymbol{\phi* (y^+_\rho y^-_\rho < 0)}$", r"$\boldsymbol{\phi* (y^+_\rho y^-_\rho > 0)}$"],
+                          labels=[r"${\phi* (y^+_\rho y^-_\rho < 0)}$", r"${\phi* (y^+_\rho y^-_\rho > 0)}$"],
                           xlabel=r"${\phi_{\rho \rho}}$", title="{:.2f} rad".format(alphaCP))
     else: 
         # The same but without taking into account any specific hypothesis in terms of the weights values
