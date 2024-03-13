@@ -229,7 +229,7 @@ def total_train(pathOUT, model, data, args, emodel=None, batch_size=128, epochs=
     if model.tloss == 'soft_weights':
         """ TODO (Proposition): we do not save the value returned by the function below,
         so I suppose we can safely delete it: """
-        test_roc_auc(preds_w, calc_w)             
+        # test_roc_auc(preds_w, calc_w)             
 
         # Storing the training history            
         np.save(pathOUT+'train_losses.npy', train_losses)

@@ -118,7 +118,6 @@ def preprocess_data(args):
     
     # Loading C0, C1, C2 and saving them in a one-hot encoded form
     c012s = np.load(os.path.join(data_path, 'c012s.npy'))
-   
     c012s_paths = []
     for i in range(3):
         c012s_paths.append(os.path.join(data_path, f'hits_c{i}s.npy'))
