@@ -8,8 +8,7 @@ and you want to save the results in "plot_py/figures/"):
     $ python plots.py --option C012S-DISTRIBUTION --input "data" --output "plot_py/figures" --format "png" --show "True"
 """
 
-import os, errno, argparse
-from pathlib import Path
+import os, errno
 import numpy as np
 import matplotlib.pyplot as plt
 

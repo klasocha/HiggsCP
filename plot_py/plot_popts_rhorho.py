@@ -11,6 +11,8 @@ and the covariance values are stored in "data/ccovs.npy", so you want to save th
 import os, errno
 import numpy as np
 import matplotlib.pyplot as plt
+from src_py.data_utils import read_np
+from src_py.cpmix_utils import weight_fun
 
 
 def read_np(filepath):
@@ -18,11 +20,6 @@ def read_np(filepath):
     with open(filepath, 'rb') as f:
         values = np.load(f)
     return values
-
-
-def weight_fun(x, a, b, c):
-    """ Compute the functional form of the spin weight """
-    return a + b * np.cos(x) + c * np.sin(x)
 
 
 def draw_weights_to_compare(c012s, ccovs, discrete_weights, event_index, args):

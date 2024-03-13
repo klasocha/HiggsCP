@@ -20,8 +20,8 @@ being serialised.
 
 import os, errno, pickle
 import matplotlib.pyplot as plt
-from src_py.data_utils import read_np
 import numpy as np
+from src_py.data_utils import read_np
 
 
 def draw_distribution(variable, output_name, args, labels=None, weights=None, 
