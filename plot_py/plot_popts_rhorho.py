@@ -15,16 +15,7 @@ from src_py.data_utils import read_np
 from src_py.cpmix_utils import weight_fun
 
 
-def read_np(filepath):
-    """ Load and return values from a given NPY file """
-    with open(filepath, 'rb') as f:
-        values = np.load(f)
-    return values
-
-
 def draw_weights_to_compare(c012s, ccovs, discrete_weights, event_index, args):
-    """ Draw the computed values and the true values of the weight(alphaCP) function """
-
     # Drawing the true values (generated with an algorithm using Monte Carlo methods)
     x_weights = np.array([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2]) * np.pi
     plt.scatter(x_weights, discrete_weights[:, event_index], label="Generated")
@@ -58,6 +49,8 @@ def draw_weights_to_compare(c012s, ccovs, discrete_weights, event_index, args):
 
 
 def draw(args):
+    """ Draw the computed values and the true values of the weight(alphaCP) function """
+
     # Reading the calculated coefficients, covariances, as well as the calculated weights
     c012s_path = os.path.join(args.IN, "c012s.npy")
     ccovs_path = os.path.join(args.IN, "ccovs.npy")

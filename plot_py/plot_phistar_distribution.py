@@ -4,10 +4,10 @@ for various hypotheses of alphaCP. We would like to plot the distributions of th
 variables using weights for different hypotheses of alphaCP, without conditioning 
 on the sign of y1*y2, and separately grouping y1*y1>0, y1*y2<0.
 
-Try to run it as the following (let us suppose the "event" object having the attribute
+Let us suppose the "event" object having the attribute
 responsible for storing all the features, including phistar, y1 and y2 if "Variant-1.1"
-has been chosen, is stored in "data/rhorho_event.obj" and you want to save the results in "plot_py/figures/")
-you need to run "plots.py" in the following manner (hypothesis is an alphaCP class for the
+has been chosen, is stored in "data/rhorho_event.obj" and you want to save the results in "plot_py/figures/".
+Then you need to run "plots.py" in the following manner (hypothesis is an alphaCP class for the
 weighted distribution plots): 
 
     $ python plots.py --option PHISTAR-DISTRIBUTION --input "data" --output "plot_py/figures" 

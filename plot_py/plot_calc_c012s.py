@@ -14,7 +14,6 @@ import matplotlib.pyplot as plt
 
 
 def draw_distribution(calc_c012s, type, args):
-    """ Draw the distribution for a given list of coefficients """
     plt.hist(calc_c012s[:, type], histtype='step', bins=50,  color = 'black')
     plt.xlabel(f"$\mathregular{{C_{type}}}$")
     plt.tight_layout()
@@ -36,6 +35,7 @@ def draw_distribution(calc_c012s, type, args):
 
 
 def draw(args):
+    """ Draw the distribution for a given list of coefficients """
     # Reading the calculated coefficients
     filename = "c012s.npy"
     filepath = os.path.join(args.IN, filename)
