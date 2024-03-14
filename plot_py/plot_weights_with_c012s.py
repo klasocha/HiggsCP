@@ -66,7 +66,6 @@ def draw_distribution(weights, c0, alphaCP_range, args):
 
     plt.setp(axs, xlim=(0, alphaCP_range[-1]), title=r"${\alpha^{CP}}$", xlabel=r"${\alpha^{CP}}$ [rad]")
 
-
     # Creating the output folder
     output_path = args.OUT
     try:
@@ -76,10 +75,11 @@ def draw_distribution(weights, c0, alphaCP_range, args):
             raise
 
     # Saving the diagram
-    if bool(args.USE_UNWEIGHTED_EVENTS):
-        output_path = os.path.join(output_path, f"Unweighted_weights_c012s_vs_c12s.{args.FORMAT}")
+    if args.USE_UNWEIGHTED_EVENTS:
+        output_path = os.path.join(output_path, f"unweighted_weights_c012s_vs_c12s.{args.FORMAT}")
     else:
         output_path = os.path.join(output_path, f"weights_c012s_vs_c12s.{args.FORMAT}")
+    
     plt.savefig(output_path)
     print(f"Wt(alphaCP) subplots have been saved in {output_path}")
 
