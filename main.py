@@ -69,7 +69,7 @@ parser.add_argument("-o", "--optimizer", dest="OPT",
 parser.add_argument("-e", "--epochs", dest="EPOCHS", type=int, default=3,
                     help="the number of epochs used during the training process")
 parser.add_argument("--delt_classes", dest="DELT_CLASSES", type=int, default=0, 
-                    help=("Maximum allowed difference between the predicted class" + 
+                    help=("maximum allowed difference between the predicted class" + 
                     "and the true class for an event to be considered correctly classified."))
 
 # Adding the arguments downloading the original data
@@ -83,6 +83,9 @@ parser.add_argument("--pol_b", type=float, dest="pol_b", help="value of b parame
 parser.add_argument("--pol_c", type=float, dest="pol_c", help="value of c parameter for polynomial smearing", default=0.0)
 parser.add_argument("--w1", dest="W1")
 parser.add_argument("--w2", dest="W2")
+parser.add_argument("--use_unweighted_events", dest="USE_UNWEIGHTED_EVENTS", action="store_true",
+                    help="applying the unweighted events for training (Monte Carlo)")
+parser.set_defaults(use_unweighted_events=False)
 
 # Parsing the command-line arguments 
 args = parser.parse_args()

@@ -18,11 +18,17 @@ parser.add_argument("-i", "--input", dest="IN", type=Path, help="input data path
 parser.add_argument("-o", "--output", dest="OUT", type=Path, help="output path for diagrams", default="figures")
 parser.add_argument("-f", "--format", dest="FORMAT", 
                     help='the format of the output diagrams ("png"/"pdf"/"eps")', default="png")
-parser.add_argument("-s", "--show", dest="SHOW", type=bool, 
-                    help='set to False to save the diagrams without showing them', default=True)
+parser.add_argument("-s", "--show", dest="SHOW", action="store_true", 
+                    help='set to False to save the diagrams without showing them', default=False)
 parser.add_argument("--option", dest="OPTION", choices=types.keys(), default="PHISTAR-DISTRIBUTION",
                     help='specify what script for drawing the diagrams you want to run', required=True)
 parser.add_argument("--hypothesis", dest="HYPOTHESIS", default="None", 
                     help="Hypothesis: the alphaCP class (e.g. 02)")
+
+# ================= BETA-VERSION ======================================================================
+parser.add_argument("--use_unweighted_events", dest="USE_UNWEIGHTED_EVENTS", action="store_true",
+                    help="applying the unweighted events for training (Monte Carlo)", default=False)
+# =====================================================================================================
+
 args = parser.parse_args()
 types[args.OPTION](args)

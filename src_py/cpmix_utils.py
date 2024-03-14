@@ -117,7 +117,7 @@ def preprocess_data(args):
         np.save(os.path.join(data_path, 'ccovs.npy'), ccovs)
     
     # Loading C0, C1, C2 and saving them in a one-hot encoded form
-    c012s = np.load(os.path.join(data_path, 'c012s.npy'))
+    c012s = read_np(os.path.join(data_path, 'c012s.npy'))
     c012s_paths = []
     for i in range(3):
         c012s_paths.append(os.path.join(data_path, f'hits_c{i}s.npy'))
@@ -125,9 +125,9 @@ def preprocess_data(args):
     if args.FORCE_DOWNLOAD or not (os.path.exists(c012s_paths[0]) \
         and os.path.exists(c012s_paths[1]) \
         and os.path.exists(c012s_paths[2]) \
-        and np.load(c012s_paths[0]).shape[1] == num_classes \
-        and np.load(c012s_paths[1]).shape[1] == num_classes \
-        and np.load(c012s_paths[2]).shape[1] == num_classes):
+        and read_np(c012s_paths[0]).shape[1] == num_classes \
+        and read_np(c012s_paths[1]).shape[1] == num_classes \
+        and read_np(c012s_paths[2]).shape[1] == num_classes):
         classes = np.linspace(0, 2, num_classes) 
         print("Converting the C0/C1/C1 coefficients to a one-hot encoded format") 
         hits_c0s, hits_c1s, hits_c2s = calc_hits_c012s(classes, c012s, data_len, num_classes)
@@ -137,11 +137,11 @@ def preprocess_data(args):
         np.save(c012s_paths[2], hits_c2s)
 
     if args.HITS_C012s == "hits_c0s" :
-        hits_c012s = np.load(c012s_paths[0])
+        hits_c012s = read_np(c012s_paths[0])
     elif args.HITS_C012s == "hits_c1s" :   
-        hits_c012s = np.load(c012s_paths[1])
+        hits_c012s = read_np(c012s_paths[1])
     elif args.HITS_C012s == "hits_c2s" :   
-        hits_c012s = np.load(c012s_paths[2])
+        hits_c012s = read_np(c012s_paths[2])
 
     # Calculating the weights and argmaxes (one-hot encoded) and saving them
     weights_path = os.path.join(data_path, 'weights.npy')
@@ -151,8 +151,8 @@ def preprocess_data(args):
     if args.FORCE_DOWNLOAD or not (reuse_weights and os.path.exists(weights_path) \
         and os.path.exists(argmaxs_path) \
         and os.path.exists(hits_argmaxs_path) \
-        and np.load(weights_path).shape[1] == num_classes \
-        and np.load(hits_argmaxs_path).shape[1] == num_classes):
+        and read_np(weights_path).shape[1] == num_classes \
+        and read_np(hits_argmaxs_path).shape[1] == num_classes):
         classes = np.linspace(0, 2, num_classes) * np.pi
         weights, argmaxs, hits_argmaxs = calc_weights_and_argmaxs(classes, c012s, data_len, num_classes)
 
@@ -160,9 +160,9 @@ def preprocess_data(args):
         np.save(argmaxs_path, argmaxs)
         np.save(hits_argmaxs_path, hits_argmaxs)
 
-    weights  = np.load(weights_path)
-    argmaxs = np.load(argmaxs_path)
-    hits_argmaxs = np.load(hits_argmaxs_path)
+    weights  = read_np(weights_path)
+    argmaxs = read_np(argmaxs_path)
+    hits_argmaxs = read_np(hits_argmaxs_path)
 
     # TODO: Revisit
     # Comment from ERW:
@@ -184,6 +184,32 @@ def preprocess_data(args):
     if args.NORMALIZE_WEIGHTS:
         weights = weights / np.reshape(c012s[:, 0], (-1, 1))
         
+    # Creating an unweighted set (Monte Carlo) from the original weights and saving it
+    # ========= BETA-VERSION-BEGIN ======================================================================================================================
+    original_weights = np.transpose(np.array(read_np(os.path.join(data_path, "rhorho_raw.w.npy"))))
+    original_weights_normalised = original_weights / 2
+    monte_carlo_fun= lambda x : (x < np.random.random()) * 1.0
+    unweighted_set = monte_carlo_fun(original_weights_normalised)
+
+    if args.USE_UNWEIGHTED_EVENTS and (args.FORCE_DOWNLOAD or not (reuse_weights and os.path.exists(weights_path) \
+    and os.path.exists(argmaxs_path) and os.path.exists(hits_argmaxs_path) and read_np(weights_path).shape[1] == num_classes \
+    and read_np(hits_argmaxs_path).shape[1] == num_classes)):
+        np.save(os.path.join(data_path, "unweighted_weights.npy"), unweighted_set)
+    
+    print("BETA: Unweighted set - calculating C0/C1/C2 with scipy.optimize.curve_fit()")
+    c012s   = np.zeros((data_len, 3))
+    w = read_np(os.path.join(data_path, "unweighted_weights.npy"))
+    x = np.array([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0]) * np.pi
+    for i in range(data_len):
+        if i % 10000 == 0:
+            print(f"{i} events have been used by scipy.optimize.curve_fit()", end='\r')
+        coeff, _ = optimize.curve_fit(weight_fun, x, w[i, :], p0=[1, 1, 1])
+        c012s[i]  = coeff
+
+    # Saving the coefficients as NPY files
+    np.save(os.path.join(data_path, 'unweighted_c012s.npy'), c012s)
+    # ========= BETA-VERSION-END ========================================================================================================================
+
     # Comment from ERW:
     # Here, weights and argmax values are calculated at the value of CPmix representing a given class.
     # In training, the class is expressed as an integer, not as a fraction of pi.
