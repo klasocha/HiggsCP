@@ -14,13 +14,13 @@ parser = argparse.ArgumentParser(
 
 # Adding the arguments used by src_py/download_data_rhorho.py
 parser.add_argument("-i", "--input", dest="IN", type=Path, help="data path", default="temp_data")
-parser.add_argument("--force_download", dest="FORCE_DOWNLOAD", type=bool, 
+parser.add_argument("--force_download", dest="FORCE_DOWNLOAD", action="store_true", 
                     default=False, help="overwriting existing data")
 
 # Adding the arguments used by src_py/cpmix_utils.py
 parser.add_argument("--num_classes", dest="NUM_CLASSES", type=int, default=0,
                     help="number of classes used for discretisation")
-parser.add_argument("--reuse_weights", dest="REUSE_WEIGHTS", type=bool, default=False,
+parser.add_argument("--reuse_weights", dest="REUSE_WEIGHTS", action="store_true", default=False,
                     help="set this flag to True if you want to reuse the calculated weights")
 parser.add_argument("-t", "--type", dest="TYPE", choices=types.keys(), default='nn_rhorho',
                     help="decay mode for training")
@@ -30,8 +30,8 @@ parser.add_argument("--hits_c012s", dest="HITS_C012s",
 
 # TODO: Those two have been so far unclear to the project team
 parser.add_argument("--restrict_most_probable_angle", dest="RESTRICT_MOST_PROBABLE_ANGLE", 
-                    type=bool, default=False)
-parser.add_argument("--normalize_weights", dest="NORMALIZE_WEIGHTS", type=bool, 
+                    action="store_true", default=False)
+parser.add_argument("--normalize_weights", dest="NORMALIZE_WEIGHTS", action="store_true", 
                     default=False)
 
 # Adding the arguments used by src_py/data_utils.py
@@ -74,7 +74,7 @@ parser.add_argument("--delt_classes", dest="DELT_CLASSES", type=int, default=0,
 
 # Adding the arguments downloading the original data
 parser.add_argument("--download_original_data", dest="DOWNLOAD_ORIGINAL", help="downloading the original data",
-                    type=bool, default=False)
+                    action="store_true", default=False)
 
 # Adding other arguments
 parser.add_argument("-lambda", "--lambda", type=float, dest="LAMBDA", help="value of lambda parameter", default=0.0)
@@ -84,8 +84,7 @@ parser.add_argument("--pol_c", type=float, dest="pol_c", help="value of c parame
 parser.add_argument("--w1", dest="W1")
 parser.add_argument("--w2", dest="W2")
 parser.add_argument("--use_unweighted_events", dest="USE_UNWEIGHTED_EVENTS", action="store_true",
-                    help="applying the unweighted events for training (Monte Carlo)")
-parser.set_defaults(use_unweighted_events=False)
+                    help="applying the unweighted events for training (Monte Carlo)", default=False)
 
 # Parsing the command-line arguments 
 args = parser.parse_args()
