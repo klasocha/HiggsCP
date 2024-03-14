@@ -11,7 +11,7 @@ Then you need to run "plots.py" in the following manner (hypothesis is an alphaC
 weighted distribution plots): 
 
     $ python plots.py --option PHISTAR-DISTRIBUTION --input "data" --output "plot_py/figures" 
-      --format "png" --show "True" --hypothesis 02
+      --format "png" --show --hypothesis 02
 
 This program needs to be run as a module because it utilises the deserialisation mechanism used by
 the pickle module, which needs to know where the RhoRhoEvent class was located when the object was
