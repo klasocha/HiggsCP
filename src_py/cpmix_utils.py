@@ -184,32 +184,6 @@ def preprocess_data(args):
     if args.NORMALIZE_WEIGHTS:
         weights = weights / np.reshape(c012s[:, 0], (-1, 1))
         
-    # Creating an unweighted set (Monte Carlo) from the original weights and saving it
-    # ========= BETA-VERSION-BEGIN ======================================================================================================================
-    original_weights = np.transpose(np.array(read_np(os.path.join(data_path, "rhorho_raw.w.npy"))))
-    original_weights_normalised = original_weights / 2
-    monte_carlo_fun= lambda x : (x < np.random.random()) * 1.0
-    unweighted_set = monte_carlo_fun(original_weights_normalised)
-
-    if args.USE_UNWEIGHTED_EVENTS and (args.FORCE_DOWNLOAD or not (reuse_weights and os.path.exists(weights_path) \
-    and os.path.exists(argmaxs_path) and os.path.exists(hits_argmaxs_path) and read_np(weights_path).shape[1] == num_classes \
-    and read_np(hits_argmaxs_path).shape[1] == num_classes)):
-        np.save(os.path.join(data_path, "unweighted_weights.npy"), unweighted_set)
-    
-    print("BETA: Unweighted set - calculating C0/C1/C2 with scipy.optimize.curve_fit()")
-    c012s   = np.zeros((data_len, 3))
-    w = read_np(os.path.join(data_path, "unweighted_weights.npy"))
-    x = np.array([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0]) * np.pi
-    for i in range(data_len):
-        if i % 10000 == 0:
-            print(f"{i} events have been used by scipy.optimize.curve_fit()", end='\r')
-        coeff, _ = optimize.curve_fit(weight_fun, x, w[i, :], p0=[1, 1, 1])
-        c012s[i]  = coeff
-
-    # Saving the coefficients as NPY files
-    np.save(os.path.join(data_path, 'unweighted_c012s.npy'), c012s)
-    # ========= BETA-VERSION-END ========================================================================================================================
-
     # Comment from ERW:
     # Here, weights and argmax values are calculated at the value of CPmix representing a given class.
     # In training, the class is expressed as an integer, not as a fraction of pi.
