@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #SBATCH -job-name=Compute_C012_for_all_hypotheses
 #SBATCH --nodes=11
 #SBATCH --ntasks-per-node=1
@@ -10,9 +9,7 @@
 #SBATCH --array=0-10
 #SBATCH --output="results/output-%A_%a.out"
 #SBATCH --error="results/error-%A_%a.err"
-
 cd $SLURM_SUBMIT_DIR
-
 ## Command
 HYPOTHESES=(00 02 04 06 08 10 12 14 16 18 20)
 ALPHA_CP_CLASS=${HYPOTHESES[$SLURM_ARRAY_TASK_ID]}
