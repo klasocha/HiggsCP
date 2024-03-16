@@ -58,22 +58,28 @@ def draw_distribution(weights, c0, alphaCP_range, args):
     for i in range(len(weights)):
         # Weights calculated via C0/C1/C2
         ax = axs[0]
-        ax.scatter(alphaCP_range, weights[i], s=19, marker=markers[i], label=f"Event {i + 1}")
-        if args.USE_UNWEIGHTED_EVENTS:
-            ax.set_ylim(0, 1)
-        else:
+        if not args.USE_UNWEIGHTED_EVENTS:
             ax.set_ylim(0, 2)
+            label = f"Event {i + 1}"
+            color = None
+        else:
+            label = f"Based on the unweighted \nevents for alphaCP = {args.HYPOTHESIS}"
+            color = "black"
+        ax.scatter(alphaCP_range, weights[i], s=19, marker=markers[i], label=label, color=color)
         ax.legend(loc='lower right')
         ax.set_ylabel(r"$C_0 + C_1 cos({\alpha}^{CP}) + C_2 sin({\alpha^{CP}})$", loc="top")
         ax.set_xlabel(r"${\alpha^{CP}}$ [rad]", loc="right")
-
+        
         # Weights calculated via C1/C2
         ax = axs[1]
-        ax.scatter(alphaCP_range, weights[i] - c0[i], s=19, marker=markers[i], label=f"Event {i}")
-        if args.USE_UNWEIGHTED_EVENTS:
-            ax.set_ylim(-0.5, 0.5)
-        else:
+        if not args.USE_UNWEIGHTED_EVENTS:
             ax.set_ylim(-1, 1)
+            label = f"Event {i + 1}"
+            color = None
+        else:
+            color = "black"
+            label = f"Based on the unweighted \nevents for alphaCP={args.HYPOTHESIS}"
+        ax.scatter(alphaCP_range, weights[i] - c0[i], s=19, marker=markers[i], label=label, color=color)
         ax.legend(loc='lower right')
         ax.set_ylabel(r"$C_1 cos({\alpha}^{CP}) + C_2 sin({\alpha^{CP}})$", loc="top")
         ax.set_xlabel(r"${\alpha^{CP}}$ [rad]", loc="right")
