@@ -8,7 +8,7 @@ from src_py.cpmix_utils import weight_fun
 parser = argparse.ArgumentParser(description='Unweighted events generator')
 parser.add_argument("-i", "--input", dest="IN", type=Path, help="input data path", default="../temp_data")
 parser.add_argument("--hypothesis", dest="HYPOTHESIS", default="00", help="Hypothesis: the alphaCP class (e.g. 02)")
-parser.add_argument("--option", dest="OPTION", default="UNWEIGHT-EVENTS",  help="action (UNWEIGHT-EVENTS/PREPARE-C012S")
+parser.add_argument("--option", dest="OPTION", default="UNWEIGHT-EVENTS",  help="action (UNWEIGHT-EVENTS/PREPARE-C012S)")
 args = parser.parse_args()
 
 data_path = args.IN
@@ -49,7 +49,7 @@ elif args.OPTION == "PREPARE-C012S":
     num_hypothesis = unweighted_events.shape[-1]
     data_len = len(unweighted_events[-2])
     c012s  = np.zeros((data_len, 3))
-    w = read_np(os.path.join(data_path, unweighted_events_weights_filename))[int(args.HYPOTHESIS)]
+    w = read_np(os.path.join(data_path, unweighted_events_weights_filename))[int(args.HYPOTHESIS) // 2]
     x = np.array([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0]) * np.pi
     for i in range(data_len):
         if i % 10000 == 0:
