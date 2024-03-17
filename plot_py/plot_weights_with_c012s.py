@@ -39,7 +39,6 @@ def draw(args):
         # Shape modifications for backward compatibility (use_unweighted_events option was added later):
         sample_events = [0]
         c012s = np.array([c012s]) * 20
-        print(c012s)
     else:
         # Reading the initial events coefficients
         c012s = read_np(os.path.join(args.IN, "c012s.npy"))

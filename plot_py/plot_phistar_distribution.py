@@ -90,7 +90,7 @@ def draw(args):
         weights=[weights[y1y2_negative_mask], weights[y1y2_positive_mask]]
         alphaCP = float(args.HYPOTHESIS) / 10 * np.pi
         draw_distribution(variable=variables, 
-                          output_name=f"phistar_y1y2_positive_alphaCP_{args.HYPOTHESIS}", 
+                          output_name=f"phistar_y1y2_alphaCP_{args.HYPOTHESIS}", 
                           args=args, weights=weights, colors=['black', 'red'],
                           labels=[r"${\phi* (y^+_\rho y^-_\rho < 0)}$", r"${\phi* (y^+_\rho y^-_\rho > 0)}$"],
                           xlabel=r"${\phi_{\rho \rho}}$", title="{:.2f} rad".format(alphaCP))
