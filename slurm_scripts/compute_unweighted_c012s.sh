@@ -17,3 +17,4 @@ HYPOTHESES=(00 02 04 06 08 10 12 14 16 18 20)
 ALPHA_CP_CLASS=${HYPOTHESES[$SLURM_ARRAY_TASK_ID]}
 echo "Computing the C0/C1/C2 coefficients for the hypothesis specified by alphaCP =" $ALPHA_CP_CLASS
 python unweight_events.py --input "data" --option "PREPARE-C012S" --hypothesis $ALPHA_CP_CLASS
+python plots.py --input "data" --output "plot_py/figures" --option=WEIGHTS-FOR-EVENT-VIA-C012 --show --use_unweighted_events --hypothesis $ALPHA_CP_CLASS
