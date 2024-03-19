@@ -2,3 +2,7 @@
 *.pdf
 *.eps
 .venv/
+data/
+data_original/
+plot_py/figures/
+temp_results/

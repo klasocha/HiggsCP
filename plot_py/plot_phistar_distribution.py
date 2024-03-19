@@ -51,12 +51,12 @@ def draw_distribution(variable, output_name, args, labels=None, weights=None,
         if e.errno != errno.EEXIST:
             raise
 
-    # Saving the diagram
+    # Saving the plot
     output_path = os.path.join(output_path, f"{output_name}_distribution.{args.FORMAT}")
     plt.savefig(output_path)
-    print(f"Distribution plot has been saved in {output_path}")
+    print(f"Phistar distribution plot has been saved in {output_path}")
 
-    # Showing the diagram
+    # Showing the plot
     if args.SHOW:
         plt.show()
 

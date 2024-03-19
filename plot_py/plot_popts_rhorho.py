@@ -1,6 +1,6 @@
 """
-This program generates a diagram depicting the functional form of the spin weight,
-as well as the spin weight discrete values. The diagram helps to
+This program generates a plot depicting the functional form of the spin weight,
+as well as the spin weight discrete values. The plot helps to
 test the correctness of the weights calculated via the C0/C1/C2 coefficients.
 C0/C1/C2 covariance is used to show the error.
 
@@ -23,12 +23,12 @@ def draw_weights_to_compare(c012s, ccovs, discrete_weights, event_index, args):
     
     # Drawing the values computed with the help of the C0/C1/C2 coefficients
     # Notice: we do not use "weights.npy", although it already has the values computed via
-    # the coefficients, as they are discrete. We need a continuous range to draw it ideally on the diagram
+    # the coefficients, as they are discrete. We need a continuous range to draw it ideally on the plot
     x_fit = np.linspace(0, 2 * np.pi)
     plt.plot(x_fit, weight_fun(x_fit, *c012s[event_index]), 
             label=f"Function \nError: {np.sqrt(np.diag(ccovs[event_index]))}", color="orange")
     
-    # Configuring the diagram
+    # Configuring the plot
     plt.ylim([0.0, 2.5])
     plt.xlabel(r'$\alpha^{CP}$ [rad]')
     plt.ylabel('wt')
@@ -43,8 +43,11 @@ def draw_weights_to_compare(c012s, ccovs, discrete_weights, event_index, args):
         if e.errno != errno.EEXIST:
             raise
 
-    # Showing and saving the diagrams
-    plt.savefig(os.path.join(args.OUT, f"calc_vs_gen_weights_event_{event_index}.{args.FORMAT}"))
+    # Showing and saving the plot
+    output_path = os.path.join(args.OUT, f"calc_vs_gen_weights_event_{event_index}.{args.FORMAT}")
+    plt.savefig(output_path)
+    print(f"The plot showing the correctness of the calculated C0/C1/C2 has been saved in {output_path}")
+
     if args.SHOW:
         plt.show()
 

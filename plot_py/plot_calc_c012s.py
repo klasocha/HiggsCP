@@ -29,7 +29,9 @@ def draw_distribution(calc_c012s, type, args):
             raise
 
     # Saving the plot
-    plt.savefig(os.path.join(output_path, f"c{type}_distribution.{args.FORMAT}"))
+    output_path = os.path.join(output_path, f"c{type}_distribution.{args.FORMAT}")
+    plt.savefig(output_path)
+    print(f"The plot showing C0/C1/C2 distribution has been saved in {output_path}")
 
     # Showing the plot
     if args.SHOW:

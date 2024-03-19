@@ -67,11 +67,11 @@ def draw_distribution(weights, c0, alphaCP_range, args):
         if e.errno != errno.EEXIST:
             raise
 
-    # Saving the diagram
+    # Saving the plot
     output_path = os.path.join(output_path, f"weights_c012s_vs_c12s.{args.FORMAT}")
     plt.savefig(output_path)
     print(f"Wt(alphaCP) subplots have been saved in {output_path}")
 
-    # Showing the diagram
+    # Showing the plot
     if args.SHOW:
         plt.show()
