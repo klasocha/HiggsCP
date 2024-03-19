@@ -11,7 +11,16 @@ Then you need to run "plots.py" in the following manner (hypothesis is an alphaC
 weighted distribution plots): 
 
     $ python plots.py --option PHISTAR-DISTRIBUTION --input "data" --output "plot_py/figures" 
-      --format "png" --show --hypothesis 02
+      --format "png" --show --num_classes 11 --hypothesis 2 
+
+Or for the unweighted events:
+
+    $ python plots.py --option PHISTAR-DISTRIBUTION --input "data" --output "plot_py/figures" 
+      --format "png" --show --num_classes 11 --hypothesis 2 --use_unweighted_events
+
+Notice: hypotheses range depends on the number of classes. For example, if --num_classes=21, then
+you can set --hypothesis from 0 to 20 (where 0 means 0 rad, 20 means 6.28 rad). Alternatively,
+you can set the --num_classes=51 and use --hypothesis={[0, 50]}.
 
 This program needs to be run as a module because it utilises the deserialisation mechanism used by
 the pickle module, which needs to know where the RhoRhoEvent class was located when the object was
@@ -44,7 +53,8 @@ def draw_distribution(variable, output_name, args, labels=None, weights=None,
     plt.tight_layout()
 
     # Creating the output folder
-    output_path = args.OUT
+    output_path = os.path.join(args.OUT, f"phistar_y1y2_for_{args.NUM_CLASSES}_classes")
+    output_path = os.path.join(output_path, "unweighted_events" if args.USE_UNWEIGHTED_EVENTS else "weighted_events")
     try:
         os.makedirs(output_path)
     except OSError as e:
@@ -82,16 +92,19 @@ def draw(args):
     
     # Loading weights if a hypothesis (alphaCP class) has been provided for the distribution 
     if args.HYPOTHESIS != "None":
-        # Preparing the weights
-        weights = read_np(os.path.join(args.IN, f"rhorho_raw.w_{args.HYPOTHESIS}.npy"))
+        # Preparing the weights relevent to the given hypothesis
+        if args.USE_UNWEIGHTED_EVENTS:
+            weights = read_np(os.path.join(args.IN, f"unwt_multiclass_{args.NUM_CLASSES}.npy"))[:, int(args.HYPOTHESIS)]
+        else:
+            weights = read_np(os.path.join(args.IN, f"weights_multiclass_{args.NUM_CLASSES}.npy"))[:, int(args.HYPOTHESIS)]
         
         # Generating the plot showing phistar grouped by y1*y2 > 0 and y1*y2 < 0, 
         # the distribution is weighted by the weights values specific to the given hypothesis
         variables = [phistar_negative, phistar_positive]
         weights=[weights[y1y2_negative_mask], weights[y1y2_positive_mask]]
-        alphaCP = float(args.HYPOTHESIS) / 10 * np.pi
+        alphaCP = (2 * np.pi) / (args.NUM_CLASSES - 1) * float(args.HYPOTHESIS)
         draw_distribution(variable=variables, 
-                          output_name=f"phistar_y1y2_alphaCP_{args.HYPOTHESIS}", 
+                          output_name=f"phistar_y1y2_alphaCP_{args.HYPOTHESIS}_out_of_{args.NUM_CLASSES - 1}", 
                           args=args, weights=weights, colors=['black', 'red'],
                           labels=[r"${\phi* (y^+_\rho y^-_\rho < 0)}$", r"${\phi* (y^+_\rho y^-_\rho > 0)}$"],
                           xlabel=r"${\phi_{\rho \rho}}$", title="{:.2f} rad".format(alphaCP))

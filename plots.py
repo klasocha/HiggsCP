@@ -24,11 +24,10 @@ parser.add_argument("--option", dest="OPTION", choices=types.keys(), default="PH
                     help='specify what script for drawing the plots you want to run', required=True)
 parser.add_argument("--hypothesis", dest="HYPOTHESIS", default="None", 
                     help="Hypothesis: the alphaCP class (e.g. 02)")
-
-# ================= BETA-VERSION ======================================================================
+parser.add_argument("--num_classes", dest="NUM_CLASSES", type=int, default=0,
+                    help="number of classes used for discretisation (e.g. 11)")
 parser.add_argument("--use_unweighted_events", dest="USE_UNWEIGHTED_EVENTS", action="store_true",
                     help="applying the unweighted events for training (Monte Carlo)", default=False)
-# =====================================================================================================
 
 args = parser.parse_args()
 types[args.OPTION](args)
