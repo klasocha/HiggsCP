@@ -144,7 +144,7 @@ def preprocess_data(args):
         hits_c012s = read_np(c012s_paths[2])
 
     # Calculating the weights and argmaxes (one-hot encoded) and saving them
-    weights_path = os.path.join(data_path, 'weights.npy')
+    weights_path = os.path.join(data_path, f'weights_multiclass_{num_classes}.npy')
     argmaxs_path = os.path.join(data_path, 'argmaxs.npy')
     hits_argmaxs_path = os.path.join(data_path, 'hits_argmaxs.npy')
 
@@ -163,6 +163,20 @@ def preprocess_data(args):
     weights  = read_np(weights_path)
     argmaxs = read_np(argmaxs_path)
     hits_argmaxs = read_np(hits_argmaxs_path)
+
+    # Unweighting the events and saving the "hits"
+    unweighted_events_weights_filename = f"unwt_multiclass_{num_classes}.npy"
+    weights_normalised = weights / 2
+    data_len = len(weights_normalised)
+    unweighted_events = []
+    monte_carlo = lambda x : 0.0 if x < np.random.random() else 1.0
+
+    print(f"Unweighting the events...", end='\r')
+    unweighted_events = np.vectorize(monte_carlo)(weights_normalised)
+    
+    output_path = os.path.join(data_path, unweighted_events_weights_filename)
+    np.save(output_path, unweighted_events)
+    print(f"Weights of the unweighted events have been saved in {output_path}")
 
     # TODO: Revisit
     # Comment from ERW:
