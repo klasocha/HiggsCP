@@ -12,7 +12,7 @@ $ python main.py --input "data" --type nn_rhorho --epochs 5 --features Variant-A
 ```
 
 
-## Drawing the diagrams
+## Drawing the plots
 ```
 $ python plots.py --option PHISTAR-DISTRIBUTION --input "data" --output "plot_py/figures" 
 
@@ -32,7 +32,7 @@ $ python plots.py --option C012S-WEIGHT --input "data" --output "plot_py/figures
 > Fitted C_0, C_1, C_2 coefficients of the functional form are stored in the ```c012s.npy``` file;
   
 > Calculated weights (based on the functional form) for the required number of classes are
-stored in the ```weights.npy``` file
+stored in the ```weights_#.npy``` file
       
 
 ## Roadmap

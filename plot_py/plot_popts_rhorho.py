@@ -22,7 +22,7 @@ def draw_weights_to_compare(c012s, ccovs, discrete_weights, event_index, args):
     plt.scatter(x_weights, discrete_weights[:, event_index], label="Generated")
     
     # Drawing the values computed with the help of the C0/C1/C2 coefficients
-    # Notice: we do not use "weights.npy", although it already has the values computed via
+    # Notice: we do not use "weights_#.npy", although it already has the values computed via
     # the coefficients, as they are discrete. We need a continuous range to draw it ideally on the plot
     x_fit = np.linspace(0, 2 * np.pi)
     plt.plot(x_fit, weight_fun(x_fit, *c012s[event_index]), 
