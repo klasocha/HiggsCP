@@ -27,6 +27,7 @@ from src_py.data_utils import read_np
 def draw_distribution(variable, output_name, args, labels=None, weights=None, 
                       colors=None, xlabel=None, title=None):
     """ Draw the distribution of the given variable """
+    plt.clf()
     if weights is None:
         plt.hist(variable, histtype='step', bins=50, color = 'black', label=labels)
     else:

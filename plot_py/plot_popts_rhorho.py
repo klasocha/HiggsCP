@@ -16,6 +16,7 @@ from src_py.cpmix_utils import weight_fun
 
 
 def draw_weights_to_compare(c012s, ccovs, discrete_weights, event_index, args):
+    plt.clf()
     # Drawing the true values (generated with an algorithm using Monte Carlo methods)
     x_weights = np.array([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2]) * np.pi
     plt.scatter(x_weights, discrete_weights[:, event_index], label="Generated")

@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 
 
 def draw_distribution(calc_c012s, type, args):
+    plt.clf()
     plt.hist(calc_c012s[:, type], histtype='step', bins=50,  color = 'black')
     plt.xlabel(f"$\mathregular{{C_{type}}}$")
     plt.tight_layout()

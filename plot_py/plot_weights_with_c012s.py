@@ -53,7 +53,6 @@ def draw(args):
 def draw_distribution(weights, c0, alphaCP_range, args):
     _, axs = plt.subplots(1, 2, figsize=(15, 4.5))
     markers = ['s', '*', '.', 'v', '^']
-    
     for i in range(len(weights)):
         # Weights calculated via C0/C1/C2
         ax = axs[0]
