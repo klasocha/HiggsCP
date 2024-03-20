@@ -7,12 +7,14 @@ from plot_py.plot_phistar_distribution import draw as phistar_dist
 from plot_py.plot_popts_rhorho import draw as c012s_weight
 from plot_py.plot_calc_c012s import draw as c012s_dist
 from plot_py.plot_weights_with_c012s import draw as weights_with_c012s
+from plot_py.plot_unwt_weights import draw as unwt_weights
 
 # Command line arguments needed for running the program independently
 types = {"PHISTAR-DISTRIBUTION" : phistar_dist, # Variant-1.1 should be prepared in advance
          "C012S-WEIGHT" : c012s_weight,
          "C012S-DISTRIBUTION" : c012s_dist,
-         "WEIGHTS-FOR-EVENT-VIA-C012": weights_with_c012s}
+         "WEIGHTS-FOR-EVENT-VIA-C012": weights_with_c012s,
+         "UNWEIGHTED-EVENTS-WEIGHTS": unwt_weights}
 parser = argparse.ArgumentParser(description='Plot creator')
 parser.add_argument("-i", "--input", dest="IN", type=Path, help="input data path", default="../temp_data")
 parser.add_argument("-o", "--output", dest="OUT", type=Path, help="output path for plots", default="figures")
