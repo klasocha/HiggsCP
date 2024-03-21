@@ -24,7 +24,7 @@ def download_weights(args):
     # Checking whether there is already the file in a destination directory
     if path.exists(output_weight_file) and not args.FORCE_DOWNLOAD:
         print("The output weights file already exists. Downloading has been cancelled.",
-              "If you want to force download, use \"--force_download\" (True/False) option.", 
+              "If you want to force download, use \"--force_download\" option.", 
               sep=linesep)
         return
     
@@ -57,7 +57,7 @@ def download_data_files(args):
         file_path = path.join(data_path, file)
         if path.exists(file_path) and not args.FORCE_DOWNLOAD:
             print(f"File {file_path} already exists. Downloading has been cancelled.",
-                  "If you want to force download, use \"--force_download\" (True/False) option.", 
+                  "If you want to force download, use \"--force_download\" option.", 
                   sep=linesep)
         else:
             print(f'Downloading {file}')

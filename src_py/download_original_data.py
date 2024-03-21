@@ -18,7 +18,7 @@ def download(args):
     
         if path.exists(filepath) and not args.FORCE_DOWNLOAD:
             print(f"Original data file \"{filepath}\" already exists.\nDownloading has been cancelled.",
-                "If you want to force download, use \"--force_download\" (True/False) option.\n", sep=linesep)
+                "If you want to force download, use \"--force_download\" option.\n", sep=linesep)
             continue
 
         print(f"Downloading {filename} and saving it in {data_path}/ ...", sep='\r')

@@ -21,7 +21,7 @@ parser.add_argument("-o", "--output", dest="OUT", type=Path, help="output path f
 parser.add_argument("-f", "--format", dest="FORMAT", 
                     help='the format of the output plots ("png"/"pdf"/"eps")', default="png")
 parser.add_argument("-s", "--show", dest="SHOW", action="store_true", 
-                    help='set to False to save the plots without showing them', default=False)
+                    help='use it to display the plots before saving them', default=False)
 parser.add_argument("--option", dest="OPTION", choices=types.keys(), default="PHISTAR-DISTRIBUTION",
                     help='specify what script for drawing the plots you want to run', required=True)
 parser.add_argument("--hypothesis", dest="HYPOTHESIS", default="None", 
