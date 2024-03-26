@@ -6,3 +6,4 @@ data/
 data_original/
 plot_py/figures/
 temp_results/
+.DS_Store

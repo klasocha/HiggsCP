@@ -2,6 +2,7 @@ import argparse
 import train_rhorho
 from pathlib import Path
 from src_py.download_original_data import download as download_original_data
+from src_py.tf_model_2 import run as model_keras()
 
 # =============================== GETTING ALL THE ARGUMENTS ============================================
 # Specifiying the model and its function responsible for running the training process
@@ -86,18 +87,25 @@ parser.add_argument("--w2", dest="W2")
 parser.add_argument("--use_unweighted_events", dest="USE_UNWEIGHTED_EVENTS", action="store_true",
                     help="applying the unweighted events for training (Monte Carlo)", default=False)
 
+# Keras & TFv2 arguments
+parser.add_argument("--keras", dest="KERAS", help="try new implementation based on TensorFlow v2",
+                    default=False, action="store_true")
+
 # Parsing the command-line arguments 
 args = parser.parse_args()
 
 # ================================= DOWNLOADING ORIGINAL DATA =========================================
 if args.DOWNLOAD_ORIGINAL:
-    # TEST (Downloading original data:
+    # TEST (Downloading original data):
     # $ python main.py --input "data_original" --download_original True
     download_original_data(args)
+elif args.KERAS:
+    # TEST (TensorFlow v2 Implementation ==== !!! BETA VERSION !!! ====)
+    # $ python main.py --keras
+    model_keras(args)
 else:
     # =================================== TRAINING THE MODEL ===============================================
     # Calling the main function of the specified model (rhorho model by default)
-    types[args.TYPE](args)
-
     # TEST (Downloading and preprocessing data, training the model):
     # $ python main.py --input "data" --type nn_rhorho --epochs 5 --features Variant-All --num_classes 11
+    types[args.TYPE](args)
