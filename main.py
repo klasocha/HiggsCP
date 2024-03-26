@@ -2,7 +2,7 @@ import argparse
 import train_rhorho
 from pathlib import Path
 from src_py.download_original_data import download as download_original_data
-from src_py.tf_model_2 import run as model_keras()
+from src_py.tf_model_2 import run as model_keras
 
 # =============================== GETTING ALL THE ARGUMENTS ============================================
 # Specifiying the model and its function responsible for running the training process
