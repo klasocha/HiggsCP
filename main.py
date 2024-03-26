@@ -101,7 +101,7 @@ if args.DOWNLOAD_ORIGINAL:
     download_original_data(args)
 elif args.KERAS:
     # TEST (TensorFlow v2 Implementation ==== !!! BETA VERSION !!! ====)
-    # $ python main.py --keras
+    # $ python main.py --keras --size 100 --num_classes 11 --epochs 5  
     model_keras(args)
 else:
     # =================================== TRAINING THE MODEL ===============================================
