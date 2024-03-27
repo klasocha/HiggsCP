@@ -25,59 +25,43 @@ class DataGenerator(tf.keras.utils.Sequence):
 class NeuralNetwork(tf.keras.Model):
     def __init__(self, num_features, args):
         super(NeuralNetwork, self).__init__()
-        self.num_features = num_features
-        self.num_classes = int(args.NUM_CLASSES)
+        self.n_features = num_features
+        self.n_classes = int(args.NUM_CLASSES)
         self.n_epochs = int(args.EPOCHS)
-        
-        self.dense_layer_1 = tf.keras.layers.Dense(units=int(args.SIZE))
-        self.dense_layer_2 = tf.keras.layers.Dense(units=int(args.SIZE))
-        self.dense_layer_3 = tf.keras.layers.Dense(units=int(args.SIZE))
-        self.dense_layer_4 = tf.keras.layers.Dense(units=int(args.SIZE))
-        self.dense_layer_5 = tf.keras.layers.Dense(units=int(args.SIZE))
-        self.dense_layer_6 = tf.keras.layers.Dense(units=int(args.SIZE))
-        self.activation_layer_1 = tf.keras.layers.ReLU()
-        self.activation_layer_2 = tf.keras.layers.ReLU()
-        self.activation_layer_3 = tf.keras.layers.ReLU()
-        self.activation_layer_4 = tf.keras.layers.ReLU()
-        self.activation_layer_5 = tf.keras.layers.ReLU()
-        self.activation_layer_6 = tf.keras.layers.ReLU()
-        self.linear_layer = tf.keras.layers.Dense(units=self.num_classes, use_bias=False)
-        self.batch_norm_layer_1 = tf.keras.layers.BatchNormalization()
-        self.batch_norm_layer_2 = tf.keras.layers.BatchNormalization()
-        self.batch_norm_layer_3 = tf.keras.layers.BatchNormalization()
-        self.batch_norm_layer_4 = tf.keras.layers.BatchNormalization()
-        self.batch_norm_layer_5 = tf.keras.layers.BatchNormalization()
-        self.batch_norm_layer_6 = tf.keras.layers.BatchNormalization()
+        self.n_layers = int(args.LAYERS)
+        self.n_units_per_layer = int(args.SIZE)
+        self.dense_layers, self.batch_norm_layers, self.activation_layers = [], [], []
+        for i in range(self.n_layers):
+            if i == 0:
+                self.dense_layers.append(tf.keras.layers.Dense(input_shape=(self.n_features,),
+                    units=self.n_units_per_layer, name=f"dense_{i}", use_bias=False))
+            else:
+                self.dense_layers.append(tf.keras.layers.Dense(
+                    units=self.n_units_per_layer, name=f"dense_{i}", use_bias=False))
+            self.batch_norm_layers.append(tf.keras.layers.BatchNormalization(name=f"batch_norm_{i}"))
+            self.activation_layers.append(tf.keras.layers.ReLU(name=f"relu_{i}"))
+        self.linear_layer = tf.keras.layers.Dense(units=self.n_classes, use_bias=False, name="linear")
         self.softmax_layer = tf.keras.layers.Softmax()
     
     def call(self, x):
-        layers = [self.dense_layer_1, self.dense_layer_2, self.dense_layer_3,
-                  self.dense_layer_4, self.dense_layer_5, self.dense_layer_6]
-        activation_layers = [self.activation_layer_1, self.activation_layer_2, self.activation_layer_3,
-                  self.activation_layer_4, self.activation_layer_5, self.activation_layer_6]
-        batch_norm_layers = [self.batch_norm_layer_1, self.batch_norm_layer_2, self.batch_norm_layer_3,
-                  self.batch_norm_layer_4, self.batch_norm_layer_5, self.batch_norm_layer_6]
-        for i in range(6):
-            x = layers[i](x)
-            x = batch_norm_layers[i](x)
-            x = activation_layers[i](x)
+        for i in range(self.n_layers):
+            x = self.dense_layers[i](x)
+            x = self.batch_norm_layers[i](x, training=True)
+            x = self.activation_layers[i](x)
         x = self.linear_layer(x)
         return self.softmax_layer(x)
    
     def compile_model(self):
-        self(tf.keras.Input(shape=(self.num_features,)))
         optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
         self.compile(loss=tf.keras.losses.CategoricalCrossentropy(from_logits=False), 
                      optimizer=optimizer, metrics=['accuracy'])
-        
-        
+
     def train(self, data, batch_size):
         train_data_generator = DataGenerator(batch_size=batch_size, dataset=data.train)
         validation_data_generator = DataGenerator(batch_size=batch_size, dataset=data.valid)
         history = self.fit(train_data_generator,
                            validation_data=validation_data_generator,
                            epochs=self.n_epochs)
-        
 
 def run(args):
     points_path = "data/event_datasets.obj"
