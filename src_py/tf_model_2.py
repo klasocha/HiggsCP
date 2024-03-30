@@ -1,6 +1,6 @@
 import tensorflow as tf
 from math import floor
-import pickle
+import pickle, os
 import numpy as np
 from .tf_model import calculate_deltas_unsigned, calculate_deltas_signed
 
@@ -33,8 +33,8 @@ class NeuralNetwork(tf.keras.Model):
         self.input_layer = tf.keras.Input(shape=(self.n_features))
         self.dense_layers, self.batch_norm_layers, self.activation_layers = [], [], []
         for i in range(self.n_layers):
-            self.dense_layers.append(tf.keras.layers.Dense(units=self.n_units_per_layer, 
-                                                           name=f"dense_{i}", use_bias=False))
+            self.dense_layers.append(tf.keras.layers.Dense(
+                units=self.n_units_per_layer, name=f"dense_{i}", use_bias=False))
             self.batch_norm_layers.append(tf.keras.layers.BatchNormalization(name=f"batch_norm_{i}"))
             self.activation_layers.append(tf.keras.layers.ReLU(name=f"relu_{i}"))
         self.linear_layer = tf.keras.layers.Dense(units=self.n_classes, use_bias=False, name="linear")
@@ -50,36 +50,47 @@ class NeuralNetwork(tf.keras.Model):
         return self.softmax_layer(input)
    
     def compile_model(self):
+        """ Compile the model by setting an appropriate optimizer, 
+        as well as the loss function """
         optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
         self.compile(loss=tf.keras.losses.CategoricalCrossentropy(from_logits=False), 
                      optimizer=optimizer, metrics=['accuracy'])
 
     def train(self, data, batch_size):
+        """ Train the model """
         train_data_generator = DataGenerator(batch_size=batch_size, dataset=data.train)
         validation_data_generator = DataGenerator(batch_size=batch_size, dataset=data.valid)
         history = self.fit(train_data_generator,
                            validation_data=validation_data_generator,
                            epochs=self.n_epochs)
+        return history
 
     def build_graph(self):
+        """ Build the computational graph (you can call build_graph.summary() to
+        see the architecture of the model: layers, output shapes) """
         x = tf.keras.layers.Input(shape=(self.n_features))
         return tf.keras.Model(inputs=[x], outputs=self.call(x), name="HiggsCP DNN")
 
 
 def run(args):
-    points_path = "data/event_datasets.obj"
-    with open(points_path, 'rb') as f:
-            points = pickle.load(f)
-    num_features = points.train.x.shape[1]
+    # Loading data
+    data_points_path = os.path.join(args.IN, "event_datasets.obj")
+    with open(data_points_path, 'rb') as f:
+            data_points = pickle.load(f)
+    num_features = data_points.train.x.shape[1]
     print(f"{num_features} features have been prepared.")
+    
+    # Building the model
     model = NeuralNetwork(num_features, args)
     model.compile_model()
-    model.train(points, batch_size=128)
-    # Model Architecture
-    model.build_graph().summary()
-    calc_w = points.train.weights
+    
+    # Training the model
+    model.train(data_points, batch_size=128)
+    
+    # Evaluating the model
+    calc_w = data_points.train.weights
     calc_w = calc_w / np.tile(np.reshape(np.sum(calc_w, axis=1), (-1, 1)), (1, args.NUM_CLASSES))
-    pred_w = model.predict(points.train.x, batch_size=128)
+    pred_w = model.predict(data_points.train.x, batch_size=128)
 
     # Computing the mean of the difference between the most probable predicted 
     # class and the most probable true class (∆_class)      
