@@ -30,26 +30,24 @@ class NeuralNetwork(tf.keras.Model):
         self.n_epochs = int(args.EPOCHS)
         self.n_layers = int(args.LAYERS)
         self.n_units_per_layer = int(args.SIZE)
+        self.input_layer = tf.keras.Input(shape=(self.n_features))
         self.dense_layers, self.batch_norm_layers, self.activation_layers = [], [], []
         for i in range(self.n_layers):
-            if i == 0:
-                self.dense_layers.append(tf.keras.layers.Dense(input_shape=(self.n_features,),
-                    units=self.n_units_per_layer, name=f"dense_{i}", use_bias=False))
-            else:
-                self.dense_layers.append(tf.keras.layers.Dense(
-                    units=self.n_units_per_layer, name=f"dense_{i}", use_bias=False))
+            self.dense_layers.append(tf.keras.layers.Dense(units=self.n_units_per_layer, 
+                                                           name=f"dense_{i}", use_bias=False))
             self.batch_norm_layers.append(tf.keras.layers.BatchNormalization(name=f"batch_norm_{i}"))
             self.activation_layers.append(tf.keras.layers.ReLU(name=f"relu_{i}"))
         self.linear_layer = tf.keras.layers.Dense(units=self.n_classes, use_bias=False, name="linear")
         self.softmax_layer = tf.keras.layers.Softmax()
     
     def call(self, x):
+        input = x
         for i in range(self.n_layers):
-            x = self.dense_layers[i](x)
-            x = self.batch_norm_layers[i](x, training=True)
-            x = self.activation_layers[i](x)
-        x = self.linear_layer(x)
-        return self.softmax_layer(x)
+            input = self.dense_layers[i](input)
+            input = self.batch_norm_layers[i](input)
+            input = self.activation_layers[i](input)
+        input = self.linear_layer(input)
+        return self.softmax_layer(input)
    
     def compile_model(self):
         optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
@@ -63,17 +61,22 @@ class NeuralNetwork(tf.keras.Model):
                            validation_data=validation_data_generator,
                            epochs=self.n_epochs)
 
+    def build_graph(self):
+        x = tf.keras.layers.Input(shape=(self.n_features))
+        return tf.keras.Model(inputs=[x], outputs=self.call(x), name="HiggsCP DNN")
+
+
 def run(args):
     points_path = "data/event_datasets.obj"
     with open(points_path, 'rb') as f:
             points = pickle.load(f)
-
     num_features = points.train.x.shape[1]
     print(f"{num_features} features have been prepared.")
     model = NeuralNetwork(num_features, args)
     model.compile_model()
     model.train(points, batch_size=128)
-    model.summary()
+    # Model Architecture
+    model.build_graph().summary()
     calc_w = points.train.weights
     calc_w = calc_w / np.tile(np.reshape(np.sum(calc_w, axis=1), (-1, 1)), (1, args.NUM_CLASSES))
     pred_w = model.predict(points.train.x, batch_size=128)
