@@ -321,13 +321,13 @@ def predictions(model, dataset, at_most=None, filtered=True):
     at_most argument limiting the range of the records received from the dataset) """
     sess = tf.get_default_session()
 
-    x = dataset.x[dataset.mask]
-    weights = dataset.weights[dataset.mask]
-    filt = dataset.filt[dataset.mask]
-    argmaxs = dataset.argmaxs[dataset.mask]
-    c012s = dataset.c012s[dataset.mask]
-    hits_argmaxs = dataset.hits_argmaxs[dataset.mask]
-    hits_c012s = dataset.hits_c012s[dataset.mask]
+    x = dataset.x
+    weights = dataset.weights
+    filt = dataset.filt
+    argmaxs = dataset.argmaxs
+    c012s = dataset.c012s
+    hits_argmaxs = dataset.hits_argmaxs
+    hits_c012s = dataset.hits_c012s
 
     if at_most is not None:
       filt = filt[:at_most]
@@ -371,9 +371,9 @@ def softmax_predictions(model, dataset, at_most=None, filtered=True):
     choice of the appropriate labels. """
     sess = tf.get_default_session()
 
-    x = dataset.x[dataset.mask]
-    weights = dataset.weights[dataset.mask]
-    filt = dataset.filt[dataset.mask]
+    x = dataset.x
+    weights = dataset.weights
+    filt = dataset.filt
     
     if at_most is not None:
         filt = filt[:at_most]
@@ -433,9 +433,9 @@ def regr_weights_predictions(model, dataset, at_most=None, filtered=True):
     already available in predictions() function. It relies upon the weights values. """
     sess = tf.get_default_session()
 
-    x = dataset.x[dataset.mask]
-    calc_weights = dataset.weights[dataset.mask]
-    filt = dataset.filt[dataset.mask]
+    x = dataset.x
+    calc_weights = dataset.weights
+    filt = dataset.filt
 
     if at_most is not None:
         filt = filt[:at_most]
@@ -457,9 +457,9 @@ def regr_c012s_predictions(model, dataset, at_most=None, filtered=True):
     TODO (Proposition): the function seems to implement part of the functionality 
     already available in predictions() function. It relies upon the c_coefficients values. """
     sess = tf.get_default_session()
-    x = dataset.x[dataset.mask]
-    calc_c012s = dataset.c012s[dataset.mask]
-    filt = dataset.filt[dataset.mask]
+    x = dataset.x
+    calc_c012s = dataset.c012s
+    filt = dataset.filt
 
     if at_most is not None:
         filt = filt[:at_most]
@@ -483,9 +483,9 @@ def soft_c012s_predictions(model, dataset, at_most=None, filtered=True):
     encoded c_coefficients. """
     sess = tf.get_default_session()
 
-    x = dataset.x[dataset.mask]
-    calc_hits_c012s = dataset.hits_c012s[dataset.mask]
-    filt = dataset.filt[dataset.mask]
+    x = dataset.x
+    calc_hits_c012s = dataset.hits_c012s
+    filt = dataset.filt
 
     if at_most is not None:
         filt = filt[:at_most]
@@ -506,9 +506,9 @@ def regr_argmaxs_predictions(model, dataset, at_most=None, filtered=True):
     TODO (Proposition): the function seems to implement part of the functionality 
     already available in predictions() function. It relies upon the argmax values. """
     sess = tf.get_default_session()
-    x = dataset.x[dataset.mask]
-    calc_argmaxs = dataset.argmaxs[dataset.mask]
-    filt = dataset.filt[dataset.mask]
+    x = dataset.x
+    calc_argmaxs = dataset.argmaxs
+    filt = dataset.filt
 
     if at_most is not None:
         filt = filt[:at_most]
@@ -534,9 +534,9 @@ def soft_argmaxs_predictions(model, dataset, at_most=None, filtered=True):
     encoded argmax values. """
     sess = tf.get_default_session()
 
-    x = dataset.x[dataset.mask]
-    calc_hits_argmaxs = dataset.hits_argmaxs[dataset.mask]
-    filt = dataset.filt[dataset.mask]
+    x = dataset.x
+    calc_hits_argmaxs = dataset.hits_argmaxs
+    filt = dataset.filt
 
     if at_most is not None:
         filt = filt[:at_most]

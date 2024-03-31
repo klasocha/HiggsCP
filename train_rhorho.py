@@ -40,38 +40,17 @@ def run(args):
 
     # Saving additionally the EventDatasets object as a pickle binary file
     points = EventDatasets(event, weights, argmaxs, perm, c012s=c012s, hits_argmaxs=hits_argmaxs,  
-                           hits_c012s=hits_c012s, miniset=args.MINISET, unweighted=args.UNWEIGHTED)
+                           hits_c012s=hits_c012s, miniset=args.MINISET)
     points_path = os.path.join(args.IN, "event_datasets.obj")
     with open(points_path, 'wb') as f:
         pickle.dump(points, f)
 
     num_features = points.train.x.shape[1]
     print(f"{num_features} features have been prepared.")
-    
-    # TEST: Input data shape: 
-    """    
-    print('x:\n', points.train.x[0:1])
-    print('x:\n', points.train.x.shape)
-    print('filt:\n', points.train.filt[0:1])
-    print('filt:\n', points.train.filt.shape)
-    print('weights:\n', points.train.weights[0:1])
-    print('weights:\n', points.train.weights.shape)    
-    print('argmaxes:\n', points.train.argmaxs[0:1])
-    print('argmaxes:\n', points.train.argmaxs.shape)
-    print('c_coefficients:\n', points.train.c_coefficients[0:1])
-    print('c_coefficients:\n', points.train.c_coefficients.shape)
-    print('ohe_argmaxes:\n', points.train.ohe_argmaxes[0:1])
-    print('ohe_argmaxes:\n', points.train.ohe_argmaxes.shape)    
-    print('ohe_coefficients:\n', points.train.ohe_coefficients[0:1])    
-    print('ohe_coefficients:\n', points.train.ohe_coefficients.shape)    
-    print('mask:\n', points.train.mask[0:1])
-    print('mask:\n', points.train.mask.shape)
-    print('n:\n', points.train.n) 
-    """
 
     # =========================== PREPARING FOLDERS FOR STORING THE RESULTS ============================
     pathOUT = "temp_results/"+ args.TYPE + "_" + args.FEAT + "_" + args.TRAINING_METHOD + \
-        "_" + args.HITS_C012s + "_Unweighted_" + str(args.UNWEIGHTED) + "_" + \
+        "_" + args.HITS_C012s + "_" + \
             args.PLOT_FEATURES + "_NUM_CLASSES_" + str(args.NUM_CLASSES) + "/"
     
     if pathOUT:

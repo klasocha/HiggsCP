@@ -16,7 +16,6 @@ class Dataset(object):
 
         self.n = x.shape[0]
         self._next_id = 0
-        self.mask = np.ones(self.n) == 1
         self.shuffle()
 
     def shuffle(self):
@@ -42,60 +41,6 @@ class Dataset(object):
                 self.hits_argmaxs[cur_id:cur_id+batch_size], self.hits_c012s[cur_id:cur_id+batch_size], self.filt[cur_id:cur_id+batch_size])
 
 
-def unweight(x):
-    return 0 if x < random.random() * 2 else 1
-
-
-class UnweightedDataset(object):
-    def __init__(self, x, weights, argmaxs, c012s, hits_argmaxs, hits_c012s):
-        self.x = x[:, :-1]
-        self.filt = x[:, -1]
-        self.weights = weights
-        self.argmaxs = argmaxs
-        self.c012s = c012s
-        self.hits_argmaxs = hits_argmaxs
-        self.hits_c012s = hits_c012s
-
-        self.n = x.shape[0]
-        self._next_id = 0
-        self.mask = np.ones(self.n)==1
-        self.shuffle()
-
-    def weight(self, w_ind):
-        if w_ind:
-            self.w_ind = w_ind
-            self.mask = np.array(map(unweight, self.weights[:, w_ind]))
-            self.mask = self.mask > 0
-            self.n = self.mask.sum()
-        else:
-            self.n = self.x.shape[0]
-            self.mask = np.ones(self.n) == 1
-
-    def shuffle(self):
-        perm = np.arange(self.n)
-        np.random.shuffle(perm)
-        self.x = self.x[perm]
-        self.weights = self.weights[perm]
-        self.argmaxs = self.argmaxs[perm]
-        self.c012s = self.c012s[perm]
-        self.hits_argmaxs = self.hits_argmaxs[perm]
-        self.hits_c012s = self.hits_c012s[perm]
-        self.filt = self.filt[perm]
-        self._next_id = 0
-
-    def next_batch(self, batch_size):
-        if self._next_id + batch_size >= self.n:
-            self.shuffle()
-
-        cur_id = self._next_id
-        self._next_id += batch_size
-        return (self.x[self.mask][cur_id:cur_id+batch_size],
-                self.weights[self.mask][cur_id:cur_id+batch_size], self.argmaxs[self.mask][cur_id:cur_id+batch_size],
-                self.c012s[self.mask][cur_id:cur_id+batch_size],
-                self.hits_argmaxs[self.mask][cur_id:cur_id+batch_size], self.hits_c012s[self.mask][cur_id:cur_id+batch_size],
-                self.filt[self.mask][cur_id:cur_id+batch_size])
-
-
 def read_np(filename):
     """ Return the data loaded from a NPY file """
     with open(filename, 'rb') as f:
@@ -103,7 +48,7 @@ def read_np(filename):
 
 
 class EventDatasets(object):
-    def __init__(self, event, weights, argmaxs, perm, c012s, hits_argmaxs, hits_c012s, filtered=False, raw=False, miniset=False,  unweighted=False):
+    def __init__(self, event, weights, argmaxs, perm, c012s, hits_argmaxs, hits_c012s, filtered=False, raw=False, miniset=False):
         data = event.cols[:, :-1]
         filt = event.cols[:, -1]
 
@@ -119,7 +64,7 @@ class EventDatasets(object):
             test_ids = perm[-100000:]
 
         if not raw:
-            print("Training data will be standardised.")
+            print("Data will be standardised.")
             means = data[train_ids].mean(0)
             stds = data[train_ids].std(0)
             data = (data - means) / stds
@@ -131,16 +76,6 @@ class EventDatasets(object):
 
         data = np.concatenate([data, filt.reshape([-1, 1])], 1)
 
-        # Optional: "unweighting" the events to resemble real data
-        # Description: ¶ 5.4. Real data - 
-        # Master's Thesis: "Machine Learning application in High Energy Physics:
-        # case of Higgs boson CP state in H ⇾ ττ decay at LHC" by Paulina Winkowska
-        # ============================================================================
-        if unweighted:
-            w_a = np.array(map(unweight, w_a))
-            w_b = np.array(map(unweight, w_b))
-        # ============================================================================
-
         self.train = Dataset(data[train_ids], weights[train_ids, :], argmaxs[train_ids], c012s[train_ids], 
                              hits_argmaxs[train_ids], hits_c012s[train_ids])
         
@@ -149,6 +84,3 @@ class EventDatasets(object):
         
         self.test = Dataset(data[test_ids], weights[test_ids, :], argmaxs[test_ids], c012s[test_ids], 
                             hits_argmaxs[test_ids], hits_c012s[test_ids])
-        
-        self.unweightedtest = UnweightedDataset(data[test_ids], weights[test_ids, :], argmaxs[test_ids], 
-                                                c012s[test_ids], hits_argmaxs[test_ids], hits_c012s[test_ids])
