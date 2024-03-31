@@ -39,9 +39,6 @@ parser.add_argument("--normalize_weights", dest="NORMALIZE_WEIGHTS", action="sto
 parser.add_argument("--miniset", dest="MINISET", 
                     type=lambda s: s.lower() in ['true', 't', 'yes', '1'], default=False,
                     help="using the small version of the training data set")
-parser.add_argument("--unweighted", dest="UNWEIGHTED", 
-                    type=lambda s: s.lower() in ['true', 't', 'yes', '1'], default=False,
-                    help="\"unweighting\" the events to resemble real data")
 
 # Adding the arguments used by src_py/rhorho.py
 parser.add_argument("--beta",  type=float, dest="BETA", 
@@ -61,7 +58,7 @@ parser.add_argument("--plot_features", dest="PLOT_FEATURES", choices=["NO", "FIL
 parser.add_argument("-l", "--layers", dest="LAYERS", type=int, help = "number of NN layers", default=6)
 parser.add_argument("-s", "--size", dest="SIZE", type=int, help="NN size", default=100)
 parser.add_argument("-d", "--dropout", dest="DROPOUT", type=float, default=0.0,
-                    help="dropout probability")
+                    help="dropout probability (applied during the training process)")
 parser.add_argument("-o", "--optimizer", dest="OPT", 
                     choices=["GradientDescentOptimizer", "AdadeltaOptimizer", "AdagradOptimizer",
                             "ProximalAdagradOptimizer", "AdamOptimizer", "FtrlOptimizer",
@@ -101,7 +98,7 @@ if args.DOWNLOAD_ORIGINAL:
     download_original_data(args)
 elif args.KERAS:
     # TEST (TensorFlow v2 Implementation ==== !!! BETA VERSION !!! ====)
-    # $ python main.py --keras --num_classes 11 --epochs 5 
+    # $ python main.py --input "data" --keras --num_classes 11 --epochs 5 
     model_keras(args)
 else:
     # =================================== TRAINING THE MODEL ===============================================

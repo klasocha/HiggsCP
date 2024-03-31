@@ -1,6 +1,5 @@
 import tensorflow as tf
-from math import floor
-import pickle, os
+import pickle, os, sys
 import numpy as np
 from .tf_model import calculate_deltas_unsigned, calculate_deltas_signed
 
@@ -10,42 +9,110 @@ class DataGenerator(tf.keras.utils.Sequence):
     def __init__(self, batch_size, dataset):
         self.batch_size = batch_size
         self.dataset = dataset
-    
+
     def __len__(self):
         """ Denotes the number of batches per epoch """
-        return int(np.floor(self.dataset.n / self.batch_size))
+        return self.dataset.n // self.batch_size
 
     def __getitem__(self, index):
         """ Generate one batch of data """
         x, weights, _, _, _, _, _  = self.dataset.next_batch(self.batch_size)
-        weights = weights / tf.tile(tf.reshape(tf.reduce_sum(weights, axis=1), (-1, 1)), (1, weights.shape[-1]))
+        weights = weights / tf.tile(tf.reshape(
+            tf.reduce_sum(weights, axis=1), (-1, 1)), (1, weights.shape[-1]))
         return x, weights
 
 
+class MonitoringUtils(tf.keras.callbacks.Callback):
+    """ Callback for monitoring the model performance """
+    def __init__(self, train_data, val_data, batch_size, args):
+        self.train_data = train_data
+        self.val_data = val_data
+        self.batch_size = batch_size
+        self.n_batches = train_data.n // batch_size
+        self.args = args
+
+    def on_epoch_begin(self, epoch, logs=None):
+        self.epoch = epoch
+        sys.stdout.write(f"Epoch {epoch + 1}/{int(self.args.EPOCHS)}\n")
+
+    def on_batch_begin(self, batch, logs=None):
+        sys.stdout.write(f" >>> batch {batch + 1}/{self.n_batches}\r")
+    
+    def on_epoch_end(self, epoch, logs=None):
+        sys.stdout.write("\nTraining:    acc: {:.4f} | mean: {:.4f}\n".format(
+              *self.compute_accuracy_and_mean(self.train_data, self.args, at_most=100_000, filtered=True)))
+        sys.stdout.write("Validation:  acc: {:.4f} | mean: {:.4f}\n\n".format(
+              *self.compute_accuracy_and_mean(self.val_data, self.args)))
+
+    def compute_accuracy_and_mean(self, dataset, args, at_most=None, filtered=False):
+        """ Compute accuracy (within the ∆_max tolerance) and the error mean value """
+        x = dataset.x
+        calc_w = dataset.weights
+        filt = dataset.filt
+        
+        if at_most:
+            x = x[:at_most]
+            calc_w = calc_w[:at_most]
+            filt = filt[:at_most]
+        if filtered:
+            x = x[filt == 1.0]
+            calc_w = calc_w[filt == 1.0]
+        
+        n_classes = calc_w.shape[-1]
+        pred_w = self.model.predict(x, batch_size=self.batch_size, verbose=0)
+        calc_w = calc_w / np.tile(np.reshape(np.sum(calc_w, axis=1), (-1, 1)), (1, n_classes))
+
+        # Computing the mean of the difference between the most probable predicted 
+        # class and the most probable true class (∆_class)      
+        pred_argmaxs = np.argmax(pred_w, axis=1)
+        calc_argmaxs = np.argmax(calc_w, axis=1)
+        calc_pred_argmaxs_abs_distances = calculate_deltas_unsigned(pred_argmaxs, calc_argmaxs, n_classes)
+        calc_pred_argmaxs_signed_distances = calculate_deltas_signed(pred_argmaxs, calc_argmaxs, n_classes)
+        mean = np.mean(calc_pred_argmaxs_signed_distances)
+
+        # ACC (accuracy): averaging that most probable predicted class match for t
+        # the most probable class within the ∆_max tolerance. ∆max specifiec the maximum 
+        # allowed difference between the predicted class and the true class for an event 
+        # to be considered correctly classified.
+        delt_max = int(args.DELT_CLASSES)
+        acc = (calc_pred_argmaxs_abs_distances <= delt_max).mean()
+
+        return acc, mean
+            
+
 class NeuralNetwork(tf.keras.Model):
-    def __init__(self, num_features, args):
+    """ Configurable Neural Network class """
+
+    def __init__(self, num_features, batch_size, args):
         super(NeuralNetwork, self).__init__()
+        self.args = args
         self.n_features = num_features
-        self.n_classes = int(args.NUM_CLASSES)
-        self.n_epochs = int(args.EPOCHS)
-        self.n_layers = int(args.LAYERS)
-        self.n_units_per_layer = int(args.SIZE)
+        self.batch_size = batch_size
+        self.n_classes = int(self.args.NUM_CLASSES)
+        self.n_epochs = int(self.args.EPOCHS)
+        self.n_layers = int(self.args.LAYERS)
+        self.n_units_per_layer = int(self.args.SIZE)
+        self.dropout_rate = float(self.args.DROPOUT)
         self.input_layer = tf.keras.Input(shape=(self.n_features))
-        self.dense_layers, self.batch_norm_layers, self.activation_layers = [], [], []
+        self.dense_layers, self.batch_norm_layers = [], []
+        self.activation_layers, self.dropout_layers = [], []
         for i in range(self.n_layers):
             self.dense_layers.append(tf.keras.layers.Dense(
                 units=self.n_units_per_layer, name=f"dense_{i}", use_bias=False))
             self.batch_norm_layers.append(tf.keras.layers.BatchNormalization(name=f"batch_norm_{i}"))
             self.activation_layers.append(tf.keras.layers.ReLU(name=f"relu_{i}"))
+            self.dropout_layers.append(tf.keras.layers.Dropout(rate=self.dropout_rate))
         self.linear_layer = tf.keras.layers.Dense(units=self.n_classes, use_bias=False, name="linear")
         self.softmax_layer = tf.keras.layers.Softmax()
     
     def call(self, x):
+        """ Pass tensors forward """
         input = x
         for i in range(self.n_layers):
             input = self.dense_layers[i](input)
             input = self.batch_norm_layers[i](input)
             input = self.activation_layers[i](input)
+            input = self.dropout_layers[i](input)
         input = self.linear_layer(input)
         return self.softmax_layer(input)
    
@@ -54,16 +121,13 @@ class NeuralNetwork(tf.keras.Model):
         as well as the loss function """
         optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
         self.compile(loss=tf.keras.losses.CategoricalCrossentropy(from_logits=False), 
-                     optimizer=optimizer, metrics=['accuracy'])
+                     optimizer=optimizer)
 
-    def train(self, data, batch_size):
+    def train(self, data):
         """ Train the model """
-        train_data_generator = DataGenerator(batch_size=batch_size, dataset=data.train)
-        validation_data_generator = DataGenerator(batch_size=batch_size, dataset=data.valid)
-        history = self.fit(train_data_generator,
-                           validation_data=validation_data_generator,
-                           epochs=self.n_epochs)
-        return history
+        train_data_generator = DataGenerator(batch_size=self.batch_size, dataset=data.train)
+        self.fit(train_data_generator, epochs=self.n_epochs, verbose=0,
+                callbacks=[MonitoringUtils(data.train, data.valid, self.batch_size, self.args)])
 
     def build_graph(self):
         """ Build the computational graph (you can call build_graph.summary() to
@@ -81,30 +145,8 @@ def run(args):
     print(f"{num_features} features have been prepared.")
     
     # Building the model
-    model = NeuralNetwork(num_features, args)
+    model = NeuralNetwork(num_features, 128, args)
     model.compile_model()
     
     # Training the model
-    model.train(data_points, batch_size=128)
-    
-    # Evaluating the model
-    calc_w = data_points.train.weights
-    calc_w = calc_w / np.tile(np.reshape(np.sum(calc_w, axis=1), (-1, 1)), (1, args.NUM_CLASSES))
-    pred_w = model.predict(data_points.train.x, batch_size=128)
-
-    # Computing the mean of the difference between the most probable predicted 
-    # class and the most probable true class (∆_class)      
-    pred_argmaxs = np.argmax(pred_w, axis=1)
-    calc_argmaxs = np.argmax(calc_w, axis=1)
-    calc_pred_argmaxs_abs_distances = calculate_deltas_unsigned(pred_argmaxs, calc_argmaxs, args.NUM_CLASSES)
-    calc_pred_argmaxs_signed_distances = calculate_deltas_signed(pred_argmaxs, calc_argmaxs, args.NUM_CLASSES)
-    mean = np.mean(calc_pred_argmaxs_signed_distances)
-
-    # ACC (accuracy): averaging that most probable predicted class match for t
-    # the most probable class within the ∆_max tolerance. ∆max specifiec the maximum 
-    # allowed difference between the predicted class and the true class for an event 
-    # to be considered correctly classified.
-    delt_max = args.DELT_CLASSES
-    acc = (calc_pred_argmaxs_abs_distances <= delt_max).mean()
-
-    print(mean, acc)
+    history = model.train(data_points)
