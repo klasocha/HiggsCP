@@ -66,16 +66,14 @@ class MonitoringUtils(tf.keras.callbacks.Callback):
         # class and the most probable true class (∆_class)      
         pred_argmaxs = np.argmax(pred_w, axis=1)
         calc_argmaxs = np.argmax(calc_w, axis=1)
-        calc_pred_argmaxs_abs_distances = calculate_deltas_unsigned(pred_argmaxs, calc_argmaxs, n_classes)
-        calc_pred_argmaxs_signed_distances = calculate_deltas_signed(pred_argmaxs, calc_argmaxs, n_classes)
-        mean = np.mean(calc_pred_argmaxs_signed_distances)
+        mean = np.mean(calculate_deltas_signed(pred_argmaxs, calc_argmaxs, n_classes))
 
         # ACC (accuracy): averaging that most probable predicted class match for t
         # the most probable class within the ∆_max tolerance. ∆max specifiec the maximum 
         # allowed difference between the predicted class and the true class for an event 
         # to be considered correctly classified.
         delt_max = int(args.DELT_CLASSES)
-        acc = (calc_pred_argmaxs_abs_distances <= delt_max).mean()
+        acc = (calculate_deltas_unsigned(pred_argmaxs, calc_argmaxs, n_classes) <= delt_max).mean()
 
         return acc, mean
             
