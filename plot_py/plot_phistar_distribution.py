@@ -6,7 +6,7 @@ on the sign of y1*y2, and separately grouping y1*y1>0, y1*y2<0.
 
 Let us suppose the "event" object having the attribute
 responsible for storing all the features, including phistar, y1 and y2 if "Variant-1.1"
-has been chosen, is stored in "data/rhorho_event.obj" and you want to save the results in "plot_py/figures/".
+has been chosen, is stored in "data/rhorho_event_11.obj" and you want to save the results in "plot_py/figures/".
 Then you need to run "plots.py" in the following manner (hypothesis is an alphaCP class for the
 weighted distribution plots): 
 
@@ -76,7 +76,7 @@ def draw(args):
     it passes lists of different values to the draw_distribution(). """
 
     # Reading the serialised "event" (RhoRhoEvent) object
-    with open(os.path.join(args.IN, "rhorho_event.obj"), 'rb') as f:
+    with open(os.path.join(args.IN, f"rhorho_event_{args.NUM_CLASSES}.obj"), 'rb') as f:
         event = pickle.load(f)
 
     # Extracting phistar, y1 and y2

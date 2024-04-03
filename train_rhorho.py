@@ -34,14 +34,14 @@ def run(args):
     # Saving the RhoRhoEvent object as a pickle binary file for the later analysis 
     # of its attributes (e.g. drawing the distribution of the phistar depending on y1 and y2)
     event = RhoRhoEvent(data, args)
-    event_path = os.path.join(args.IN, "rhorho_event.obj")
+    event_path = os.path.join(args.IN, f"rhorho_event_{num_classes}.obj")
     with open(event_path, 'wb') as f:
         pickle.dump(event, f)
 
     # Saving additionally the EventDatasets object as a pickle binary file
     points = EventDatasets(event, weights, argmaxs, perm, c012s=c012s, hits_argmaxs=hits_argmaxs,  
                            hits_c012s=hits_c012s, miniset=args.MINISET)
-    points_path = os.path.join(args.IN, "event_datasets.obj")
+    points_path = os.path.join(args.IN, f"event_datasets_{num_classes}.obj")
     with open(points_path, 'wb') as f:
         pickle.dump(points, f)
 
