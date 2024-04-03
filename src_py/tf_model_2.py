@@ -193,7 +193,7 @@ class NeuralNetwork(tf.keras.Model):
 
 def run(args):
     # Loading data
-    data_points_path = os.path.join(args.IN, f"event_datasets{args.NUM_CLASSES}.obj")
+    data_points_path = os.path.join(args.IN, f"event_datasets_{args.NUM_CLASSES}.obj")
     with open(data_points_path, 'rb') as f:
             data_points = pickle.load(f)
     num_features = data_points.train.x.shape[1]
