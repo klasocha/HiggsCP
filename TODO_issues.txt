@@ -151,6 +151,7 @@
      -->  "run is separate processes", don't understand this option.
            Please explain.
 
+     >>> DECISION (3.04.2024): HAS BEEN REMOVED
      What below is the version for nootebook only?
      --> "calculate_classification_metrics" returns now np.array of arrays,
           but it is nor reflected in the total_train module of your code.

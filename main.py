@@ -3,6 +3,7 @@ import train_rhorho
 from pathlib import Path
 from src_py.download_original_data import download as download_original_data
 from src_py.tf_model_2 import run as model_keras
+from src_py.prepare_data import prepare_data
 
 # =============================== GETTING ALL THE ARGUMENTS ============================================
 # Specifiying the model and its function responsible for running the training process
@@ -106,3 +107,6 @@ else:
     # TEST (Downloading and preprocessing data, training the model):
     # $ python main.py --input "data" --type nn_rhorho --epochs 5 --features Variant-All --num_classes 11
     types[args.TYPE](args)
+
+    # New approach (separated logic)  ==== !!! BETA VERSION !!! ====
+    # prepare_data(args)

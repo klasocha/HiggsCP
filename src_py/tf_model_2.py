@@ -1,7 +1,12 @@
+""" This module contains the model itself (in its different configurations),
+data generators needed for feeding it with the data provided batch-by-batch,
+as well as the Keras callback class for utilising all the evaluation methods
+available in evaluation_utils.py """
+
 import tensorflow as tf
 import pickle, os, sys
 import numpy as np
-from .tf_model import calculate_deltas_unsigned, calculate_deltas_signed
+from .evaluation_utils import compute_accuracy_and_mean
 
 
 class DataGenerator(tf.keras.utils.Sequence):
@@ -37,40 +42,6 @@ class DataGenerator(tf.keras.utils.Sequence):
         return x, labels
 
 
-def compute_accuracy_and_mean(model, dataset, batch_size, args, at_most=None, filtered=False):
-    """ Compute accuracy (within the ∆_max tolerance) and the error mean value """
-    x = dataset.x
-    calc_w = dataset.weights
-    filt = dataset.filt
-    
-    if at_most:
-        x = x[:at_most]
-        calc_w = calc_w[:at_most]
-        filt = filt[:at_most]
-    if filtered:
-        x = x[filt == 1.0]
-        calc_w = calc_w[filt == 1.0]
-    
-    n_classes = calc_w.shape[-1]
-    pred_w = model.predict(x, batch_size=batch_size, verbose=0)
-    calc_w = calc_w / np.tile(np.reshape(np.sum(calc_w, axis=1), (-1, 1)), (1, n_classes))
-
-    # Computing the mean of the difference between the most probable predicted 
-    # class and the most probable true class (∆_class)      
-    pred_argmaxs = np.argmax(pred_w, axis=1)
-    calc_argmaxs = np.argmax(calc_w, axis=1)
-    mean = np.mean(calculate_deltas_signed(pred_argmaxs, calc_argmaxs, n_classes))
-
-    # ACC (accuracy): averaging that most probable predicted class match for t
-    # the most probable class within the ∆_max tolerance. ∆max specifiec the maximum 
-    # allowed difference between the predicted class and the true class for an event 
-    # to be considered correctly classified.
-    delt_max = int(args.DELT_CLASSES)
-    acc = (calculate_deltas_unsigned(pred_argmaxs, calc_argmaxs, n_classes) <= delt_max).mean()
-
-    return acc, mean
-
-
 class MonitoringUtils(tf.keras.callbacks.Callback):
     """ Callback for monitoring the model performance """
     def __init__(self, train_data, val_data, batch_size, args):
@@ -82,27 +53,34 @@ class MonitoringUtils(tf.keras.callbacks.Callback):
 
     def on_epoch_begin(self, epoch, logs=None):
         self.epoch = epoch
-        sys.stdout.write(f"Epoch {epoch + 1}/{int(self.args.EPOCHS)}\n")
+        sys.stdout.write(f"\nEpoch {epoch + 1}/{int(self.args.EPOCHS)}\n")
 
     def on_batch_begin(self, batch, logs=None):
         if (batch + 1) % 10 == 0:
             sys.stdout.write(f" >>> batch {batch + 1}/{self.n_batches}\r")
     
     def on_epoch_end(self, epoch, logs=None):
-        sys.stdout.write("\nTraining:    acc: {:.4f} | mean: {:.4f}\n".format(
-              *compute_accuracy_and_mean(self.model, self.train_data, self.batch_size,
-                                         self.args, at_most=100_000, filtered=True)))
-        sys.stdout.write("Validation:  acc: {:.4f} | mean: {:.4f}\n\n".format(
-              *compute_accuracy_and_mean(self.model, self.val_data, self.batch_size, self.args)))
+        # Training loss
+        sys.stdout.write("\nLoss: {:.4f}\n".format(logs.get('loss')))
+
+        if self.model.configuration == "soft_weights":
+            # Accuracy, mean, l1, l2 for training data
+            acc, mean, l1, l2 = compute_accuracy_and_mean(
+                self.model, self.train_data, self.batch_size, self.args, 
+                at_most=100_000, filtered=True)
+            sys.stdout.write("Training:      accuracy: {:.4f} | mean: {:.4f} | ".format(acc, mean) +
+                            "L1 norm: {:.4f} | L2 norm: {:.4f}\n".format(l1, l2))
+            
+            # Accuracy, mean, l2, l2 for validation data
+            acc, mean, l1, l2 = compute_accuracy_and_mean(
+                self.model, self.val_data, self.batch_size, self.args, 
+                at_most=None, filtered=True)
+            sys.stdout.write("Validation:    accuracy: {:.4f} | mean: {:.4f} | ".format(acc, mean) +
+                            "L1 norm: {:.4f} | L2 norm: {:.4f}\n".format(l1, l2))
 
 
 def regr_argmaxs_loss(y_true, y_pred):
-    # TODO: not well learning close to angle = 0, 2pi
-    # Old implementation:
-    # self.loss = loss = tf.losses.mean_squared_error(self.argmaxs, sx)
-    # new proposal by J. Kurek, does not work without correcting at analysis step
-    # use for plotting script with "_topo" extension.
-    # New implementation:
+    """ Loss function for the regr_argmaxs configuration """
     return tf.reduce_mean(1 - tf.math.cos(y_true - y_pred))
 
 
@@ -170,8 +148,9 @@ class NeuralNetwork(tf.keras.Model):
         if self.configuration in ["soft_weights", "soft_argmaxs", "soft_c012s"]:
             loss = tf.keras.losses.CategoricalCrossentropy(from_logits=False)
         elif self.configuration in ["regr_c012s", "regr_weights"]:
-            loss = tf.keras.losses.MSE()
+            loss = tf.keras.losses.MeanSquaredError()
         elif self.configuration == "regr_argmaxs":
+            # TODO: not well learning close to angle = 0, 2pi
             loss = regr_argmaxs_loss
         else:
             raise ValueError(f"Unknown training method has been provided: {self.configuration}")
@@ -189,7 +168,7 @@ class NeuralNetwork(tf.keras.Model):
         see the architecture of the model: layers, output shapes) """
         x = tf.keras.layers.Input(shape=(self.n_features))
         return tf.keras.Model(inputs=[x], outputs=self.call(x), name=f"HiggsCP DNN ({self.configuration})")
-
+        
 
 def run(args):
     # Loading data
