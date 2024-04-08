@@ -4,6 +4,8 @@ metrics used to measure the performance of the model from tf_model_2.py """
 from .tf_model import calculate_deltas_unsigned, calculate_deltas_signed
 import numpy as np
 import tensorflow as tf
+from sklearn.metrics import roc_auc_score
+
 
 def compute_accuracy_and_mean(model, dataset, batch_size, args, at_most=None, filtered=False):
     """ Compute accuracy (within the ∆_max tolerance) and the error mean value """
@@ -41,3 +43,22 @@ def compute_accuracy_and_mean(model, dataset, batch_size, args, at_most=None, fi
     l2_delt_w = np.sqrt(np.mean((calc_w - pred_w)**2))
     
     return acc, mean, l1_delt_w, l2_delt_w
+
+
+def calculate_roc_auc(pred_w, calc_w, index_a, index_b):
+    """ Calculate the ROC for a specific pair of classes (useful for multiclass classification).
+    This function is used by test_roc_auc() """
+    n, _ = calc_w.shape
+    true_labels = np.concatenate([np.ones(n), np.zeros(n)])
+    preds = np.concatenate([pred_w[:, index_a], pred_w[:, index_a]])
+    weights = np.concatenate([calc_w[:, index_a], calc_w[:, index_b]])
+    return roc_auc_score(true_labels, preds, sample_weight=weights)
+
+
+def test_roc_auc(preds_w, calc_w):
+    """ Test the ROC AUC for each class. This function calculates and prints the ROC AUC 
+    for each class based on the predicted weights and the calculated weights. """
+    n, num_classes = calc_w.shape
+    for i in range(0, num_classes):
+         print(i + 1, 'oracle_roc_auc: {}'.format(calculate_roc_auc(calc_w, calc_w, 0, i)),
+                  'roc_auc: {}'.format(calculate_roc_auc(preds_w, calc_w, 0, i)))
