@@ -4,9 +4,9 @@ as well as the Keras callback class for utilising all the evaluation methods
 available in evaluation_utils.py """
 
 import tensorflow as tf
-import pickle, os, sys
+import pickle, os, sys, errno, json
 import numpy as np
-from .evaluation_utils import compute_accuracy_and_mean
+from .evaluation_utils import compute_accuracy_and_mean, compute_loss
 
 
 class DataGenerator(tf.keras.utils.Sequence):
@@ -50,6 +50,12 @@ class MonitoringUtils(tf.keras.callbacks.Callback):
         self.batch_size = batch_size
         self.n_batches = train_data.n // batch_size
         self.args = args
+        self.results = {"training_epoch_relative_loss" : [], 
+                        "training_loss" : [], "validation_loss" : [],
+                        "training_accuracy" : [], "validation_accuracy" : [],
+                        "training_mean" : [], "validation_mean" : [],
+                        "training_l1_norm" : [], "validation_l1_norm" : [],
+                        "training_l2_norm" : [], "validation_l2_norm" : [],}
 
     def on_epoch_begin(self, epoch, logs=None):
         self.epoch = epoch
@@ -61,13 +67,28 @@ class MonitoringUtils(tf.keras.callbacks.Callback):
     
     def on_epoch_end(self, epoch, logs=None):
         # Training loss
-        sys.stdout.write("\nLoss: {:.4f}\n".format(logs.get('loss')))
+        epoch_relative_loss = logs.get('loss')
+        sys.stdout.write("\nTraining epoch relative loss (convergence): {:.4f}\n".format(epoch_relative_loss))
+        self.results["training_epoch_relative_loss"].append(str(epoch_relative_loss))
+        
+        if self.model.configuration != "soft_weights":
+            # Computing validation loss for all the configurations except soft_weights
+            train_loss = compute_loss(self.model, self.train_data, self.batch_size, self.args)
+            self.results["training_loss"].append(str(train_loss))
+            sys.stdout.write("Training loss: {:.4f}\n".format(train_loss))
+            val_loss = compute_loss(self.model, self.val_data, self.batch_size, self.args)
+            self.results["validation_loss"].append(str(val_loss))
+            sys.stdout.write("Validation loss: {:.4f}\n".format(val_loss))
 
         if self.model.configuration == "soft_weights":
             # Accuracy, mean, l1, l2 for training data
             acc, mean, l1, l2 = compute_accuracy_and_mean(
                 self.model, self.train_data, self.batch_size, self.args, 
                 at_most=100_000, filtered=True)
+            self.results["training_accuracy"].append(str(acc))
+            self.results["training_mean"].append(str(mean))
+            self.results["training_l1_norm"].append(str(l1))
+            self.results["training_l2_norm"].append(str(l2))
             sys.stdout.write("Training:      accuracy: {:.4f} | mean: {:.4f} | ".format(acc, mean) +
                             "L1 norm: {:.4f} | L2 norm: {:.4f}\n".format(l1, l2))
             
@@ -75,8 +96,26 @@ class MonitoringUtils(tf.keras.callbacks.Callback):
             acc, mean, l1, l2 = compute_accuracy_and_mean(
                 self.model, self.val_data, self.batch_size, self.args, 
                 at_most=None, filtered=True)
+            self.results["validation_accuracy"].append(str(acc))
+            self.results["validation_mean"].append(str(mean))
+            self.results["validation_l1_norm"].append(str(l1))
+            self.results["validation_l2_norm"].append(str(l2))
             sys.stdout.write("Validation:    accuracy: {:.4f} | mean: {:.4f} | ".format(acc, mean) +
                             "L1 norm: {:.4f} | L2 norm: {:.4f}\n".format(l1, l2))
+    
+    def on_train_end(self, logs=None):
+        output_dir = os.path.join('results', self.model.configuration)
+        try:
+            os.makedirs(output_dir)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
+        output = os.path.join(output_dir, "training_history.json")
+        with open(output, "w") as file:
+            json.dump(self.results, file, indent=2)
+        output = os.path.join(output_dir, "configuration.json")
+        with open(output, "w") as file:
+            json.dump(self.model.args.__dict__, file, indent=2)
 
 
 def regr_argmaxs_loss(y_true, y_pred):
@@ -86,7 +125,6 @@ def regr_argmaxs_loss(y_true, y_pred):
 
 class NeuralNetwork(tf.keras.Model):
     """ Configurable Neural Network class """
-
     def __init__(self, num_features, batch_size, args, lr=1e-3, input_noise=0.0):
         super(NeuralNetwork, self).__init__()
         self.args = args

@@ -22,7 +22,7 @@ def compute_accuracy_and_mean(model, dataset, batch_size, args, at_most=None, fi
         calc_w = calc_w[filt == 1.0]
     
     n_classes = calc_w.shape[-1]
-    pred_w = model.predict(x, batch_size=batch_size, verbose=0)
+    pred_w = model.predict(x, verbose=0)
     calc_w = calc_w / np.tile(np.reshape(np.sum(calc_w, axis=1), (-1, 1)), (1, n_classes))
 
     # Computing the mean of the difference between the most probable predicted 
@@ -43,6 +43,30 @@ def compute_accuracy_and_mean(model, dataset, batch_size, args, at_most=None, fi
     l2_delt_w = np.sqrt(np.mean((calc_w - pred_w)**2))
     
     return acc, mean, l1_delt_w, l2_delt_w
+
+
+def compute_loss(model, dataset, batch_size, args):
+    n_epochs = dataset.n // batch_size
+    losses = []
+    for i in range(n_epochs):
+        x, weights, argmaxs, c012s, hits_argmaxs, hits_c012s, filt  = dataset.next_batch(batch_size)
+        if model.configuration == "soft_weights":
+            labels = weights / tf.tile(tf.reshape(tf.reduce_sum(weights, axis=1), (-1, 1)), 
+                                    (1, weights.shape[-1]))
+        if model.configuration == "soft_argmaxs":
+            labels = hits_argmaxs / tf.tile(tf.reshape(tf.reduce_sum(hits_argmaxs, axis=1), 
+                                                        (-1, 1)), (1, hits_argmaxs.shape[-1]))
+        if model.configuration == "soft_c012s":
+            labels = hits_c012s / tf.tile(tf.reshape(tf.reduce_sum(hits_c012s, axis=1), 
+                                                        (-1, 1)), (1, hits_c012s.shape[-1]))
+        if model.configuration == "regr_argmaxs":
+            labels = argmaxs
+        if model.configuration == "regr_c012s":
+            labels = c012s
+        if model.configuration == "regr_weights":
+            labels = weights
+        losses.append(model.loss(labels, model.predict_on_batch(x)))
+    return np.mean(losses)
 
 
 def calculate_roc_auc(pred_w, calc_w, index_a, index_b):

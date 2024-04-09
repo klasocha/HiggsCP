@@ -1,6 +1,6 @@
 import argparse
 import train_rhorho
-from pathlib import Path
+import os
 from src_py.download_original_data import download as download_original_data
 from src_py.tf_model_2 import run as model_keras
 from src_py.prepare_data import prepare_data
@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser(
   description='Download data and train the classifier for the Higgs Boson CP problem')
 
 # Adding the arguments used by src_py/download_data_rhorho.py
-parser.add_argument("-i", "--input", dest="IN", type=Path, help="data path", default="temp_data")
+parser.add_argument("-i", "--input", dest="IN", type=os.fspath, help="data path", default="temp_data")
 parser.add_argument("--force_download", dest="FORCE_DOWNLOAD", action="store_true", 
                     default=False, help="overwriting existing data")
 
