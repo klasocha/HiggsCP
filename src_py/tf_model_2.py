@@ -4,7 +4,7 @@ as well as the Keras callback class for utilising all the evaluation methods
 available in evaluation_utils.py """
 
 import tensorflow as tf
-import pickle, os, sys, errno, json
+import pickle, os, sys, errno, json, time
 import numpy as np
 from .evaluation_utils import compute_accuracy_and_mean, compute_loss
 
@@ -44,7 +44,7 @@ class DataGenerator(tf.keras.utils.Sequence):
 
 class MonitoringUtils(tf.keras.callbacks.Callback):
     """ Callback for monitoring the model performance """
-    def __init__(self, train_data, val_data, batch_size, args):
+    def __init__(self, train_data, val_data, batch_size, timestamp, args):
         self.train_data = train_data
         self.val_data = val_data
         self.batch_size = batch_size
@@ -56,6 +56,7 @@ class MonitoringUtils(tf.keras.callbacks.Callback):
                         "training_mean" : [], "validation_mean" : [],
                         "training_l1_norm" : [], "validation_l1_norm" : [],
                         "training_l2_norm" : [], "validation_l2_norm" : [],}
+        self.timestamp = timestamp
 
     def on_epoch_begin(self, epoch, logs=None):
         self.epoch = epoch
@@ -104,16 +105,11 @@ class MonitoringUtils(tf.keras.callbacks.Callback):
                             "L1 norm: {:.4f} | L2 norm: {:.4f}\n".format(l1, l2))
     
     def on_train_end(self, logs=None):
-        output_dir = os.path.join('results', self.model.configuration)
-        try:
-            os.makedirs(output_dir)
-        except OSError as e:
-            if e.errno != errno.EEXIST:
-                raise
-        output = os.path.join(output_dir, "training_history.json")
+        output_dir = os.path.join('results', self.model.configuration, self.timestamp)
+        output = os.path.join(output_dir, f"training_history.json")
         with open(output, "w") as file:
             json.dump(self.results, file, indent=2)
-        output = os.path.join(output_dir, "configuration.json")
+        output = os.path.join(output_dir, f"configuration.json")
         with open(output, "w") as file:
             json.dump(self.model.args.__dict__, file, indent=2)
 
@@ -130,6 +126,7 @@ class NeuralNetwork(tf.keras.Model):
         self.args = args
         self.lr = lr
         self.configuration = args.TRAINING_METHOD
+        self.checkpoint_path = "results"
         self.n_features = num_features
         self.batch_size = batch_size
         self.n_classes = int(self.args.NUM_CLASSES)
@@ -156,7 +153,7 @@ class NeuralNetwork(tf.keras.Model):
         self.linear_layer = tf.keras.layers.Dense(units=self.n_classes, use_bias=False, name="linear")
         if self.configuration in ["soft_weights", "soft_argmaxs", "soft_c012s"]:
             self.softmax_layer = tf.keras.layers.Softmax()
-    
+
     def call(self, x):
         """ Pass tensors forward """
         input = x
@@ -188,7 +185,6 @@ class NeuralNetwork(tf.keras.Model):
         elif self.configuration in ["regr_c012s", "regr_weights"]:
             loss = tf.keras.losses.MeanSquaredError()
         elif self.configuration == "regr_argmaxs":
-            # TODO: not well learning close to angle = 0, 2pi
             loss = regr_argmaxs_loss
         else:
             raise ValueError(f"Unknown training method has been provided: {self.configuration}")
@@ -198,8 +194,15 @@ class NeuralNetwork(tf.keras.Model):
         """ Train the model """
         train_data_generator = DataGenerator(batch_size=self.batch_size, dataset=data.train,
                                              configuration=self.configuration)
+        timestamp = time.strftime("%Y-%m-%d_on_%H-%M-%S")
+        self.checkpoint_path = os.path.join(self.checkpoint_path, 
+                                       os.path.normpath(f"{self.configuration}/{timestamp}/checkpoint/cp.ckpt"))
+        cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.checkpoint_path, 
+                                                         save_weights_only=True, verbose=1)
         self.fit(train_data_generator, epochs=self.n_epochs, verbose=0,
-                callbacks=[MonitoringUtils(data.train, data.valid, self.batch_size, self.args)])
+                callbacks=[MonitoringUtils(data.train, data.valid, self.batch_size, 
+                                           timestamp, 
+                                           self.args), cp_callback])
 
     def build_graph(self):
         """ Build the computational graph (you can call build_graph.summary() to
