@@ -44,7 +44,7 @@ class DataGenerator(tf.keras.utils.Sequence):
 
 class MonitoringUtils(tf.keras.callbacks.Callback):
     """ Callback for monitoring the model performance """
-    def __init__(self, train_data, val_data, batch_size, timestamp, args):
+    def __init__(self, train_data, val_data, batch_size, history_path, args):
         self.train_data = train_data
         self.val_data = val_data
         self.batch_size = batch_size
@@ -56,7 +56,7 @@ class MonitoringUtils(tf.keras.callbacks.Callback):
                         "training_mean" : [], "validation_mean" : [],
                         "training_l1_norm" : [], "validation_l1_norm" : [],
                         "training_l2_norm" : [], "validation_l2_norm" : [],}
-        self.timestamp = timestamp
+        self.history_path = history_path
 
     def on_epoch_begin(self, epoch, logs=None):
         self.epoch = epoch
@@ -105,11 +105,9 @@ class MonitoringUtils(tf.keras.callbacks.Callback):
                             "L1 norm: {:.4f} | L2 norm: {:.4f}\n".format(l1, l2))
     
     def on_train_end(self, logs=None):
-        output_dir = os.path.join('results', self.model.configuration, self.timestamp)
-        output = os.path.join(output_dir, f"training_history.json")
-        with open(output, "w") as file:
+        with open(os.path.join(self.history_path, "history.json"), "w") as file:
             json.dump(self.results, file, indent=2)
-        output = os.path.join(output_dir, f"configuration.json")
+        output = os.path.join(self.history_path, f"configuration.json")
         with open(output, "w") as file:
             json.dump(self.model.args.__dict__, file, indent=2)
 
@@ -126,7 +124,8 @@ class NeuralNetwork(tf.keras.Model):
         self.args = args
         self.lr = lr
         self.configuration = args.TRAINING_METHOD
-        self.checkpoint_path = "results"
+        self.history_path = os.path.normpath(f"results/{self.configuration}/")
+        self.checkpoint_path = self.history_path
         self.n_features = num_features
         self.batch_size = batch_size
         self.n_classes = int(self.args.NUM_CLASSES)
@@ -169,7 +168,7 @@ class NeuralNetwork(tf.keras.Model):
             input = self.softmax_layer(input)
         return input
    
-    def compile_model(self):
+    def compile_and_build(self):
         """ Compile the model by setting an appropriate optimizer, 
         as well as the loss function """
         optimizer = {"GradientDescentOptimizer": tf.keras.optimizers.SGD, 
@@ -189,20 +188,28 @@ class NeuralNetwork(tf.keras.Model):
         else:
             raise ValueError(f"Unknown training method has been provided: {self.configuration}")
         self.compile(loss=loss, optimizer=optimizer[self.args.OPT](learning_rate=self.lr))
-
+        self.build(input_shape=(None, self.n_features))
+        
     def train(self, data):
         """ Train the model """
-        train_data_generator = DataGenerator(batch_size=self.batch_size, dataset=data.train,
-                                             configuration=self.configuration)
-        timestamp = time.strftime("%Y-%m-%d_on_%H-%M-%S")
-        self.checkpoint_path = os.path.join(self.checkpoint_path, 
-                                       os.path.normpath(f"{self.configuration}/{timestamp}/checkpoint/cp.ckpt"))
+        # Speicifying the weights, history and configuration paths
+        if self.args.WEIGHTS_OUTPUT is None:
+          timestamp = time.strftime("%Y-%m-%d_on_%H-%M-%S")
+          self.checkpoint_path = os.path.join(self.checkpoint_path, timestamp, 
+                                              os.path.normpath("checkpoint/cp.ckpt"))
+          self.history_path = os.path.join(self.history_path, timestamp)
+        else:
+          self.checkpoint_path = os.path.join(self.checkpoint_path, self.args.WEIGHTS_OUTPUT, 
+                                              os.path.normpath("checkpoint/cp.ckpt"))
+          self.history_path = os.path.join(self.history_path, self.args.WEIGHTS_OUTPUT)
         cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.checkpoint_path, 
                                                          save_weights_only=True, verbose=1)
+        # Training the model
+        train_data_generator = DataGenerator(batch_size=self.batch_size, dataset=data.train,
+                                        configuration=self.configuration)
         self.fit(train_data_generator, epochs=self.n_epochs, verbose=0,
                 callbacks=[MonitoringUtils(data.train, data.valid, self.batch_size, 
-                                           timestamp, 
-                                           self.args), cp_callback])
+                                           self.history_path, self.args), cp_callback])
 
     def build_graph(self):
         """ Build the computational graph (you can call build_graph.summary() to
@@ -221,8 +228,16 @@ def run(args):
     
     # Building the model
     model = NeuralNetwork(num_features, 128, args)
-    model.compile_model()
+    model.compile_and_build()
+
+    if args.ACTION == "train": 
+      # Training the model
+      model.train(data_points)
+    elif args.ACTION == "continue_training":
+      # Loading the model weights
+      weights_hd5_normalised_path = str(
+          os.path.join(model.checkpoint_path, args.WEIGHTS_INPUT, "checkpoint/cp.ckpt")).replace('\\', '/')
+      model.load_weights(weights_hd5_normalised_path)
+      model.train(data_points)
     
-    # Training the model
-    model.build_graph().summary()
-    history = model.train(data_points)
+    

@@ -88,6 +88,12 @@ parser.add_argument("--use_unweighted_events", dest="USE_UNWEIGHTED_EVENTS", act
 # Keras & TFv2 arguments
 parser.add_argument("--keras", dest="KERAS", help="try new implementation based on TensorFlow v2",
                     default=False, action="store_true")
+parser.add_argument("--weights_output", dest="WEIGHTS_OUTPUT", 
+                    help="the name of the package in which the model weights are to be saved")
+parser.add_argument("--weights_input", dest="WEIGHTS_INPUT", 
+                    help="the name of the package in which the model weights are stored")
+parser.add_argument("--action", dest="ACTION", choices=["download_original", "download_and_preprocess",  
+                    "train", "continue_training", "predict"], default="train")
 
 # Parsing the command-line arguments 
 args = parser.parse_args()
