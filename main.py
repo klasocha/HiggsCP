@@ -119,16 +119,17 @@ parser.add_argument("--source-2", dest="SOURCE_2",
 parser.add_argument("--datasets", dest="DATASETS", default=2, type=int, help="number of datasets to prepare")
 
 # Main controller
-parser.add_argument("--action", dest="ACTION", choices=["download_original", "download_and_preprocess",  
+parser.add_argument("--action", dest="ACTION", choices=["download_and_prepare_original", "download_and_preprocess",  
                     "train", "continue_training", "predict", "plot", "test"], default="train")
 
 # Parsing the command-line arguments 
 args = parser.parse_args()
 
 # =================================== CONTROLING THE ML FLOW  ==========================================
-if args.ACTION == "download_original":
-    # $ python main.py --action "download_original" --input "data_original"
+if args.ACTION == "download_and_prepare_original":
+    # $ python main.py --action "download_and_prepare_original" --input "data_original"
     download_original_data(args)
+    prepare_rhorho(args)
 
 if args.ACTION == "download_and_preprocess":
     # $ python main.py --action "download_and_preprocess" --input "data" --features Variant-All --num_classes 11
@@ -138,6 +139,7 @@ if args.ACTION in ["train", "continue_training", "predict"]:
     # 1. python main.py --action "train" --input "data" --num_classes 11 --epochs 3 --training_method "soft_weights" --weights_output "to_be_continued"                   
     # 2. python main.py --action "continue_training" --use_checkpoint --input "data" --num_classes 11 --epochs 2 --training_method "soft_weights" --weights_input "to_be_continued" --weights_output "continued_from_checkpoint" 
     # 3. python main.py --action "continue_training" --input "data" --num_classes 11 --epochs 2 --training_method "soft_weights" --weights_input "to_be_continued" --weights_output "continued_from_full_model"
+    # 4. python main.py --action "predict" --training_method "soft_weights" --weights_input "continued_from_full_model" --input "data" --num_classes 11 --use_checkpoint    
     train_model(args)
 
 if args.ACTION == "plot":
@@ -152,6 +154,5 @@ if args.ACTION == "test":
         2. "prepare_rhorho.py", 
         3. "download_data_rhorho.py"
     """)
-    prepare_rhorho(args)
     test_parsed_data(args)
     show_example_records(args)

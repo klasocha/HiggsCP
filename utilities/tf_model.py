@@ -3,10 +3,9 @@ data generators needed for feeding it with the data provided batch-by-batch,
 as well as the Keras callback class for utilising all the evaluation methods
 available in evaluation_utils.py """
 
-import tensorflow as tf
+import tensorflow as tf, numpy as np
 import pickle, os, sys, json, time, pickle
 from .evaluation_utils import compute_accuracy_and_mean, compute_loss
-tf.debugging.disable_traceback_filtering()
 
 
 class DataGenerator(tf.keras.utils.Sequence):
@@ -266,7 +265,8 @@ class NeuralNetwork(tf.keras.Model):
         """ Load weights from the last checkpoint. """
         self.load_weights(str(os.path.join(
             "results", self.configuration, 
-            self.args.WEIGHTS_INPUT, os.path.normpath("checkpoint/cp.ckpt")).replace('\\', '/')))
+            self.args.WEIGHTS_INPUT, 
+            os.path.normpath("checkpoint/cp.ckpt")).replace('\\', '/'))).expect_partial()
     
     def save_model(self):
         """ Save the whole model (weights, variables, optimizer state). """
@@ -302,6 +302,23 @@ def run(args):
         
         if args.ACTION == "continue_training":
             model.train(data_points, args.EPOCHS, use_old_history=True)
-        
+            model.save_model()
+
         if args.ACTION == "predict":
-            print("{Making predictions...}")
+            print("Making predictions for the training and validation sets...")
+            train_preds = model.predict(data_points.train.x)
+            valid_preds = model.predict(data_points.valid.x)
+            
+            pred_path = os.path.join("results", args.TRAINING_METHOD, args.WEIGHTS_INPUT, "predictions")
+            if not os.path.exists(pred_path):
+                os.makedirs(pred_path)
+            
+            train_preds_path = os.path.join(pred_path, "train_preds.npy")
+            with open(train_preds_path, 'wb') as f:
+                np.save(f, train_preds)
+            print(f"Predictions for training data have been saved in {train_preds_path}")
+            
+            valid_preds_path = os.path.join(pred_path, "valid_preds.npy")
+            with open(valid_preds_path, 'wb') as f:
+                np.save(f, valid_preds)
+            print(f"Predictions for validation data have been saved in {valid_preds_path}")
