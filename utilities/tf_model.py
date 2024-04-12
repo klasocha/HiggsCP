@@ -261,13 +261,6 @@ class NeuralNetwork(tf.keras.Model):
         x = tf.keras.layers.Input(shape=(self.n_features))
         return tf.keras.Model(inputs=[x], outputs=self.call(x), name=f"HiggsCP DNN ({self.configuration})")
     
-    def load_weights_from_checkpoint(self):
-        """ Load weights from the last checkpoint. """
-        self.load_weights(str(os.path.join(
-            "results", self.configuration, 
-            self.args.WEIGHTS_INPUT, 
-            os.path.normpath("checkpoint/cp.ckpt")).replace('\\', '/'))).expect_partial()
-    
     def save_model(self):
         """ Save the whole model (weights, variables, optimizer state). """
         if not os.path.exists(self.history_path):
@@ -292,33 +285,53 @@ def run(args):
         model.train(data_points, args.EPOCHS)
         model.save_model()
 
-    else:
+    if args.ACTION == "continue_training":
         if args.USE_CHECKPOINT:
-            model.load_weights_from_checkpoint()
+            # This way of loading the model checkpoint makes it possible
+            # to continue training not only with the last values of weights
+            # but also with the last state of the optimizer.
+            checkpoint = tf.train.Checkpoint(root=model, optimizer=model.optimizer)
+            checkpoint.restore(os.path.join(
+                "results", args.TRAINING_METHOD, args.WEIGHTS_INPUT, 
+                os.path.normpath("checkpoint/cp.ckpt")))
         else:
-            model = tf.keras.models.load_model(os.path.join("results", args.TRAINING_METHOD, 
-                                                args.WEIGHTS_INPUT, "model.keras"))
-            model.configure(args)
+            # This way of loading the whole model can provide us with the last 
+            # saved values of the model weights. However, the optimizer will be
+            # initialised one more time.
+            model = tf.keras.models.load_model(os.path.join(
+                "results", args.TRAINING_METHOD, args.WEIGHTS_INPUT, "model.keras"))
+        model.configure(args)
+        model.train(data_points, args.EPOCHS, use_old_history=True)
+        model.save_model()
         
-        if args.ACTION == "continue_training":
-            model.train(data_points, args.EPOCHS, use_old_history=True)
-            model.save_model()
-
-        if args.ACTION == "predict":
-            print("Making predictions for the training and validation sets...")
-            train_preds = model.predict(data_points.train.x)
-            valid_preds = model.predict(data_points.valid.x)
-            
-            pred_path = os.path.join("results", args.TRAINING_METHOD, args.WEIGHTS_INPUT, "predictions")
-            if not os.path.exists(pred_path):
-                os.makedirs(pred_path)
-            
-            train_preds_path = os.path.join(pred_path, "train_preds.npy")
-            with open(train_preds_path, 'wb') as f:
-                np.save(f, train_preds)
-            print(f"Predictions for training data have been saved in {train_preds_path}")
-            
-            valid_preds_path = os.path.join(pred_path, "valid_preds.npy")
-            with open(valid_preds_path, 'wb') as f:
-                np.save(f, valid_preds)
-            print(f"Predictions for validation data have been saved in {valid_preds_path}")
+    if args.ACTION == "predict":
+        if args.USE_CHECKPOINT:
+            # This way of loading allows us to use only weights (which is enough 
+            # for inference), so it is similar to model.load_model() taking 
+            # the result of model.save() as an argument
+            model.load_weights(str(os.path.join(
+                "results", args.TRAINING_METHOD, args.WEIGHTS_INPUT, 
+                os.path.normpath("checkpoint/cp.ckpt")).replace('\\', '/'))).expect_partial()
+        else:
+            model = tf.keras.models.load_model(
+                os.path.join("results", args.TRAINING_METHOD, 
+                             args.WEIGHTS_INPUT, "model.keras"))
+        model.configure(args)
+        
+        print("Making predictions for the training and validation sets...")
+        train_preds = model.predict(data_points.train.x)
+        valid_preds = model.predict(data_points.valid.x)
+        
+        pred_path = os.path.join("results", args.TRAINING_METHOD, args.WEIGHTS_INPUT, "predictions")
+        if not os.path.exists(pred_path):
+            os.makedirs(pred_path)
+        
+        train_preds_path = os.path.join(pred_path, "train_preds.npy")
+        with open(train_preds_path, 'wb') as f:
+            np.save(f, train_preds)
+        print(f"Predictions for training data have been saved in {train_preds_path}")
+        
+        valid_preds_path = os.path.join(pred_path, "valid_preds.npy")
+        with open(valid_preds_path, 'wb') as f:
+            np.save(f, valid_preds)
+        print(f"Predictions for validation data have been saved in {valid_preds_path}")
