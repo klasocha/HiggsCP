@@ -1,14 +1,17 @@
 import argparse
-import train_rhorho
 import os
-from src_py.download_original_data import download as download_original_data
-from src_py.tf_model_2 import run as model_keras
-from src_py.prepare_data import prepare_data
+from utilities.download_original_data import download as download_original_data
+from utilities.tf_model import run as train_model
+from utilities.prepare_data import prepare_data
+from plots.plot_phistar_distribution import draw as phistar_dist 
+from plots.plot_popts_rhorho import draw as c012s_weight
+from plots.plot_calc_c012s import draw as c012s_dist
+from plots.plot_weights_with_c012s import draw as weights_with_c012s
+from plots.plot_unwt_weights import draw as unwt_weights
+from tests.test_data import test_parsed_data, show_example_records
+from utilities.prepare_rhorho import prepare_rhorho
 
 # =============================== GETTING ALL THE ARGUMENTS ============================================
-# Specifiying the model and its function responsible for running the training process
-types = {"nn_rhorho": train_rhorho.start}
-
 # Initialising a parser handling all the commaind-line arguments and options
 parser = argparse.ArgumentParser(
   prog='Higgs Boson CP Classifier',
@@ -24,8 +27,6 @@ parser.add_argument("--num_classes", dest="NUM_CLASSES", type=int, default=0,
                     help="number of classes used for discretisation")
 parser.add_argument("--reuse_weights", dest="REUSE_WEIGHTS", action="store_true", default=False,
                     help="set this flag to True if you want to reuse the calculated weights")
-parser.add_argument("-t", "--type", dest="TYPE", choices=types.keys(), default='nn_rhorho',
-                    help="decay mode for training")
 parser.add_argument("--hits_c012s", dest="HITS_C012s", 
                     choices=["hits_c0s", "hits_c1s",  "hits_c2s"], default="hits_c0s",
                     help="?") # TODO: Add a help message
@@ -86,33 +87,71 @@ parser.add_argument("--use_unweighted_events", dest="USE_UNWEIGHTED_EVENTS", act
                     help="applying the unweighted events for training (Monte Carlo)", default=False)
 
 # Keras & TFv2 arguments
-parser.add_argument("--keras", dest="KERAS", help="try new implementation based on TensorFlow v2",
-                    default=False, action="store_true")
 parser.add_argument("--weights_output", dest="WEIGHTS_OUTPUT", 
                     help="the name of the package in which the model weights are to be saved")
 parser.add_argument("--weights_input", dest="WEIGHTS_INPUT", 
                     help="the name of the package in which the model weights are stored")
+parser.add_argument("--use_checkpoint", dest="USE_CHECKPOINT", action="store_true", default=False,
+                    help="loading weights from the last saved checkpoint" )
+
+# Plot arguments
+plot_types = {"PHISTAR-DISTRIBUTION" : phistar_dist, # Variant-1.1 should be prepared in advance
+         "C012S-WEIGHT" : c012s_weight,
+         "C012S-DISTRIBUTION" : c012s_dist,
+         "WEIGHTS-FOR-EVENT-VIA-C012": weights_with_c012s,
+         "UNWEIGHTED-EVENTS-WEIGHTS": unwt_weights}
+
+parser.add_argument("--output", dest="OUT", help="output path for plots", default="figures")
+parser.add_argument("--format", dest="FORMAT", 
+                    help='the format of the output plots ("png"/"pdf"/"eps")', default="png")
+parser.add_argument("--show", dest="SHOW", action="store_true", 
+                    help='use it to display the plots before saving them', default=False)
+parser.add_argument("--option", dest="OPTION", choices=plot_types.keys(), default="PHISTAR-DISTRIBUTION",
+                    help='specify what script for drawing the plots you want to run')
+parser.add_argument("--hypothesis", dest="HYPOTHESIS", default="None", 
+                    help="Hypothesis: the alphaCP class (e.g. 02)")
+
+# Test arguments
+parser.add_argument("--source-1", dest="SOURCE_1",
+                    help="the first directory containing data to be compared")
+parser.add_argument("--source-2", dest="SOURCE_2", 
+                    help="the second directory containing data to be compared")
+parser.add_argument("--datasets", dest="DATASETS", default=2, type=int, help="number of datasets to prepare")
+
+# Main controller
 parser.add_argument("--action", dest="ACTION", choices=["download_original", "download_and_preprocess",  
-                    "train", "continue_training", "predict"], default="train")
+                    "train", "continue_training", "predict", "plot", "test"], default="train")
 
 # Parsing the command-line arguments 
 args = parser.parse_args()
 
-# ================================= DOWNLOADING ORIGINAL DATA =========================================
-if args.DOWNLOAD_ORIGINAL:
-    # TEST (Downloading original data):
-    # $ python main.py --input "data_original" --download_original True
+# =================================== CONTROLING THE ML FLOW  ==========================================
+if args.ACTION == "download_original":
+    # $ python main.py --action "download_original" --input "data_original"
     download_original_data(args)
-elif args.KERAS:
-    # TEST (TensorFlow v2 Implementation ==== !!! BETA VERSION !!! ====)
-    # $ python main.py --input "data" --keras --num_classes 11 --epochs 5 
-    model_keras(args)
-else:
-    # =================================== TRAINING THE MODEL ===============================================
-    # Calling the main function of the specified model (rhorho model by default)
-    # TEST (Downloading and preprocessing data, training the model):
-    # $ python main.py --input "data" --type nn_rhorho --epochs 5 --features Variant-All --num_classes 11
-    types[args.TYPE](args)
 
-    # New approach (separated logic)  ==== !!! BETA VERSION !!! ====
-    # prepare_data(args)
+if args.ACTION == "download_and_preprocess":
+    # $ python main.py --action "download_and_preprocess" --input "data" --features Variant-All --num_classes 11
+    prepare_data(args)
+
+if args.ACTION in ["train", "continue_training", "predict"]:
+    # 1. python main.py --action "train" --input "data" --num_classes 11 --epochs 3 --training_method "soft_weights" --weights_output "to_be_continued"                   
+    # 2. python main.py --action "continue_training" --use_checkpoint --input "data" --num_classes 11 --epochs 2 --training_method "soft_weights" --weights_input "to_be_continued" --weights_output "continued_from_checkpoint" 
+    # 3. python main.py --action "continue_training" --input "data" --num_classes 11 --epochs 2 --training_method "soft_weights" --weights_input "to_be_continued" --weights_output "continued_from_full_model"
+    train_model(args)
+
+if args.ACTION == "plot":
+    # Instructions are in the modules located in plots/
+    plot_types[args.OPTION](args)
+
+if args.ACTION == "test":
+    # $ python main.py --action "test" --source-1 "data" --source-2 "data_original" --input "data_original"
+    print(""" 
+    This part was created to test 
+        1. "prepare_utils.py", 
+        2. "prepare_rhorho.py", 
+        3. "download_data_rhorho.py"
+    """)
+    prepare_rhorho(args)
+    test_parsed_data(args)
+    show_example_records(args)
