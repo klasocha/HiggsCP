@@ -78,7 +78,7 @@ parser.add_argument("--download_original_data", dest="DOWNLOAD_ORIGINAL", help="
 
 # Adding other arguments
 parser.add_argument("-lambda", "--lambda", type=float, dest="LAMBDA", help="value of lambda parameter", default=0.0)
-parser.add_argument("--z_noise_fraction", dest="Z_NOISE_FRACTION", type=float, default=0.5)
+parser.add_argument("--z_noise_fraction", dest="Z_NOISE_FRACTION", type=float, default=0.5) # TODO find out the purpose of this argument
 parser.add_argument("--pol_b", type=float, dest="pol_b", help="value of b parameter for polynomial smearing", default=0.0)
 parser.add_argument("--pol_c", type=float, dest="pol_c", help="value of c parameter for polynomial smearing", default=0.0)
 parser.add_argument("--w1", dest="W1")
@@ -87,12 +87,8 @@ parser.add_argument("--use_unweighted_events", dest="USE_UNWEIGHTED_EVENTS", act
                     help="applying the unweighted events for training (Monte Carlo)", default=False)
 
 # Keras & TFv2 arguments
-parser.add_argument("--weights_output", dest="WEIGHTS_OUTPUT", 
-                    help="the name of the package in which the model weights are to be saved")
-parser.add_argument("--weights_input", dest="WEIGHTS_INPUT", 
-                    help="the name of the package in which the model weights are stored")
-parser.add_argument("--use_checkpoint", dest="USE_CHECKPOINT", action="store_true", default=False,
-                    help="loading weights from the last saved checkpoint" )
+parser.add_argument("--model_location", dest="MODEL_LOCATION", 
+                    help='name of the directory in "results/" containing the model state (weights, metadata)')
 
 # Plot arguments
 plot_types = {"PHISTAR-DISTRIBUTION" : phistar_dist, # Variant-1.1 should be prepared in advance
@@ -136,10 +132,9 @@ if args.ACTION == "download_and_preprocess":
     prepare_data(args)
 
 if args.ACTION in ["train", "continue_training", "predict"]:
-    # 1. python main.py --action "train" --input "data" --num_classes 11 --epochs 3 --training_method "soft_weights" --weights_output "to_be_continued"                   
-    # 2. python main.py --action "continue_training" --use_checkpoint --input "data" --num_classes 11 --epochs 2 --training_method "soft_weights" --weights_input "to_be_continued" --weights_output "continued_from_checkpoint" 
-    # 3. python main.py --action "continue_training" --input "data" --num_classes 11 --epochs 2 --training_method "soft_weights" --weights_input "to_be_continued" --weights_output "continued_from_full_model"
-    # 4. python main.py --action "predict" --training_method "soft_weights" --weights_input "continued_from_full_model" --input "data" --num_classes 11 --use_checkpoint    
+    # 1. python main.py --action "train" --input "data" --num_classes "11" --epochs "2" --training_method "soft_weights" --model_location "model_1"
+    # 2. python main.py --action "continue_training" --input "data" --num_classes "11" --epochs "3" --training_method "soft_weights" --model_location "model_1"
+    # 3. python main.py --action "predict" --input "data" --num_classes "11" --model_location "model_1"
     train_model(args)
 
 if args.ACTION == "plot":

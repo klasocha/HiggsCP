@@ -4,13 +4,14 @@ as well as the Keras callback class for utilising all the evaluation methods
 available in evaluation_utils.py """
 
 import tensorflow as tf, numpy as np
-import pickle, os, sys, json, time, pickle
-from .evaluation_utils import compute_accuracy_and_mean, compute_loss
+import pickle, os, sys, json, pickle
+from .evaluation_utils import compute_accuracy_and_mean, compute_loss, calculate_deltas_unsigned
 
 
 class DataGenerator(tf.keras.utils.Sequence):
     """ Generates data for Keras models """
-    def __init__(self, batch_size, dataset, configuration):
+    def __init__(self, batch_size, dataset, configuration, **kwargs):
+        super(DataGenerator, self).__init__(**kwargs)
         self.batch_size = batch_size
         self.dataset = dataset
         self.configuration = configuration
@@ -39,31 +40,32 @@ class DataGenerator(tf.keras.utils.Sequence):
             labels = weights
         return x, labels
     
-
 class MonitoringUtils(tf.keras.callbacks.Callback):
     """ Callback for monitoring the model performance """
-    def __init__(self, train_data, val_data, batch_size, history_path, args, previous_results=None):
-        # Configuration attributes required by serialization mechanism        
+    def __init__(self, train_data, val_data, batch_size, n_epochs, delta_max_tolerance, 
+                 output_location):
         self.train_data = train_data
         self.val_data = val_data
         self.batch_size = batch_size
-        self.history_path = history_path
+        self.n_epochs = n_epochs
+        self.output_location = os.path.join(output_location, "history.json")
+        self.delta_max_tolerance = delta_max_tolerance
 
         self.n_batches = train_data.n // batch_size
-        self.args = args
-        if previous_results is None:
-            self.results = {"training_epoch_relative_loss" : [], 
-                            "training_final_loss" : [], "validation_loss" : [],
-                            "training_accuracy" : [], "validation_accuracy" : [],
-                            "training_mean" : [], "validation_mean" : [],
-                            "training_l1_norm" : [], "validation_l1_norm" : [],
-                            "training_l2_norm" : [], "validation_l2_norm" : [],}
+        if not os.path.exists(self.output_location):
+            self.results = {
+                "training_epoch_relative_loss" : [], 
+                "training_final_loss" : [], "validation_loss" : [],
+                "training_accuracy" : [], "validation_accuracy" : [],
+                "training_mean" : [], "validation_mean" : [],
+                "training_l1_norm" : [], "validation_l1_norm" : [],
+                "training_l2_norm" : [], "validation_l2_norm" : [],}
         else:
-            self.results = previous_results
+            with open(self.output_location, "r") as file:
+                self.results = json.load(file)
 
     def on_epoch_begin(self, epoch, logs=None):
-        self.epoch = epoch
-        sys.stdout.write(f"\nEpoch {epoch + 1}/{int(self.args.EPOCHS)}\n")
+        sys.stdout.write(f"\nEpoch {epoch + 1}/{self.n_epochs}\n")
 
     def on_batch_begin(self, batch, logs=None):
         if (batch + 1) % 10 == 0:
@@ -78,20 +80,20 @@ class MonitoringUtils(tf.keras.callbacks.Callback):
         if self.model.configuration != "soft_weights":
             # We do not need to monitor true training loss during the training as
             # the loss computed as an average over the batches is enough for tracing convergence
-            if (epoch + 1) == int(self.args.EPOCHS):
-                train_loss = compute_loss(self.model, self.train_data, self.batch_size, self.args)
+            if (epoch + 1) == self.n_epochs:
+                train_loss = compute_loss(self.model, self.train_data, self.batch_size)
                 self.results["training_final_loss"].append(str(train_loss))
                 sys.stdout.write("Training loss: {:.4f}\n".format(train_loss))
             
             # Computing validation loss for all the configurations except soft_weights
-            val_loss = compute_loss(self.model, self.val_data, self.batch_size, self.args)
+            val_loss = compute_loss(self.model, self.val_data, self.batch_size)
             self.results["validation_loss"].append(str(val_loss))
             sys.stdout.write("Validation loss: {:.4f}\n".format(val_loss))
 
         if self.model.configuration == "soft_weights":
             # Accuracy, mean, l1, l2 for training data
             acc, mean, l1, l2 = compute_accuracy_and_mean(
-                self.model, self.train_data, self.batch_size, self.args, 
+                self.model, self.train_data, self.batch_size, self.delta_max_tolerance, 
                 at_most=100_000, filtered=True)
             self.results["training_accuracy"].append(str(acc))
             self.results["training_mean"].append(str(mean))
@@ -102,7 +104,7 @@ class MonitoringUtils(tf.keras.callbacks.Callback):
             
             # Accuracy, mean, l2, l2 for validation data
             acc, mean, l1, l2 = compute_accuracy_and_mean(
-                self.model, self.val_data, self.batch_size, self.args, 
+                self.model, self.val_data, self.batch_size, self.delta_max_tolerance, 
                 at_most=None, filtered=True)
             self.results["validation_accuracy"].append(str(acc))
             self.results["validation_mean"].append(str(mean))
@@ -110,48 +112,42 @@ class MonitoringUtils(tf.keras.callbacks.Callback):
             self.results["validation_l2_norm"].append(str(l2))
             sys.stdout.write("Validation:    accuracy: {:.4f} | mean: {:.4f} | ".format(acc, mean) +
                             "L1 norm: {:.4f} | L2 norm: {:.4f}\n".format(l1, l2))
-    
-    def on_train_end(self, logs=None):
-        with open(os.path.join(self.history_path, "history.json"), "w") as file:
+        
+        # Updating the history file
+        with open(self.output_location, "w") as file:
             json.dump(self.results, file, indent=2)
-        output = os.path.join(self.history_path, f"configuration.json")
-        with open(output, "w") as file:
-            json.dump(self.model.args.__dict__, file, indent=2)
+
+    def on_train_end(self, logs=None):
+        sys.stdout.write(
+            f"\nTraining has finished. Results are available in {str(self.output_location)}\n")
 
 
-@tf.keras.utils.register_keras_serializable(package="ML_Model", name="regr_argmaxs_loss")
 def regr_argmaxs_loss(y_true, y_pred):
     """ Loss function for the regr_argmaxs configuration. """
     return tf.reduce_mean(1 - tf.math.cos(y_true - y_pred))
 
 
-@tf.keras.utils.register_keras_serializable(package="ML_Model", name="NeuralNetwork")
 class NeuralNetwork(tf.keras.Model):
     """ Configurable Neural Network class """
-    def __init__(self, args, num_features, batch_size, lr=1e-3, input_noise=0.0):
-        super(NeuralNetwork, self).__init__()
-        
-        # Configuration attributes required by serialization mechanism
-        self.n_features = num_features
-        self.batch_size = batch_size
-        self.args = args
-        self.lr = lr
-        self.input_noise = input_noise
+    def __init__(self, configuration, n_features, n_classes, n_layers, n_units_per_layer, input_noise_rate, 
+                 dropout_rate, opt, **kwargs):
+        super().__init__(**kwargs)
 
-        # Attributes defining the model architecture
-        self.n_classes = int(self.args.NUM_CLASSES)
-        self.n_classes = {"soft_weights": self.n_classes, "soft_argmaxs": self.n_classes, 
-                          "soft_c012s": self.n_classes, "regr_argmaxs": 1,
-                          "regr_c012s": 3, "regr_weights": self.n_classes}
-        self.n_classes = self.n_classes[args.TRAINING_METHOD]
-        self.n_layers = int(self.args.LAYERS)
-        self.n_units_per_layer = int(self.args.SIZE)
-        self.dropout_rate = float(self.args.DROPOUT)
+        # Architecture parameters
+        self.n_features = n_features
+        self.configuration = configuration
+        self.n_classes = {"soft_weights": n_classes, "soft_argmaxs": n_classes, 
+                          "soft_c012s": n_classes, "regr_argmaxs": 1,
+                          "regr_c012s": 3, "regr_weights": n_classes}[self.configuration]
+        self.n_layers = n_layers
+        self.n_units_per_layer = n_units_per_layer
+        self.input_noise_rate = input_noise_rate
+        self.dropout_rate = dropout_rate
+        self.opt = opt
 
         # Computational layers
-        self.input_layer = tf.keras.Input(shape=(self.n_features))
-        if input_noise:
-            self.input_noise_layer = tf.keras.layers.GaussianNoise(self.input_noise)
+        if self.input_noise_rate > 0:
+            self.input_noise_layer = tf.keras.layers.GaussianNoise(self.input_noise_rate)
         self.dense_layers, self.batch_norm_layers = [], []
         self.activation_layers, self.dropout_layers = [], []
         for i in range(self.n_layers):
@@ -161,13 +157,13 @@ class NeuralNetwork(tf.keras.Model):
             self.activation_layers.append(tf.keras.layers.ReLU(name=f"relu_{i}"))
             self.dropout_layers.append(tf.keras.layers.Dropout(rate=self.dropout_rate))
         self.linear_layer = tf.keras.layers.Dense(units=self.n_classes, use_bias=False, name="linear")
-        if self.args.TRAINING_METHOD in ["soft_weights", "soft_argmaxs", "soft_c012s"]:
+        if self.configuration in ["soft_weights", "soft_argmaxs", "soft_c012s"]:
             self.softmax_layer = tf.keras.layers.Softmax()
 
     def call(self, x):
         """ Pass tensors forward """
         input = x
-        if self.input_noise:
+        if self.input_noise_rate > 0:
             input = self.input_noise_layer(input)
         for i in range(self.n_layers):
             input = self.dense_layers[i](input)
@@ -175,97 +171,49 @@ class NeuralNetwork(tf.keras.Model):
             input = self.activation_layers[i](input)
             input = self.dropout_layers[i](input)
         input = self.linear_layer(input)
-        if self.args.TRAINING_METHOD in ["soft_weights", "soft_argmaxs", "soft_c012s"]:
+        if self.configuration in ["soft_weights", "soft_argmaxs", "soft_c012s"]:
             input = self.softmax_layer(input)
         return input
-   
-    def get_config(self):
-        """ Return configuration data needed for model saving. """
-        base_config = super().get_config()
-        config = {
-            "args" : pickle.dumps(self.args).decode("latin1"),
-            "num_features" : self.n_features,
-            "batch_size" : self.batch_size,
-            "lr" : self.lr,
-            "input_noise" : self.input_noise
-        } 
-        return {**base_config, **config}
 
-    @classmethod
-    def from_config(cls, config):
-        """ Load configuration data returned by self.get_config(). """
-        args = pickle.loads(config.pop("args").encode("latin1"))
-        return cls(args, **config)
+    def compile(self, optimizer, loss_fn, metrics=None):
+        super().compile(optimizer=optimizer, loss=loss_fn, metrics=metrics)
+        self.model_optimizer = optimizer
+        self.loss_fn = loss_fn
+        self.loss_metrics = metrics
 
-    def compile_and_build(self):
-        """ Compile the model by configuring some of the attributes, 
-        setting an appropriate optimizer, as well as the loss function """
-        self.configure(self.args)
-        optimizer = {"GradientDescentOptimizer": tf.keras.optimizers.SGD, 
-                     "AdadeltaOptimizer": tf.keras.optimizers.Adadelta, 
-                     "AdagradOptimizer": tf.keras.optimizers.Adagrad,
-                     "ProximalAdagradOptimizer": tf.compat.v1.train.ProximalAdagradOptimizer, 
-                     "AdamOptimizer": tf.keras.optimizers.Adam,
-                     "FtrlOptimizer": tf.keras.optimizers.Ftrl,
-                     "RMSPropOptimizer": tf.keras.optimizers.RMSprop,
-                     "ProximalGradientDescentOptimizer": tf.compat.v1.train.ProximalGradientDescentOptimizer}
-        if self.configuration in ["soft_weights", "soft_argmaxs", "soft_c012s"]:
-            loss = tf.keras.losses.CategoricalCrossentropy(from_logits=False)
-        elif self.configuration in ["regr_c012s", "regr_weights"]:
-            loss = tf.keras.losses.MeanSquaredError()
-        elif self.configuration == "regr_argmaxs":
-            loss = regr_argmaxs_loss
-        else:
-            raise ValueError(f"Unknown training method has been provided: {self.configuration}")
-        self.compile(loss=loss, optimizer=optimizer[self.args.OPT](learning_rate=self.lr))
-        self.build(input_shape=(None, self.n_features))
-
-    def configure(self, args):
-        """ Speicifying attributes (used by compile_and_build() and can also be used to
-        continue training with new parameters ) """
-        self.args = args
-        self.configuration = args.TRAINING_METHOD
-        self.history_path = os.path.normpath(f"results/{self.configuration}/")
-        self.checkpoint_path = self.history_path
-        if args.WEIGHTS_OUTPUT is None:
-          timestamp = time.strftime("%Y-%m-%d_on_%H-%M-%S")
-          self.checkpoint_path = os.path.join(self.checkpoint_path, timestamp, 
-                                              os.path.normpath("checkpoint/cp.ckpt"))
-          self.history_path = os.path.join(self.history_path, timestamp)
-        else:
-          self.checkpoint_path = os.path.join(self.checkpoint_path, args.WEIGHTS_OUTPUT, 
-                                              os.path.normpath("checkpoint/cp.ckpt"))
-          self.history_path = os.path.join(self.history_path, args.WEIGHTS_OUTPUT)
+    def build(self):
+        """ Build the model """
+        self.call(tf.keras.layers.Input(shape=(self.n_features,)))
         
-    def train(self, data, n_epochs, use_old_history=False):
-        """ Train the model """
-        cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.checkpoint_path, 
-                                                         save_weights_only=True, verbose=1)
-        # Training the model
-        train_data_generator = DataGenerator(batch_size=self.batch_size, dataset=data.train,
-                                        configuration=self.configuration)
-        if use_old_history:
-            with open(os.path.join("results", self.configuration, self.args.WEIGHTS_INPUT, 
-                                   "history.json"), "r") as file:
-                previous_results = json.load(file)
-        else:
-            previous_results = None
-        monitoring_callback = MonitoringUtils(
-            data.train, data.valid, self.batch_size, self.history_path, self.args, previous_results)
-        self.fit(train_data_generator, epochs=n_epochs, verbose=0,
-                callbacks=[monitoring_callback, cp_callback])
+    def train(self, data, n_epochs, batch_size, delta_max_tolerance, output_location):
+        """ Train the model by setting the loss function, optimizer and calling tf.keras.Model.fit() """
 
-    def build_graph(self):
-        """ Build the computational graph (you can call build_graph.summary() to
-        see the architecture of the model: layers, output shapes) """
-        x = tf.keras.layers.Input(shape=(self.n_features,))
-        return tf.keras.Model(inputs=[x], outputs=self.call(x), name=f"HiggsCP DNN ({self.configuration})")
-    
-    def save_model(self):
-        """ Save the whole model (weights, variables, optimizer state). """
-        if not os.path.exists(self.history_path):
-            os.makedirs(self.history_path)
-        tf.keras.models.save_model(self, os.path.join(self.history_path, "model.keras"))
+        # Preparing the data generator (training and validation)
+        train_data_generator = DataGenerator(
+            batch_size=batch_size, dataset=data.train, configuration=self.configuration)
+        
+        # Preparing the callback reponsible for monitoring the model performance
+        output_location = os.path.join("results", self.configuration, output_location)
+        monitoring_callback = MonitoringUtils(data.train, data.valid, batch_size, 
+                                              n_epochs, delta_max_tolerance, output_location)
+
+        # Preparing the callback for saving checkpoints (weights)
+        output_location = os.path.join(
+            output_location, os.path.normpath("model_state/model.weights.h5"))
+        cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=output_location,
+                                                         save_weights_only=True)
+
+        # Training the model
+        self.fit(train_data_generator, epochs=n_epochs, verbose=0, 
+                 callbacks=[monitoring_callback, cp_callback])
+
+
+def save_configuration(location, args):
+    """ Save the full set of command line arguments """
+    if not os.path.exists(location):
+            os.makedirs(location)
+    with open(os.path.join(location, "configuration.json"), "w") as file:
+        json.dump(args.__dict__, file, indent=2) 
 
 
 def run(args):
@@ -273,56 +221,75 @@ def run(args):
     data_points_path = os.path.join(args.IN, f"event_datasets_{args.NUM_CLASSES}.obj")
     with open(data_points_path, 'rb') as f:
         data_points = pickle.load(f)
-    num_features = data_points.train.x.shape[1]
-    print(f"Loaded data: {num_features} features have been prepared.")
+    n_features = data_points.train.x.shape[1]
+    print(f"Loaded data: {n_features} features have been prepared.")
     
-    # Building the model
-    model = NeuralNetwork(args, num_features, 128)
-    model.compile_and_build()
+    # Creating a new model instance
+    model = NeuralNetwork(
+        configuration=args.TRAINING_METHOD, 
+        n_features=n_features, 
+        n_classes=int(args.NUM_CLASSES),
+        n_layers=int(args.LAYERS), 
+        n_units_per_layer=int(args.SIZE),
+        input_noise_rate=0.0,
+        dropout_rate=float(args.DROPOUT),
+        opt=args.OPT)
+    model.build()
 
-    if args.ACTION == "train": 
-        # Training and saving the whole model
-        model.train(data_points, args.EPOCHS)
-        model.save_model()
+    # Configuring the optimizer and loss function
+    opt = {
+        "GradientDescentOptimizer": tf.keras.optimizers.SGD, 
+        "AdadeltaOptimizer": tf.keras.optimizers.Adadelta, 
+        "AdagradOptimizer": tf.keras.optimizers.Adagrad,
+        "ProximalAdagradOptimizer": tf.compat.v1.train.ProximalAdagradOptimizer, 
+        "AdamOptimizer": tf.keras.optimizers.Adam,
+        "FtrlOptimizer": tf.keras.optimizers.Ftrl,
+        "RMSPropOptimizer": tf.keras.optimizers.RMSprop,
+        "ProximalGradientDescentOptimizer": tf.compat.v1.train.ProximalGradientDescentOptimizer
+    }[args.OPT](learning_rate=0.001)
 
-    if args.ACTION == "continue_training":
-        if args.USE_CHECKPOINT:
-            # This way of loading the model checkpoint makes it possible
-            # to continue training not only with the last values of weights
-            # but also with the last state of the optimizer.
-            checkpoint = tf.train.Checkpoint(root=model, optimizer=model.optimizer)
-            checkpoint.restore(os.path.join(
-                "results", args.TRAINING_METHOD, args.WEIGHTS_INPUT, 
-                os.path.normpath("checkpoint/cp.ckpt")))
-        else:
-            # This way of loading the whole model can provide us with the last 
-            # saved values of the model weights. However, the optimizer will be
-            # initialised one more time.
-            model = tf.keras.models.load_model(os.path.join(
-                "results", args.TRAINING_METHOD, args.WEIGHTS_INPUT, "model.keras"))
-        model.configure(args)
-        model.train(data_points, args.EPOCHS, use_old_history=True)
-        model.save_model()
+    if args.TRAINING_METHOD in ["soft_weights", "soft_argmaxs", "soft_c012s"]:
+        loss = tf.keras.losses.CategoricalCrossentropy(from_logits=False)
+    elif args.TRAINING_METHOD  in ["regr_c012s", "regr_weights"]:
+        loss = tf.keras.losses.MeanSquaredError()
+    elif args.TRAINING_METHOD  == "regr_argmaxs":
+        loss = regr_argmaxs_loss
+    else:
+        raise ValueError(f"Unknown training method has been provided: {args.TRAINING_METHOD}")
+
+    # Compiling the model (loss, optimizer)
+    model.compile(optimizer=opt, loss_fn=loss)
+
+    # Running the action (training, training continuation, predicting)
+    action = args.ACTION
+    model_location = os.path.join("results", args.TRAINING_METHOD, args.MODEL_LOCATION)
+    
+    if action in ["train", "continue_training"]:
+        # Saving command line arguments
+        save_configuration(model_location, args)
+
+        if action == "continue_training":
+            # Loading the model weights
+            model.load_weights(os.path.join(model_location, os.path.normpath("model_state/model.weights.h5")))
         
+        # Training the model (checkpoints with weights are saved at the end of each epoch)
+        model.train(
+            data=data_points, 
+            n_epochs=int(args.EPOCHS),
+            batch_size=128,     
+            delta_max_tolerance=int(args.DELT_CLASSES),
+            output_location=args.MODEL_LOCATION
+        )
+
     if args.ACTION == "predict":
-        if args.USE_CHECKPOINT:
-            # This way of loading allows us to use only weights (which is enough 
-            # for inference), so it is similar to model.load_model() taking 
-            # the result of model.save() as an argument
-            model.load_weights(str(os.path.join(
-                "results", args.TRAINING_METHOD, args.WEIGHTS_INPUT, 
-                os.path.normpath("checkpoint/cp.ckpt")).replace('\\', '/'))).expect_partial()
-        else:
-            model = tf.keras.models.load_model(
-                os.path.join("results", args.TRAINING_METHOD, 
-                             args.WEIGHTS_INPUT, "model.keras"))
-        model.configure(args)
+        # Loading the model weights
+        model.load_weights(os.path.join(model_location, os.path.normpath("model_state/model.weights.h5")))
         
         print("Making predictions for the training and validation sets...")
         train_preds = model.predict(data_points.train.x)
         valid_preds = model.predict(data_points.valid.x)
         
-        pred_path = os.path.join("results", args.TRAINING_METHOD, args.WEIGHTS_INPUT, "predictions")
+        pred_path = os.path.join(model_location, "predictions")
         if not os.path.exists(pred_path):
             os.makedirs(pred_path)
         
