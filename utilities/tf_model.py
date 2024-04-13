@@ -258,7 +258,7 @@ class NeuralNetwork(tf.keras.Model):
     def build_graph(self):
         """ Build the computational graph (you can call build_graph.summary() to
         see the architecture of the model: layers, output shapes) """
-        x = tf.keras.layers.Input(shape=(self.n_features))
+        x = tf.keras.layers.Input(shape=(self.n_features,))
         return tf.keras.Model(inputs=[x], outputs=self.call(x), name=f"HiggsCP DNN ({self.configuration})")
     
     def save_model(self):
