@@ -9,7 +9,7 @@ Let us suppose the original weights calculated via the C0/C1/C2 coefficients are
 "plots/figures/unwt_weight_distribution_for_51_classes/" you can run the following command:
 
     $ python main.py --action "plot" --input "data" --output "plots/figures" --format "png" 
-    --option UNWEIGHTED-EVENTS-WEIGHTS --num_classes 51
+    --option "UNWEIGHTED-EVENTS-WEIGHTS" --num_classes "51"
 
 Notice: "--show" option is also supported. Use it to show the plots as they are created. """
 

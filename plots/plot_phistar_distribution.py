@@ -10,8 +10,8 @@ has been chosen, is stored in "data/rhorho_event_11.obj" and you want to save th
 Then you need to run "plots.py" in the following manner (hypothesis is an alphaCP class for the
 weighted distribution plots): 
 
-    $ python main.py --action "plot" --option PHISTAR-DISTRIBUTION --input "data" --output "plots/figures" 
-        --format "png" --show --num_classes 11 --hypothesis 2 
+    $ python main.py --action "plot" --option "PHISTAR-DISTRIBUTION" --input "data" --output "plots/figures" 
+        --format "png" --show --num_classes "11" --hypothesis "2" 
 
 Or for the unweighted events:
 

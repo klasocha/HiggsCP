@@ -4,7 +4,7 @@ with the use of C0/C1/C2 as well as C1/C2 (without C0)
 Try to run it as the following (let us suppose the coefficients are stored in "data/c012s.npy"
 and you want to save the resul in "plots/figures/"):
 
-    $ python main.py --action "plot" --option WEIGHTS-FOR-EVENT-VIA-C012 --input "data" 
+    $ python main.py --action "plot" --option "WEIGHTS-FOR-EVENT-VIA-C012" --input "data" 
       --output "plots/figures" --format "png" --show 
 """
 

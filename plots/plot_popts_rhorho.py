@@ -6,7 +6,7 @@ C0/C1/C2 covariance is used to show the error.
 
 Try to run it as the following (let us suppose the coefficients are stored in "data/c012s.npy"
 and the covariance values are stored in "data/ccovs.npy", so you want to save the results in "plots/figures/"): 
-     $ python main.py --action "plot" --option C012S-WEIGHT --input "data" --output "plots/figures" --format "png" --show
+     $ python main.py --action "plot" --option "C012S-WEIGHT" --input "data" --output "plots/figures" --format "png" --show
 """
 import os, errno
 import numpy as np

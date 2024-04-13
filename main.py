@@ -128,7 +128,7 @@ if args.ACTION == "download_and_prepare_original":
     prepare_rhorho(args)
 
 if args.ACTION == "download_and_preprocess":
-    # $ python main.py --action "download_and_preprocess" --input "data" --features Variant-All --num_classes 11
+    # $ python main.py --action "download_and_preprocess" --input "data" --features Variant-All --num_classes "11"
     prepare_data(args)
 
 if args.ACTION in ["train", "continue_training", "predict"]:

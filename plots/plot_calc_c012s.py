@@ -6,7 +6,7 @@ in the directory specified by the command line argument.
 Try to run it as the following (let us suppose the coefficients are stored in "data/c012s.npy" 
 and you want to save the results in "plots/figures/"): 
 
-    $ python main.py --action "plot" --option C012S-DISTRIBUTION --input "data" 
+    $ python main.py --action "plot" --option "C012S-DISTRIBUTION" --input "data" 
     --output "plots/figures" --format "png" --show
 """
 
