@@ -119,13 +119,13 @@ class MonitoringUtils(tf.keras.callbacks.Callback):
             json.dump(self.model.args.__dict__, file, indent=2)
 
 
-@tf.keras.saving.register_keras_serializable(package="ML_Model", name="regr_argmaxs_loss")
+@tf.keras.utils.register_keras_serializable(package="ML_Model", name="regr_argmaxs_loss")
 def regr_argmaxs_loss(y_true, y_pred):
     """ Loss function for the regr_argmaxs configuration. """
     return tf.reduce_mean(1 - tf.math.cos(y_true - y_pred))
 
 
-@tf.keras.saving.register_keras_serializable(package="ML_Model", name="NeuralNetwork")
+@tf.keras.utils.register_keras_serializable(package="ML_Model", name="NeuralNetwork")
 class NeuralNetwork(tf.keras.Model):
     """ Configurable Neural Network class """
     def __init__(self, args, num_features, batch_size, lr=1e-3, input_noise=0.0):
