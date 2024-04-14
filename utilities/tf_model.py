@@ -4,23 +4,28 @@ as well as the Keras callback class for utilising all the evaluation methods
 available in evaluation_utils.py """
 
 import tensorflow as tf, numpy as np
-import pickle, os, sys, json, pickle
+import pickle, os, sys, json, pickle, math
 from .evaluation_utils import compute_accuracy_and_mean, compute_loss, calculate_deltas_unsigned
 
+# Uncomment these two lines to switch to the old Keras 2.0 Engine
+# Make sure you have tf_keras installed: $ pip install tf-keras~=2.16
+
+# os.environ["TF_USE_LEGACY_KERAS"]="1"
+# import tf_keras as keras
 
 class DataGenerator(tf.keras.utils.Sequence):
     """ Generates data for Keras models """
-    def __init__(self, batch_size, dataset, configuration, **kwargs):
-        super(DataGenerator, self).__init__(**kwargs)
+    def __init__(self, batch_size, dataset, configuration):
+        super().__init__()
         self.batch_size = batch_size
         self.dataset = dataset
         self.configuration = configuration
 
     def __len__(self):
         """ Denotes the number of batches per epoch """
-        return self.dataset.n // self.batch_size
+        return math.ceil(self.dataset.n / self.batch_size)
 
-    def __getitem__(self, index):
+    def __getitem__(self, idx):
         """ Generate one batch of data """
         x, weights, argmaxs, c012s, hits_argmaxs, hits_c012s, _ = self.dataset.next_batch(self.batch_size)
         if self.configuration == "soft_weights":
@@ -51,16 +56,15 @@ class MonitoringUtils(tf.keras.callbacks.Callback):
         self.output_location = os.path.join(output_location, "history.json")
         self.delta_max_tolerance = delta_max_tolerance
 
-        self.n_batches = train_data.n // batch_size
-        if not os.path.exists(self.output_location):
-            self.results = {
-                "training_epoch_relative_loss" : [], 
-                "training_final_loss" : [], "validation_loss" : [],
-                "training_accuracy" : [], "validation_accuracy" : [],
-                "training_mean" : [], "validation_mean" : [],
-                "training_l1_norm" : [], "validation_l1_norm" : [],
-                "training_l2_norm" : [], "validation_l2_norm" : [],}
-        else:
+        self.n_batches = math.ceil(train_data.n / batch_size)
+        self.results = {
+            "training_epoch_relative_loss" : [], 
+            "training_final_loss" : [], "validation_loss" : [],
+            "training_accuracy" : [], "validation_accuracy" : [],
+            "training_mean" : [], "validation_mean" : [],
+            "training_l1_norm" : [], "validation_l1_norm" : [],
+            "training_l2_norm" : [], "validation_l2_norm" : [],}
+        if os.path.exists(self.output_location):
             with open(self.output_location, "r") as file:
                 self.results = json.load(file)
 
@@ -181,12 +185,12 @@ class NeuralNetwork(tf.keras.Model):
         self.loss_fn = loss_fn
         self.loss_metrics = metrics
 
-    def build(self):
+    def build(self, input_shapes=None):
         """ Build the model """
         self.call(tf.keras.layers.Input(shape=(self.n_features,)))
         
     def train(self, data, n_epochs, batch_size, delta_max_tolerance, output_location):
-        """ Train the model by setting the loss function, optimizer and calling tf.keras.Model.fit() """
+        """ Train the model by calling tf.keras.Model.fit() """
 
         # Preparing the data generator (training and validation)
         train_data_generator = DataGenerator(
@@ -258,7 +262,7 @@ def run(args):
         raise ValueError(f"Unknown training method has been provided: {args.TRAINING_METHOD}")
 
     # Compiling the model (loss, optimizer)
-    model.compile(optimizer=opt, loss_fn=loss)
+    model.compile(optimizer=opt, loss_fn=loss, metrics=['accuracy'])
 
     # Running the action (training, training continuation, predicting)
     action = args.ACTION
