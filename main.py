@@ -29,7 +29,7 @@ parser.add_argument("--reuse_weights", dest="REUSE_WEIGHTS", action="store_true"
                     help="set this flag to True if you want to reuse the calculated weights")
 parser.add_argument("--hits_c012s", dest="HITS_C012s", 
                     choices=["hits_c0s", "hits_c1s",  "hits_c2s"], default="hits_c0s",
-                    help="?") # TODO: Add a help message
+                    help="which coefficients (C0, C1 or C2) to choose as labels")
 
 # TODO: Those two have been so far unclear to the project team
 parser.add_argument("--restrict_most_probable_angle", dest="RESTRICT_MOST_PROBABLE_ANGLE", 

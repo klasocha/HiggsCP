@@ -1,6 +1,6 @@
 # HiggsCP Analysis (ρρ case)
 
-Here is the Quick Start guide for testing the whole ML flow by running some of the commands
+Here is the Quick Start guide for testing the whole ML pipeline by running some of the commands
 step by step. The whole project is designed to be open source and configurable, so
 you are supposed to have the needed libraries installed in order to run the code, 
 make some new changes and experiment on your own.
@@ -58,7 +58,7 @@ $ python main.py --action "continue_training" --input "data" --num_classes "11" 
 ```
 
 ## 🌀 Making Predictions
-You can use the pretrained model weights to make predictions. The following
+You can use the pre-trained model weights to make predictions. The following
 command prepares predictions on training and validation data:
 
 ```shell
