@@ -1,5 +1,4 @@
 *.pyc
-*.pdf
 *.eps
 .venv/
 data/
