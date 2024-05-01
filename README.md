@@ -62,7 +62,7 @@ You can use the pre-trained model weights to make predictions. The following
 command prepares predictions on training and validation data:
 
 ```shell
-$ python main.py --action "predict" --input "data" --num_classes "11" --model_location "model_1"
+$ python main.py --action "predict_train_and_valid" --input "data" --num_classes "11" --model_location "model_1"
 ```
 
 The files containing predictions should appear in `results/soft_weights/model_1/predictions`.
