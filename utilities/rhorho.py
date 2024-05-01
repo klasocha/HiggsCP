@@ -172,7 +172,7 @@ class RhoRhoEvent(object):
         elif args.FEAT == "Variant-2.0":
             cols += [ve_tau1_nu_long, ve_tau2_nu_long, ve_tau1_nu_E, ve_tau2_nu_E, ve_tau1_nu_trans, ve_tau2_nu_trans]
 
-        # Filter
+        # Filter (picking only those vectors having "pt" value greater than 20)
         filt = (p_tau1_rho.pt >= 20) & (p_tau2_rho.pt >= 20)
         for part in (l_tau1_pi + l_tau2_pi):
             filt = filt & (part.pt >= 1)

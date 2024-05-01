@@ -81,7 +81,7 @@ class MonitoringUtils(tf.keras.callbacks.Callback):
         sys.stdout.write("\nTraining epoch relative loss (convergence): {:.4f}\n".format(epoch_relative_loss))
         self.results["training_epoch_relative_loss"].append(str(epoch_relative_loss))
         
-        if self.model.configuration != "soft_weights":
+        if self.model.configuration != "soft_weights": # TODO: dodać filtrację równiez do innych konfiguracji (oprócz soft_weights + dodać mozliwość wyłączenia filtracji z poziomu powłoki (argument))
             # We do not need to monitor true training loss during the training as
             # the loss computed as an average over the batches is enough for tracing convergence
             if (epoch + 1) == self.n_epochs:
@@ -306,3 +306,36 @@ def run(args):
         with open(valid_preds_path, 'wb') as f:
             np.save(f, valid_preds)
         print(f"Predictions for validation data have been saved in {valid_preds_path}")
+
+
+    if args.ACTION == "predict_test":
+        # Loading the model weights
+        model.load_weights(os.path.join(model_location, os.path.normpath("model_state/model.weights.h5")))
+        
+        # Saving predictions
+        print("Making final predictions for the testing data set...")
+        test_preds = model.predict(data_points.test.x)
+        pred_path = os.path.join(model_location, "predictions")
+        if not os.path.exists(pred_path):
+            os.makedirs(pred_path)
+        test_preds_path = os.path.join(pred_path, "test_preds.npy")
+        with open(test_preds_path, 'wb') as f:
+            np.save(f, test_preds)
+        print(f"Predictions for testing data have been saved in {test_preds_path}")
+
+        # Preparing labels
+        if args.TRAINING_METHOD == "soft_weights":
+            test_calc = data_points.test.weights / tf.tile(
+                tf.reshape(tf.reduce_sum(data_points.test.weights, axis=1), (-1, 1)), 
+                (1, data_points.test.weights.shape[-1]))
+        
+        if args.TRAINING_METHOD == "soft_c012s":
+            test_calc = data_points.test.hits_c012s / tf.tile(
+                tf.reshape(tf.reduce_sum(data_points.test.hits_c012s, axis=1), 
+                           (-1, 1)), (1, data_points.test.hits_c012s.shape[-1]))
+            
+        #Saving true values
+        test_calc_path = os.path.join(pred_path, "test_calc.npy")
+        with open(test_calc_path, 'wb') as f:
+            np.save(f, test_calc)
+        print(f"Calculated values for testing data have been saved in {test_calc_path}")

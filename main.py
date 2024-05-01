@@ -8,6 +8,8 @@ from plots.plot_popts_rhorho import draw as c012s_weight
 from plots.plot_calc_c012s import draw as c012s_dist
 from plots.plot_weights_with_c012s import draw as weights_with_c012s
 from plots.plot_unwt_weights import draw as unwt_weights
+from plots.results_analysis_1 import draw as results_analysis_1
+from plots.results_analysis_2 import draw as results_analysis_2
 from tests.test_data import test_parsed_data, show_example_records
 from utilities.prepare_rhorho import prepare_rhorho
 
@@ -76,13 +78,14 @@ parser.add_argument("--delt_classes", dest="DELT_CLASSES", type=int, default=0,
 parser.add_argument("--download_original_data", dest="DOWNLOAD_ORIGINAL", help="downloading the original data",
                     action="store_true", default=False)
 
-# Adding other arguments
-parser.add_argument("-lambda", "--lambda", type=float, dest="LAMBDA", help="value of lambda parameter", default=0.0)
-parser.add_argument("--z_noise_fraction", dest="Z_NOISE_FRACTION", type=float, default=0.5) # TODO find out the purpose of this argument
-parser.add_argument("--pol_b", type=float, dest="pol_b", help="value of b parameter for polynomial smearing", default=0.0)
-parser.add_argument("--pol_c", type=float, dest="pol_c", help="value of c parameter for polynomial smearing", default=0.0)
-parser.add_argument("--w1", dest="W1")
-parser.add_argument("--w2", dest="W2")
+# Adding other arguments (not used for now)
+# parser.add_argument("-lambda", "--lambda", type=float, dest="LAMBDA", help="value of lambda parameter", default=0.0)
+# parser.add_argument("--z_noise_fraction", dest="Z_NOISE_FRACTION", type=float, default=0.5)
+# parser.add_argument("--pol_b", type=float, dest="pol_b", help="value of b parameter for polynomial smearing", default=0.0)
+# parser.add_argument("--pol_c", type=float, dest="pol_c", help="value of c parameter for polynomial smearing", default=0.0)
+# parser.add_argument("--w1", dest="W1")
+# parser.add_argument("--w2", dest="W2")
+
 parser.add_argument("--use_unweighted_events", dest="USE_UNWEIGHTED_EVENTS", action="store_true",
                     help="applying the unweighted events for training (Monte Carlo)", default=False)
 
@@ -95,7 +98,10 @@ plot_types = {"PHISTAR-DISTRIBUTION" : phistar_dist, # Variant-1.1 should be pre
          "C012S-WEIGHT" : c012s_weight,
          "C012S-DISTRIBUTION" : c012s_dist,
          "WEIGHTS-FOR-EVENT-VIA-C012": weights_with_c012s,
-         "UNWEIGHTED-EVENTS-WEIGHTS": unwt_weights}
+         "UNWEIGHTED-EVENTS-WEIGHTS": unwt_weights,
+         "RESULTS_ANALYSIS_1": results_analysis_1,
+         "RESULTS_ANALYSIS_2": results_analysis_2,
+         }
 
 parser.add_argument("--output", dest="OUT", help="output path for plots", default="figures")
 parser.add_argument("--format", dest="FORMAT", 
@@ -116,7 +122,7 @@ parser.add_argument("--datasets", dest="DATASETS", default=2, type=int, help="nu
 
 # Main controller
 parser.add_argument("--action", dest="ACTION", choices=["download_and_prepare_original", "download_and_preprocess",  
-                    "train", "continue_training", "predict", "plot", "test"], default="train")
+                    "train", "continue_training", "predict", "plot", "test", "predict_test"], default="train")
 
 # Parsing the command-line arguments 
 args = parser.parse_args()
@@ -131,10 +137,11 @@ if args.ACTION == "download_and_preprocess":
     # $ python main.py --action "download_and_preprocess" --input "data" --features Variant-All --num_classes "11"
     prepare_data(args)
 
-if args.ACTION in ["train", "continue_training", "predict"]:
+if args.ACTION in ["train", "continue_training", "predict", "predict_test"]:
     # 1. python main.py --action "train" --input "data" --num_classes "11" --epochs "2" --training_method "soft_weights" --model_location "model_1"
     # 2. python main.py --action "continue_training" --input "data" --num_classes "11" --epochs "3" --training_method "soft_weights" --model_location "model_1"
     # 3. python main.py --action "predict" --input "data" --num_classes "11" --model_location "model_1"
+    # 4. python main.py --action "predict_test" --input "data" --num_classes "11" --model_location "model_1"
     train_model(args)
 
 if args.ACTION == "plot":

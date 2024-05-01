@@ -1,0 +1,118 @@
+import os, errno
+import matplotlib.pyplot as plt
+import numpy as np
+from utilities.cpmix_utils import weight_fun
+from scipy import stats
+from utilities.metrics_utils import calculate_deltas_signed
+from utilities.data_utils import read_np
+
+
+def calc_weights(num_classes, coeffs):
+    k2PI = 2* np.pi
+    x = np.linspace(0, k2PI, num_classes)
+    data_len = coeffs.shape[0]
+    weights = np.zeros((data_len, num_classes))
+    for i in range(data_len):
+        weights[i] = weight_fun(x, *coeffs[i])
+    return weights
+
+
+def draw(args):
+    # Preparing the output directory
+    output_path = os.path.join(os.path.normpath(args.OUT), "results_analysis_2")
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+    filename = f"soft_c012s_delt_argmax_rhorho_Variant-All_nc_{args.NUM_CLASSES}.{args.FORMAT}"
+    output_path = os.path.join(output_path, filename)
+
+    # Loading the coefficients
+    c0_input_path = f"{args.IN}0"
+    calc_hits_c0s = read_np(os.path.join(c0_input_path, "predictions", "test_calc.npy")) 
+    preds_hits_c0s = read_np(os.path.join(c0_input_path, "predictions", "test_preds.npy")) 
+
+    c1_input_path = f"{args.IN}1"
+    calc_hits_c1s = read_np(os.path.join(c1_input_path, "predictions", "test_calc.npy")) 
+    preds_hits_c1s = read_np(os.path.join(c1_input_path, "predictions", "test_preds.npy")) 
+
+    c2_input_path = f"{args.IN}2"
+    calc_hits_c2s = read_np(os.path.join(c2_input_path, "predictions", "test_calc.npy")) 
+    preds_hits_c2s = read_np(os.path.join(c2_input_path, "predictions", "test_preds.npy")) 
+        
+    # Computing the needed values
+    num_classes = int(args.NUM_CLASSES)
+    data_len = calc_hits_c0s.shape[0]
+
+    preds_c0s = np.zeros((data_len, 1))
+    calc_c0s = np.zeros((data_len, 1))
+    
+    preds_c1s = np.zeros((data_len, 1))
+    calc_c1s = np.zeros((data_len, 1))
+    
+    preds_c2s = np.zeros((data_len, 1))
+    calc_c2s = np.zeros((data_len, 1))
+
+    for i in range(data_len):
+        preds_c0s[i] = np.argmax(preds_hits_c0s[i])
+        calc_c0s[i] = np.argmax(calc_hits_c0s[i])
+    
+        preds_c1s[i] = np.argmax(preds_hits_c1s[i])
+        calc_c1s[i] = np.argmax(calc_hits_c1s[i])
+    
+        preds_c2s[i] = np.argmax(preds_hits_c2s[i])
+        calc_c2s[i] = np.argmax(calc_hits_c2s[i])    
+
+    calc_c012s = np.zeros((data_len, 3))
+    preds_c012s = np.zeros((data_len, 3))
+
+    for i in range(data_len):
+        calc_c012s[i][0] = calc_c0s[i] * (2./num_classes)
+        calc_c012s[i][1] = calc_c1s[i] * (2./num_classes) -1.0
+        calc_c012s[i][2] = calc_c2s[i] * (2./num_classes) -1.0
+
+        preds_c012s[i][0] = preds_c0s[i] * (2./num_classes)
+        preds_c012s[i][1] = preds_c1s[i] * (2./num_classes) -1.0
+        preds_c012s[i][2] = preds_c2s[i] * (2./num_classes) -1.0
+
+    k2PI = 2 * np.pi
+    calc_w  =  calc_weights(num_classes, calc_c012s)
+    preds_w =  calc_weights(num_classes, preds_c012s)
+    delt_argmax = calculate_deltas_signed(np.argmax(preds_w[:], axis=1), 
+                                          np.argmax(calc_w[:], axis=1), num_classes)      
+
+    mean = np.mean(delt_argmax) 
+    std  = np.std(delt_argmax) 
+    meanerr = stats.sem(delt_argmax)
+    meanrad = np.mean(delt_argmax) * k2PI/num_classes
+    stdrad  = np.std(delt_argmax) * k2PI/num_classes
+    meanraderr = stats.sem(delt_argmax) * k2PI/num_classes
+
+    # Preparing the plot
+    plt.hist(delt_argmax, histtype='step', bins=num_classes, color='black')
+    plt.xlabel(r'$\Delta_{class} [idx]$')
+    plt.gca()
+
+    table_vals=[[r'Classification: $C_0, C_1, C_2$'],
+                [" "],
+                [r"mean = {:0.3f}$\pm$ {:1.3f} [idx]".format(mean, meanerr)],
+                ["std = {:1.3f} [idx]".format(std)],
+                [" "],
+                [r"mean = {:0.3f}$\pm$ {:1.3f} [rad]".format(meanrad, meanraderr)],
+                ["std = {:1.3f} [rad]".format(stdrad)]
+                ]
+
+    table = plt.table(cellText=table_vals,
+                    colWidths = [0.40],
+                    cellLoc="left",
+                    loc='upper right')
+    table.set_fontsize(14)
+
+    for _, cell in table.get_celld().items():
+        cell.set_linewidth(0)
+
+    plt.tight_layout()
+
+    # Saving the plot
+    plt.savefig(output_path)
+    print(f"The plot has been saved as {output_path}")
+
+    plt.clf()
