@@ -4,7 +4,7 @@ as well as the Keras callback class for utilising all the evaluation methods
 available in evaluation_utils.py """
 
 import tensorflow as tf, numpy as np
-import pickle, os, sys, json, pickle, math
+import pickle, os, sys, json, pickle, math, shutil
 from .evaluation_utils import compute_accuracy_and_mean, compute_loss, calculate_deltas_unsigned
 
 # Uncomment these two lines to switch to the old Keras 2.0 Engine
@@ -12,6 +12,7 @@ from .evaluation_utils import compute_accuracy_and_mean, compute_loss, calculate
 
 # os.environ["TF_USE_LEGACY_KERAS"]="1"
 # import tf_keras as keras
+
 
 class DataGenerator(tf.keras.utils.Sequence):
     """ Generates data for Keras models """
@@ -45,6 +46,7 @@ class DataGenerator(tf.keras.utils.Sequence):
             labels = weights
         return x, labels
     
+
 class MonitoringUtils(tf.keras.callbacks.Callback):
     """ Callback for monitoring the model performance """
     def __init__(self, train_data, val_data, batch_size, n_epochs, delta_max_tolerance, 
@@ -53,6 +55,7 @@ class MonitoringUtils(tf.keras.callbacks.Callback):
         self.val_data = val_data
         self.batch_size = batch_size
         self.n_epochs = n_epochs
+        self.results_location = os.path.join(output_location, "model_state")
         self.output_location = os.path.join(output_location, "history.json")
         self.delta_max_tolerance = delta_max_tolerance
 
@@ -63,7 +66,8 @@ class MonitoringUtils(tf.keras.callbacks.Callback):
             "training_accuracy" : [], "validation_accuracy" : [],
             "training_mean" : [], "validation_mean" : [],
             "training_l1_norm" : [], "validation_l1_norm" : [],
-            "training_l2_norm" : [], "validation_l2_norm" : [],}
+            "training_l2_norm" : [], "validation_l2_norm" : [],
+            "best_epoch" : [0]}
         if os.path.exists(self.output_location):
             with open(self.output_location, "r") as file:
                 self.results = json.load(file)
@@ -123,7 +127,29 @@ class MonitoringUtils(tf.keras.callbacks.Callback):
 
     def on_train_end(self, logs=None):
         sys.stdout.write(
-            f"\nTraining has finished. Results are available in {str(self.output_location)}\n")
+            f"\nTraining has finished. Training history is available in {str(self.output_location)}\n")
+        
+        # Saving the best model as "model.weights" based on either the maximum value
+        # of validation accuracy or the minimum value of validation loss and then
+        # writing the best epoch index in history.json
+        if self.model.configuration == "soft_weights":
+            best_epoch = np.argmax(self.results["validation_accuracy"]) + 1
+            print("The best results (validation accuracy) have been achieved",
+                  f"at epoch #{best_epoch}.")
+        else:
+            best_epoch = np.argmin(self.results["validation_loss"]) + 1
+            print("The best results (validation loss) have been achieved",
+                  f"at epoch #{best_epoch}.")  
+            
+        self.results["best_epoch"][0] = str(best_epoch)
+        with open(self.output_location, "w") as file:
+            json.dump(self.results, file, indent=2)
+        
+        best_weights_path = os.path.join(self.results_location, 
+                                            f"model_epoch_{best_epoch:02d}.weights.h5")
+        new_best_weights_path = os.path.join(self.results_location, "model.weights.h5")
+        shutil.copy2(best_weights_path, new_best_weights_path)
+        print(f"The best weights have been achieved in {new_best_weights_path}.")
 
 
 def regr_argmaxs_loss(y_true, y_pred):
@@ -189,7 +215,8 @@ class NeuralNetwork(tf.keras.Model):
         """ Build the model """
         self.call(tf.keras.layers.Input(shape=(self.n_features,)))
         
-    def train(self, data, n_epochs, batch_size, delta_max_tolerance, output_location):
+    def train(self, data, n_epochs, batch_size, delta_max_tolerance, output_location,
+              continue_training=False):
         """ Train the model by calling tf.keras.Model.fit() """
 
         # Preparing the data generator (training and validation)
@@ -198,18 +225,24 @@ class NeuralNetwork(tf.keras.Model):
         
         # Preparing the callback reponsible for monitoring the model performance
         output_location = os.path.join("results", self.configuration, output_location)
+        last_n_epochs = 0
+        if (continue_training):
+            with open(os.path.join(output_location, "history.json"), "r") as file:
+                last_n_epochs = len(json.load(file)["training_epoch_relative_loss"])
+        n_epochs = n_epochs + last_n_epochs
         monitoring_callback = MonitoringUtils(data.train, data.valid, batch_size, 
                                               n_epochs, delta_max_tolerance, output_location)
-
+        
         # Preparing the callback for saving checkpoints (weights)
         output_location = os.path.join(
-            output_location, os.path.normpath("model_state/model.weights.h5"))
-        cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=output_location,
-                                                         save_weights_only=True)
+            output_location, os.path.normpath("model_state/model_epoch_{epoch:02d}.weights.h5"))
+        cp_callback = tf.keras.callbacks.ModelCheckpoint(
+            filepath=output_location,
+            save_weights_only=True)
 
         # Training the model
-        self.fit(train_data_generator, epochs=n_epochs, verbose=0, 
-                 callbacks=[monitoring_callback, cp_callback])
+        self.fit(train_data_generator, epochs=n_epochs, verbose=0,
+                 callbacks=[monitoring_callback, cp_callback], initial_epoch=last_n_epochs)
 
 
 def save_configuration(location, args):
@@ -219,6 +252,57 @@ def save_configuration(location, args):
     with open(os.path.join(location, "configuration.json"), "w") as file:
         json.dump(args.__dict__, file, indent=2) 
 
+
+def get_predictions_and_labels(model, dataset, training_method, filtered=False):
+    if filtered:
+        dataset.x = dataset.x[dataset.filt == 1]
+
+    preds = model.predict(dataset.x)
+
+    if training_method == "soft_weights":
+        if filtered:
+            dataset.weights = dataset.weights[dataset.filt == 1]
+        calc = dataset.weights / tf.tile(
+            tf.reshape(tf.reduce_sum(dataset.weights, axis=1), (-1, 1)), 
+            (1, dataset.weights.shape[-1]))
+        
+    if training_method == "soft_c012s":
+        if filtered:
+            dataset.hits_c012s = dataset.hits_c012s[dataset.filt == 1]
+        calc = dataset.hits_c012s / tf.tile(
+            tf.reshape(tf.reduce_sum(dataset.hits_c012s, axis=1), 
+                        (-1, 1)), (1, dataset.hits_c012s.shape[-1]))
+    
+    if training_method == "soft_argmaxs":
+        if filtered:
+            dataset.hits_argmaxs = dataset.hits_argmaxs[dataset.filt == 1]
+        calc = dataset.hits_argmaxs / tf.tile(
+            tf.reshape(tf.reduce_sum(dataset.hits_argmaxs, axis=1), 
+                       (-1, 1)), (1, dataset.hits_argmaxs.shape[-1]))    
+    
+    if training_method == "regr_argmaxs":
+        if filtered:
+            dataset.argmaxs = dataset.argmaxs[dataset.filt == 1]
+        calc = dataset.argmaxs
+    
+    if training_method == "regr_c012s":
+        if filtered:
+            dataset.c012s = dataset.c012s[dataset.filt == 1]
+        calc = dataset.c012s
+    
+    if training_method == "regr_weights":
+        if filtered:
+            dataset.weights = dataset.weights[dataset.filt == 1]
+        calc = dataset.weights
+
+    return preds, calc
+
+
+def save_file(filepath, data, message):
+    with open(filepath, 'wb') as f:
+        np.save(f, data)
+    print(message)
+        
 
 def run(args):
     # Loading data
@@ -262,7 +346,7 @@ def run(args):
         raise ValueError(f"Unknown training method has been provided: {args.TRAINING_METHOD}")
 
     # Compiling the model (loss, optimizer)
-    model.compile(optimizer=opt, loss_fn=loss, metrics=['accuracy'])
+    model.compile(optimizer=opt, loss_fn=loss)
 
     # Running the action (training, training continuation, predicting)
     action = args.ACTION
@@ -272,70 +356,57 @@ def run(args):
         # Saving command line arguments
         save_configuration(model_location, args)
 
+        continue_training = False
         if action == "continue_training":
             # Loading the model weights
             model.load_weights(os.path.join(model_location, os.path.normpath("model_state/model.weights.h5")))
-        
+            continue_training = True
+
         # Training the model (checkpoints with weights are saved at the end of each epoch)
         model.train(
             data=data_points, 
             n_epochs=int(args.EPOCHS),
             batch_size=128,     
             delta_max_tolerance=int(args.DELT_CLASSES),
-            output_location=args.MODEL_LOCATION
+            output_location=args.MODEL_LOCATION,
+            continue_training=continue_training
         )
 
-    if args.ACTION == "predict":
+    if action in ["predict_train_and_valid", "predict_test"]:
         # Loading the model weights
         model.load_weights(os.path.join(model_location, os.path.normpath("model_state/model.weights.h5")))
-        
-        print("Making predictions for the training and validation sets...")
-        train_preds = model.predict(data_points.train.x)
-        valid_preds = model.predict(data_points.valid.x)
-        
         pred_path = os.path.join(model_location, "predictions")
         if not os.path.exists(pred_path):
             os.makedirs(pred_path)
+
+    if action == "predict_train_and_valid":
+        print("Making predictions for the training and validation sets...")
+        train_preds, train_calc = get_predictions_and_labels(
+            model, data_points.train, args.TRAINING_METHOD, args.USE_FILTERED_DATA)
+        valid_preds, valid_calc = get_predictions_and_labels(
+            model, data_points.valid, args.TRAINING_METHOD, args.USE_FILTERED_DATA)
         
         train_preds_path = os.path.join(pred_path, "train_preds.npy")
-        with open(train_preds_path, 'wb') as f:
-            np.save(f, train_preds)
-        print(f"Predictions for training data have been saved in {train_preds_path}")
-        
+        save_file(train_preds_path, train_preds,
+                  f"Predictions for training data have been saved in {train_preds_path}")
+        train_calc_path = os.path.join(pred_path, "train_calc.npy")
+        save_file(train_calc_path, train_calc,
+                  f"True values for training data have been saved in {train_calc_path}")
         valid_preds_path = os.path.join(pred_path, "valid_preds.npy")
-        with open(valid_preds_path, 'wb') as f:
-            np.save(f, valid_preds)
-        print(f"Predictions for validation data have been saved in {valid_preds_path}")
+        save_file(valid_preds_path, valid_preds,
+                  f"Predictions for validation data have been saved in {valid_preds_path}")
+        valid_calc_path = os.path.join(pred_path, "valid_calc.npy")
+        save_file(valid_calc_path, valid_calc,
+                  f"True values for validation data have been saved in {valid_calc_path}")
 
-
-    if args.ACTION == "predict_test":
-        # Loading the model weights
-        model.load_weights(os.path.join(model_location, os.path.normpath("model_state/model.weights.h5")))
-        
-        # Saving predictions
+    if action == "predict_test":
         print("Making final predictions for the testing data set...")
-        test_preds = model.predict(data_points.test.x)
-        pred_path = os.path.join(model_location, "predictions")
-        if not os.path.exists(pred_path):
-            os.makedirs(pred_path)
+        test_preds, test_calc = get_predictions_and_labels(
+            model, data_points.test, args.TRAINING_METHOD, args.USE_FILTERED_DATA)
+    
         test_preds_path = os.path.join(pred_path, "test_preds.npy")
-        with open(test_preds_path, 'wb') as f:
-            np.save(f, test_preds)
-        print(f"Predictions for testing data have been saved in {test_preds_path}")
-
-        # Preparing labels
-        if args.TRAINING_METHOD == "soft_weights":
-            test_calc = data_points.test.weights / tf.tile(
-                tf.reshape(tf.reduce_sum(data_points.test.weights, axis=1), (-1, 1)), 
-                (1, data_points.test.weights.shape[-1]))
-        
-        if args.TRAINING_METHOD == "soft_c012s":
-            test_calc = data_points.test.hits_c012s / tf.tile(
-                tf.reshape(tf.reduce_sum(data_points.test.hits_c012s, axis=1), 
-                           (-1, 1)), (1, data_points.test.hits_c012s.shape[-1]))
-            
-        #Saving true values
+        save_file(test_preds_path, test_preds,
+                  f"Predictions for testing data have been saved in {test_preds_path}")
         test_calc_path = os.path.join(pred_path, "test_calc.npy")
-        with open(test_calc_path, 'wb') as f:
-            np.save(f, test_calc)
-        print(f"Calculated values for testing data have been saved in {test_calc_path}")
+        save_file(test_calc_path, test_calc,
+                  f"True values for testing data have been saved in {test_calc_path}")

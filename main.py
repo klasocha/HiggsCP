@@ -10,6 +10,7 @@ from plots.plot_weights_with_c012s import draw as weights_with_c012s
 from plots.plot_unwt_weights import draw as unwt_weights
 from plots.results_analysis_1 import draw as results_analysis_1
 from plots.results_analysis_2 import draw as results_analysis_2
+from plots.results_analysis_3 import draw as results_analysis_3
 from tests.test_data import test_parsed_data, show_example_records
 from utilities.prepare_rhorho import prepare_rhorho
 
@@ -92,6 +93,9 @@ parser.add_argument("--use_unweighted_events", dest="USE_UNWEIGHTED_EVENTS", act
 # Keras & TFv2 arguments
 parser.add_argument("--model_location", dest="MODEL_LOCATION", 
                     help='name of the directory in "results/" containing the model state (weights, metadata)')
+parser.add_argument("--use_filtered_data", dest="USE_FILTERED_DATA", 
+                    help="picking only those vectors having \"pt\" value greater than 20",
+                    action="store_true", default=False)
 
 # Plot arguments
 plot_types = {"PHISTAR-DISTRIBUTION" : phistar_dist, # Variant-1.1 should be prepared in advance
@@ -99,8 +103,9 @@ plot_types = {"PHISTAR-DISTRIBUTION" : phistar_dist, # Variant-1.1 should be pre
          "C012S-DISTRIBUTION" : c012s_dist,
          "WEIGHTS-FOR-EVENT-VIA-C012": weights_with_c012s,
          "UNWEIGHTED-EVENTS-WEIGHTS": unwt_weights,
-         "RESULTS_ANALYSIS_1": results_analysis_1,
-         "RESULTS_ANALYSIS_2": results_analysis_2,
+         "RESULTS_ANALYSIS_1": results_analysis_1, # "soft_weight"
+         "RESULTS_ANALYSIS_2": results_analysis_2, # "soft_c012s"
+         "RESULTS_ANALYSIS_2": results_analysis_3
          }
 
 parser.add_argument("--output", dest="OUT", help="output path for plots", default="figures")
@@ -122,7 +127,8 @@ parser.add_argument("--datasets", dest="DATASETS", default=2, type=int, help="nu
 
 # Main controller
 parser.add_argument("--action", dest="ACTION", choices=["download_and_prepare_original", "download_and_preprocess",  
-                    "train", "continue_training", "predict", "plot", "test", "predict_test"], default="train")
+                    "train", "continue_training", "predict_train_and_valid", "plot", "test", "predict_test"], 
+                    default="train")
 
 # Parsing the command-line arguments 
 args = parser.parse_args()
@@ -137,10 +143,10 @@ if args.ACTION == "download_and_preprocess":
     # $ python main.py --action "download_and_preprocess" --input "data" --features Variant-All --num_classes "11"
     prepare_data(args)
 
-if args.ACTION in ["train", "continue_training", "predict", "predict_test"]:
+if args.ACTION in ["train", "continue_training", "predict_train_and_valid", "predict_test"]:
     # 1. python main.py --action "train" --input "data" --num_classes "11" --epochs "2" --training_method "soft_weights" --model_location "model_1"
     # 2. python main.py --action "continue_training" --input "data" --num_classes "11" --epochs "3" --training_method "soft_weights" --model_location "model_1"
-    # 3. python main.py --action "predict" --input "data" --num_classes "11" --model_location "model_1"
+    # 3. python main.py --action "predict_train_and_valid" --input "data" --num_classes "11" --model_location "model_1"
     # 4. python main.py --action "predict_test" --input "data" --num_classes "11" --model_location "model_1"
     train_model(args)
 

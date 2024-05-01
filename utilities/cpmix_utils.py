@@ -137,10 +137,13 @@ def preprocess_data(args):
         np.save(c012s_paths[2], hits_c2s)
 
     if args.HITS_C012s == "hits_c0s" :
+        print(f"Choosing hits_c0s")
         hits_c012s = read_np(c012s_paths[0])
     elif args.HITS_C012s == "hits_c1s" :   
+        print(f"Choosing hits_c1s")
         hits_c012s = read_np(c012s_paths[1])
     elif args.HITS_C012s == "hits_c2s" :   
+        print(f"Choosing hits_c2s")
         hits_c012s = read_np(c012s_paths[2])
 
     # Calculating the weights and argmaxes (one-hot encoded) and saving them
