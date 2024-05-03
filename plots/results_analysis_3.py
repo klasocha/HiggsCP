@@ -7,7 +7,7 @@ from utilities.data_utils import read_np
 
 
 def draw(args):
-     # Preparing the output directory
+    # Preparing the output directory
     num_classes = args.NUM_CLASSES
     output_path = os.path.join(os.path.normpath(args.OUT), "results_analysis_3")
     if not os.path.exists(output_path):

@@ -8,35 +8,52 @@ from utilities.metrics_utils import calculate_deltas_signed
 
 def draw(args):
     # Preparing the output directory 
-    output_path = os.path.join(os.path.normpath(args.OUT), "results_analysis_1")
+    num_classes = int(args.NUM_CLASSES)
+    output_path = os.path.join(os.path.normpath(args.OUT), "results_analysis_1", 
+                               args.TRAINING_METHOD, args.DATASET)
     if not os.path.exists(output_path):
         os.makedirs(output_path)
-    filename = f"soft_wt_delt_argmax_rhorho_Variant-All_nc_{args.NUM_CLASSES}.{args.FORMAT}"
+    filtered = "unfiltered" if not args.USE_FILTERED_DATA else "filtered"
+    if args.TRAINING_METHOD == "soft_weights":
+        filename = f"soft_wt_delt_argmax_rhorho_Variant-All_nc_{num_classes}_" + \
+            f"{filtered}.{args.FORMAT}"
+    if args.TRAINING_METHOD == "regr_weights":
+        filename = f"regr_wt_delt_argmax_rhorho_Variant-All_nc_{num_classes}_" + \
+            f"{filtered}.{args.FORMAT}"
     output_path = os.path.join(output_path, filename)
 
     # Loading calculated and true weights
-    calc_w  = read_np(os.path.join(os.path.normpath(args.IN), 'test_calc.npy'))
-    preds_w  = read_np(os.path.join(os.path.normpath(args.IN), 'test_preds.npy'))
+    dataset = filtered + '_' + args.DATASET
+    calc_w  = read_np(os.path.join(os.path.normpath(args.IN), f"{dataset}_calc.npy"))
+    preds_w  = read_np(os.path.join(os.path.normpath(args.IN), f"{dataset}_preds.npy"))
 
     # Computing the difference
-    num_classes = int(args.NUM_CLASSES)
     delt_argmax =  calculate_deltas_signed(np.argmax(preds_w[:], axis=1), 
-                                                np.argmax(calc_w[:], axis=1), num_classes)      
+                                           np.argmax(calc_w[:], axis=1), num_classes)      
 
     # Preparing the plot
     plt.hist(delt_argmax, histtype='step', bins=num_classes, color='black')
-    plt.xlabel(r'$\Delta_{class}$ [idx]')
+    if args.TRAINING_METHOD == "soft_weights":
+         plt.xlabel(r'$\alpha^{CP}_{max}: \Delta_{class} [idx]$')
+    if args.TRAINING_METHOD == "regr_weights":
+        plt.xlabel(r'$\Delta_{class}$ [idx]')
     plt.ylabel('Entries')
     plt.gca()
     
+    k2PI = 2 * np.pi
     mean = np.mean(delt_argmax, dtype=np.float64)
     std  = np.std(delt_argmax, dtype=np.float64)
     meanerr = stats.sem(delt_argmax)
-    meanrad = np.mean(delt_argmax, dtype=np.float64) * 6.28/num_classes
-    stdrad  = np.std(delt_argmax, dtype=np.float64) * 6.28/num_classes
-    meanerrrad = stats.sem(delt_argmax) * 6.28/num_classes
+    meanrad = np.mean(delt_argmax, dtype=np.float64) * k2PI /num_classes
+    stdrad  = np.std(delt_argmax, dtype=np.float64) * k2PI /num_classes
+    meanerrrad = stats.sem(delt_argmax) * k2PI /num_classes
 
-    table_vals=[[r"Classification: $wt$"],
+    if args.TRAINING_METHOD == "soft_weights":
+        table_title = [r"Classification: $wt$"]
+    if args.TRAINING_METHOD == "regr_weights":
+        table_title = [r"Regression: $wt$"]
+
+    table_vals=[table_title,
                 [" "],
                 [r"mean = {:0.3f} $\pm$ {:1.3f}[idx] ".format(mean, meanerr)],
                 ["std = {:1.3f} [idx]".format(std)],
@@ -44,17 +61,13 @@ def draw(args):
                 [r"mean = {:0.3f} $\pm$ {:1.3f}[rad]".format(meanrad, meanerrrad)],
                 ["std = {:1.3f} [rad]".format(stdrad)]
                 ]
-
     table = plt.table(cellText=table_vals,
                     colWidths = [0.40],
                     cellLoc="left",
                     loc='upper right')
-
     table.set_fontsize(14)
-
     for _, cell in table.get_celld().items():
         cell.set_linewidth(0)
-
     plt.tight_layout()
 
     # Saving the plot

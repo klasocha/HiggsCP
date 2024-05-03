@@ -103,9 +103,9 @@ plot_types = {"PHISTAR-DISTRIBUTION" : phistar_dist, # Variant-1.1 should be pre
          "C012S-DISTRIBUTION" : c012s_dist,
          "WEIGHTS-FOR-EVENT-VIA-C012": weights_with_c012s,
          "UNWEIGHTED-EVENTS-WEIGHTS": unwt_weights,
-         "RESULTS_ANALYSIS_1": results_analysis_1, # "soft_weights"
+         "RESULTS_ANALYSIS_1": results_analysis_1, # "soft_weights", "regr_weights"
          "RESULTS_ANALYSIS_2": results_analysis_2, # "soft_c012s"
-         "RESULTS_ANALYSIS_3": results_analysis_3  # "regr_weights"
+         "RESULTS_ANALYSIS_3": results_analysis_3 # "soft_argmaxs"
          }
 
 parser.add_argument("--output", dest="OUT", help="output path for plots", default="figures")
@@ -117,6 +117,7 @@ parser.add_argument("--option", dest="OPTION", choices=plot_types.keys(), defaul
                     help='specify what script for drawing the plots you want to run')
 parser.add_argument("--hypothesis", dest="HYPOTHESIS", default="None", 
                     help="Hypothesis: the alphaCP class (e.g. 02)")
+parser.add_argument("--dataset", dest="DATASET", help="dataset (train/valid/test)")
 
 # Test arguments
 parser.add_argument("--source-1", dest="SOURCE_1",

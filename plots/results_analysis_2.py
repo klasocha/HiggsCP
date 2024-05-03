@@ -19,10 +19,11 @@ def calc_weights(num_classes, coeffs):
 
 def draw(args):
     # Preparing the output directory
+    num_classes = int(args.NUM_CLASSES)
     output_path = os.path.join(os.path.normpath(args.OUT), "results_analysis_2")
     if not os.path.exists(output_path):
         os.makedirs(output_path)
-    filename = f"soft_c012s_delt_argmax_rhorho_Variant-All_nc_{args.NUM_CLASSES}.{args.FORMAT}"
+    filename = f"soft_c012s_delt_argmax_rhorho_Variant-All_nc_{num_classes}.{args.FORMAT}"
     output_path = os.path.join(output_path, filename)
 
     # Loading the coefficients
@@ -45,7 +46,6 @@ def draw(args):
         os.path.normpath(c2_input_path), "predictions", "test_preds.npy")) 
         
     # Computing the needed values
-    num_classes = int(args.NUM_CLASSES)
     data_len = calc_hits_c0s.shape[0]
 
     preds_c0s = np.zeros((data_len, 1))

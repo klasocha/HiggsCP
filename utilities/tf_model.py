@@ -385,17 +385,17 @@ def run(args):
             model, data_points.train, args.TRAINING_METHOD, args.USE_FILTERED_DATA)
         valid_preds, valid_calc = get_predictions_and_labels(
             model, data_points.valid, args.TRAINING_METHOD, args.USE_FILTERED_DATA)
-        
-        train_preds_path = os.path.join(pred_path, "train_preds.npy")
+        filtered = "unfiltered" if not args.USE_FILTERED_DATA else "filtered"
+        train_preds_path = os.path.join(pred_path, f"{filtered}_train_preds.npy")
         save_file(train_preds_path, train_preds,
                   f"Predictions for training data have been saved in {train_preds_path}")
-        train_calc_path = os.path.join(pred_path, "train_calc.npy")
+        train_calc_path = os.path.join(pred_path, f"{filtered}_train_calc.npy")
         save_file(train_calc_path, train_calc,
                   f"True values for training data have been saved in {train_calc_path}")
-        valid_preds_path = os.path.join(pred_path, "valid_preds.npy")
+        valid_preds_path = os.path.join(pred_path, f"{filtered}_valid_preds.npy")
         save_file(valid_preds_path, valid_preds,
                   f"Predictions for validation data have been saved in {valid_preds_path}")
-        valid_calc_path = os.path.join(pred_path, "valid_calc.npy")
+        valid_calc_path = os.path.join(pred_path, f"{filtered}_valid_calc.npy")
         save_file(valid_calc_path, valid_calc,
                   f"True values for validation data have been saved in {valid_calc_path}")
 
@@ -403,10 +403,10 @@ def run(args):
         print("Making final predictions for the testing data set...")
         test_preds, test_calc = get_predictions_and_labels(
             model, data_points.test, args.TRAINING_METHOD, args.USE_FILTERED_DATA)
-    
-        test_preds_path = os.path.join(pred_path, "test_preds.npy")
+        filtered = "unfiltered" if not args.USE_FILTERED_DATA else "filtered"
+        test_preds_path = os.path.join(pred_path, f"{filtered}_test_preds.npy")
         save_file(test_preds_path, test_preds,
                   f"Predictions for testing data have been saved in {test_preds_path}")
-        test_calc_path = os.path.join(pred_path, "test_calc.npy")
+        test_calc_path = os.path.join(pred_path, f"{filtered}_test_calc.npy")
         save_file(test_calc_path, test_calc,
                   f"True values for testing data have been saved in {test_calc_path}")
