@@ -15,8 +15,8 @@ def draw(args):
     output_path = os.path.join(output_path, filename)
 
     # Loading calculated and true weights
-    calc_w  = read_np(os.path.join(args.IN, 'test_calc.npy'))
-    preds_w  = read_np(os.path.join(args.IN, 'test_preds.npy'))
+    calc_w  = read_np(os.path.join(os.path.normpath(args.IN), 'test_calc.npy'))
+    preds_w  = read_np(os.path.join(os.path.normpath(args.IN), 'test_preds.npy'))
 
     # Computing the difference
     num_classes = int(args.NUM_CLASSES)

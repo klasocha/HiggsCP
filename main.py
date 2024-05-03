@@ -103,9 +103,9 @@ plot_types = {"PHISTAR-DISTRIBUTION" : phistar_dist, # Variant-1.1 should be pre
          "C012S-DISTRIBUTION" : c012s_dist,
          "WEIGHTS-FOR-EVENT-VIA-C012": weights_with_c012s,
          "UNWEIGHTED-EVENTS-WEIGHTS": unwt_weights,
-         "RESULTS_ANALYSIS_1": results_analysis_1, # "soft_weight"
+         "RESULTS_ANALYSIS_1": results_analysis_1, # "soft_weights"
          "RESULTS_ANALYSIS_2": results_analysis_2, # "soft_c012s"
-         "RESULTS_ANALYSIS_2": results_analysis_3
+         "RESULTS_ANALYSIS_3": results_analysis_3  # "regr_weights"
          }
 
 parser.add_argument("--output", dest="OUT", help="output path for plots", default="figures")

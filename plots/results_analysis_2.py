@@ -1,4 +1,4 @@
-import os, errno
+import os
 import matplotlib.pyplot as plt
 import numpy as np
 from utilities.cpmix_utils import weight_fun
@@ -27,16 +27,22 @@ def draw(args):
 
     # Loading the coefficients
     c0_input_path = f"{args.IN}0"
-    calc_hits_c0s = read_np(os.path.join(c0_input_path, "predictions", "test_calc.npy")) 
-    preds_hits_c0s = read_np(os.path.join(c0_input_path, "predictions", "test_preds.npy")) 
+    calc_hits_c0s = read_np(os.path.join(
+        os.path.normpath(c0_input_path), "predictions", "test_calc.npy")) 
+    preds_hits_c0s = read_np(os.path.join(
+        os.path.normpath(c0_input_path), "predictions", "test_preds.npy")) 
 
     c1_input_path = f"{args.IN}1"
-    calc_hits_c1s = read_np(os.path.join(c1_input_path, "predictions", "test_calc.npy")) 
-    preds_hits_c1s = read_np(os.path.join(c1_input_path, "predictions", "test_preds.npy")) 
+    calc_hits_c1s = read_np(os.path.join(
+        os.path.normpath(c1_input_path), "predictions", "test_calc.npy")) 
+    preds_hits_c1s = read_np(os.path.join(
+        os.path.normpath(c1_input_path), "predictions", "test_preds.npy")) 
 
     c2_input_path = f"{args.IN}2"
-    calc_hits_c2s = read_np(os.path.join(c2_input_path, "predictions", "test_calc.npy")) 
-    preds_hits_c2s = read_np(os.path.join(c2_input_path, "predictions", "test_preds.npy")) 
+    calc_hits_c2s = read_np(os.path.join(
+        os.path.normpath(c2_input_path), "predictions", "test_calc.npy")) 
+    preds_hits_c2s = read_np(os.path.join(
+        os.path.normpath(c2_input_path), "predictions", "test_preds.npy")) 
         
     # Computing the needed values
     num_classes = int(args.NUM_CLASSES)
