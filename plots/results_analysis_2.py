@@ -20,30 +20,34 @@ def calc_weights(num_classes, coeffs):
 def draw(args):
     # Preparing the output directory
     num_classes = int(args.NUM_CLASSES)
-    output_path = os.path.join(os.path.normpath(args.OUT), "results_analysis_2")
+    output_path = os.path.join(os.path.normpath(args.OUT), "results_analysis_2",
+                               args.TRAINING_METHOD, args.DATASET)
     if not os.path.exists(output_path):
         os.makedirs(output_path)
-    filename = f"soft_c012s_delt_argmax_rhorho_Variant-All_nc_{num_classes}.{args.FORMAT}"
+    filtered = "unfiltered" if not args.USE_FILTERED_DATA else "filtered"
+    filename = f"soft_c012s_delt_argmax_rhorho_Variant-All_nc_{num_classes}_" + \
+        f"{filtered}.{args.FORMAT}"
     output_path = os.path.join(output_path, filename)
 
     # Loading the coefficients
+    dataset = filtered + '_' + args.DATASET
     c0_input_path = f"{args.IN}0"
     calc_hits_c0s = read_np(os.path.join(
-        os.path.normpath(c0_input_path), "predictions", "test_calc.npy")) 
+        os.path.normpath(c0_input_path), "predictions", f"{dataset}_calc.npy")) 
     preds_hits_c0s = read_np(os.path.join(
-        os.path.normpath(c0_input_path), "predictions", "test_preds.npy")) 
+        os.path.normpath(c0_input_path), "predictions", f"{dataset}_preds.npy")) 
 
     c1_input_path = f"{args.IN}1"
     calc_hits_c1s = read_np(os.path.join(
-        os.path.normpath(c1_input_path), "predictions", "test_calc.npy")) 
+        os.path.normpath(c1_input_path), "predictions", f"{dataset}_calc.npy")) 
     preds_hits_c1s = read_np(os.path.join(
-        os.path.normpath(c1_input_path), "predictions", "test_preds.npy")) 
+        os.path.normpath(c1_input_path), "predictions", f"{dataset}_preds.npy")) 
 
     c2_input_path = f"{args.IN}2"
     calc_hits_c2s = read_np(os.path.join(
-        os.path.normpath(c2_input_path), "predictions", "test_calc.npy")) 
+        os.path.normpath(c2_input_path), "predictions", f"{dataset}_calc.npy")) 
     preds_hits_c2s = read_np(os.path.join(
-        os.path.normpath(c2_input_path), "predictions", "test_preds.npy")) 
+        os.path.normpath(c2_input_path), "predictions", f"{dataset}_preds.npy")) 
         
     # Computing the needed values
     data_len = calc_hits_c0s.shape[0]
@@ -72,12 +76,12 @@ def draw(args):
 
     for i in range(data_len):
         calc_c012s[i][0] = calc_c0s[i] * (2./num_classes)
-        calc_c012s[i][1] = calc_c1s[i] * (2./num_classes) -1.0
-        calc_c012s[i][2] = calc_c2s[i] * (2./num_classes) -1.0
+        calc_c012s[i][1] = calc_c1s[i] * (2./num_classes) - 1.0
+        calc_c012s[i][2] = calc_c2s[i] * (2./num_classes) - 1.0
 
         preds_c012s[i][0] = preds_c0s[i] * (2./num_classes)
-        preds_c012s[i][1] = preds_c1s[i] * (2./num_classes) -1.0
-        preds_c012s[i][2] = preds_c2s[i] * (2./num_classes) -1.0
+        preds_c012s[i][1] = preds_c1s[i] * (2./num_classes) - 1.0
+        preds_c012s[i][2] = preds_c2s[i] * (2./num_classes) - 1.0
 
     k2PI = 2 * np.pi
     calc_w  =  calc_weights(num_classes, calc_c012s)

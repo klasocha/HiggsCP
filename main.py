@@ -11,6 +11,7 @@ from plots.plot_unwt_weights import draw as unwt_weights
 from plots.results_analysis_1 import draw as results_analysis_1
 from plots.results_analysis_2 import draw as results_analysis_2
 from plots.results_analysis_3 import draw as results_analysis_3
+from plots.results_analysis_4 import draw as results_analysis_4
 from tests.test_data import test_parsed_data, show_example_records
 from utilities.prepare_rhorho import prepare_rhorho
 
@@ -105,7 +106,8 @@ plot_types = {"PHISTAR-DISTRIBUTION" : phistar_dist, # Variant-1.1 should be pre
          "UNWEIGHTED-EVENTS-WEIGHTS": unwt_weights,
          "RESULTS_ANALYSIS_1": results_analysis_1, # "soft_weights", "regr_weights"
          "RESULTS_ANALYSIS_2": results_analysis_2, # "soft_c012s"
-         "RESULTS_ANALYSIS_3": results_analysis_3 # "soft_argmaxs"
+         "RESULTS_ANALYSIS_3": results_analysis_3, # "soft_argmaxs"
+         "RESULTS_ANALYSIS_3": results_analysis_4  # "regr_c012s"
          }
 
 parser.add_argument("--output", dest="OUT", help="output path for plots", default="figures")
