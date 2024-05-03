@@ -71,4 +71,4 @@ Feel free to take a look at the module reponsible for running the inference to
 adapt the code to your input data set.
 
 ---
-Last update: 14 April 2024
+Last update: 1 May 2024
