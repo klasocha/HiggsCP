@@ -11,8 +11,8 @@ from .evaluation_utils import compute_accuracy_and_mean, compute_loss
 # Uncomment these two lines to switch to the old Keras 2.0 Engine
 # Make sure you have tf_keras installed: $ pip install tf-keras~=2.16
 
-os.environ["TF_USE_LEGACY_KERAS"]="1"
-import tf_keras as keras
+# os.environ["TF_USE_LEGACY_KERAS"]="1"
+# import tf_keras as keras
 
 
 class DataGenerator(keras.utils.Sequence):

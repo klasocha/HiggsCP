@@ -25,7 +25,7 @@ def draw(args):
     if not os.path.exists(output_path):
         os.makedirs(output_path)
     filtered = "unfiltered" if not args.USE_FILTERED_DATA else "filtered"
-    filename = f"soft_c012s_delt_argmax_rhorho_Variant-All_nc_{num_classes}_" + \
+    filename = f"soft_c012s_delt_argmax_rhorho_{args.FEAT}_nc_{num_classes}_" + \
         f"{filtered}.{args.FORMAT}"
     output_path = os.path.join(output_path, filename)
 
