@@ -11,6 +11,7 @@
 #SBATCH --error="results/error-%A_%a.err"
 
 cd $SLURM_SUBMIT_DIR
-python main.py --action "download_and_preprocess" --input "data" --features Variant-1.1 --num_classes "51" --hits_c012s "hits_c2s"
-python main.py --action "train" --input "data" --num_classes "51" --epochs "120" --training_method "soft_c012s" --model_location "51_classes_c2" --hits_c012s "hits_c2s"
-python main.py --action "predict_test" --input "data" --num_classes "51" --training_method "soft_c012s" --model_location "51_classes_c2" --training_method "soft_c012s" --dataset "test" --use_filtered_data
+module load python/3.11.3-gcccore-12.3.0
+python3.11 main.py --action "download_and_preprocess" --input "data" --features Variant-1.1 --num_classes "51" --hits_c012s "hits_c2s"
+python3.11 main.py --action "train" --input "data" --num_classes "51" --epochs "120" --training_method "soft_c012s" --model_location "51_classes_c2" --hits_c012s "hits_c2s"
+python3.11 main.py --action "predict_test" --input "data" --num_classes "51" --training_method "soft_c012s" --model_location "51_classes_c2" --training_method "soft_c012s" --dataset "test" --use_filtered_data
