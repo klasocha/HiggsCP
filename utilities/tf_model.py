@@ -4,17 +4,18 @@ as well as the Keras callback class for utilising all the evaluation methods
 available in evaluation_utils.py """
 
 import tensorflow as tf, numpy as np
+from tensorflow import keras as keras
 import pickle, os, sys, json, pickle, math, shutil
-from .evaluation_utils import compute_accuracy_and_mean, compute_loss, calculate_deltas_unsigned
+from .evaluation_utils import compute_accuracy_and_mean, compute_loss
 
 # Uncomment these two lines to switch to the old Keras 2.0 Engine
 # Make sure you have tf_keras installed: $ pip install tf-keras~=2.16
 
-# os.environ["TF_USE_LEGACY_KERAS"]="1"
-# import tf_keras as keras
+os.environ["TF_USE_LEGACY_KERAS"]="1"
+import tf_keras as keras
 
 
-class DataGenerator(tf.keras.utils.Sequence):
+class DataGenerator(keras.utils.Sequence):
     """ Generates data for Keras models """
     def __init__(self, batch_size, dataset, configuration):
         super().__init__()
@@ -47,7 +48,7 @@ class DataGenerator(tf.keras.utils.Sequence):
         return x, labels
     
 
-class MonitoringUtils(tf.keras.callbacks.Callback):
+class MonitoringUtils(keras.callbacks.Callback):
     """ Callback for monitoring the model performance """
     def __init__(self, train_data, val_data, batch_size, n_epochs, delta_max_tolerance, 
                  output_location):
@@ -157,7 +158,7 @@ def regr_argmaxs_loss(y_true, y_pred):
     return tf.reduce_mean(1 - tf.math.cos(y_true - y_pred))
 
 
-class NeuralNetwork(tf.keras.Model):
+class NeuralNetwork(keras.Model):
     """ Configurable Neural Network class """
     def __init__(self, configuration, n_features, n_classes, n_layers, n_units_per_layer, input_noise_rate, 
                  dropout_rate, opt, **kwargs):
@@ -177,18 +178,18 @@ class NeuralNetwork(tf.keras.Model):
 
         # Computational layers
         if self.input_noise_rate > 0:
-            self.input_noise_layer = tf.keras.layers.GaussianNoise(self.input_noise_rate)
+            self.input_noise_layer = keras.layers.GaussianNoise(self.input_noise_rate)
         self.dense_layers, self.batch_norm_layers = [], []
         self.activation_layers, self.dropout_layers = [], []
         for i in range(self.n_layers):
-            self.dense_layers.append(tf.keras.layers.Dense(
+            self.dense_layers.append(keras.layers.Dense(
                 units=self.n_units_per_layer, name=f"dense_{i}", use_bias=False))
-            self.batch_norm_layers.append(tf.keras.layers.BatchNormalization(name=f"batch_norm_{i}"))
-            self.activation_layers.append(tf.keras.layers.ReLU(name=f"relu_{i}"))
-            self.dropout_layers.append(tf.keras.layers.Dropout(rate=self.dropout_rate))
-        self.linear_layer = tf.keras.layers.Dense(units=self.n_classes, use_bias=False, name="linear")
+            self.batch_norm_layers.append(keras.layers.BatchNormalization(name=f"batch_norm_{i}"))
+            self.activation_layers.append(keras.layers.ReLU(name=f"relu_{i}"))
+            self.dropout_layers.append(keras.layers.Dropout(rate=self.dropout_rate))
+        self.linear_layer = keras.layers.Dense(units=self.n_classes, use_bias=False, name="linear")
         if self.configuration in ["soft_weights", "soft_argmaxs", "soft_c012s"]:
-            self.softmax_layer = tf.keras.layers.Softmax()
+            self.softmax_layer = keras.layers.Softmax()
 
     def call(self, x):
         """ Pass tensors forward """
@@ -213,11 +214,11 @@ class NeuralNetwork(tf.keras.Model):
 
     def build(self, input_shapes=None):
         """ Build the model """
-        self.call(tf.keras.layers.Input(shape=(self.n_features,)))
+        self.call(keras.layers.Input(shape=(self.n_features,)))
         
     def train(self, data, n_epochs, batch_size, delta_max_tolerance, output_location,
               continue_training=False):
-        """ Train the model by calling tf.keras.Model.fit() """
+        """ Train the model by calling keras.Model.fit() """
 
         # Preparing the data generator (training and validation)
         train_data_generator = DataGenerator(
@@ -236,7 +237,7 @@ class NeuralNetwork(tf.keras.Model):
         # Preparing the callback for saving checkpoints (weights)
         output_location = os.path.join(
             output_location, os.path.normpath("model_state/model_epoch_{epoch:02d}.weights.h5"))
-        cp_callback = tf.keras.callbacks.ModelCheckpoint(
+        cp_callback = keras.callbacks.ModelCheckpoint(
             filepath=output_location,
             save_weights_only=True)
 
@@ -326,20 +327,20 @@ def run(args):
 
     # Configuring the optimizer and loss function
     opt = {
-        "GradientDescentOptimizer": tf.keras.optimizers.SGD, 
-        "AdadeltaOptimizer": tf.keras.optimizers.Adadelta, 
-        "AdagradOptimizer": tf.keras.optimizers.Adagrad,
+        "GradientDescentOptimizer": keras.optimizers.SGD, 
+        "AdadeltaOptimizer": keras.optimizers.Adadelta, 
+        "AdagradOptimizer": keras.optimizers.Adagrad,
         "ProximalAdagradOptimizer": tf.compat.v1.train.ProximalAdagradOptimizer, 
-        "AdamOptimizer": tf.keras.optimizers.Adam,
-        "FtrlOptimizer": tf.keras.optimizers.Ftrl,
-        "RMSPropOptimizer": tf.keras.optimizers.RMSprop,
+        "AdamOptimizer": keras.optimizers.Adam,
+        "FtrlOptimizer": keras.optimizers.Ftrl,
+        "RMSPropOptimizer": keras.optimizers.RMSprop,
         "ProximalGradientDescentOptimizer": tf.compat.v1.train.ProximalGradientDescentOptimizer
     }[args.OPT](learning_rate=0.001)
 
     if args.TRAINING_METHOD in ["soft_weights", "soft_argmaxs", "soft_c012s"]:
-        loss = tf.keras.losses.CategoricalCrossentropy(from_logits=False)
+        loss = keras.losses.CategoricalCrossentropy(from_logits=False)
     elif args.TRAINING_METHOD  in ["regr_c012s", "regr_weights"]:
-        loss = tf.keras.losses.MeanSquaredError()
+        loss = keras.losses.MeanSquaredError()
     elif args.TRAINING_METHOD  == "regr_argmaxs":
         loss = regr_argmaxs_loss
     else:

@@ -33,7 +33,6 @@ def calculate_deltas_signed_pi(expected, actual):
     deltas = actual - expected
     deltas -= np.pi * (deltas > np.pi)
     deltas += np.pi * (deltas <= -np.pi)
-
     return deltas
 
 

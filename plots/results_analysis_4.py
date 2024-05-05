@@ -23,12 +23,12 @@ def draw(args):
     output_path = os.path.join(os.path.normpath(args.OUT), "results_analysis_4")
     if not os.path.exists(output_path):
         os.makedirs(output_path)
+    filtered = "unfiltered" if not args.USE_FILTERED_DATA else "filtered"
     filename = f"regr_c012s_delt_argmax_rhorho_Variant-All_nc_{num_classes}_" + \
         f"{filtered}.{args.FORMAT}"
     output_path = os.path.join(output_path, filename)
 
     # Loading the coefficients
-    filtered = "unfiltered" if not args.USE_FILTERED_DATA else "filtered"
     dataset = filtered + '_' + args.DATASET
     calc_c012s = read_np(os.path.join(os.path.normpath(args.IN), f"{dataset}_calc.npy"))
     preds_c012s = read_np(os.path.join(os.path.normpath(args.IN), f"{dataset}_preds.npy"))

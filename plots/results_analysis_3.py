@@ -9,15 +9,19 @@ from utilities.data_utils import read_np
 def draw(args):
     # Preparing the output directory
     num_classes = args.NUM_CLASSES
-    output_path = os.path.join(os.path.normpath(args.OUT), "results_analysis_3")
+    output_path = os.path.join(os.path.normpath(args.OUT), "results_analysis_3",
+                               args.TRAINING_METHOD, args.DATASET)
     if not os.path.exists(output_path):
         os.makedirs(output_path)
-    filename = f"soft_argmaxs_delt_rhorho_Variant-All_nc_{num_classes}.{args.FORMAT}"
+    filtered = "unfiltered" if not args.USE_FILTERED_DATA else "filtered"
+    filename = f"soft_argmaxs_delt_rhorho_Variant-All_nc_{num_classes}_" + \
+        f"{filtered}.{args.FORMAT}"
     output_path = os.path.join(output_path, filename)
 
     # Loading data
-    calc_hits_argmaxs = read_np(os.path.join(os.path.normpath(args.IN), 'valid_calc.npy'))
-    preds_hits_argmaxs = read_np(os.path.join(os.path.normpath(args.IN), 'valid_preds.npy'))
+    dataset = filtered + '_' + args.DATASET
+    calc_hits_argmaxs = read_np(os.path.join(os.path.normpath(args.IN), f"{dataset}_valid_calc.npy"))
+    preds_hits_argmaxs = read_np(os.path.join(os.path.normpath(args.IN), f"{dataset}_valid_preds.npy"))
 
     # Computing the needed values
     data_len = calc_hits_argmaxs.shape[0]
@@ -44,7 +48,6 @@ def draw(args):
     plt.hist(delt_argmaxs, histtype='step', bins=num_classes, color = 'black')
     plt.xlabel(r'$\Delta_{class}$ [idx]')
     plt.gca()
- 
     table_vals=[[r'Classification: $\alpha^{CP}_{max}$'],
                 [" "],
                 [r"mean = {:0.3f}$\pm$ {:1.3f} [idx]".format(mean, meanerr)],
@@ -53,16 +56,13 @@ def draw(args):
                 [r"mean = {:0.3f}$\pm$ {:1.3f} [rad]".format(meanrad, meanerrrad)],
                 ["std = {:1.3f} [rad]".format(stdrad)]
                 ]
-
     table = plt.table(cellText=table_vals,
                     colWidths = [0.40],
                     cellLoc="left",
                     loc='upper right')
     table.set_fontsize(14)
-
     for _, cell in table.get_celld().items():
         cell.set_linewidth(0)
-
     plt.tight_layout()
     
     # Saving the plot
