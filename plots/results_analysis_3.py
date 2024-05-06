@@ -10,7 +10,7 @@ def draw(args):
     # Preparing the output directory
     num_classes = args.NUM_CLASSES
     output_path = os.path.join(os.path.normpath(args.OUT), "results_analysis_3",
-                               args.TRAINING_METHOD, args.DATASET)
+                              args.DATASET)
     if not os.path.exists(output_path):
         os.makedirs(output_path)
     filtered = "unfiltered" if not args.USE_FILTERED_DATA else "filtered"
@@ -20,8 +20,8 @@ def draw(args):
 
     # Loading data
     dataset = filtered + '_' + args.DATASET
-    calc_hits_argmaxs = read_np(os.path.join(os.path.normpath(args.IN), f"{dataset}_valid_calc.npy"))
-    preds_hits_argmaxs = read_np(os.path.join(os.path.normpath(args.IN), f"{dataset}_valid_preds.npy"))
+    calc_hits_argmaxs = read_np(os.path.join(os.path.normpath(args.IN), f"{dataset}_calc.npy"))
+    preds_hits_argmaxs = read_np(os.path.join(os.path.normpath(args.IN), f"{dataset}_preds.npy"))
 
     # Computing the needed values
     data_len = calc_hits_argmaxs.shape[0]
