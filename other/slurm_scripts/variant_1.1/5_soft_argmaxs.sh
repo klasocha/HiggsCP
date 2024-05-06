@@ -16,13 +16,13 @@ source .venv/bin/activate
 python main.py --action "train" --input "data" --num_classes "21" --epochs "120" --training_method "soft_argmaxs" --model_location "21_classes_variant_1.1"
 
 python main.py --action "predict_test" --input "data" --num_classes "21" --training_method "soft_argmaxs" --model_location "21_classes_variant_1.1" --use_filtered_data
-python main.py --action "plot" --input "results/soft_argmaxs/21_classes_variant_1.1/predictions" --output "plots/figures" --format "png" --option "RESULTS_ANALYSIS_3" --features Variant-1.1 --dataset "test" --num_classes "21" --use_filtered_data
-python main.py --action "plot" --input "results/soft_argmaxs/21_classes_variant_1.1/predictions" --output "plots/figures" --format "pdf" --option "RESULTS_ANALYSIS_3" --features Variant-1.1 --dataset "test" --num_classes "21" --use_filtered_data
-python main.py --action "plot" --input "results/soft_argmaxs/21_classes_variant_1.1/predictions" --output "plots/figures" --format "eps" --option "RESULTS_ANALYSIS_3" --features Variant-1.1 --dataset "test" --num_classes "21" --use_filtered_data
+python main.py --action "plot" --input "results/soft_argmaxs/21_classes_variant_1.1/predictions" --output "plots/figures" --format "png" --option "RESULTS_ANALYSIS_3" --features Variant-1.1 --training_method "soft_argmaxs" --dataset "test" --num_classes "21" --use_filtered_data
+python main.py --action "plot" --input "results/soft_argmaxs/21_classes_variant_1.1/predictions" --output "plots/figures" --format "pdf" --option "RESULTS_ANALYSIS_3" --features Variant-1.1 --training_method "soft_argmaxs" --dataset "test" --num_classes "21" --use_filtered_data
+python main.py --action "plot" --input "results/soft_argmaxs/21_classes_variant_1.1/predictions" --output "plots/figures" --format "eps" --option "RESULTS_ANALYSIS_3" --features Variant-1.1 --training_method "soft_argmaxs" --dataset "test" --num_classes "21" --use_filtered_data
 
 python main.py --action "predict_train_and_valid" --input "data" --num_classes "21" --training_method "soft_argmaxs" --model_location "21_classes_variant_1.1" --use_filtered_data
-python main.py --action "plot" --input "results/soft_argmaxs/21_classes_variant_1.1/predictions" --output "plots/figures" --format "png" --option "RESULTS_ANALYSIS_3" --features Variant-1.1 --dataset "valid" --num_classes "21" --use_filtered_data
-python main.py --action "plot" --input "results/soft_argmaxs/21_classes_variant_1.1/predictions" --output "plots/figures" --format "pdf" --option "RESULTS_ANALYSIS_3" --features Variant-1.1 --dataset "valid" --num_classes "21" --use_filtered_data
-python main.py --action "plot" --input "results/soft_argmaxs/21_classes_variant_1.1/predictions" --output "plots/figures" --format "eps" --option "RESULTS_ANALYSIS_3" --features Variant-1.1 --dataset "valid" --num_classes "21" --use_filtered_data
+python main.py --action "plot" --input "results/soft_argmaxs/21_classes_variant_1.1/predictions" --output "plots/figures" --format "png" --option "RESULTS_ANALYSIS_3" --features Variant-1.1 --training_method "soft_argmaxs" --dataset "valid" --num_classes "21" --use_filtered_data
+python main.py --action "plot" --input "results/soft_argmaxs/21_classes_variant_1.1/predictions" --output "plots/figures" --format "pdf" --option "RESULTS_ANALYSIS_3" --features Variant-1.1 --training_method "soft_argmaxs" --dataset "valid" --num_classes "21" --use_filtered_data
+python main.py --action "plot" --input "results/soft_argmaxs/21_classes_variant_1.1/predictions" --output "plots/figures" --format "eps" --option "RESULTS_ANALYSIS_3" --features Variant-1.1 --training_method "soft_argmaxs" --dataset "valid" --num_classes "21" --use_filtered_data
 
 deactivate

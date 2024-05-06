@@ -20,7 +20,8 @@ def calc_weights(num_classes, coeffs):
 def draw(args):
     # Preparing the output directory
     num_classes = int(args.NUM_CLASSES)
-    output_path = os.path.join(os.path.normpath(args.OUT), "results_analysis_4")
+    output_path = os.path.join(os.path.normpath(args.OUT), "results_analysis_4",
+                               args.TRAINING_METHOD, args.DATASET)
     if not os.path.exists(output_path):
         os.makedirs(output_path)
     filtered = "unfiltered" if not args.USE_FILTERED_DATA else "filtered"

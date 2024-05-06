@@ -10,7 +10,7 @@ def draw(args):
     # Preparing the output directory
     num_classes = args.NUM_CLASSES
     output_path = os.path.join(os.path.normpath(args.OUT), "results_analysis_3",
-                              args.DATASET)
+                              args.TRAINING_METHOD, args.DATASET)
     if not os.path.exists(output_path):
         os.makedirs(output_path)
     filtered = "unfiltered" if not args.USE_FILTERED_DATA else "filtered"
