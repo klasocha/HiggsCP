@@ -16,5 +16,7 @@ source .venv/bin/activate
 python main.py --action "train" --input "data" --num_classes "51" --epochs "120" --training_method "regr_argmaxs" --model_location "51_classes_variant_1.1"
 python main.py --action "predict_test" --input "data" --num_classes "51" --training_method "regr_argmaxs" --model_location "51_classes_variant_1.1" --use_filtered_data
 python main.py --action "plot" --input "results/regr_argmaxs/51_classes_variant_1.1/predictions" --output "plots/figures" --format "png" --option "RESULTS_ANALYSIS_5" --num_classes "51" --training_method "regr_argmaxs" --features Variant-1.1 --dataset "test" --use_filtered_data
+python main.py --action "plot" --input "results/regr_argmaxs/51_classes_variant_1.1/predictions" --output "plots/figures" --format "pdf" --option "RESULTS_ANALYSIS_5" --num_classes "51" --training_method "regr_argmaxs" --features Variant-1.1 --dataset "test" --use_filtered_data
+python main.py --action "plot" --input "results/regr_argmaxs/51_classes_variant_1.1/predictions" --output "plots/figures" --format "eps" --option "RESULTS_ANALYSIS_5" --num_classes "51" --training_method "regr_argmaxs" --features Variant-1.1 --dataset "test" --use_filtered_data
 
 deactivate
