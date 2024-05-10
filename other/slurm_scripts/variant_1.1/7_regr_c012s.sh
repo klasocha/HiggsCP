@@ -15,35 +15,41 @@ source .venv/bin/activate
 
 # Training    	
 python main.py --action "train" --input "data" --num_classes "21" --epochs "25" \
---training_method "regr_c012s" --model_location "21_classes_variant_1.1"
+--training_method "regr_c012s" --model_location "21_classes_variant_1.1" \
+--features Variant-1.1
 python main.py --action "train" --input "data" --num_classes "51" --epochs "25" \
---training_method "regr_c012s" --model_location "51_classes_variant_1.1"
+--training_method "regr_c012s" --model_location "51_classes_variant_1.1" \
+--features Variant-1.1
 
 # Prediction (test)
 python main.py --action "predict_test" --input "data" --num_classes "21" \
 --training_method "regr_c012s" --model_location "21_classes_variant_1.1" \
---use_filtered_data
+--features Variant-1.1 --use_filtered_data
 python main.py --action "predict_test" --input "data" --num_classes "21" \
---training_method "regr_c012s" --model_location "21_classes_variant_1.1"
+--training_method "regr_c012s" --model_location "21_classes_variant_1.1" \
+--features Variant-1.1
 python main.py --action "predict_test" --input "data" --num_classes "51" \
 --training_method "regr_c012s" --model_location "51_classes_variant_1.1" \
---use_filtered_data
+--features Variant-1.1 --use_filtered_data
 python main.py --action "predict_test" --input "data" --num_classes "51" \
---training_method "regr_c012s" --model_location "51_classes_variant_1.1"
+--training_method "regr_c012s" --model_location "51_classes_variant_1.1" \
+--features Variant-1.1
 
 # Prediction (training and validation)
 python main.py --action "predict_train_and_valid" --input "data" --num_classes "21" \
 --training_method "regr_c012s" --model_location "21_classes_variant_1.1" \
---use_filtered_data
+--features Variant-1.1 --use_filtered_data
 python main.py --action "predict_train_and_valid" --input "data" --num_classes "21" \
---training_method "regr_c012s" --model_location "21_classes_variant_1.1"
+--training_method "regr_c012s" --model_location "21_classes_variant_1.1" \
+--features Variant-1.1
 python main.py --action "predict_train_and_valid" --input "data" --num_classes "51" \
 --training_method "regr_c012s" --model_location "51_classes_variant_1.1" \
---use_filtered_data
+--features Variant-1.1 --use_filtered_data
 python main.py --action "predict_train_and_valid" --input "data" --num_classes "51" \
---training_method "regr_c012s" --model_location "51_classes_variant_1.1"
+--training_method "regr_c012s" --model_location "51_classes_variant_1.1" \
+--features Variant-1.1
 
-# Plots (51 classes)
+# Plots (21 classes)
 python main.py --action "plot" --input "results/regr_c012s/21_classes_variant_1.1/predictions" \
 --output "plots/figures" --option "RESULTS_ANALYSIS_4" --num_classes "21" \
 --training_method "regr_c012s" --features Variant-1.1 --dataset "test" --use_filtered_data

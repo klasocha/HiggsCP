@@ -1,6 +1,7 @@
 import argparse, os
 from utilities.download_original_data import download as download_original_data
 from utilities.tf_model import run as train_model
+from utilities.tf_model_keras_v2 import run as train_model_keras_v2
 from utilities.prepare_data import prepare_data
 from plots.plot_phistar_distribution import draw as phistar_dist 
 from plots.plot_popts_rhorho import draw as c012s_weight
@@ -134,6 +135,7 @@ parser.add_argument("--datasets", dest="DATASETS", default=2, type=int, help="nu
 parser.add_argument("--action", dest="ACTION", choices=["download_and_prepare_original", "download_and_preprocess",  
                     "train", "continue_training", "predict_train_and_valid", "plot", "test", "predict_test"], 
                     default="train")
+parser.add_argument("--keras", dest="KERAS", choices=["v2", "v3"], default="v3", help="the version of the Keras engine")
 
 # Parsing the command-line arguments 
 args = parser.parse_args()
@@ -153,8 +155,11 @@ if args.ACTION in ["train", "continue_training", "predict_train_and_valid", "pre
     # 2. python main.py --action "continue_training" --input "data" --num_classes "11" --epochs "3" --training_method "soft_weights" --model_location "model_1"
     # 3. python main.py --action "predict_train_and_valid" --input "data" --num_classes "11" --model_location "model_1"
     # 4. python main.py --action "predict_test" --input "data" --num_classes "11" --model_location "model_1"
-    train_model(args)
-
+    if args.KERAS == "v3":
+        train_model(args)
+    elif args.KERAS == "v2":
+        train_model_keras_v2(args)
+        
 if args.ACTION == "plot":
     # Instructions are in the modules located in plots/
     plot_types[args.OPTION](args)

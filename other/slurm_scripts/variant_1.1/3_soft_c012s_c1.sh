@@ -16,35 +16,39 @@ source .venv/bin/activate
 # Training
 python main.py --action "train" --input "data" --num_classes "21" --epochs "25" \
 --training_method "soft_c012s" --model_location "variant_1.1/21_classes_c1" \
---hits_c012s "hits_c1s"
+--hits_c012s "hits_c1s" --features Variant-1.1
 python main.py --action "train" --input "data" --num_classes "51" --epochs "25" \
 --training_method "soft_c012s" --model_location "variant_1.1/51_classes_c1" \
---hits_c012s "hits_c1s"
+--hits_c012s "hits_c1s" --features Variant-1.1
 
 # Prediction (test)
 python main.py --action "predict_test" --input "data" --num_classes "21" \
 --training_method "soft_c012s" --model_location "variant_1.1/21_classes_c1" \
---use_filtered_data
+--features Variant-1.1 --use_filtered_data
 python main.py --action "predict_test" --input "data" --num_classes "21" \
---training_method "soft_c012s" --model_location "variant_1.1/21_classes_c1"
+--training_method "soft_c012s" --model_location "variant_1.1/21_classes_c1" \
+--features Variant-1.1
 
 python main.py --action "predict_test" --input "data" --num_classes "51" \
 --training_method "soft_c012s" --model_location "variant_1.1/51_classes_c1" \
---use_filtered_data
+--features Variant-1.1 --use_filtered_data
 python main.py --action "predict_test" --input "data" --num_classes "51" \
---training_method "soft_c012s" --model_location "variant_1.1/51_classes_c1"
+--training_method "soft_c012s" --model_location "variant_1.1/51_classes_c1" \
+--features Variant-1.1
 
 # Prediction (training and validation)
 python main.py --action "predict_train_and_valid" --input "data" --num_classes "21" \
 --training_method "soft_c012s" --model_location "variant_1.1/21_classes_c1" \
---use_filtered_data
+--features Variant-1.1 --use_filtered_data
 python main.py --action "predict_train_and_valid" --input "data" --num_classes "21" \
---training_method "soft_c012s" --model_location "variant_1.1/21_classes_c1"
+--training_method "soft_c012s" --model_location "variant_1.1/21_classes_c1" \
+--features Variant-1.1
 
 python main.py --action "predict_train_and_valid" --input "data" --num_classes "51" \
 --training_method "soft_c012s" --model_location "variant_1.1/51_classes_c1" \
---use_filtered_data
+--features Variant-1.1 --use_filtered_data
 python main.py --action "predict_train_and_valid" --input "data" --num_classes "51" \
---training_method "soft_c012s" --model_location "variant_1.1/51_classes_c1"
+--training_method "soft_c012s" --model_location "variant_1.1/51_classes_c1" \
+--features Variant-1.1
 
 deactivate
