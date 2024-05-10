@@ -309,7 +309,7 @@ def run(args):
     # Loading data
     data_points_path = os.path.join(
         args.IN, 
-        "event_datasets_{num_classes}_{args.HITS_C012s}_{args.FEAT}.obj")
+        f"event_datasets_{args.NUM_CLASSES}_{args.HITS_C012s}_{args.FEAT}.obj")
     with open(data_points_path, 'rb') as f:
         data_points = pickle.load(f)
     n_features = data_points.train.x.shape[1]
