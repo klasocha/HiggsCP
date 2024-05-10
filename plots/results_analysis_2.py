@@ -26,7 +26,7 @@ def draw(args):
         os.makedirs(output_path)
     filtered = "unfiltered" if not args.USE_FILTERED_DATA else "filtered"
     filename = f"soft_c012s_delt_argmax_rhorho_{args.FEAT}_nc_{num_classes}_" + \
-        f"{filtered}.{args.FORMAT}"
+        f"{filtered}"
     output_path = os.path.join(output_path, filename)
 
     # Loading the coefficients
@@ -122,7 +122,9 @@ def draw(args):
     plt.tight_layout()
 
     # Saving the plot
-    plt.savefig(output_path)
+    plt.savefig(f"{output_path}.pdf")
+    plt.savefig(f"{output_path}.png")
+    plt.savefig(f"{output_path}.eps")
     print(f"The plot has been saved as {output_path}")
 
     plt.clf()
