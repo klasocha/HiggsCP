@@ -14,10 +14,10 @@ module load python/3.11.3-gcccore-12.3.0
 source .venv/bin/activate
 
 # Training
-python main.py --action "train" --input "data" --num_classes "21" --epochs "25" \
+python main.py --action "train" --input "data" --num_classes "21" --epochs $EPOCHS \
 --training_method "soft_c012s" --model_location "variant_all/21_classes_c1" \
 --hits_c012s "hits_c1s" --features Variant-All
-python main.py --action "train" --input "data" --num_classes "51" --epochs "25" \
+python main.py --action "train" --input "data" --num_classes "51" --epochs $EPOCHS \
 --training_method "soft_c012s" --model_location "variant_all/51_classes_c1" \
 --hits_c012s "hits_c1s" --features Variant-All
 

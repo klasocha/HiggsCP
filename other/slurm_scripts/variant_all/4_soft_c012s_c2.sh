@@ -15,10 +15,10 @@ source .venv/bin/activate
 
 
 # Training
-python main.py --action "train" --input "data" --num_classes "21" --epochs "25" \
+python main.py --action "train" --input "data" --num_classes "21" --epochs $EPOCHS \
 --training_method "soft_c012s" --model_location "variant_all/21_classes_c2" \
 --hits_c012s "hits_c2s" --features Variant-All
-python main.py --action "train" --input "data" --num_classes "51" --epochs "25" \
+python main.py --action "train" --input "data" --num_classes "51" --epochs $EPOCHS \
 --training_method "soft_c012s" --model_location "variant_all/51_classes_c2" \
 --hits_c012s "hits_c2s" --features Variant-All
 
