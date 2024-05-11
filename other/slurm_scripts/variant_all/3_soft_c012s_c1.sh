@@ -24,31 +24,31 @@ python main.py --action "train" --input "data" --num_classes "51" --epochs "25" 
 # Prediction (test)
 python main.py --action "predict_test" --input "data" --num_classes "21" \
 --training_method "soft_c012s" --model_location "variant_all/21_classes_c1" \
---features Variant-All --use_filtered_data
+--features Variant-All --hits_c012s "hits_c1s" --use_filtered_data
 python main.py --action "predict_test" --input "data" --num_classes "21" \
 --training_method "soft_c012s" --model_location "variant_all/21_classes_c1" \
---features Variant-All
+--features Variant-All --hits_c012s "hits_c1s"
 
 python main.py --action "predict_test" --input "data" --num_classes "51" \
 --training_method "soft_c012s" --model_location "variant_all/51_classes_c1" \
---features Variant-All --use_filtered_data
+--features Variant-All --hits_c012s "hits_c1s" --use_filtered_data
 python main.py --action "predict_test" --input "data" --num_classes "51" \
 --training_method "soft_c012s" --model_location "variant_all/51_classes_c1" \
---features Variant-All
+--features Variant-All --hits_c012s "hits_c1s"
 
 # Prediction (training and validation)
 python main.py --action "predict_train_and_valid" --input "data" --num_classes "21" \
 --training_method "soft_c012s" --model_location "variant_all/21_classes_c1" \
---features Variant-All --use_filtered_data
+--features Variant-All --hits_c012s "hits_c1s" --use_filtered_data
 python main.py --action "predict_train_and_valid" --input "data" --num_classes "21" \
 --training_method "soft_c012s" --model_location "variant_all/21_classes_c1" \
---features Variant-All
+--features Variant-All --hits_c012s "hits_c1s"
 
 python main.py --action "predict_train_and_valid" --input "data" --num_classes "51" \
 --training_method "soft_c012s" --model_location "variant_all/51_classes_c1" \
---features Variant-All --use_filtered_data
+--features Variant-All --hits_c012s "hits_c1s" --use_filtered_data
 python main.py --action "predict_train_and_valid" --input "data" --num_classes "51" \
 --training_method "soft_c012s" --model_location "variant_all/51_classes_c1" \
---features Variant-All
+--features Variant-All --hits_c012s "hits_c1s"
 
 deactivate
