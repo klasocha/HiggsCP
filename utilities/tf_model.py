@@ -7,7 +7,7 @@ import tensorflow as tf, numpy as np
 from tensorflow import keras as keras
 import pickle, os, sys, json, pickle, math, shutil
 from .evaluation_utils import compute_accuracy_and_mean, compute_loss
-from .data_utils import read_np
+
 
 class DataGenerator(keras.utils.Sequence):
     """ Generates data for Keras models """
@@ -407,17 +407,3 @@ def run(args):
         test_calc_path = os.path.join(pred_path, f"{filtered}_test_calc.npy")
         save_file(test_calc_path, test_calc,
                   f"True values for testing data have been saved in {test_calc_path}")
-        
-    if action == "predict_unweighted":
-        # Loading the unweighted events
-        unweighted_events_path = os.path.join(
-            args.IN, 
-            f"unwt_multiclass_{args.NUM_CLASSES}.npy") 
-        unwt_events = read_np(unweighted_events_path)
-        # Choosing the events belonging to a specific hypothesis
-        hyp = args.HYPOTHESIS
-        print(unwt_events.shape)
-        print(unwt_events[0:5])
-        unwt_events = unwt_events[:, hyp]
-        print(unwt_events.shape[0:5])
-        # Filtering the events based(0/1)
