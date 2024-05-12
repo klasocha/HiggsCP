@@ -30,15 +30,11 @@ def test_on_unwt_events(args):
     n_classes = int(args.NUM_CLASSES)
     hypothesis = int(args.HYPOTHESIS)
 
-    # Loading and normalising the original weights
-    W = read_np(os.path.join(args.IN, f"weights_multiclass_{args.NUM_CLASSES}.npy"))
-    W = W / tf.tile(tf.reshape(tf.reduce_sum(W, axis=1), (-1, 1)), (1, W.shape[-1]))
-
     # Loading and standardising the input data (features)
     X_path = os.path.join(args.IN, f"rhorho_event_{args.FEAT}.obj")
     with open(X_path, 'rb') as f:
         X = pickle.load(f)
-    X = X.cols[:, :-1]
+    X = X.cols[:, :-1] 
     mean = X.mean(0)
     std = X.std(0)
     X = (X - mean) / std
@@ -47,11 +43,10 @@ def test_on_unwt_events(args):
     unwt_path = os.path.join(args.IN, f"unwt_multiclass_{args.NUM_CLASSES}.npy") 
     unwt = read_np(unwt_path)
 
-    # Filtering the weights and features according to the chosen hypothesis
+    # Filtering the features according to the chosen hypothesis
     # defining the unweighted events mask
     unwt = unwt[:, hypothesis]
     X = X[unwt == 1.0]
-    W = W[unwt == 1.0]
 
     # Loading a trained model and making predictions
     model = NeuralNetwork(
