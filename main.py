@@ -149,21 +149,21 @@ if args.ACTION == "download_and_prepare_original":
     prepare_rhorho(args)
 
 if args.ACTION == "download_and_preprocess":
-    # $ python main.py --action "download_and_preprocess" --input "data" --features Variant-All \
+    # $ python main.py --action "download_and_preprocess" --input "data" --features Variant-All
     # --num_classes "11"
     prepare_data(args)
 
 if args.ACTION in ["train", "continue_training", "predict_train_and_valid", "predict_test"]:
-    # 1. python main.py --action "train" --input "data" --num_classes "11" --epochs "2" \
+    # 1. python main.py --action "train" --input "data" --num_classes "11" --epochs "2"
     # --training_method "soft_weights" --model_location "model_1"
     
-    # 2. python main.py --action "continue_training" --input "data" --num_classes "11" \
+    # 2. python main.py --action "continue_training" --input "data" --num_classes "11"
     # --epochs "3" --training_method "soft_weights" --model_location "model_1"
     
-    # 3. python main.py --action "predict_train_and_valid" --input "data" --num_classes "11" \
+    # 3. python main.py --action "predict_train_and_valid" --input "data" --num_classes "11"
     # --model_location "model_1"
     
-    # 4. python main.py --action "predict_test" --input "data" --num_classes "11" \
+    # 4. python main.py --action "predict_test" --input "data" --num_classes "11"
     # --model_location "model_1"
     if args.KERAS == "v3":
         train_model(args)
@@ -175,7 +175,7 @@ if args.ACTION == "plot":
     plot_types[args.OPTION](args)
 
 if args.ACTION == "test_parsed_data":
-    # $ python main.py --action "test_parsed_data" --source-1 "data" --source-2 \
+    # $ python main.py --action "test_parsed_data" --source-1 "data" --source-2
     # "data_original" --input "data_original"
     print(""" 
     This part was created to test 
@@ -187,12 +187,13 @@ if args.ACTION == "test_parsed_data":
     show_example_records(args)
 
 if args.ACTION == "test_model_on_unwt_events":
-    # $ python main.py --action "test_model_on_unwt_events" --input "data" \
-    # --num_classes "21" --hypothesis "0" --training_method "soft_weights" \
-    # --model_location "model_1"
+    # $ python main.py --action "test_model_on_unwt_events" --input "data" 
+    # --output "plots/figures/test_model_on_unwt_events" --num_classes "21" 
+    # --hypothesis "0" --training_method "soft_weights" --model_location "model_1" 
+    # --features "Variant-All"
     print(""" 
     This part was created to test the trained model by feeding it with
-    the unweighted events and the creating some plots showing the summed
+    the unweighted events and the creating a plot showing the summed
     distribution of the predicted weights.
     """)
     test_on_unwt_events(args)

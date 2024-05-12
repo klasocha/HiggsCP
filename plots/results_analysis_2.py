@@ -1,3 +1,6 @@
+""" This program prepares a plot showing the mean and std of the difference
+between true and predicted values for the "soft_c012s" model configuration """
+
 import os
 import matplotlib.pyplot as plt
 import numpy as np

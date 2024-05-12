@@ -1,3 +1,7 @@
+""" This program prepares a plot showing the mean and std of the difference
+between true and predicted values for "soft_weights" and "regr_weights" 
+model configurations """
+
 import os
 import numpy as np
 import matplotlib.pyplot as plt
