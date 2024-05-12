@@ -18,11 +18,11 @@ def prepare_data(args):
     
     print("\033[1mPreprocessing data...\033[0m")
     data, weights, argmaxs, perm, c012s, hits_argmaxs, hits_c012s = preprocess_data(args)
-    
+
     # Saving the RhoRhoEvent object as a pickle binary file for the later analysis 
     # of its attributes (e.g. drawing the distribution of the phistar depending on y1 and y2)
     event = RhoRhoEvent(data, args)
-    event_path = os.path.join(args.IN, f"rhorho_event_{num_classes}.obj")
+    event_path = os.path.join(args.IN, f"rhorho_event_{args.FEAT}.obj")
     with open(event_path, 'wb') as f:
         pickle.dump(event, f)
     print(f"RhoRhoEvent object has been saved in {event_path}")

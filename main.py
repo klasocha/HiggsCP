@@ -133,7 +133,8 @@ parser.add_argument("--datasets", dest="DATASETS", default=2, type=int, help="nu
 
 # Main controller
 parser.add_argument("--action", dest="ACTION", choices=["download_and_prepare_original", "download_and_preprocess",  
-                    "train", "continue_training", "predict_train_and_valid", "plot", "test", "predict_test"], 
+                    "train", "continue_training", "predict_train_and_valid", "plot", "test", "predict_test",
+                    "predict_unweighted"], 
                     default="train")
 parser.add_argument("--keras", dest="KERAS", choices=["v2", "v3"], default="v3", help="the version of the Keras engine")
 
@@ -150,7 +151,7 @@ if args.ACTION == "download_and_preprocess":
     # $ python main.py --action "download_and_preprocess" --input "data" --features Variant-All --num_classes "11"
     prepare_data(args)
 
-if args.ACTION in ["train", "continue_training", "predict_train_and_valid", "predict_test"]:
+if args.ACTION in ["train", "continue_training", "predict_train_and_valid", "predict_test", "predict_unweighted"]:
     # 1. python main.py --action "train" --input "data" --num_classes "11" --epochs "2" --training_method "soft_weights" --model_location "model_1"
     # 2. python main.py --action "continue_training" --input "data" --num_classes "11" --epochs "3" --training_method "soft_weights" --model_location "model_1"
     # 3. python main.py --action "predict_train_and_valid" --input "data" --num_classes "11" --model_location "model_1"

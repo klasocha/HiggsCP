@@ -64,7 +64,7 @@ class EventDatasets(object):
             test_ids = perm[-100000:]
 
         if not raw:
-            print("Data will be standardised.")
+            print("Data (input features) will be standardised.")
             means = data[train_ids].mean(0)
             stds = data[train_ids].std(0)
             data = (data - means) / stds
