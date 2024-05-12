@@ -13,7 +13,8 @@ from plots.results_analysis_2 import draw as results_analysis_2
 from plots.results_analysis_3 import draw as results_analysis_3
 from plots.results_analysis_4 import draw as results_analysis_4
 from plots.results_analysis_5 import draw as results_analysis_5
-from tests.test_data import test_parsed_data, show_example_records
+from tests.test_parsed_data import test_parsed_data, show_example_records
+from tests.test_model_on_unwt_events import test_on_unwt_events
 from utilities.prepare_rhorho import prepare_rhorho
 
 
@@ -133,7 +134,8 @@ parser.add_argument("--datasets", dest="DATASETS", default=2, type=int, help="nu
 
 # Main controller
 parser.add_argument("--action", dest="ACTION", choices=["download_and_prepare_original", "download_and_preprocess",  
-                    "train", "continue_training", "predict_train_and_valid", "plot", "test", "predict_test"], 
+                    "train", "continue_training", "predict_train_and_valid", "plot", "test_parsed_data", 
+                    "test_model_on_unwt_events", "predict_test"], 
                     default="train")
 parser.add_argument("--keras", dest="KERAS", choices=["v2", "v3"], default="v3", help="the version of the Keras engine")
 
@@ -147,14 +149,22 @@ if args.ACTION == "download_and_prepare_original":
     prepare_rhorho(args)
 
 if args.ACTION == "download_and_preprocess":
-    # $ python main.py --action "download_and_preprocess" --input "data" --features Variant-All --num_classes "11"
+    # $ python main.py --action "download_and_preprocess" --input "data" --features Variant-All \
+    # --num_classes "11"
     prepare_data(args)
 
 if args.ACTION in ["train", "continue_training", "predict_train_and_valid", "predict_test"]:
-    # 1. python main.py --action "train" --input "data" --num_classes "11" --epochs "2" --training_method "soft_weights" --model_location "model_1"
-    # 2. python main.py --action "continue_training" --input "data" --num_classes "11" --epochs "3" --training_method "soft_weights" --model_location "model_1"
-    # 3. python main.py --action "predict_train_and_valid" --input "data" --num_classes "11" --model_location "model_1"
-    # 4. python main.py --action "predict_test" --input "data" --num_classes "11" --model_location "model_1"
+    # 1. python main.py --action "train" --input "data" --num_classes "11" --epochs "2" \
+    # --training_method "soft_weights" --model_location "model_1"
+    
+    # 2. python main.py --action "continue_training" --input "data" --num_classes "11" \
+    # --epochs "3" --training_method "soft_weights" --model_location "model_1"
+    
+    # 3. python main.py --action "predict_train_and_valid" --input "data" --num_classes "11" \
+    # --model_location "model_1"
+    
+    # 4. python main.py --action "predict_test" --input "data" --num_classes "11" \
+    # --model_location "model_1"
     if args.KERAS == "v3":
         train_model(args)
     elif args.KERAS == "v2":
@@ -164,13 +174,25 @@ if args.ACTION == "plot":
     # Instructions are in the modules located in plots/
     plot_types[args.OPTION](args)
 
-if args.ACTION == "test":
-    # $ python main.py --action "test" --source-1 "data" --source-2 "data_original" --input "data_original"
+if args.ACTION == "test_parsed_data":
+    # $ python main.py --action "test_parsed_data" --source-1 "data" --source-2 \
+    # "data_original" --input "data_original"
     print(""" 
     This part was created to test 
         1. "prepare_utils.py", 
         2. "prepare_rhorho.py", 
-        3. "download_data_rhorho.py"
+        3. "download_data_rhorho.py".
     """)
     test_parsed_data(args)
     show_example_records(args)
+
+if args.ACTION == "test_model_on_unwt_events":
+    # $ python main.py --action "test_model_on_unwt_events" --input "data" \
+    # --num_classes "21" --hypothesis "0" --training_method "soft_weights" \
+    # --model_location "model_1"
+    print(""" 
+    This part was created to test the trained model by feeding it with
+    the unweighted events and the creating some plots showing the summed
+    distribution of the predicted weights.
+    """)
+    test_on_unwt_events(args)
