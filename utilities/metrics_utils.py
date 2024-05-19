@@ -38,7 +38,8 @@ def calculate_deltas_signed_pi(expected, actual):
 
 # by J.Kurek
 def calculate_deltas_signed_pi_topo(expected, actual):
-    """ TODO: add description """
+    """ Calculate the difference similar to the one returned by 
+    calculate_deltas_signed() but expressed in radians. """
     # Unsigned
     deltas = np.minimum(np.abs(actual - expected), 2 * np.pi - np.abs(actual - expected))
     deltas *= np.sign(np.sin(expected - actual))

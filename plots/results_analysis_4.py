@@ -37,7 +37,8 @@ def draw(args):
     calc_c012s = read_np(os.path.join(os.path.normpath(args.IN), f"{dataset}_calc.npy"))
     preds_c012s = read_np(os.path.join(os.path.normpath(args.IN), f"{dataset}_preds.npy"))
 
-    # Computing the needed values    
+    # Computing the needed values
+    # Discrete    
     kPI = np.pi
     k2PI = 2 * np.pi
     calc_w = calc_weights(num_classes, calc_c012s)
@@ -48,6 +49,10 @@ def draw(args):
     meanrad = np.mean(delt_argmax) * k2PI/num_classes
     stdrad  = np.std(delt_argmax) * k2PI/num_classes
     meanerrrad = stats.sem(delt_argmax) * k2PI/num_classes
+    # Continuous
+    difference = calc_c012s - preds_c012s
+    mean = np.mean(difference)
+    std = np.std(difference)
 
     # Preparing the plot
     plt.hist(delt_argmax_pi, histtype='step', color="black", bins=num_classes)
@@ -57,8 +62,13 @@ def draw(args):
 
     table_vals=[[r"Regression: $C_0, C_1, C_2$"],
                 [" "],
+                ["Discrete (weights classes):"],
                 [r"mean = {:0.3f} $\pm$ {:1.3f}[rad]".format(meanrad, meanerrrad)],
-                ["std = {:1.3f} [rad]".format(stdrad)]
+                ["std = {:1.3f} [rad]".format(stdrad)],
+                [" "],
+                ["Continuous (c012s values difference):"],
+                ["mean = {:0.3f}".format(mean)],
+                ["std = {:1.3f}".format(std)]
                 ]
 
     table = plt.table(cellText=table_vals,
