@@ -6,4 +6,5 @@ data_original/
 plots/figures/
 temp_results/
 results/
+experimental/figures/
 .DS_Store

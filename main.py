@@ -136,7 +136,7 @@ parser.add_argument("--datasets", dest="DATASETS", default=2, type=int, help="nu
 # Main controller
 parser.add_argument("--action", dest="ACTION", choices=["download_and_prepare_original", "download_and_preprocess",  
                     "train", "continue_training", "predict_train_and_valid", "plot", "test_parsed_data", 
-                    "test_model_on_unwt_events", "predict_test", "test_labels"], 
+                    "test_model_on_unwt_events", "predict_test", "test_labels", "experimental"], 
                     default="train")
 parser.add_argument("--keras", dest="KERAS", choices=["v2", "v3"], default="v3", help="the version of the Keras engine")
 
@@ -207,3 +207,7 @@ if args.ACTION == "test_labels":
     to train the model.
     """)
     test_labels(args)
+
+if args.ACTION == "experimental":
+    exec(open(os.path.normpath("experimental/model_c012s_v1.py")).read())
+    exec(open(os.path.normpath("experimental/model_c012s_v2.py")).read())
