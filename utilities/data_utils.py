@@ -1,5 +1,5 @@
 import numpy as np
-import random
+import os
 
 class Dataset(object):
     """ Represent a dataset with features, weights, and additional attributes.
@@ -48,7 +48,8 @@ def read_np(filename):
 
 
 class EventDatasets(object):
-    def __init__(self, event, weights, argmaxs, perm, c012s, hits_argmaxs, hits_c012s, filtered=False, raw=False, miniset=False):
+    def __init__(self, event, weights, argmaxs, perm, c012s, hits_argmaxs, 
+                 hits_c012s, args, filtered=False, raw=False, miniset=False):
         data = event.cols[:, :-1]
         filt = event.cols[:, -1]
 
@@ -68,6 +69,10 @@ class EventDatasets(object):
             means = data[train_ids].mean(0)
             stds = data[train_ids].std(0)
             data = (data - means) / stds
+            # Saving std and mean
+            std_and_means = [stds, means]
+            with open(os.path.join(args.IN, f"training_std_and_mean_{args.FEAT}.npy"), 'wb') as f:
+                np.save(f, std_and_means)
 
         if filtered:
             train_ids = train_ids[filt[train_ids] == 1]

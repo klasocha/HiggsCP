@@ -29,7 +29,7 @@ def prepare_data(args):
 
     # Saving additionally the EventDatasets object as a pickle binary file
     points = EventDatasets(event, weights, argmaxs, perm, c012s=c012s, hits_argmaxs=hits_argmaxs,  
-                           hits_c012s=hits_c012s, miniset=args.MINISET)
+                           hits_c012s=hits_c012s, args=args, miniset=args.MINISET)
     points_path = os.path.join(args.IN, 
                                f"event_datasets_{num_classes}_{args.HITS_C012s}_{args.FEAT}.obj")
     with open(points_path, 'wb') as f:
