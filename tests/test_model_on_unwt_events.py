@@ -84,10 +84,10 @@ def test_on_unwt_events(args):
     # Creating a plot showing the amplified summed distribution of Wt relative to
     # the weights of the chosen hypothesis
     hyp_vec = preds[:, hypothesis]
-    preds = preds * hyp_vec[:, np.newaxis]
+    ampl_preds = preds * hyp_vec[:, np.newaxis]
     draw_distribution(
         x=np.linspace(0, n_classes - 1, num=n_classes),
-        y=np.sum(preds, axis=0),
+        y=np.sum(ampl_preds, axis=0),
         output_path=args.OUT,
         filename=f"{hypothesis}_amplified_dist",
         title="Amplified distribution",
@@ -99,5 +99,5 @@ def test_on_unwt_events(args):
         y=preds,
         output_path=args.OUT,
         filename=f"{hypothesis}_sample_predictions",
-        title="Some sample predictions",
+        title="Event spin weight",
         multiple=True)
