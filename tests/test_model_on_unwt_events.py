@@ -14,7 +14,10 @@ def draw_distribution(x, y, title, output_path, filename, color=None, multiple=F
             plt.plot(x, y[i])
     plt.title(title)
     plt.xlabel(r"${\alpha^{CP}}$ [idx]", loc="right")
-    plt.ylabel(r"$\sum_{i=0}^N Wt_i$", rotation=0, labelpad=20)
+    if multiple:
+        plt.ylabel("Wt", rotation=0, labelpad=20)
+    else:
+        plt.ylabel(r"$\sum_{i=0}^N Wt_i$", rotation=0, labelpad=20)
     plt.tight_layout()
     for format in ["pdf", "png", "eps"]:
         plt.savefig(os.path.join(output_path, f"{filename}.{format}"))

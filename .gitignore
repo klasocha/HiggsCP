@@ -7,4 +7,5 @@ plots/figures/
 temp_results/
 results/
 experimental/figures/
+experimental/history/
 .DS_Store
