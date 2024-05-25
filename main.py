@@ -14,7 +14,7 @@ from plots.results_analysis_3 import draw as results_analysis_3
 from plots.results_analysis_4 import draw as results_analysis_4
 from plots.results_analysis_5 import draw as results_analysis_5
 from tests.test_parsed_data import test_parsed_data, show_example_records
-from tests.test_model_on_unwt_events import test_on_unwt_events
+from tests.test_unwt_evt import test_on_unwt_events
 from tests.test_labels import test_labels
 from utilities.prepare_rhorho import prepare_rhorho
 
@@ -114,7 +114,6 @@ plot_types = {"PHISTAR-DISTRIBUTION" : phistar_dist, # Variant-1.1 should be pre
          "RESULTS_ANALYSIS_4": results_analysis_4, # "regr_c012s"
          "RESULTS_ANALYSIS_5": results_analysis_5  # "regr_argmaxs"
          }
-
 parser.add_argument("--output", dest="OUT", help="output path for plots", default="figures")
 parser.add_argument("--format", dest="FORMAT", 
                     help='the format of the output plots ("png"/"pdf"/"eps")', default="png")
@@ -125,6 +124,7 @@ parser.add_argument("--option", dest="OPTION", choices=plot_types.keys(), defaul
 parser.add_argument("--hypothesis", dest="HYPOTHESIS", default="None", 
                     help="Hypothesis: the alphaCP class (e.g. 02)")
 parser.add_argument("--dataset", dest="DATASET", help="dataset (train/valid/test)")
+parser.add_argument("--discretisation", dest="DISCR", help="discretisation level (number of classes)")
 
 # Test arguments
 parser.add_argument("--source-1", dest="SOURCE_1",
