@@ -14,7 +14,7 @@ from plots.results_analysis_3 import draw as results_analysis_3
 from plots.results_analysis_4 import draw as results_analysis_4
 from plots.results_analysis_5 import draw as results_analysis_5
 from tests.test_parsed_data import test_parsed_data, show_example_records
-from tests.test_unwt_evt import test_on_unwt_events
+from tests.test_unwt_evt_1 import test_on_unwt_events
 from tests.test_labels import test_labels
 from utilities.prepare_rhorho import prepare_rhorho
 
