@@ -101,7 +101,10 @@ def test_on_unwt_events(args):
             "model_state", "model.weights.h5"))
             coefficients = model.predict(X)
             c012s[:, i] = np.argmax(coefficients, axis=1)
-            c012s[:, i] = c012s[:, i] * (2. / n_classes) - 1.0
+            if i == 0:
+                c012s[:, i] = c012s[:, i] * (2. / n_classes)
+            else:
+                c012s[:, i] = c012s[:, i] * (2. / n_classes) - 1.0
         preds =  calc_weights(discr_level, c012s)
     
     if args.TRAINING_METHOD == "regr_c012s":
