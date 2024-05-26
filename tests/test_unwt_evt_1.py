@@ -9,6 +9,7 @@ from utilities.cpmix_utils import weight_fun
 
 def draw_distribution(x, y, title, output_path, filename, color=None, 
                       info_table=None, multiple=False):
+    plt.figure(figsize=(9, 6))
     if not multiple:
         plt.plot(x, y, color=color)
     else:
@@ -21,11 +22,16 @@ def draw_distribution(x, y, title, output_path, filename, color=None,
     else:
         plt.ylabel(r"$\sum_{i=0}^N Wt_i$", rotation=0, labelpad=20)
     if info_table is not None:
-        table_vals=[[f"Hypothesis class: {info_table[0]}"],
-                [f"Argmax class: {info_table[1]}"]]
-        table = plt.table(cellText=table_vals, colWidths = [0.40],
+        table_vals=[[f"Hypothesis idx: {info_table[0]}" + \
+                    " (" + r"${{\alpha^{CP}}_{max}}$" + f" = {info_table[2]:0,.2f} rad)"],
+                    [""],
+                    [f"Predicted idx: {info_table[1]}" + \
+                    " (" + r"${{\alpha^{CP}}_{max}}$" + f" = {info_table[3]:0,.2f} rad)"],
+                    [""],
+                    [f"Relative amplitude: {info_table[4]:0,.2f}"]]
+        table = plt.table(cellText=table_vals, colWidths = [0.50],
                           cellLoc="left", loc='upper right')
-        table.set_fontsize(10)
+        table.set_fontsize(14)
         for _, cell in table.get_celld().items():
             cell.set_linewidth(0)
     plt.tight_layout()
@@ -120,14 +126,21 @@ def test_on_unwt_events(args):
         hypothesis = round(hypothesis / n_classes * discr_level)
 
     # Creating a plot showing the summed distribution of Wt
+    predicted_argmax = np.argmax(np.sum(preds, axis=0)) 
+    summed_wt = np.sum(preds, axis=0)
+    min_summed_wt, max_summed_wt = np.min(summed_wt), np.max(summed_wt)
+    relative_amplitude = 2 * (max_summed_wt - min_summed_wt) / (max_summed_wt + min_summed_wt)
     draw_distribution(
         x=np.linspace(0, discr_level - 1, num=discr_level),
-        y=np.sum(preds, axis=0),
+        y=summed_wt,
         output_path=args.OUT,
         filename= f"{args.TRAINING_METHOD}_hyp_{hypothesis}_summed_dist",
         title="Summed distribution",
         color="black",
-        info_table=[hypothesis, np.argmax(np.sum(preds, axis=0))])
+        info_table=[hypothesis, predicted_argmax,
+                    hypothesis / (discr_level - 1) * 2 * np.pi, 
+                    predicted_argmax / (discr_level - 1) * 2 * np.pi,
+                    relative_amplitude])
 
     # Creating a plot showing some sample events predictied by the model
     draw_distribution(
