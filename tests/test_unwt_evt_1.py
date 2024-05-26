@@ -50,7 +50,7 @@ def test_on_unwt_events(args):
     filtered according to a chosen hypothesis and create a double check plot 
     showing the summed distribution of the predicted weights """
 
-    discr_level = int(args.DISCR) if args.DISCR is not None and \
+    discr_level = int(args.NBINS) if args.NBINS is not None and \
         args.TRAINING_METHOD in ["soft_c012s", "regr_c012s"] else int(args.NUM_CLASSES)
     n_classes = int(args.NUM_CLASSES)
     hypothesis = int(args.HYPOTHESIS)
