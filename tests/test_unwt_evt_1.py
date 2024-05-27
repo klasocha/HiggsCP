@@ -42,7 +42,8 @@ def draw_distribution(x, y, title, output_path, filename, true_weights=None, col
             ax2.plot(np.arange(len(x)), y[np.random.randint(len(y))])
         ax2.set_ylabel("Wt", rotation=0, labelpad=20)
         ax2.set_title(title)
-    
+
+    ax2.set_xlabel(r"${\alpha^{CP}}$ [idx]", loc="right")    
     plt.xticks(np.arange(len(x)), x)
     if len(x) > 31:
         ax2.xaxis.set_major_locator(ticker.MultipleLocator(int(len(x) / 15), 1))
@@ -153,13 +154,12 @@ def test_on_unwt_events(args):
     summed_true_wt = np.sum(true_weights, axis=0)
     min_summed_wt, max_summed_wt = np.min(summed_wt), np.max(summed_wt)
     relative_amplitude = 2 * (max_summed_wt - min_summed_wt) / (max_summed_wt + min_summed_wt)
-    chi2_nf = np.sum(np.square(
-        (np.argmax(true_weights, axis=1) - np.argmax(preds, axis=1)) / discr_level)) 
-    
+    chi2_nf = np.sum(np.square(summed_true_wt - summed_wt)) / discr_level 
+
     draw_distribution(
-        x=np.roll(np.arange(0, discr_level), int((discr_level - 1) / 2)),
-        y=np.roll(summed_wt, int((discr_level - 1) / 2)),
-        true_weights=np.roll(summed_true_wt, int((discr_level - 1) / 2)),
+        x=np.roll(np.arange(0, discr_level - 1), int((discr_level - 1) / 2)),
+        y=np.roll(summed_wt[:-1], int((discr_level - 1) / 2)),
+        true_weights=np.roll(summed_true_wt[:-1], int((discr_level - 1) / 2)),
         output_path=args.OUT,
         filename= f"{args.TRAINING_METHOD}_hyp_{hypothesis}_summed_dist",
         title="Summed distribution",
@@ -173,8 +173,8 @@ def test_on_unwt_events(args):
 
     # Creating a plot showing some sample events predictied by the model
     draw_distribution(
-        x=np.roll(np.arange(0, discr_level), int((discr_level - 1) / 2)),
-        y=np.roll(preds, axis=1, shift=int((discr_level - 1) / 2)),
+        x=np.roll(np.arange(0, discr_level - 1), int((discr_level - 1) / 2)),
+        y=np.roll(preds[:, :-1], axis=1, shift=int((discr_level - 1) / 2)),
         output_path=args.OUT,
         filename=f"{args.TRAINING_METHOD}_hyp_{hypothesis}_samples",
         title="Event spin weight",

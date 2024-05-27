@@ -48,9 +48,9 @@ def draw(args):
     mean = np.mean(delt_argmax, dtype=np.float64)
     std  = np.std(delt_argmax, dtype=np.float64)
     meanerr = stats.sem(delt_argmax)
-    meanrad = np.mean(delt_argmax, dtype=np.float64) * k2PI /num_classes
-    stdrad  = np.std(delt_argmax, dtype=np.float64) * k2PI /num_classes
-    meanerrrad = stats.sem(delt_argmax) * k2PI /num_classes
+    meanrad = np.mean(delt_argmax, dtype=np.float64) * k2PI / num_classes
+    stdrad  = np.std(delt_argmax, dtype=np.float64) * k2PI / num_classes
+    meanerrrad = stats.sem(delt_argmax) * k2PI / num_classes
 
     if args.TRAINING_METHOD == "soft_weights":
         table_title = [r"Classification: $wt$"]
