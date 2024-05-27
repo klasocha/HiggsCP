@@ -5,39 +5,51 @@ import tensorflow as tf
 from tensorflow import keras
 import matplotlib.pyplot as plt
 from utilities.cpmix_utils import weight_fun
+import matplotlib.ticker as ticker 
 
 
-def draw_distribution(x, y, title, output_path, filename, color=None, 
+def draw_distribution(x, y, title, output_path, filename, true_weights=None, color=None, 
                       info_table=None, multiple=False):
-    plt.figure(figsize=(9, 6))
+    
     if not multiple:
-        plt.plot(x, y, color=color)
-    else:
-        for i in range(10):
-            plt.plot(x, y[i])
-    plt.title(title)
-    plt.xlabel(r"${\alpha^{CP}}$ [idx]", loc="right")
-    if multiple:
-        plt.ylabel("Wt", rotation=0, labelpad=20)
-    else:
-        plt.ylabel(r"$\sum_{i=0}^N Wt_i$", rotation=0, labelpad=20)
-    if info_table is not None:
+        fig, (ax1, ax2) = plt.subplots(2, height_ratios=[1, 3])
+        fig.set_size_inches(9, 6)
+        ax2.plot(np.arange(len(x)), y, color=color[0], label="Predicted")
+        ax2.plot(np.arange(len(x)), true_weights, linestyle="dotted", color=color[1], label="True")
+        ax2.legend()
+        ax2.set_ylabel(r"$\sum_{i=0}^N Wt_i$", rotation=0, labelpad=20)
+        ax2.set_title(title)
+
         table_vals=[[f"Hypothesis idx: {info_table[0]}" + \
                     " (" + r"${{\alpha^{CP}}_{max}}$" + f" = {info_table[2]:0,.2f} rad)"],
-                    [""],
                     [f"Predicted idx: {info_table[1]}" + \
                     " (" + r"${{\alpha^{CP}}_{max}}$" + f" = {info_table[3]:0,.2f} rad)"],
-                    [""],
                     [f"Relative amplitude: {info_table[4]:0,.2f}"]]
-        table = plt.table(cellText=table_vals, colWidths = [0.50],
-                          cellLoc="left", loc='upper right')
-        table.set_fontsize(14)
+        
+        ax1.axis('off')
+        ax1.axis('tight')
+        table = ax1.table(cellText=table_vals, colWidths = [0.6],
+                          cellLoc="left", loc='upper left')
+        table.set_fontsize(12)
+        
         for _, cell in table.get_celld().items():
             cell.set_linewidth(0)
+    else:
+        fig, ax2 = plt.subplots(1)
+        fig.set_size_inches(9, 6)
+        for i in range(5):
+            ax2.plot(np.arange(len(x)), y[np.random.randint(len(y))])
+        ax2.set_ylabel("Wt", rotation=0, labelpad=20)
+        ax2.set_title(title)
+    
+    plt.xticks(np.arange(len(x)), x)
+    if len(x) > 31:
+        ax2.xaxis.set_major_locator(ticker.MultipleLocator(int(len(x) / 15), 1))
+
     plt.tight_layout()
     for format in ["pdf", "png", "eps"]:
-        plt.savefig(os.path.join(output_path, f"{filename}.{format}"))
-    print(f"The plot has been saved as {output_path}")
+        plt.savefig(os.path.join(os.path.normpath(output_path), f"{filename}.{format}"))
+    print(f"The plot has been saved as {os.path.join(os.path.normpath(output_path), filename)}")
     plt.clf()
 
 
@@ -65,7 +77,7 @@ def test_on_unwt_events(args):
     X_path = os.path.join(args.IN, f"rhorho_event_{args.FEAT}.obj")
     with open(X_path, 'rb') as f:
         X = pickle.load(f)
-    X = X.cols[:, :-1] 
+    X = X.cols[:1000, :-1] 
     mean = X.mean(0)
     std = X.std(0)
     X = (X - mean) / std
@@ -76,7 +88,7 @@ def test_on_unwt_events(args):
 
     # Filtering the features according to the chosen hypothesis
     # defining the unweighted events mask
-    unwt = unwt[:, hypothesis]
+    unwt = unwt[:1000, hypothesis]
     X = X[unwt == 1.0]
 
     # Preparing the model
@@ -131,12 +143,13 @@ def test_on_unwt_events(args):
     min_summed_wt, max_summed_wt = np.min(summed_wt), np.max(summed_wt)
     relative_amplitude = 2 * (max_summed_wt - min_summed_wt) / (max_summed_wt + min_summed_wt)
     draw_distribution(
-        x=np.linspace(0, discr_level - 1, num=discr_level),
-        y=summed_wt,
+        x=np.roll(np.arange(0, discr_level), int((discr_level - 1) / 2)),
+        y=np.roll(summed_wt, int((discr_level - 1) / 2)),
+        true_weights=np.roll(summed_wt, int((discr_level - 1) / 2) + 1),
         output_path=args.OUT,
         filename= f"{args.TRAINING_METHOD}_hyp_{hypothesis}_summed_dist",
         title="Summed distribution",
-        color="black",
+        color=["black", "red"],
         info_table=[hypothesis, predicted_argmax,
                     hypothesis / (discr_level - 1) * 2 * np.pi, 
                     predicted_argmax / (discr_level - 1) * 2 * np.pi,
@@ -144,8 +157,8 @@ def test_on_unwt_events(args):
 
     # Creating a plot showing some sample events predictied by the model
     draw_distribution(
-        x=np.linspace(0, discr_level - 1, num=discr_level),
-        y=preds,
+        x=np.roll(np.arange(0, discr_level), int((discr_level - 1) / 2)),
+        y=np.roll(preds, axis=1, shift=int((discr_level - 1) / 2)),
         output_path=args.OUT,
         filename=f"{args.TRAINING_METHOD}_hyp_{hypothesis}_samples",
         title="Event spin weight",
