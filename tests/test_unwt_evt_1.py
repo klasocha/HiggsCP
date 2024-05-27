@@ -123,16 +123,15 @@ def test_on_unwt_events(args):
                 c012s[:, i] = c012s[:, i] * (2. / n_classes)
             else:
                 c012s[:, i] = c012s[:, i] * (2. / n_classes) - 1.0
-        preds =  calc_weights(discr_level, c012s)
+        preds = calc_weights(discr_level, c012s)
     
     if args.TRAINING_METHOD == "regr_c012s":
         preds = calc_weights(discr_level, preds)
 
-    # Loading true weights and filtering according to the hypothesis
-    true_weights = read_np(
-        os.path.join(os.path.normpath(args.IN), 
-                     f"weights_multiclass_{args.NUM_CLASSES}.npy")) 
-    true_weights = true_weights[unwt == 1.0]
+    # Loading the true coefficients and calculating true weights
+    true_c012s = read_np("data/c012s.npy")
+    true_c012s = true_c012s[unwt == 1.0]
+    true_weights = calc_weights(discr_level, true_c012s)
 
     # Creating a directory for storing the plots
     if not os.path.exists(os.path.normpath(args.OUT)):
@@ -142,6 +141,10 @@ def test_on_unwt_events(args):
     # from the number of classes the model works with
     if args.TRAINING_METHOD in ["soft_c012s", "regr_c012s"]:
         hypothesis = round(hypothesis / n_classes * discr_level)
+
+    # Normalising weights to the probability distribution
+    preds = preds / np.sum(preds, axis=1).reshape((preds.shape[0], 1))
+    true_weights = true_weights / np.sum(true_weights, axis=1).reshape((true_weights.shape[0], 1))
 
     # Creating a plot showing the summed distribution of Wt
     predicted_argmax = np.argmax(np.sum(preds, axis=0)) 
