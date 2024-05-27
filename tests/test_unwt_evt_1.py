@@ -154,7 +154,7 @@ def test_on_unwt_events(args):
     summed_true_wt = np.sum(true_weights, axis=0)
     min_summed_wt, max_summed_wt = np.min(summed_wt), np.max(summed_wt)
     relative_amplitude = 2 * (max_summed_wt - min_summed_wt) / (max_summed_wt + min_summed_wt)
-    chi2_nf = np.sum(np.square(summed_true_wt - summed_wt)) / discr_level 
+    chi2_nf = np.sum(np.square(summed_true_wt - summed_wt) / summed_true_wt) / discr_level 
 
     draw_distribution(
         x=np.roll(np.arange(0, discr_level - 1), int((discr_level - 1) / 2)),
