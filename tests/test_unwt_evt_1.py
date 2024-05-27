@@ -77,18 +77,18 @@ def test_on_unwt_events(args):
     X_path = os.path.join(args.IN, f"rhorho_event_{args.FEAT}.obj")
     with open(X_path, 'rb') as f:
         X = pickle.load(f)
-    X = X.cols[:1000, :-1] 
+    X = X.cols[:, :-1] 
     mean = X.mean(0)
     std = X.std(0)
     X = (X - mean) / std
 
     # Loading the unweighted events weights
-    unwt_path = os.path.join(args.IN, f"unwt_multiclass_{args.NUM_CLASSES}.npy") 
+    unwt_path = os.path.join(os.path.normpath(args.IN), f"unwt_multiclass_{args.NUM_CLASSES}.npy") 
     unwt = read_np(unwt_path)
 
     # Filtering the features according to the chosen hypothesis
     # defining the unweighted events mask
-    unwt = unwt[:1000, hypothesis]
+    unwt = unwt[:, hypothesis]
     X = X[unwt == 1.0]
 
     # Preparing the model
@@ -128,6 +128,12 @@ def test_on_unwt_events(args):
     if args.TRAINING_METHOD == "regr_c012s":
         preds = calc_weights(discr_level, preds)
 
+    # Loading true weights and filtering according to the hypothesis
+    true_weights = read_np(
+        os.path.join(os.path.normpath(args.IN), 
+                     f"weights_multiclass_{args.NUM_CLASSES}.npy")) 
+    true_weights = true_weights[unwt == 1.0]
+
     # Creating a directory for storing the plots
     if not os.path.exists(os.path.normpath(args.OUT)):
         os.makedirs(os.path.normpath(args.OUT))
@@ -140,12 +146,13 @@ def test_on_unwt_events(args):
     # Creating a plot showing the summed distribution of Wt
     predicted_argmax = np.argmax(np.sum(preds, axis=0)) 
     summed_wt = np.sum(preds, axis=0)
+    summed_true_wt = np.sum(true_weights, axis=0)
     min_summed_wt, max_summed_wt = np.min(summed_wt), np.max(summed_wt)
     relative_amplitude = 2 * (max_summed_wt - min_summed_wt) / (max_summed_wt + min_summed_wt)
     draw_distribution(
         x=np.roll(np.arange(0, discr_level), int((discr_level - 1) / 2)),
         y=np.roll(summed_wt, int((discr_level - 1) / 2)),
-        true_weights=np.roll(summed_wt, int((discr_level - 1) / 2) + 1),
+        true_weights=np.roll(summed_true_wt, int((discr_level - 1) / 2)),
         output_path=args.OUT,
         filename= f"{args.TRAINING_METHOD}_hyp_{hypothesis}_summed_dist",
         title="Summed distribution",
