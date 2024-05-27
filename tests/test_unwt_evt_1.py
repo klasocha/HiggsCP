@@ -24,7 +24,8 @@ def draw_distribution(x, y, title, output_path, filename, true_weights=None, col
                     " (" + r"${{\alpha^{CP}}_{max}}$" + f" = {info_table[2]:0,.2f} rad)"],
                     [f"Predicted idx: {info_table[1]}" + \
                     " (" + r"${{\alpha^{CP}}_{max}}$" + f" = {info_table[3]:0,.2f} rad)"],
-                    [f"Relative amplitude: {info_table[4]:0,.2f}"]]
+                    [f"Relative amplitude: {info_table[4]:0,.2f}"],
+                    [r"${{\chi^2}/Nf}$" + f" = {info_table[5]:0,.2f}"]]
         
         ax1.axis('off')
         ax1.axis('tight')
@@ -146,12 +147,14 @@ def test_on_unwt_events(args):
     preds = preds / np.sum(preds, axis=1).reshape((preds.shape[0], 1))
     true_weights = true_weights / np.sum(true_weights, axis=1).reshape((true_weights.shape[0], 1))
 
-    # Creating a plot showing the summed distribution of Wt
+    # Creating a plot showing the summed distribution of Wt and computing the needed values
     predicted_argmax = np.argmax(np.sum(preds, axis=0)) 
     summed_wt = np.sum(preds, axis=0)
     summed_true_wt = np.sum(true_weights, axis=0)
     min_summed_wt, max_summed_wt = np.min(summed_wt), np.max(summed_wt)
     relative_amplitude = 2 * (max_summed_wt - min_summed_wt) / (max_summed_wt + min_summed_wt)
+    chi2_nf = np.sum(np.square(true_weights - preds) / discr_level) 
+    
     draw_distribution(
         x=np.roll(np.arange(0, discr_level), int((discr_level - 1) / 2)),
         y=np.roll(summed_wt, int((discr_level - 1) / 2)),
@@ -160,10 +163,12 @@ def test_on_unwt_events(args):
         filename= f"{args.TRAINING_METHOD}_hyp_{hypothesis}_summed_dist",
         title="Summed distribution",
         color=["black", "red"],
-        info_table=[hypothesis, predicted_argmax,
+        info_table=[hypothesis, 
+                    predicted_argmax,
                     hypothesis / (discr_level - 1) * 2 * np.pi, 
                     predicted_argmax / (discr_level - 1) * 2 * np.pi,
-                    relative_amplitude])
+                    relative_amplitude,
+                    chi2_nf])
 
     # Creating a plot showing some sample events predictied by the model
     draw_distribution(
