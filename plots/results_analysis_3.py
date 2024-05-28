@@ -35,26 +35,21 @@ def draw(args):
         preds_argmaxs[i] = np.argmax(preds_hits_argmaxs[i])
         calc_argmaxs[i] = np.argmax(calc_hits_argmaxs[i])
 
+    k2PI= 2 * np.pi
     delt_argmaxs =  calculate_deltas_signed(
         np.argmax(preds_hits_argmaxs[:], axis=1), 
         np.argmax(calc_hits_argmaxs[:], axis=1), num_classes)      
-
-    k2PI= 2 * np.pi
-    mean = np.mean(delt_argmaxs)
-    std  = np.std(delt_argmaxs)
-    meanerr = stats.sem(delt_argmaxs) 
-    meanrad = np.mean(delt_argmaxs) * k2PI/num_classes
-    stdrad  = np.std(delt_argmaxs) * k2PI/num_classes
-    meanerrrad = stats.sem(delt_argmaxs)* k2PI/num_classes 
+    delt_argmaxs_rad = delt_argmaxs * k2PI / (num_classes - 1)
+ 
+    meanrad = np.mean(delt_argmaxs) * k2PI / (num_classes - 1)
+    stdrad = np.std(delt_argmaxs) * k2PI / (num_classes - 1)
+    meanerrrad = stats.sem(delt_argmaxs) * k2PI / (num_classes - 1) 
     
     # Preparing the plot
-    plt.hist(delt_argmaxs, histtype='step', bins=num_classes, color = 'black')
-    plt.xlabel(r'$\Delta_{class}$ [idx]')
+    plt.hist(delt_argmaxs_rad, histtype='step', bins=num_classes, color='black')
+    plt.xlabel(r'$\Delta\alpha^{CP}_{max}$ [rad]')    
     plt.gca()
     table_vals=[[r'Classification: $\alpha^{CP}_{max}$'],
-                [" "],
-                [r"mean = {:0.3f}$\pm$ {:1.3f} [idx]".format(mean, meanerr)],
-                ["std = {:1.3f} [idx]".format(std)],
                 [" "],
                 [r"mean = {:0.3f}$\pm$ {:1.3f} [rad]".format(meanrad, meanerrrad)],
                 ["std = {:1.3f} [rad]".format(stdrad)]
