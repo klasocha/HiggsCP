@@ -91,23 +91,18 @@ def draw(args):
     preds_w =  calc_weights(num_classes, preds_c012s)
     delt_argmax = calculate_deltas_signed(np.argmax(preds_w[:], axis=1), 
                                           np.argmax(calc_w[:], axis=1), num_classes)      
+    delt_argmax_rad = delt_argmax * k2PI / (num_classes - 1)
 
-    mean = np.mean(delt_argmax) 
-    std  = np.std(delt_argmax) 
-    meanerr = stats.sem(delt_argmax)
-    meanrad = np.mean(delt_argmax) * k2PI/num_classes
-    stdrad  = np.std(delt_argmax) * k2PI/num_classes
-    meanraderr = stats.sem(delt_argmax) * k2PI/num_classes
+    meanrad = np.mean(delt_argmax) * k2PI / (num_classes - 1)
+    stdrad  = np.std(delt_argmax) * k2PI / (num_classes - 1)
+    meanraderr = stats.sem(delt_argmax) * k2PI / (num_classes - 1)
 
     # Preparing the plot
-    plt.hist(delt_argmax, histtype='step', bins=num_classes, color='black')
-    plt.xlabel(r'$\Delta_{class} [idx]$')
+    plt.hist(delt_argmax_rad, histtype='step', bins=num_classes, color='black')
+    plt.xlabel(r'$\Delta\alpha^{CP}_{max}$ [rad]')
     plt.gca()
 
     table_vals=[[r'Classification: $C_0, C_1, C_2$'],
-                [" "],
-                [r"mean = {:0.3f}$\pm$ {:1.3f} [idx]".format(mean, meanerr)],
-                ["std = {:1.3f} [idx]".format(std)],
                 [" "],
                 [r"mean = {:0.3f}$\pm$ {:1.3f} [rad]".format(meanrad, meanraderr)],
                 ["std = {:1.3f} [rad]".format(stdrad)]
