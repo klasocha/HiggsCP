@@ -44,11 +44,10 @@ def draw(args):
     delt_argmax = calculate_deltas_signed(np.argmax(preds_w[:], axis=1), 
                                           np.argmax(calc_w[:], axis=1), num_classes)
     delt_argmax_pi =  delt_argmax * k2PI / (num_classes - 1)
-   
-    # Continuous
-    difference = calc_c012s - preds_c012s
-    mean = np.mean(difference)
-    std = np.std(difference)
+
+    meanrad = np.mean(delt_argmax) * k2PI / (num_classes - 1)
+    stdrad  = np.std(delt_argmax) * k2PI / (num_classes - 1)
+    meanraderr = stats.sem(delt_argmax) * k2PI / (num_classes - 1)
 
     # Preparing the plot
     plt.hist(delt_argmax_pi, histtype='step', color="black", bins=num_classes)
@@ -56,16 +55,17 @@ def draw(args):
     plt.xlabel(r'$\Delta \alpha^{CP}_{max}$ [rad]')
     plt.gca()
 
-    table_vals=[[r"Regression: $C_0, C_1, C_2$"],
+    table_vals=[[r'Regression: $C_0, C_1, C_2$'],
                 [" "],
-                ["mean = {:0.3f}".format(mean)],
-                ["std = {:1.3f}".format(std)]
+                [r"mean = {:0.3f}$\pm$ {:1.3f} [rad]".format(meanrad, meanraderr)],
+                ["std = {:1.3f} [rad]".format(stdrad)]
                 ]
+
     table = plt.table(cellText=table_vals,
-                    colWidths = [0.30],
+                    colWidths = [0.40],
                     cellLoc="left",
                     loc='upper right')
-    table.set_fontsize(12)
+    table.set_fontsize(14)
 
     for _, cell in table.get_celld().items():
         cell.set_linewidth(0)
