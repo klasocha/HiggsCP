@@ -32,25 +32,23 @@ def draw(args):
     preds_w  = read_np(os.path.join(os.path.normpath(args.IN), f"{dataset}_preds.npy"))
 
     # Computing the difference
-    delt_argmax =  calculate_deltas_signed(np.argmax(preds_w[:], axis=1), 
-                                           np.argmax(calc_w[:], axis=1), num_classes)      
+    k2PI = 2 * np.pi
+    delt_argmax = calculate_deltas_signed(np.argmax(preds_w[:], axis=1), 
+                                          np.argmax(calc_w[:], axis=1), num_classes)      
+    delt_argmax_rad = delt_argmax * k2PI / (num_classes - 1)
 
     # Preparing the plot
-    plt.hist(delt_argmax, histtype='step', bins=num_classes, color='black')
+    plt.hist(delt_argmax_rad, histtype='step', bins=num_classes, color='black')
     if args.TRAINING_METHOD == "soft_weights":
-         plt.xlabel(r'$\alpha^{CP}_{max}: \Delta_{class} [idx]$')
+        plt.xlabel(r'$\Delta\alpha^{CP}_{max}$ [rad]')
     if args.TRAINING_METHOD == "regr_weights":
-        plt.xlabel(r'$\Delta_{class}$ [idx]')
+        plt.xlabel(r'$\Delta\alpha^{CP}_{max}$ [rad]')
     plt.ylabel('Entries')
     plt.gca()
     
-    k2PI = 2 * np.pi
-    mean = np.mean(delt_argmax, dtype=np.float64)
-    std  = np.std(delt_argmax, dtype=np.float64)
-    meanerr = stats.sem(delt_argmax)
-    meanrad = np.mean(delt_argmax, dtype=np.float64) * k2PI / num_classes
-    stdrad  = np.std(delt_argmax, dtype=np.float64) * k2PI / num_classes
-    meanerrrad = stats.sem(delt_argmax) * k2PI / num_classes
+    meanrad = np.mean(delt_argmax, dtype=np.float64) * k2PI / (num_classes - 1)
+    stdrad  = np.std(delt_argmax, dtype=np.float64) * k2PI / (num_classes - 1)
+    meanerrrad = stats.sem(delt_argmax) * k2PI / (num_classes - 1)
 
     if args.TRAINING_METHOD == "soft_weights":
         table_title = [r"Classification: $wt$"]
@@ -58,9 +56,6 @@ def draw(args):
         table_title = [r"Regression: $wt$"]
 
     table_vals=[table_title,
-                [" "],
-                [r"mean = {:0.3f} $\pm$ {:1.3f}[idx] ".format(mean, meanerr)],
-                ["std = {:1.3f} [idx]".format(std)],
                 [" "],
                 [r"mean = {:0.3f} $\pm$ {:1.3f}[rad]".format(meanrad, meanerrrad)],
                 ["std = {:1.3f} [rad]".format(stdrad)]
