@@ -26,12 +26,7 @@ def draw(args):
     preds_argmaxs = read_np(os.path.join(os.path.normpath(args.IN), f"{dataset}_preds.npy"))
 
     # Computing the needed values
-    delt_argmaxs = calc_argmaxs - preds_argmaxs
-    # TODO: poprawic!!! delta < 3.1415
     delt_argmaxs = calculate_deltas_signed_pi_topo(calc_argmaxs, preds_argmaxs)
-    
-    # k2PI = 2 * np.pi
-    # calc_argmaxs= calc_argmaxs/k2PI
     mean = np.mean(delt_argmaxs)
     std  = np.std(delt_argmaxs)
 
