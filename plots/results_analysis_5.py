@@ -31,7 +31,7 @@ def draw(args):
     std  = np.std(delt_argmaxs)
 
     # Preparing the plot
-    plt.hist(delt_argmaxs, histtype="step", bins=num_classes, color="black")
+    plt.hist(delt_argmaxs, histtype="step", bins=(num_classes-1), color="black")
     plt.xlim([-3.2, 3.2])
     plt.xlabel(r'$\Delta \alpha^{CP}_{max}$ [rad]')
     plt.gca()

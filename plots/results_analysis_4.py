@@ -50,7 +50,7 @@ def draw(args):
     meanraderr = stats.sem(delt_argmax) * k2PI / (num_classes - 1)
 
     # Preparing the plot
-    plt.hist(delt_argmax_pi, histtype='step', color="black", bins=num_classes)
+    plt.hist(delt_argmax_pi, histtype='step', color="black", bins=(num_classes-1))
     plt.ylabel('Entries')
     plt.xlabel(r'$\Delta \alpha^{CP}_{max}$ [rad]')
     plt.gca()

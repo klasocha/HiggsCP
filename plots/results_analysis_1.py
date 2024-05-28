@@ -38,7 +38,7 @@ def draw(args):
     delt_argmax_rad = delt_argmax * k2PI / (num_classes - 1)
 
     # Preparing the plot
-    plt.hist(delt_argmax_rad, histtype='step', bins=num_classes, color='black')
+    plt.hist(delt_argmax_rad, histtype='step', bins=(num_classes-1), color='black')
     if args.TRAINING_METHOD == "soft_weights":
         plt.xlabel(r'$\Delta\alpha^{CP}_{max}$ [rad]')
     if args.TRAINING_METHOD == "regr_weights":
