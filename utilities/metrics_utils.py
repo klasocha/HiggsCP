@@ -40,7 +40,14 @@ def calculate_deltas_signed_pi(expected, actual):
 def calculate_deltas_signed_pi_topo(expected, actual):
     """ Calculate the difference similar to the one returned by 
     calculate_deltas_signed() but expressed in radians. """
-    # Unsigned
+
+    # Shifting the predictions to the range [0, 2pi]
+    for i in range(len(actual)):
+        while actual[i] > (2 * np.pi):
+            actual[i] -= 2 * np.pi
+        while actual[i] < 0:
+            actual[i] += 2 * np.pi
+
     deltas = np.minimum(np.abs(actual - expected), 2 * np.pi - np.abs(actual - expected))
     deltas *= np.sign(np.sin(expected - actual))
     return deltas
