@@ -120,9 +120,7 @@ def test_on_unwt_events(args):
             os.path.normpath(f"{args.MODEL_LOCATION}_c{i}"), 
             "model_state", "model.weights.h5"))
             coefficients = model.predict(X)
-            print(">>", coefficients.shape)
             c012s[:, i] = np.argmax(coefficients, axis=1)
-            print(">>>", np.max(c012s[:, i]))
             if i == 0:
                 c012s[:, i] = c012s[:, i] * (2. / (n_classes - 1))
             else:
