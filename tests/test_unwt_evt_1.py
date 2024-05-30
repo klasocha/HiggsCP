@@ -120,11 +120,13 @@ def test_on_unwt_events(args):
             os.path.normpath(f"{args.MODEL_LOCATION}_c{i}"), 
             "model_state", "model.weights.h5"))
             coefficients = model.predict(X)
+            print(">>", coefficients.shape)
             c012s[:, i] = np.argmax(coefficients, axis=1)
+            print(">>>", np.max(c012s[:, i]))
             if i == 0:
-                c012s[:, i] = c012s[:, i] * (2. / n_classes)
+                c012s[:, i] = c012s[:, i] * (2. / (n_classes - 1))
             else:
-                c012s[:, i] = c012s[:, i] * (2. / n_classes) - 1.0
+                c012s[:, i] = c012s[:, i] * (2. / (n_classes - 1)) - 1.0
         preds = calc_weights(discr_level, c012s)
     
     if args.TRAINING_METHOD == "regr_c012s":
@@ -149,8 +151,8 @@ def test_on_unwt_events(args):
     true_weights = true_weights / np.sum(true_weights, axis=1).reshape((true_weights.shape[0], 1))
 
     # Creating a plot showing the summed distribution of Wt and computing the needed values
-    predicted_argmax = np.argmax(np.sum(preds, axis=0)) 
     summed_wt = np.sum(preds, axis=0)
+    predicted_argmax = np.argmax(summed_wt)
     summed_true_wt = np.sum(true_weights, axis=0)
     min_summed_wt, max_summed_wt = np.min(summed_wt), np.max(summed_wt)
     relative_amplitude = 2 * (max_summed_wt - min_summed_wt) / (max_summed_wt + min_summed_wt)

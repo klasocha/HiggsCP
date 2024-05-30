@@ -188,12 +188,12 @@ calc_c2s = np.argmax(calc_hits_c2s, axis=1)
 calc_c012s = np.zeros((data_len, 3))
 preds_c012s = np.zeros((data_len, 3))
 
-calc_c012s[:, 0] = calc_c0s * (2./n_classes)
-calc_c012s[:, 1] = calc_c1s * (2./n_classes) - 1.0
-calc_c012s[:, 2] = calc_c2s * (2./n_classes) - 1.0
-preds_c012s[:, 0] = preds_c0s * (2./n_classes)
-preds_c012s[:, 1] = preds_c1s * (2./n_classes) - 1.0
-preds_c012s[:, 2] = preds_c2s * (2./n_classes) - 1.0
+calc_c012s[:, 0] = calc_c0s * (2./(n_classes - 1))
+calc_c012s[:, 1] = calc_c1s * (2./(n_classes - 1)) - 1.0
+calc_c012s[:, 2] = calc_c2s * (2./(n_classes - 1)) - 1.0
+preds_c012s[:, 0] = preds_c0s * (2./(n_classes - 1))
+preds_c012s[:, 1] = preds_c1s * (2./(n_classes - 1)) - 1.0
+preds_c012s[:, 2] = preds_c2s * (2./(n_classes - 1)) - 1.0
 
 k2PI = 2 * np.pi
 calc_w  =  calc_weights(n_classes, calc_c012s)

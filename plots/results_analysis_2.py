@@ -78,13 +78,13 @@ def draw(args):
     preds_c012s = np.zeros((data_len, 3))
 
     for i in range(data_len):
-        calc_c012s[i][0] = calc_c0s[i] * (2./num_classes)
-        calc_c012s[i][1] = calc_c1s[i] * (2./num_classes) - 1.0
-        calc_c012s[i][2] = calc_c2s[i] * (2./num_classes) - 1.0
+        calc_c012s[i][0] = calc_c0s[i] * (2. / (num_classes - 1))
+        calc_c012s[i][1] = calc_c1s[i] * (2. / (num_classes - 1)) - 1.0
+        calc_c012s[i][2] = calc_c2s[i] * (2. / (num_classes - 1)) - 1.0
 
-        preds_c012s[i][0] = preds_c0s[i] * (2./num_classes)
-        preds_c012s[i][1] = preds_c1s[i] * (2./num_classes) - 1.0
-        preds_c012s[i][2] = preds_c2s[i] * (2./num_classes) - 1.0
+        preds_c012s[i][0] = preds_c0s[i] * (2. / (num_classes - 1))
+        preds_c012s[i][1] = preds_c1s[i] * (2. / (num_classes - 1)) - 1.0
+        preds_c012s[i][2] = preds_c2s[i] * (2. / (num_classes - 1)) - 1.0
 
     k2PI = 2 * np.pi
     calc_w  =  calc_weights(num_classes, calc_c012s)
