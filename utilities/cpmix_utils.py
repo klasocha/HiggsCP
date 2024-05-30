@@ -20,8 +20,7 @@ def hits_fun(classes, x, num_classes):
         if classes[i] <= x < classes[i + 1]:
           hits[i] = 1.0
     if x >= classes[num_classes - 1]:
-        hits[i] = 1.0
-       
+        hits[i + 1] = 1.0
     return hits
 
 
@@ -128,7 +127,7 @@ def preprocess_data(args):
         and read_np(c012s_paths[0]).shape[1] == num_classes \
         and read_np(c012s_paths[1]).shape[1] == num_classes \
         and read_np(c012s_paths[2]).shape[1] == num_classes):
-        classes = np.linspace(0, 2, num_classes) 
+        classes = np.linspace(0, 2, num_classes, endpoint=False) 
         print("Converting the C0/C1/C1 coefficients to a one-hot encoded format") 
         hits_c0s, hits_c1s, hits_c2s = calc_hits_c012s(classes, c012s, data_len, num_classes)
         print("Saving the C0/C1/C2 coefficients in one-hot encoded form")
