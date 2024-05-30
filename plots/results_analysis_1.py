@@ -34,11 +34,12 @@ def draw(args):
     # Computing the difference
     k2PI = 2 * np.pi
     delt_argmax = calculate_deltas_signed(np.argmax(preds_w[:], axis=1), 
-                                          np.argmax(calc_w[:], axis=1), num_classes)      
+                                          np.argmax(calc_w[:], axis=1), num_classes)    
     delt_argmax_rad = delt_argmax * k2PI / (num_classes - 1)
 
     # Preparing the plot
-    plt.hist(delt_argmax_rad, histtype='step', bins=(num_classes-1), color='black')
+    bins = np.max(delt_argmax) - np.min(delt_argmax) + 1
+    plt.hist(delt_argmax_rad, histtype='step', bins=bins, color='black')
     if args.TRAINING_METHOD == "soft_weights":
         plt.xlabel(r'$\Delta\alpha^{CP}_{max}$ [rad]')
     if args.TRAINING_METHOD == "regr_weights":
