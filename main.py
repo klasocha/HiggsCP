@@ -195,7 +195,7 @@ if args.ACTION == "test_model_on_unwt_events":
     # --features "Variant-All"
     print(""" 
     This part was created to test the trained model by feeding it with
-    the unweighted events and the creating a plot showing the summed
+    the unweighted events and then creating a plot showing the summed
     distribution of the predicted weights.
     """)
     test_on_unwt_events(args)
