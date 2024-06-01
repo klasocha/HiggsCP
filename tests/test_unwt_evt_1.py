@@ -145,7 +145,13 @@ def test_on_unwt_events(args):
         hypothesis = round(hypothesis / n_classes * discr_level)
 
     # Normalising weights to the probability distribution
-    preds = preds / np.sum(preds, axis=1).reshape((preds.shape[0], 1))
+    if args.TRAINING_METHOD != "soft_weights":
+        if np.sum(np.sum(preds, axis=1).reshape((preds.shape[0], 1)) == 0) != 0:
+            print("Softmax normalisation will be applied on predictions")
+            preds = np.exp(preds) / np.sum(np.exp(preds), axis=1).reshape((preds.shape[0], 1))
+        else:
+            print("Normalisation will be applied on predictions")
+            preds = preds / np.sum(preds, axis=1).reshape((preds.shape[0], 1))
     true_weights = true_weights / np.sum(true_weights, axis=1).reshape((true_weights.shape[0], 1))
 
     # Creating a plot showing the summed distribution of Wt and computing the needed values
