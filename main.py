@@ -210,5 +210,6 @@ if args.ACTION == "test_labels":
     test_labels(args)
 
 if args.ACTION == "experimental":
-    exec(open(os.path.normpath("experimental/model_c012s_v1.py")).read())
-    exec(open(os.path.normpath("experimental/model_c012s_v2.py")).read())
+    # exec(open(os.path.normpath("experimental/model_c012s_v1.py")).read())
+    # exec(open(os.path.normpath("experimental/model_c012s_v2.py")).read())
+    exec(open(os.path.normpath("experimental/model_regr_c012s.py")).read())

@@ -1,3 +1,5 @@
+""" Target: soft_c012s, Variant-All """
+
 import tensorflow as tf
 import os, pickle, math
 import matplotlib.pyplot as plt
@@ -12,7 +14,6 @@ datapath = "data"
 feature_config = "Variant-All"
 n_classes = 21
 filtered = True
-miniset = False
 
 # Hyperparameters
 batch_size = 128
@@ -39,40 +40,30 @@ with open(dataset_c2_path, 'rb') as f:
 
 # Model definition
 input = tf.keras.Input(shape=(features.shape[-1],), name="input")
-x = input
 
-x = tf.keras.layers.Dense(units=100, use_bias=False)(x)
-x = tf.keras.layers.BatchNormalization()(x)
-x = tf.keras.layers.ReLU()(x)
+c0_model = input
+for i in range(6):
+    c0_model = tf.keras.layers.Dense(units=100, name=f"dense_c0_{i}", use_bias=False)(c0_model)
+    c0_model = tf.keras.layers.BatchNormalization(name=f"batch_norm_c0_{i}")(c0_model)
+    c0_model = tf.keras.layers.ReLU(name=f"relu_c0_{i}")(c0_model)
+c0_model = tf.keras.layers.Dense(units=n_classes, use_bias=False, name="linear_c0")(c0_model)
+c0_output = tf.keras.layers.Softmax(name="output_c0")(c0_model)
 
-x = tf.keras.layers.Dense(units=100, use_bias=False)(x)
-x = tf.keras.layers.BatchNormalization()(x)
-x = tf.keras.layers.ReLU()(x)
+c1_model = input
+for i in range(6):
+    c1_model = tf.keras.layers.Dense(units=100, name=f"dense_c1_{i}", use_bias=False)(c1_model)
+    c1_model = tf.keras.layers.BatchNormalization(name=f"batch_norm_c1_{i}")(c1_model)
+    c1_model = tf.keras.layers.ReLU(name=f"relu_c1_{i}")(c1_model)
+c1_model = tf.keras.layers.Dense(units=n_classes, use_bias=False, name="linear_c1")(c1_model)
+c1_output = tf.keras.layers.Softmax(name="output_c1")(c1_model)
 
-x = tf.keras.layers.Dense(units=100, use_bias=False)(x)
-x = tf.keras.layers.BatchNormalization()(x)
-x = tf.keras.layers.ReLU()(x)
-
-x = tf.keras.layers.Dense(units=100, use_bias=False)(x)
-x = tf.keras.layers.BatchNormalization()(x)
-x = tf.keras.layers.ReLU()(x)
-
-x = tf.keras.layers.Dense(units=100, use_bias=False)(x)
-x = tf.keras.layers.BatchNormalization()(x)
-x = tf.keras.layers.ReLU()(x)
-
-x = tf.keras.layers.Dense(units=100, use_bias=False)(x)
-x = tf.keras.layers.BatchNormalization()(x)
-x = tf.keras.layers.ReLU()(x)
-
-c0_output = tf.keras.layers.Dense(units=n_classes, use_bias=False, name="linear_c0")(x)
-c0_output = tf.keras.layers.Softmax(name="output_c0")(c0_output)
-
-c1_output = tf.keras.layers.Dense(units=n_classes, use_bias=False, name="linear_c1")(x)
-c1_output = tf.keras.layers.Softmax(name="output_c1")(c1_output)
-
-c2_output = tf.keras.layers.Dense(units=n_classes, use_bias=False, name="linear_c2")(x)
-c2_output = tf.keras.layers.Softmax(name="output_c2")(c2_output)
+c2_model = input
+for i in range(6):
+    c2_model = tf.keras.layers.Dense(units=100, name=f"dense_c2_{i}", use_bias=False)(c2_model)
+    c2_model = tf.keras.layers.BatchNormalization(name=f"batch_norm_c2_{i}")(c2_model)
+    c2_model = tf.keras.layers.ReLU(name=f"relu_c2_{i}")(c2_model)
+c2_model = tf.keras.layers.Dense(units=n_classes, use_bias=False, name="linear_c2")(c2_model)
+c2_output = tf.keras.layers.Softmax(name="output_c2")(c2_model)
 
 model = tf.keras.Model(inputs=[input], outputs=[c0_output, c1_output, c2_output])
 # tf.keras.utils.plot_model(model, "multi_input_and_output_model.png", show_shapes=True)
@@ -114,18 +105,6 @@ class DataGenerator(tf.keras.utils.Sequence):
                 hits_c2s, axis=1), (-1, 1)), (1, hits_c2s.shape[-1]))
         return (x), (hits_c0s, hits_c1s, hits_c2s)
 
-# Training
-if miniset:
-    dataset_c0.train.x = dataset_c0.train.x[0:100000]
-    dataset_c0.train.hits_c012s = dataset_c0.train.hits_c012s[0:100000]
-    dataset_c0.train.n = 100000
-    dataset_c1.train.x = dataset_c1.train.x[0:100000]
-    dataset_c1.train.hits_c012s = dataset_c1.train.hits_c012s[0:100000]
-    dataset_c1.train.n = 100000
-    dataset_c2.train.x = dataset_c2.train.x[0:100000]
-    dataset_c2.train.hits_c012s = dataset_c2.train.hits_c012s[0:100000]
-    dataset_c2.train.n = 100000
-    
 training_generator = DataGenerator(
     batch_size, dataset_c0.train, dataset_c1.train, dataset_c2.train)
 
@@ -236,6 +215,6 @@ plt.tight_layout()
 output_path = "experimental/figures"
 if not os.path.exists(output_path):
         os.makedirs(output_path)
-plt.savefig(os.path.join(output_path, "model_c012s_v2.pdf"))
+plt.savefig(os.path.join(output_path, "model_c012s_v1.pdf"))
 
 plt.clf()
