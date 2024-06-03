@@ -130,9 +130,15 @@ class RhoRhoEvent(object):
         va_tau2_nu_E = approx_E_nu(pb_tau2_h, va_tau2_nu_long)
 
         #------------------------------------------------------------
-
-        va_tau1_nu_trans = np.sqrt(np.square(va_tau1_nu_E) - np.square(va_tau1_nu_long))
-        va_tau2_nu_trans = np.sqrt(np.square(va_tau2_nu_E) - np.square(va_tau2_nu_long))
+        
+        va_tau1_square_diff = np.square(va_tau1_nu_E) - np.square(va_tau1_nu_long)
+        va_tau1_square_diff = np.where(va_tau1_square_diff < 0, 0, va_tau1_square_diff)
+        
+        va_tau2_square_diff = np.square(va_tau2_nu_E) - np.square(va_tau2_nu_long)
+        va_tau2_square_diff = np.where(va_tau2_square_diff < 0, 0, va_tau2_square_diff)
+        
+        va_tau1_nu_trans = np.sqrt(va_tau1_square_diff)
+        va_tau2_nu_trans = np.sqrt(va_tau2_square_diff)
  
         v_tau1_nu_phi    = np.arctan2(pb_tau1_nu.x, pb_tau1_nu.y) # boosted
         v_tau2_nu_phi    = np.arctan2(pb_tau2_nu.x, pb_tau2_nu.y)
@@ -158,8 +164,14 @@ class RhoRhoEvent(object):
         ve_tau1_nu_E = approx_E_nu(pb_tau1_h, ve_tau1_nu_long)
         ve_tau2_nu_E = approx_E_nu(pb_tau2_h, ve_tau2_nu_long)
 
-        ve_tau1_nu_trans = np.sqrt(np.square(ve_tau1_nu_E) - np.square(ve_tau1_nu_long))
-        ve_tau2_nu_trans = np.sqrt(np.square(ve_tau2_nu_E) - np.square(ve_tau2_nu_long))
+        ve_tau1_square_diff = np.square(ve_tau1_nu_E) - np.square(ve_tau1_nu_long)
+        ve_tau1_square_diff = np.where(ve_tau1_square_diff < 0, 0, ve_tau1_square_diff)
+        
+        ve_tau2_square_diff = np.square(ve_tau2_nu_E) - np.square(ve_tau2_nu_long)
+        ve_tau2_square_diff = np.where(ve_tau2_square_diff < 0, 0, ve_tau2_square_diff)
+
+        ve_tau1_nu_trans = np.sqrt(ve_tau1_square_diff)
+        ve_tau2_nu_trans = np.sqrt(ve_tau2_square_diff)
 
 
         if args.FEAT in ["Variant-2.1", "Variant-2.2"]:
@@ -204,15 +216,28 @@ class RhoRhoEvent(object):
             va_tau2_nu_E_B = approx_E_nu(pb_tau2_h, va_tau2_nu_long_B)
             va_tau2_nu_E_C = approx_E_nu(pb_tau2_h, va_tau2_nu_long_C)
 
-            va_tau1_nu_trans_A = np.sqrt(np.square(va_tau1_nu_E_A) - np.square(va_tau1_nu_long_A))
-            va_tau1_nu_trans_B = np.sqrt(np.square(va_tau1_nu_E_B) - np.square(va_tau1_nu_long_B))
-            va_tau1_nu_trans_C = np.sqrt(np.square(va_tau1_nu_E_C) - np.square(va_tau1_nu_long_C))
+            va_tau1_A_square_diff = np.square(va_tau1_nu_E_A) - np.square(va_tau1_nu_long_A)
+            va_tau1_A_square_diff = np.where(va_tau1_A_square_diff < 0, 0, va_tau1_A_square_diff)
+            va_tau1_B_square_diff = np.square(va_tau1_nu_E_B) - np.square(va_tau1_nu_long_B)
+            va_tau1_B_square_diff = np.where(va_tau1_B_square_diff < 0, 0, va_tau1_B_square_diff)
+            va_tau1_C_square_diff = np.square(va_tau1_nu_E_C) - np.square(va_tau1_nu_long_C)
+            va_tau1_C_square_diff = np.where(va_tau1_C_square_diff < 0, 0, va_tau1_C_square_diff)
+           
+            va_tau1_nu_trans_A = np.sqrt(va_tau1_A_square_diff)
+            va_tau1_nu_trans_B = np.sqrt(va_tau1_B_square_diff)
+            va_tau1_nu_trans_C = np.sqrt(va_tau1_C_square_diff)
 
-            va_tau2_nu_trans_A = np.sqrt(np.square(va_tau2_nu_E_A) - np.square(va_tau2_nu_long_A))
-            va_tau2_nu_trans_B = np.sqrt(np.square(va_tau2_nu_E_B) - np.square(va_tau2_nu_long_B))
-            va_tau2_nu_trans_C = np.sqrt(np.square(va_tau2_nu_E_C) - np.square(va_tau2_nu_long_C))
+            va_tau2_A_square_diff = np.square(va_tau2_nu_E_A) - np.square(va_tau2_nu_long_A)
+            va_tau2_A_square_diff = np.where(va_tau2_A_square_diff < 0, 0, va_tau2_A_square_diff)
+            va_tau2_B_square_diff = np.square(va_tau2_nu_E_B) - np.square(va_tau2_nu_long_B)
+            va_tau2_B_square_diff = np.where(va_tau2_B_square_diff < 0, 0, va_tau2_B_square_diff)
+            va_tau2_C_square_diff = np.square(va_tau2_nu_E_C) - np.square(va_tau2_nu_long_C)
+            va_tau2_C_square_diff = np.where(va_tau2_C_square_diff < 0, 0, va_tau2_C_square_diff)
+           
+            va_tau2_nu_trans_A = np.sqrt(va_tau2_A_square_diff)
+            va_tau2_nu_trans_B = np.sqrt(va_tau2_B_square_diff)
+            va_tau2_nu_trans_C = np.sqrt(va_tau2_C_square_diff)
                   
-
             for alpha in [va_alpha1_A, va_alpha1_B, va_alpha1_C, va_alpha2_A, va_alpha2_B, va_alpha2_C]:
                 isFilter *= (alpha > 0)
             for energy in [va_tau1_nu_E_A, va_tau1_nu_E_B, va_tau1_nu_E_C, va_tau2_nu_E_A, va_tau2_nu_E_B, va_tau2_nu_E_C]:
