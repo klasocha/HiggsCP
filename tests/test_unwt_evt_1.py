@@ -144,6 +144,12 @@ def test_on_unwt_events(args):
     if args.TRAINING_METHOD in ["soft_c012s", "regr_c012s"]:
         hypothesis = round(hypothesis / n_classes * discr_level)
 
+    # Testing for negative weights
+    negs = np.where(preds < 0, True, False)
+    negs = np.sum(negs, axis=1)
+    negs = np.where(negs > 0, True, False)
+    print(f"{np.sum(negs)} (out of {len(preds)}) predictions lead to negative weights")
+
     # Normalising weights to the probability distribution
     if args.TRAINING_METHOD != "soft_weights":
         if np.sum(np.sum(preds, axis=1).reshape((preds.shape[0], 1)) == 0) != 0:
