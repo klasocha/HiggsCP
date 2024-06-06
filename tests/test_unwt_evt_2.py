@@ -84,6 +84,7 @@ def test_on_unwt_events(args):
             "results", args.TRAINING_METHOD, args.MODEL_LOCATION, 
             "model_state", "model.weights.h5"))
         preds = model.predict(X)
+    # if args.TRAINING_METHOD == ""
 
     # Shifting the predictions to the range [0, 2pi]
     for i in range(len(preds)):
@@ -101,8 +102,10 @@ def test_on_unwt_events(args):
         os.makedirs(os.path.normpath(args.OUT))
 
     # Creating a plot showing the distribution of argmaxs and computing the needed values
-    min_preds, max_preds = np.min(preds), np.max(preds)
-    relative_amplitude = 2 * (max_preds - min_preds) / (max_preds + min_preds)
+    pred_counts, _ = np.histogram(preds, bins=discr_level)
+    preds_max_bin = pred_counts.max()
+    preds_min_bin = pred_counts.min()
+    relative_amplitude = 2 * (preds_max_bin - preds_min_bin) / (preds_max_bin + preds_min_bin)
 
     draw_distribution(
         preds=preds,
