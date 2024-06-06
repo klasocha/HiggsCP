@@ -2,24 +2,26 @@ from utilities.data_utils import read_np
 import os, pickle, numpy as np
 from utilities.tf_model import NeuralNetwork
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker 
 
 
-def draw_distribution(preds, true_argmaxs, title, bins, output_path, filename, 
+def draw_distribution(preds, x, true_values, title, output_path, filename, 
                       color=None, info_table=None):
-    
-    # if not multiple:
     fig, (ax1, ax2) = plt.subplots(2, height_ratios=[1, 3])
     fig.set_size_inches(9, 6)
-    ax2.hist(preds, bins=bins, color=color[0], label="Predicted", alpha=0.8)
-    ax2.hist(true_argmaxs, bins=bins, color=color[1], linestyle="dotted", 
-             histtype="step", label="True", linewidth=2.0)
+    ax2.step(np.arange(len(x)), preds, color=color[0], where="mid", label="Predicted")
+    ax2.step(np.arange(len(x)), true_values, color=color[1], where="mid", 
+             linestyle="dotted", label="True")
     ax2.legend()
-    ax2.set_ylabel("Entries", rotation=0, labelpad=20)
+    ax2.set_ylabel("Entries", rotation=0, labelpad=10, loc="top")
     ax2.set_title(title)
 
     table_vals=[[f"Hypothesis idx: {info_table[0]}" + \
-                " (" + r"${{\alpha^{CP}_{max}}}$" + f" = {info_table[1]:0,.2f} rad)"],
-                [f"Relative amplitude: {info_table[2]:0,.2f}"]]    
+                " (" + r"${{\alpha^{CP}}_{max}}$" + f" = {info_table[1]:0,.2f} rad)"],
+                [f"Predicted idx: {info_table[3]}" + \
+                " (" + r"${{\alpha^{CP}}_{max}}$" + f" = {info_table[4]:0,.2f} rad)"],
+                [f"Relative amplitude: {info_table[2]:0,.2f}"],
+                [r"${{\chi^2}/Nf}$" + f" = {info_table[5]:0,.2f}"]]    
     ax1.axis('off')
     ax1.axis('tight')
     table = ax1.table(cellText=table_vals, colWidths = [0.6],
@@ -29,7 +31,10 @@ def draw_distribution(preds, true_argmaxs, title, bins, output_path, filename,
     for _, cell in table.get_celld().items():
         cell.set_linewidth(0)
 
-    ax2.set_xlabel(r"${{\alpha}^{CP}_{max}}$ [rad]", loc="right")    
+    ax2.set_xlabel(r"${\alpha^{CP}}$ [idx]", loc="right")    
+    plt.xticks(np.arange(len(x)), x)
+    if len(x) > 31:
+        ax2.xaxis.set_major_locator(ticker.MultipleLocator(int(len(x) / 15), 1))
 
     plt.tight_layout()
     for format in ["pdf", "png", "eps"]:
@@ -65,7 +70,6 @@ def test_on_unwt_events(args):
     # Filtering the features according to the chosen hypothesis
     # defining the unweighted events mask
     unwt = unwt[:, hypothesis]
-    unwt[100000:] = 0
     X = X[unwt == 1.0]
 
     # Preparing the model
@@ -106,19 +110,31 @@ def test_on_unwt_events(args):
     if not os.path.exists(os.path.normpath(args.OUT)):
         os.makedirs(os.path.normpath(args.OUT))
 
+    # Recomputing hypothesis index if the level of discretisation is different
+    # from the number of classes the model works with
+    if args.TRAINING_METHOD == "regr_argmaxs":
+        hypothesis = round(hypothesis / (n_classes - 1) * (discr_level - 1))
+
     # Creating a plot showing the distribution of argmaxs and computing the needed values
-    pred_counts, _ = np.histogram(preds, bins=discr_level)
-    preds_max_bin = pred_counts.max()
-    preds_min_bin = pred_counts.min()
+    preds_counts, _ = np.histogram(preds, bins=(np.linspace(0, 2*np.pi, discr_level, endpoint=False)))
+    true_counts, _ = np.histogram(true_argmaxs, bins=(np.linspace(0, 2*np.pi, discr_level, endpoint=False)))
+    preds_max_bin = preds_counts.max()
+    preds_min_bin = preds_counts.min()
     relative_amplitude = 2 * (preds_max_bin - preds_min_bin) / (preds_max_bin + preds_min_bin)
+    predicted_hypothesis = np.argmax(preds_counts)
+    chi2_nf = np.sum(np.square(true_counts - preds_counts) / true_counts) / discr_level
 
     draw_distribution(
-        preds=preds,
-        true_argmaxs=true_argmaxs,
-        bins=discr_level,
+        preds=np.roll(preds_counts[:-1], int((discr_level - 1) / 2)),
+        x=np.roll(np.arange(0, discr_level - 1), int((discr_level - 1) / 2)),
+        true_values=np.roll(true_counts[:-1], int((discr_level - 1) / 2)),
         output_path=args.OUT,
-        filename= f"{args.TRAINING_METHOD}_hyp_{hypothesis}_summed_dist",
+        filename= f"{args.TRAINING_METHOD}_hyp_{hypothesis}_dist",
         title="Distribution",
         color=["black", "red"],
-        info_table=[hypothesis, hypothesis / (n_classes - 1) * 2 * np.pi, 
-            relative_amplitude])
+        info_table=[hypothesis, 
+            hypothesis / (n_classes - 1) * 2 * np.pi, 
+            relative_amplitude,
+            predicted_hypothesis,
+            predicted_hypothesis / (n_classes - 1) * 2 * np.pi,
+            chi2_nf])

@@ -1,8 +1,6 @@
 from utilities.data_utils import read_np
 import os, pickle, numpy as np
-from utilities.tf_model import NeuralNetwork, regr_argmaxs_loss
-import tensorflow as tf
-from tensorflow import keras
+from utilities.tf_model import NeuralNetwork
 import matplotlib.pyplot as plt
 from utilities.cpmix_utils import weight_fun
 import matplotlib.ticker as ticker 
@@ -142,7 +140,7 @@ def test_on_unwt_events(args):
     # Recomputing hypothesis index if the level of discretisation is different
     # from the number of classes the model works with
     if args.TRAINING_METHOD in ["soft_c012s", "regr_c012s"]:
-        hypothesis = round(hypothesis / n_classes * discr_level)
+        hypothesis = round(hypothesis / (n_classes - 1) * (discr_level - 1))
 
     # Testing for negative weights
     negs = np.where(preds < 0, True, False)
