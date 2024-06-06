@@ -1,11 +1,7 @@
 from utilities.data_utils import read_np
 import os, pickle, numpy as np
-from utilities.tf_model import NeuralNetwork, regr_argmaxs_loss
-import tensorflow as tf
-from tensorflow import keras
+from utilities.tf_model import NeuralNetwork
 import matplotlib.pyplot as plt
-from utilities.cpmix_utils import weight_fun
-import matplotlib.ticker as ticker 
 
 
 def draw_distribution(preds, true_argmaxs, title, bins, output_path, filename, 
@@ -14,11 +10,11 @@ def draw_distribution(preds, true_argmaxs, title, bins, output_path, filename,
     # if not multiple:
     fig, (ax1, ax2) = plt.subplots(2, height_ratios=[1, 3])
     fig.set_size_inches(9, 6)
-    ax2.hist(preds, bins=bins, color=color[0], label="Predicted")
+    ax2.hist(preds, bins=bins, color=color[0], label="Predicted", alpha=0.8)
     ax2.hist(true_argmaxs, bins=bins, color=color[1], linestyle="dotted", 
-             label="True", alpha=0.4)
+             histtype="step", label="True", linewidth=2.0)
     ax2.legend()
-    ax2.set_ylabel(r"$\sum_{i=0}^N {alphaCP}_max$", rotation=0, labelpad=20)
+    ax2.set_ylabel("Entries", rotation=0, labelpad=20)
     ax2.set_title(title)
 
     table_vals=[[f"Hypothesis idx: {info_table[0]}" + \
@@ -34,9 +30,6 @@ def draw_distribution(preds, true_argmaxs, title, bins, output_path, filename,
         cell.set_linewidth(0)
 
     ax2.set_xlabel(r"${{\alpha}^{CP}_{max}}$ [rad]", loc="right")    
-    # plt.xticks(np.arange(len(x)), x)
-    # if discr_level > 31:
-    #     ax2.xaxis.set_major_locator(ticker.MultipleLocator(int(len(x) / 15), 1))
 
     plt.tight_layout()
     for format in ["pdf", "png", "eps"]:
@@ -50,9 +43,7 @@ def test_on_unwt_events(args):
     filtered according to a chosen hypothesis and create a double check plot 
     showing the distribution of the predicted weights """
 
-    discr_level = int(args.NBINS) if args.NBINS is not None and \
-        args.TRAINING_METHOD in ["soft_c012s", "regr_c012s"] else \
-        int(args.NUM_CLASSES)
+    discr_level = int(args.NBINS) if args.NBINS is not None else int(args.NUM_CLASSES)
     n_classes = int(args.NUM_CLASSES)
     hypothesis = int(args.HYPOTHESIS)
 
@@ -73,7 +64,6 @@ def test_on_unwt_events(args):
     # Filtering the features according to the chosen hypothesis
     # defining the unweighted events mask
     unwt = unwt[:, hypothesis]
-    unwt[100000:] = 0
     X = X[unwt == 1.0]
 
     # Preparing the model
@@ -111,9 +101,8 @@ def test_on_unwt_events(args):
         os.makedirs(os.path.normpath(args.OUT))
 
     # Creating a plot showing the distribution of argmaxs and computing the needed values
-    min_summed, max_summed = np.min(preds), np.max(preds)
-    relative_amplitude = 2 * (max_summed - min_summed) / (max_summed + min_summed)
-    # chi2_nf = np.sum(np.square(true_argmaxs - preds) / true_argmaxs) / discr_level 
+    min_preds, max_preds = np.min(preds), np.max(preds)
+    relative_amplitude = 2 * (max_preds - min_preds) / (max_preds + min_preds)
 
     draw_distribution(
         preds=preds,
@@ -121,8 +110,7 @@ def test_on_unwt_events(args):
         bins=discr_level,
         output_path=args.OUT,
         filename= f"{args.TRAINING_METHOD}_hyp_{hypothesis}_summed_dist",
-        title="Summed distribution",
+        title="Distribution",
         color=["black", "red"],
-        info_table=[hypothesis, 
-                    hypothesis / (discr_level - 1) * 2 * np.pi, 
-                    relative_amplitude])
+        info_table=[hypothesis, hypothesis / (n_classes - 1) * 2 * np.pi, 
+            relative_amplitude])
