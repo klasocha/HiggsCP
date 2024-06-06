@@ -43,7 +43,8 @@ def test_on_unwt_events(args):
     filtered according to a chosen hypothesis and create a double check plot 
     showing the distribution of the predicted weights """
 
-    discr_level = int(args.NBINS) if args.NBINS is not None else int(args.NUM_CLASSES)
+    discr_level = int(args.NBINS) if args.NBINS is not None and \
+        args.TRAINING_METHOD != "soft_argmaxs" else int(args.NUM_CLASSES)
     n_classes = int(args.NUM_CLASSES)
     hypothesis = int(args.HYPOTHESIS)
 
@@ -64,6 +65,7 @@ def test_on_unwt_events(args):
     # Filtering the features according to the chosen hypothesis
     # defining the unweighted events mask
     unwt = unwt[:, hypothesis]
+    unwt[100000:] = 0
     X = X[unwt == 1.0]
 
     # Preparing the model
@@ -79,19 +81,22 @@ def test_on_unwt_events(args):
     model.build()
 
     # Loading model weights and making predictions
+    model.load_weights(os.path.join(
+    "results", args.TRAINING_METHOD, args.MODEL_LOCATION, 
+    "model_state", "model.weights.h5"))
+    preds = model.predict(X)
+  
+    if args.TRAINING_METHOD == "soft_argmaxs":
+        preds = np.argmax(preds, axis=1)
+        preds = preds * 2 * np.pi / (n_classes - 1)
+    
     if args.TRAINING_METHOD == "regr_argmaxs":
-        model.load_weights(os.path.join(
-            "results", args.TRAINING_METHOD, args.MODEL_LOCATION, 
-            "model_state", "model.weights.h5"))
-        preds = model.predict(X)
-    # if args.TRAINING_METHOD == ""
-
-    # Shifting the predictions to the range [0, 2pi]
-    for i in range(len(preds)):
-        while preds[i] > (2 * np.pi):
-            preds[i] -= 2 * np.pi
-        while preds[i] < 0:
-            preds[i] += 2 * np.pi
+        # Shifting the predictions to the range [0, 2pi]
+        for i in range(len(preds)):
+            while preds[i] > (2 * np.pi):
+                preds[i] -= 2 * np.pi
+            while preds[i] < 0:
+                preds[i] += 2 * np.pi
 
     # Loading and filtering true alphaCPmax values
     true_argmaxs = read_np("data/argmaxs.npy")
