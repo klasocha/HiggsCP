@@ -14,7 +14,8 @@ from plots.results_analysis_3 import draw as results_analysis_3
 from plots.results_analysis_4 import draw as results_analysis_4
 from plots.results_analysis_5 import draw as results_analysis_5
 from tests.test_parsed_data import test_parsed_data, show_example_records
-from tests.test_unwt_evt_1 import test_on_unwt_events
+from tests.test_unwt_evt_1 import test_on_unwt_events as test_on_unwt_events_1
+from tests.test_unwt_evt_2 import test_on_unwt_events as test_on_unwt_events_2
 from tests.test_labels import test_labels
 from utilities.prepare_rhorho import prepare_rhorho
 
@@ -193,12 +194,20 @@ if args.ACTION == "test_model_on_unwt_events":
     # --output "plots/figures/test_model_on_unwt_events" --num_classes "21" 
     # --hypothesis "0" --training_method "soft_weights" --model_location "model_1" 
     # --features "Variant-All"
-    print(""" 
-    This part was created to test the trained model by feeding it with
-    the unweighted events and then creating a plot showing the summed
-    distribution of the predicted weights.
-    """)
-    test_on_unwt_events(args)
+    if args.TRAINING_METHOD not in ["regr_argmaxs", "soft_argmaxs"]:
+        print(""" 
+        This part was created to test the trained model by feeding it with
+        the unweighted events and then creating a plot showing the summed
+        distribution of the predicted weights.
+        """)
+        test_on_unwt_events_1(args)
+    else:
+        print(""" 
+        This part was created to test the trained model by feeding it with
+        the unweighted events and then creating a plot showing the
+        distribution of the predicted alphaCP max.
+        """)
+        test_on_unwt_events_2(args)
 
 if args.ACTION == "test_labels":
     # $ python main.py --action "test_labels" --input "data" 
