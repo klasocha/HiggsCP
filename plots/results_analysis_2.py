@@ -11,8 +11,7 @@ from utilities.data_utils import read_np
 
 
 def calc_weights(num_classes, coeffs):
-    k2PI = 2* np.pi
-    x = np.linspace(0, k2PI, num_classes)
+    x = np.linspace(0, 2 * np.pi, num_classes)
     data_len = coeffs.shape[0]
     weights = np.zeros((data_len, num_classes))
     for i in range(data_len):
@@ -23,13 +22,15 @@ def calc_weights(num_classes, coeffs):
 def draw(args):
     # Preparing the output directory
     num_classes = int(args.NUM_CLASSES)
+    discr_level = int(args.NBINS) if args.NBINS else int(args.NUM_CLASSES)
+        
     output_path = os.path.join(os.path.normpath(args.OUT), "results_analysis_2",
                                args.TRAINING_METHOD, args.DATASET)
     if not os.path.exists(output_path):
         os.makedirs(output_path)
     filtered = "unfiltered" if not args.USE_FILTERED_DATA else "filtered"
     filename = f"soft_c012s_delt_argmax_rhorho_{args.FEAT}_nc_{num_classes}_" + \
-        f"{filtered}"
+        f"{filtered}_bins_{discr_level}"
     output_path = os.path.join(output_path, filename)
 
     # Loading the coefficients
@@ -87,15 +88,15 @@ def draw(args):
         preds_c012s[i][2] = preds_c2s[i] * (2. / (num_classes - 1)) - 1.0
 
     k2PI = 2 * np.pi
-    calc_w  =  calc_weights(num_classes, calc_c012s)
-    preds_w =  calc_weights(num_classes, preds_c012s)
+    calc_w  =  calc_weights(discr_level, calc_c012s)
+    preds_w =  calc_weights(discr_level, preds_c012s)
     delt_argmax = calculate_deltas_signed(np.argmax(preds_w[:], axis=1), 
-                                          np.argmax(calc_w[:], axis=1), num_classes)      
-    delt_argmax_rad = delt_argmax * k2PI / (num_classes - 1)
+                                          np.argmax(calc_w[:], axis=1), discr_level)      
+    delt_argmax_rad = delt_argmax * k2PI / (discr_level - 1)
 
-    meanrad = np.mean(delt_argmax) * k2PI / (num_classes - 1)
-    stdrad  = np.std(delt_argmax) * k2PI / (num_classes - 1)
-    meanraderr = stats.sem(delt_argmax) * k2PI / (num_classes - 1)
+    meanrad = np.mean(delt_argmax) * k2PI / (discr_level - 1)
+    stdrad  = np.std(delt_argmax) * k2PI / (discr_level - 1)
+    meanraderr = stats.sem(delt_argmax) * k2PI / (discr_level - 1)
 
     # Preparing the plot
     bins = np.max(delt_argmax) - np.min(delt_argmax) + 1

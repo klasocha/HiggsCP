@@ -146,7 +146,13 @@ def test_on_unwt_events(args):
     negs = np.where(preds < 0, True, False)
     negs = np.sum(negs, axis=1)
     negs = np.where(negs > 0, True, False)
-    print(f"{np.sum(negs)} (out of {len(preds)}) predictions lead to negative weights")
+    negs_n = np.sum(negs)
+    # Replacing predictions containing negative weights by zeroes
+    lambda_fun = np.vectorize(lambda x : 0)
+    if negs_n > 0:
+        preds_zero_neg = np.copy(preds) 
+        preds_zero_neg[negs] = lambda_fun(preds_zero_neg[negs])
+    print(f"{negs_n} (out of {len(preds)}) predictions lead to negative weights")
 
     # Normalising weights to the probability distribution
     if args.TRAINING_METHOD != "soft_weights":
@@ -156,6 +162,11 @@ def test_on_unwt_events(args):
         else:
             print("Normalisation will be applied on predictions")
             preds = preds / np.sum(preds, axis=1).reshape((preds.shape[0], 1))
+        if negs_n > 0:
+            preds_zero_neg = np.exp(preds_zero_neg) / np.sum(
+                np.exp(preds_zero_neg), axis=1).reshape((preds_zero_neg.shape[0], 1))
+
+
     true_weights = true_weights / np.sum(true_weights, axis=1).reshape((true_weights.shape[0], 1))
 
     # Creating a plot showing the summed distribution of Wt and computing the needed values
@@ -189,3 +200,36 @@ def test_on_unwt_events(args):
         filename=f"{args.TRAINING_METHOD}_hyp_{hypothesis}_samples",
         title="Event spin weight",
         multiple=True)
+    
+    # Plotting the same for preprocessed predictions (those containing
+    # negative weights are set to zero)
+    if negs_n > 0:
+        summed_wt = np.sum(preds_zero_neg, axis=0)
+        predicted_argmax = np.argmax(summed_wt)
+        min_summed_wt, max_summed_wt = np.min(summed_wt), np.max(summed_wt)
+        relative_amplitude = 2 * (max_summed_wt - min_summed_wt) / (max_summed_wt + min_summed_wt)
+        chi2_nf = np.sum(np.square(summed_true_wt - summed_wt) / summed_true_wt) / discr_level 
+
+        draw_distribution(
+            x=np.roll(np.arange(0, discr_level - 1), int((discr_level - 1) / 2)),
+            y=np.roll(summed_wt[:-1], int((discr_level - 1) / 2)),
+            true_weights=np.roll(summed_true_wt[:-1], int((discr_level - 1) / 2)),
+            output_path=args.OUT,
+            filename= f"{args.TRAINING_METHOD}_hyp_{hypothesis}_summed_dist_zeroed_neg",
+            title="Summed distribution",
+            color=["black", "red"],
+            info_table=[hypothesis, 
+                        predicted_argmax,
+                        hypothesis / (discr_level - 1) * 2 * np.pi, 
+                        predicted_argmax / (discr_level - 1) * 2 * np.pi,
+                        relative_amplitude,
+                        chi2_nf])
+
+        # Creating a plot showing some sample events predictied by the model
+        draw_distribution(
+            x=np.roll(np.arange(0, discr_level - 1), int((discr_level - 1) / 2)),
+            y=np.roll(preds_zero_neg[:, :-1], axis=1, shift=int((discr_level - 1) / 2)),
+            output_path=args.OUT,
+            filename=f"{args.TRAINING_METHOD}_hyp_{hypothesis}_samples_zeroed_neg",
+            title="Event spin weight",
+            multiple=True)
