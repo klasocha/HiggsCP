@@ -49,7 +49,7 @@ def draw(args):
         plt.ylabel(r"wt (mean)", loc="top")
         plt.ylim([0, 1])
         plt.legend(loc="upper right")
-
+        plt.title(f"Actual alphaCPmax = {np.argmax(w)}")
         # Creating the output folder
         output_path = os.path.join(os.path.normpath(args.OUT), f"unwt_weight_distribution_for_{int(args.NUM_CLASSES)}_classes")
         try:
