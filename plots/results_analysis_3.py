@@ -52,7 +52,7 @@ def draw(args):
     plt.gca()
     table_vals=[[r'Classification: $\alpha^{CP}_{max}$'],
                 [" "],
-                [r"mean = {:0.3f}$\pm$ {:1.3f} [rad]".format(meanrad, meanerrrad)],
+                [r"mean = {:0.3f} $\pm$ {:1.3f} [rad]".format(meanrad, meanerrrad)],
                 ["std = {:1.3f} [rad]".format(stdrad)]
                 ]
     table = plt.table(cellText=table_vals,

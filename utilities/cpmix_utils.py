@@ -10,17 +10,29 @@ def weight_fun(alphaCP, c0, c1, c2):
     return c0 + c1 * np.cos(alphaCP) + c2 * np.sin(alphaCP)
 
 
-def hits_fun(classes, x, num_classes):
+def hits_fun(classes, x, num_classes, periodicity=False):
     """ Assign x to one of the intervals defined by the classes. 
     Return a vector which is the one-hot encoded representation of x assigned
-    to a specific bin among all the len(classes) bins available """
+    to a specific bin among all the len(classes) bins available. If
+    periodicity is True, then it does not convert values to one-hot encoded ones
+    as the first bin and the last bin are assigned to its common sum. """
+
     hits = np.zeros(num_classes)
 
-    for i in range(num_classes - 1):
-        if classes[i] <= x < classes[i + 1]:
-          hits[i] = 1.0
-    if x >= classes[num_classes - 1]:
-        hits[i + 1] = 1.0
+    if x < ((classes[0] + classes[1]) / 2):
+        hits[0] = 1.0
+        
+    for i in range(1, num_classes):
+        if ((classes[i-1] + classes[i]) / 2) <= x < \
+            ((classes[i] + classes[i+1]) / 2):
+            hits[i] = 1.0
+    
+    if periodicity:
+        if hits[0] == 1:
+            hits[num_classes - 1] = 1
+        if hits[num_classes - 1] == 1:
+            hits[0] = 1   
+
     return hits
 
 
@@ -48,7 +60,7 @@ def calc_weights_and_argmaxs(c012s, data_len, num_classes):
     hits_argmaxs = np.zeros((data_len, num_classes))
     
     classes_for_weight_fun = np.linspace(0, 2, num_classes) * np.pi
-    classes_for_hits_fun = np.linspace(0, 2, num_classes, endpoint=False) * np.pi
+    classes_for_hits_fun = np.linspace(0, 2 + 2/(num_classes - 1), (num_classes + 1)) * np.pi
 
     print("Calculating weights and argmax values from continuum distributions")    
     for i in range(data_len):
@@ -56,8 +68,7 @@ def calc_weights_and_argmaxs(c012s, data_len, num_classes):
             print(f"{i} events have been processed...", end='\r')
         weights[i] = weight_fun(classes_for_weight_fun, *c012s[i])
         arg_max = 0
-        if weight_fun(2 * np.pi, *c012s[i]) > weight_fun(arg_max, *c012s[i]):
-            arg_max = 2 * np.pi
+
         phi = np.arctan(c012s[i][2] / c012s[i][1])
 
         if 0 < phi < 2 * np.pi and weight_fun(phi, *c012s[i]) > weight_fun(arg_max, *c012s[i]):
@@ -70,7 +81,7 @@ def calc_weights_and_argmaxs(c012s, data_len, num_classes):
             arg_max = phi + 2 * np.pi
 
         argmaxs[i] = arg_max
-        hits_argmaxs[i] = hits_fun(classes_for_hits_fun, arg_max, num_classes)
+        hits_argmaxs[i] = hits_fun(classes_for_hits_fun, arg_max, num_classes, True)
     print()
     return weights, argmaxs, hits_argmaxs
 
@@ -130,7 +141,7 @@ def preprocess_data(args):
         and read_np(c012s_paths[0]).shape[1] == num_classes \
         and read_np(c012s_paths[1]).shape[1] == num_classes \
         and read_np(c012s_paths[2]).shape[1] == num_classes):
-        classes = np.linspace(0, 2, num_classes, endpoint=False) 
+        classes = np.linspace(0, 2 + 2/(num_classes - 1), (num_classes + 1)) 
         print("Converting the C0/C1/C1 coefficients to a one-hot encoded format") 
         hits_c0s, hits_c1s, hits_c2s = calc_hits_c012s(classes, c012s, data_len, num_classes)
         print("Saving the C0/C1/C2 coefficients in one-hot encoded form")

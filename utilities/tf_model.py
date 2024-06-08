@@ -28,6 +28,7 @@ class DataGenerator(keras.utils.Sequence):
             labels = weights / tf.tile(tf.reshape(tf.reduce_sum(weights, axis=1), (-1, 1)), 
                                        (1, weights.shape[-1]))
         if self.configuration == "soft_argmaxs":
+            hits_argmaxs = hits_argmaxs[:, :-1]
             labels = hits_argmaxs / tf.tile(tf.reshape(tf.reduce_sum(hits_argmaxs, axis=1), 
                                                        (-1, 1)), (1, hits_argmaxs.shape[-1]))
         if self.configuration == "soft_c012s":
@@ -161,7 +162,7 @@ class NeuralNetwork(keras.Model):
         # Architecture parameters
         self.n_features = n_features
         self.configuration = configuration
-        self.n_classes = {"soft_weights": n_classes, "soft_argmaxs": n_classes, 
+        self.n_classes = {"soft_weights": n_classes, "soft_argmaxs": n_classes - 1, 
                           "soft_c012s": n_classes, "regr_argmaxs": 1,
                           "regr_c012s": 3, "regr_weights": n_classes}[self.configuration]
         self.n_layers = n_layers
@@ -273,7 +274,8 @@ def get_predictions_and_labels(model, dataset, training_method, filtered=False):
             dataset.hits_argmaxs = dataset.hits_argmaxs[dataset.filt == 1]
         calc = dataset.hits_argmaxs / tf.tile(
             tf.reshape(tf.reduce_sum(dataset.hits_argmaxs, axis=1), 
-                       (-1, 1)), (1, dataset.hits_argmaxs.shape[-1]))    
+                       (-1, 1)), (1, dataset.hits_argmaxs.shape[-1]))
+        calc = calc[:, :-1]    
     
     if training_method == "regr_argmaxs":
         if filtered:

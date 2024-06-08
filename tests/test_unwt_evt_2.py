@@ -5,19 +5,42 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker 
 
 
+def bins_fun(classes, data, num_classes, periodicity):
+    # Similar to hits_fun from cpmix_utils.py but data is an array and
+    # hits contain the counts of data points
+    hits = np.zeros(num_classes)
+    
+    def count_bins(e):
+        if e < ((classes[0] + classes[1]) / 2):
+            hits[0] += 1.0
+            if periodicity:
+                hits[num_classes - 1] += 1.0
+        for i in range(1, num_classes):
+            if ((classes[i-1] + classes[i]) / 2) <= e < \
+                ((classes[i] + classes[i+1]) / 2):
+                hits[i] += 1.0
+                if i == num_classes - 1 and periodicity:
+                    hits[0] += 1.0
+
+    lambda_fun = np.vectorize(lambda x: count_bins(x))
+    data = lambda_fun(data)    
+    return hits
+
+
 def draw_distribution(preds, x, true_values, title, output_path, filename, 
                       color=None, info_table=None):
     fig, (ax1, ax2) = plt.subplots(2, height_ratios=[1, 3])
     fig.set_size_inches(9, 6)
     ax2.step(np.arange(len(x)), preds, color=color[0], where="mid", label="Predicted")
-    ax2.step(np.arange(len(x)), true_values, color=color[1], where="mid", 
-             linestyle="dotted", label="True")
+    ax2.step(np.arange(len(x)), true_values, color=color[1], where="mid", label="True")
     ax2.legend()
     ax2.set_ylabel("Entries", rotation=0, labelpad=10, loc="top")
     ax2.set_title(title)
 
     table_vals=[[f"Hypothesis idx: {info_table[0]}" + \
                 " (" + r"${{\alpha^{CP}}_{max}}$" + f" = {info_table[1]:0,.2f} rad)"],
+                [f"Actual hypothesis idx: {info_table[6]}" + \
+                " (" + r"${{\alpha^{CP}}_{max}}$" + f" = {info_table[7]:0,.2f} rad)"],
                 [f"Predicted idx: {info_table[3]}" + \
                 " (" + r"${{\alpha^{CP}}_{max}}$" + f" = {info_table[4]:0,.2f} rad)"],
                 [f"Relative amplitude: {info_table[2]:0,.2f}"],
@@ -105,7 +128,7 @@ def test_on_unwt_events(args):
     # Loading and filtering true alphaCPmax values
     true_argmaxs = read_np("data/argmaxs.npy")
     true_argmaxs = true_argmaxs[unwt == 1.0]
-
+    
     # Creating a directory for storing the plots
     if not os.path.exists(os.path.normpath(args.OUT)):
         os.makedirs(os.path.normpath(args.OUT))
@@ -116,18 +139,26 @@ def test_on_unwt_events(args):
         hypothesis = round(hypothesis / (n_classes - 1) * (discr_level - 1))
 
     # Creating a plot showing the distribution of argmaxs and computing the needed values
-    preds_counts, _ = np.histogram(preds, bins=(np.linspace(0, 2*np.pi, discr_level, endpoint=False)))
-    true_counts, _ = np.histogram(true_argmaxs, bins=(np.linspace(0, 2*np.pi, discr_level, endpoint=False)))
+    classes = np.linspace(0, 2 + 2/(discr_level - 1), (discr_level + 1)) * np.pi
+    true_counts = bins_fun(classes, true_argmaxs, discr_level, True)
+    periodicity = True if args.TRAINING_METHOD == "regr_argmaxs" else False
+    preds_counts = bins_fun(classes, preds, discr_level, periodicity)
+
+    # Getting rid of the last class (360° = 0°, bins_fun() takes into account this)
+    preds_counts = preds_counts[:-1]
+    true_counts = true_counts[:-1]
+    
     preds_max_bin = preds_counts.max()
     preds_min_bin = preds_counts.min()
     relative_amplitude = 2 * (preds_max_bin - preds_min_bin) / (preds_max_bin + preds_min_bin)
     predicted_hypothesis = np.argmax(preds_counts)
+    actual_hypothesis = np.argmax(true_counts)
     chi2_nf = np.sum(np.square(true_counts - preds_counts) / true_counts) / discr_level
 
     draw_distribution(
-        preds=np.roll(preds_counts[:-1], int((discr_level - 1) / 2)),
+        preds=np.roll(preds_counts, int((discr_level - 1) / 2)),
         x=np.roll(np.arange(0, discr_level - 1), int((discr_level - 1) / 2)),
-        true_values=np.roll(true_counts[:-1], int((discr_level - 1) / 2)),
+        true_values=np.roll(true_counts, int((discr_level - 1) / 2)),
         output_path=args.OUT,
         filename= f"{args.TRAINING_METHOD}_hyp_{hypothesis}_dist",
         title="Distribution",
@@ -137,4 +168,6 @@ def test_on_unwt_events(args):
             relative_amplitude,
             predicted_hypothesis,
             predicted_hypothesis / (n_classes - 1) * 2 * np.pi,
-            chi2_nf])
+            chi2_nf,
+            actual_hypothesis,
+            actual_hypothesis / (n_classes - 1) * 2 * np.pi])

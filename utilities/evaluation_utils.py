@@ -55,6 +55,7 @@ def compute_loss(model, dataset, batch_size):
             labels = weights / tf.tile(tf.reshape(tf.reduce_sum(weights, axis=1), (-1, 1)), 
                                     (1, weights.shape[-1]))
         if model.configuration == "soft_argmaxs":
+            hits_argmaxs = hits_argmaxs[:, :-1]
             labels = hits_argmaxs / tf.tile(tf.reshape(tf.reduce_sum(hits_argmaxs, axis=1), 
                                                         (-1, 1)), (1, hits_argmaxs.shape[-1]))
         if model.configuration == "soft_c012s":
