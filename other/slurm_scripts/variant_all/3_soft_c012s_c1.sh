@@ -14,21 +14,11 @@ module load python/3.11.3-gcccore-12.3.0
 source .venv/bin/activate
 
 # Training
-python main.py --action "train" --input "data" --num_classes "21" --epochs $EPOCHS \
---training_method "soft_c012s" --model_location "variant_all/21_classes_c1" \
---hits_c012s "hits_c1s" --features Variant-All
 python main.py --action "train" --input "data" --num_classes "51" --epochs $EPOCHS \
 --training_method "soft_c012s" --model_location "variant_all/51_classes_c1" \
 --hits_c012s "hits_c1s" --features Variant-All
 
 # Prediction (test)
-python main.py --action "predict_test" --input "data" --num_classes "21" \
---training_method "soft_c012s" --model_location "variant_all/21_classes_c1" \
---features Variant-All --hits_c012s "hits_c1s" --use_filtered_data
-python main.py --action "predict_test" --input "data" --num_classes "21" \
---training_method "soft_c012s" --model_location "variant_all/21_classes_c1" \
---features Variant-All --hits_c012s "hits_c1s"
-
 python main.py --action "predict_test" --input "data" --num_classes "51" \
 --training_method "soft_c012s" --model_location "variant_all/51_classes_c1" \
 --features Variant-All --hits_c012s "hits_c1s" --use_filtered_data
@@ -37,13 +27,6 @@ python main.py --action "predict_test" --input "data" --num_classes "51" \
 --features Variant-All --hits_c012s "hits_c1s"
 
 # Prediction (training and validation)
-python main.py --action "predict_train_and_valid" --input "data" --num_classes "21" \
---training_method "soft_c012s" --model_location "variant_all/21_classes_c1" \
---features Variant-All --hits_c012s "hits_c1s" --use_filtered_data
-python main.py --action "predict_train_and_valid" --input "data" --num_classes "21" \
---training_method "soft_c012s" --model_location "variant_all/21_classes_c1" \
---features Variant-All --hits_c012s "hits_c1s"
-
 python main.py --action "predict_train_and_valid" --input "data" --num_classes "51" \
 --training_method "soft_c012s" --model_location "variant_all/51_classes_c1" \
 --features Variant-All --hits_c012s "hits_c1s" --use_filtered_data

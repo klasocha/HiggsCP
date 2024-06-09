@@ -14,21 +14,11 @@ module load python/3.11.3-gcccore-12.3.0
 source .venv/bin/activate
 
 # Training
-python main.py --action "train" --input "data" --num_classes "21" --epochs $EPOCHS \
---training_method "soft_c012s" --model_location "variant_all/21_classes_c0" \
---hits_c012s "hits_c0s" --features Variant-All
 python main.py --action "train" --input "data" --num_classes "51" --epochs $EPOCHS \
 --training_method "soft_c012s" --model_location "variant_all/51_classes_c0" \
 --hits_c012s "hits_c0s" --features Variant-All
 
 # Prediction (test)
-python main.py --action "predict_test" --input "data" --num_classes "21" \
---training_method "soft_c012s" --model_location "variant_all/21_classes_c0" \
---features Variant-All --use_filtered_data
-python main.py --action "predict_test" --input "data" --num_classes "21" \
---training_method "soft_c012s" --model_location "variant_all/21_classes_c0" \
---features Variant-All
-
 python main.py --action "predict_test" --input "data" --num_classes "51" \
 --training_method "soft_c012s" --model_location "variant_all/51_classes_c0" \
 --features Variant-All --use_filtered_data
@@ -37,13 +27,6 @@ python main.py --action "predict_test" --input "data" --num_classes "51" \
 --features Variant-All
 
 # Prediction (training and validation)
-python main.py --action "predict_train_and_valid" --input "data" --num_classes "21" \
---training_method "soft_c012s" --model_location "variant_all/21_classes_c0" \
---features Variant-All --use_filtered_data
-python main.py --action "predict_train_and_valid" --input "data" --num_classes "21" \
---training_method "soft_c012s" --model_location "variant_all/21_classes_c0" \
---features Variant-All
-
 python main.py --action "predict_train_and_valid" --input "data" --num_classes "51" \
 --training_method "soft_c012s" --model_location "variant_all/51_classes_c0" \
 --features Variant-All --use_filtered_data

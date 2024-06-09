@@ -14,79 +14,20 @@ module load python/3.11.3-gcccore-12.3.0
 source .venv/bin/activate
 
 # Training
-python main.py --action "train" --input "data" --num_classes "21" --epochs $EPOCHS \
---training_method "soft_weights" --model_location "21_classes_variant_all" \
---features Variant-All
 python main.py --action "train" --input "data" --num_classes "51" --epochs $EPOCHS \
 --training_method "soft_weights" --model_location "51_classes_variant_all" \
 --features Variant-All
 
 # Prediction (test)
-python main.py --action "predict_test" --input "data" --num_classes "21" \
---model_location "21_classes_variant_all" --features Variant-All --use_filtered_data
 python main.py --action "predict_test" --input "data" --num_classes "51" \
 --model_location "51_classes_variant_all" --features Variant-All --use_filtered_data
-python main.py --action "predict_test" --input "data" --num_classes "21" \
---model_location "21_classes_variant_all" --features Variant-All
 python main.py --action "predict_test" --input "data" --num_classes "51" \
 --model_location "51_classes_variant_all" --features Variant-All
 
 # Prediction (training and validation)
-python main.py --action "predict_train_and_valid" --input "data" --num_classes "21" \
---model_location "21_classes_variant_all" --features Variant-All --use_filtered_data
 python main.py --action "predict_train_and_valid" --input "data" --num_classes "51" \
 --model_location "51_classes_variant_all" --features Variant-All --use_filtered_data
-python main.py --action "predict_train_and_valid" --input "data" --num_classes "21" \
---model_location "21_classes_variant_all" --features Variant-All
 python main.py --action "predict_train_and_valid" --input "data" --num_classes "51" \
 --model_location "51_classes_variant_all" --features Variant-All
-
-# Plots (21 classes)
-python main.py --action "plot" --input "results/soft_weights/21_classes_variant_all/predictions" \
---output "plots/figures" --option "RESULTS_ANALYSIS_1" --num_classes "21" \
---training_method "soft_weights" --features Variant-All --dataset "test" \
---use_filtered_data
-python main.py --action "plot" --input "results/soft_weights/21_classes_variant_all/predictions" \
---output "plots/figures" --option "RESULTS_ANALYSIS_1" --num_classes "21" \
---training_method "soft_weights" --features Variant-All --dataset "valid" \
---use_filtered_data
-python main.py --action "plot" --input "results/soft_weights/21_classes_variant_all/predictions" \
---output "plots/figures" --option "RESULTS_ANALYSIS_1" --num_classes "21" \
---training_method "soft_weights" --features Variant-All --dataset "train" \
---use_filtered_data
-
-python main.py --action "plot" --input "results/soft_weights/21_classes_variant_all/predictions" \
---output "plots/figures" --option "RESULTS_ANALYSIS_1" --num_classes "21" \
---training_method "soft_weights" --features Variant-All --dataset "test"
-python main.py --action "plot" --input "results/soft_weights/21_classes_variant_all/predictions" \
---output "plots/figures" --option "RESULTS_ANALYSIS_1" --num_classes "21" \
---training_method "soft_weights" --features Variant-All --dataset "valid"
-python main.py --action "plot" --input "results/soft_weights/21_classes_variant_all/predictions" \
---output "plots/figures" --option "RESULTS_ANALYSIS_1" --num_classes "21" \
---training_method "soft_weights" --features Variant-All --dataset "train"
-
-# Plots (51 classes)
-python main.py --action "plot" --input "results/soft_weights/51_classes_variant_all/predictions" \
---output "plots/figures" --option "RESULTS_ANALYSIS_1" --num_classes "51" \
---training_method "soft_weights" --features Variant-All --dataset "test" \
---use_filtered_data
-python main.py --action "plot" --input "results/soft_weights/51_classes_variant_all/predictions" \
---output "plots/figures" --option "RESULTS_ANALYSIS_1" --num_classes "51" \
---training_method "soft_weights" --features Variant-All --dataset "valid" \
---use_filtered_data
-python main.py --action "plot" --input "results/soft_weights/51_classes_variant_all/predictions" \
---output "plots/figures" --option "RESULTS_ANALYSIS_1" --num_classes "51" \
---training_method "soft_weights" --features Variant-All --dataset "train" \
---use_filtered_data
-
-python main.py --action "plot" --input "results/soft_weights/51_classes_variant_all/predictions" \
---output "plots/figures" --option "RESULTS_ANALYSIS_1" --num_classes "51" \
---training_method "soft_weights" --features Variant-All --dataset "test"
-python main.py --action "plot" --input "results/soft_weights/51_classes_variant_all/predictions" \
---output "plots/figures" --option "RESULTS_ANALYSIS_1" --num_classes "51" \
---training_method "soft_weights" --features Variant-All --dataset "valid"
-python main.py --action "plot" --input "results/soft_weights/51_classes_variant_all/predictions" \
---output "plots/figures" --option "RESULTS_ANALYSIS_1" --num_classes "51" \
---training_method "soft_weights" --features Variant-All --dataset "train"
 
 deactivate

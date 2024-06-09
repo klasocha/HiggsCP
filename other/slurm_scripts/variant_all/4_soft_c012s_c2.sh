@@ -15,21 +15,11 @@ source .venv/bin/activate
 
 
 # Training
-python main.py --action "train" --input "data" --num_classes "21" --epochs $EPOCHS \
---training_method "soft_c012s" --model_location "variant_all/21_classes_c2" \
---hits_c012s "hits_c2s" --features Variant-All
 python main.py --action "train" --input "data" --num_classes "51" --epochs $EPOCHS \
 --training_method "soft_c012s" --model_location "variant_all/51_classes_c2" \
 --hits_c012s "hits_c2s" --features Variant-All
 
 # Prediction (test)
-python main.py --action "predict_test" --input "data" --num_classes "21" \
---training_method "soft_c012s" --model_location "variant_all/21_classes_c2" \
---features Variant-All --hits_c012s "hits_c2s" --use_filtered_data
-python main.py --action "predict_test" --input "data" --num_classes "21" \
---training_method "soft_c012s" --model_location "variant_all/21_classes_c2" \
---features Variant-All --hits_c012s "hits_c2s"
-
 python main.py --action "predict_test" --input "data" --num_classes "51" \
 --training_method "soft_c012s" --model_location "variant_all/51_classes_c2" \
 --features Variant-All --hits_c012s "hits_c2s" --use_filtered_data
@@ -38,66 +28,11 @@ python main.py --action "predict_test" --input "data" --num_classes "51" \
 --features Variant-All --hits_c012s "hits_c2s"
 
 # Prediction (training and validation)
-python main.py --action "predict_train_and_valid" --input "data" --num_classes "21" \
---training_method "soft_c012s" --model_location "variant_all/21_classes_c2" \
---features Variant-All --hits_c012s "hits_c2s" --use_filtered_data
-python main.py --action "predict_train_and_valid" --input "data" --num_classes "21" \
---training_method "soft_c012s" --model_location "variant_all/21_classes_c2" \
---features Variant-All --hits_c012s "hits_c2s"
-
 python main.py --action "predict_train_and_valid" --input "data" --num_classes "51" \
 --training_method "soft_c012s" --model_location "variant_all/51_classes_c2" \
 --features Variant-All --hits_c012s "hits_c2s" --use_filtered_data
 python main.py --action "predict_train_and_valid" --input "data" --num_classes "51" \
 --training_method "soft_c012s" --model_location "variant_all/51_classes_c2" \
 --features Variant-All --hits_c012s "hits_c2s"
-
-# Plots (21 classes)
-python main.py  --action "plot" --input "results/soft_c012s/variant_all/21_classes_c" \
---output "plots/figures" --option "RESULTS_ANALYSIS_2" --num_classes "21" \
---training_method "soft_c012s" --features Variant-All --dataset "test" \
---use_filtered_data
-python main.py --action "plot" --input "results/soft_c012s/variant_all/21_classes_c" \
---output "plots/figures" --option "RESULTS_ANALYSIS_2" --num_classes "21" \
---training_method "soft_c012s" --features Variant-All --dataset "valid" \
---use_filtered_data
-python main.py --action "plot" --input "results/soft_c012s/variant_all/21_classes_c" \
---output "plots/figures" --option "RESULTS_ANALYSIS_2" --num_classes "21" \
---training_method "soft_c012s" --features Variant-All --dataset "train" \
---use_filtered_data
-
-python main.py  --action "plot" --input "results/soft_c012s/variant_all/21_classes_c" \
---output "plots/figures" --option "RESULTS_ANALYSIS_2" --num_classes "21" \
---training_method "soft_c012s" --features Variant-All --dataset "test" 
-python main.py --action "plot" --input "results/soft_c012s/variant_all/21_classes_c" \
---output "plots/figures" --option "RESULTS_ANALYSIS_2" --num_classes "21" \
---training_method "soft_c012s" --features Variant-All --dataset "valid" 
-python main.py --action "plot" --input "results/soft_c012s/variant_all/21_classes_c" \
---output "plots/figures" --option "RESULTS_ANALYSIS_2" --num_classes "21" \
---training_method "soft_c012s" --features Variant-All --dataset "train" 
-
-# Plots (51 classes)
-python main.py  --action "plot" --input "results/soft_c012s/variant_all/51_classes_c" \
---output "plots/figures" --option "RESULTS_ANALYSIS_2" --num_classes "51" \
---training_method "soft_c012s" --features Variant-All --dataset "test" \
---use_filtered_data
-python main.py --action "plot" --input "results/soft_c012s/variant_all/51_classes_c" \
---output "plots/figures" --option "RESULTS_ANALYSIS_2" --num_classes "51" \
---training_method "soft_c012s" --features Variant-All --dataset "valid" \
---use_filtered_data
-python main.py --action "plot" --input "results/soft_c012s/variant_all/51_classes_c" \
---output "plots/figures" --option "RESULTS_ANALYSIS_2" --num_classes "51" \
---training_method "soft_c012s" --features Variant-All --dataset "train" \
---use_filtered_data
-
-python main.py  --action "plot" --input "results/soft_c012s/variant_all/51_classes_c" \
---output "plots/figures" --option "RESULTS_ANALYSIS_2" --num_classes "51" \
---training_method "soft_c012s" --features Variant-All --dataset "test" 
-python main.py --action "plot" --input "results/soft_c012s/variant_all/51_classes_c" \
---output "plots/figures" --option "RESULTS_ANALYSIS_2" --num_classes "51" \
---training_method "soft_c012s" --features Variant-All --dataset "valid" 
-python main.py --action "plot" --input "results/soft_c012s/variant_all/51_classes_c" \
---output "plots/figures" --option "RESULTS_ANALYSIS_2" --num_classes "51" \
---training_method "soft_c012s" --features Variant-All --dataset "train" 
 
 deactivate
