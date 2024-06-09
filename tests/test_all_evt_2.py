@@ -1,5 +1,4 @@
-# Testing model predictions on the events filtered by a specifiv hypothesis
-# and an unweighted events hits mask (soft/regr_argmaxs)
+# Testing model predictions on all events (soft/regr_argmaxs)
 
 from utilities.data_utils import read_np
 import os, pickle, numpy as np
@@ -40,14 +39,9 @@ def draw_distribution(preds, x, true_values, title, output_path, filename,
     ax2.set_ylabel("Entries", rotation=0, labelpad=10, loc="top")
     ax2.set_title(title)
 
-    table_vals=[[f"Hypothesis idx: {info_table[0]}" + \
-                " (" + r"${{\alpha^{CP}}_{max}}$" + f" = {info_table[1]:0,.2f} rad)"],
-                [f"Actual hypothesis idx: {info_table[6]}" + \
-                " (" + r"${{\alpha^{CP}}_{max}}$" + f" = {info_table[7]:0,.2f} rad)"],
-                [f"Predicted idx: {info_table[3]}" + \
-                " (" + r"${{\alpha^{CP}}_{max}}$" + f" = {info_table[4]:0,.2f} rad)"],
-                [f"Relative amplitude: {info_table[2]:0,.2f}"],
-                [r"${{\chi^2}/Nf}$" + f" = {info_table[5]:0,.2f}"]]    
+    table_vals=[[f"Relative amplitude: {info_table[0]:0,.2f}"],
+                [r"${{\chi^2}/Nf}$" + f" = {info_table[1]:0,.2f}"]]
+       
     ax1.axis('off')
     ax1.axis('tight')
     table = ax1.table(cellText=table_vals, colWidths = [0.6],
@@ -69,15 +63,14 @@ def draw_distribution(preds, x, true_values, title, output_path, filename,
     plt.clf()
 
 
-def test_on_unwt_events(args):
-    """ Feed a pretrained NN with unweighted events (the whole data set is used)
-    filtered according to a chosen hypothesis and create a double check plot 
-    showing the distribution of the predicted alphaCP argmaxs """
+def test_on_all_events(args):
+    """ Feed a pretrained NN with all events (the whole data set is used)
+    and create a double check plot showing the distribution of the predicted 
+    alphaCP argmaxs """
 
     discr_level = int(args.NBINS) if args.NBINS is not None and \
         args.TRAINING_METHOD != "soft_argmaxs" else int(args.NUM_CLASSES)
     n_classes = int(args.NUM_CLASSES)
-    hypothesis = int(args.HYPOTHESIS)
 
     # Loading and standardising the input data (features)
     X_path = os.path.join(args.IN, f"rhorho_event_{args.FEAT}.obj")
@@ -87,16 +80,6 @@ def test_on_unwt_events(args):
     mean = X.mean(0)
     std = X.std(0)
     X = (X - mean) / std
-
-    # Loading the unweighted events weights
-    unwt_path = os.path.join(os.path.normpath(args.IN), 
-                             f"unwt_multiclass_{args.NUM_CLASSES}.npy") 
-    unwt = read_np(unwt_path)
-
-    # Filtering the features according to the chosen hypothesis
-    # defining the unweighted events mask
-    unwt = unwt[:, hypothesis]
-    X = X[unwt == 1.0]
 
     # Preparing the model
     model = NeuralNetwork(
@@ -128,18 +111,12 @@ def test_on_unwt_events(args):
             while preds[i] < 0:
                 preds[i] += 2 * np.pi
 
-    # Loading and filtering true alphaCPmax values
+    # Loading true alphaCPmax values
     true_argmaxs = read_np(os.path.join(args.IN, "argmaxs.npy"))
-    true_argmaxs = true_argmaxs[unwt == 1.0]
     
     # Creating a directory for storing the plots
     if not os.path.exists(os.path.normpath(args.OUT)):
         os.makedirs(os.path.normpath(args.OUT))
-
-    # Recomputing hypothesis index if the level of discretisation is different
-    # from the number of classes the model works with
-    if args.TRAINING_METHOD == "regr_argmaxs":
-        hypothesis = round(hypothesis / (n_classes - 1) * (discr_level - 1))
 
     # Creating a plot showing the distribution of argmaxs and computing the needed values
     classes = np.linspace(0, 2 + 2/(discr_level - 1), (discr_level + 1)) * np.pi
@@ -154,8 +131,6 @@ def test_on_unwt_events(args):
     preds_max_bin = preds_counts.max()
     preds_min_bin = preds_counts.min()
     relative_amplitude = 2 * (preds_max_bin - preds_min_bin) / (preds_max_bin + preds_min_bin)
-    predicted_hypothesis = np.argmax(preds_counts)
-    actual_hypothesis = np.argmax(true_counts)
     chi2_nf = np.sum(np.square(true_counts - preds_counts) / true_counts) / (discr_level - 1)
 
     draw_distribution(
@@ -163,14 +138,7 @@ def test_on_unwt_events(args):
         x=np.roll(np.arange(0, discr_level - 1), int((discr_level - 1) / 2)),
         true_values=np.roll(true_counts, int((discr_level - 1) / 2)),
         output_path=args.OUT,
-        filename= f"{args.TRAINING_METHOD}_hyp_{hypothesis}_dist",
+        filename= f"{args.TRAINING_METHOD}_all_events_dist",
         title="Distribution",
         color=["black", "red"],
-        info_table=[hypothesis, 
-            hypothesis / (n_classes - 1) * 2 * np.pi, 
-            relative_amplitude,
-            predicted_hypothesis,
-            predicted_hypothesis / (n_classes - 1) * 2 * np.pi,
-            chi2_nf,
-            actual_hypothesis,
-            actual_hypothesis / (n_classes - 1) * 2 * np.pi])
+        info_table=[relative_amplitude, chi2_nf])

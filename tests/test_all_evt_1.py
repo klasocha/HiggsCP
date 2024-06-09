@@ -116,7 +116,7 @@ def test_on_all_events(args):
         preds = calc_weights(discr_level, preds)
 
     # Loading the true coefficients and calculating true weights
-    true_c012s = read_np("data/c012s.npy")
+    true_c012s = read_np(os.path.join(args.IN, "c012s.npy"))
     true_weights = calc_weights(discr_level, true_c012s)
 
     # Creating a directory for storing the plots

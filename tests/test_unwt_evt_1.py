@@ -132,7 +132,7 @@ def test_on_unwt_events(args):
         preds = calc_weights(discr_level, preds)
 
     # Loading the true coefficients and calculating true weights
-    true_c012s = read_np("data/c012s.npy")
+    true_c012s = read_np(os.path.join(args.IN, "c012s.npy"))
     true_c012s = true_c012s[unwt == 1.0]
     true_weights = calc_weights(discr_level, true_c012s)
 

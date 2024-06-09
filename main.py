@@ -17,6 +17,7 @@ from tests.test_parsed_data import test_parsed_data, show_example_records
 from tests.test_unwt_evt_1 import test_on_unwt_events as test_on_unwt_events_1
 from tests.test_unwt_evt_2 import test_on_unwt_events as test_on_unwt_events_2
 from tests.test_all_evt_1 import test_on_all_events as test_on_all_events_1
+from tests.test_all_evt_2 import test_on_all_events as test_on_all_events_2
 from tests.test_labels import test_labels
 from utilities.prepare_rhorho import prepare_rhorho
 
@@ -229,7 +230,7 @@ if args.ACTION == "test_model_on_all_events":
         all events and then creating a plot showing the
         distribution of the predicted alphaCP max.
         """)
-        
+        test_on_all_events_2(args)
 
 if args.ACTION == "test_labels":
     # $ python main.py --action "test_labels" --input "data" 
