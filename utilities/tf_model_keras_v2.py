@@ -87,16 +87,16 @@ class MonitoringUtils(keras.callbacks.Callback):
         sys.stdout.write("\nTraining epoch relative loss (convergence): {:.4f}\n".format(epoch_relative_loss))
         self.results["training_epoch_relative_loss"].append(str(epoch_relative_loss))
         
-        if self.model.configuration != "soft_weights": # TODO: dodać filtrację równiez do innych konfiguracji (oprócz soft_weights + dodać mozliwość wyłączenia filtracji z poziomu powłoki (argument))
+        if self.model.configuration != "soft_weights":
             # We do not need to monitor true training loss during the training as
             # the loss computed as an average over the batches is enough for tracing convergence
             if (epoch + 1) == self.n_epochs:
-                train_loss = compute_loss(self.model, self.train_data, self.batch_size)
+                train_loss = compute_loss(self.model, self.train_data, self.batch_size, filtered=True)
                 self.results["training_final_loss"].append(str(train_loss))
                 sys.stdout.write("Training loss: {:.4f}\n".format(train_loss))
             
             # Computing validation loss for all the configurations except soft_weights
-            val_loss = compute_loss(self.model, self.val_data, self.batch_size)
+            val_loss = compute_loss(self.model, self.val_data, self.batch_size, filtered=True)
             self.results["validation_loss"].append(str(val_loss))
             sys.stdout.write("Validation loss: {:.4f}\n".format(val_loss))
 

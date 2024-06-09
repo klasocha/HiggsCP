@@ -46,11 +46,11 @@ def compute_accuracy_and_mean(model, dataset, batch_size, delta_max_tolerance,
     return acc, mean, l1_delt_w, l2_delt_w
 
 
-def compute_loss(model, dataset, batch_size):
+def compute_loss(model, dataset, batch_size, filtered=False):
     n_epochs = dataset.n // batch_size
     losses = []
     for _ in range(n_epochs):
-        x, weights, argmaxs, c012s, hits_argmaxs, hits_c012s, _  = dataset.next_batch(batch_size)
+        x, weights, argmaxs, c012s, hits_argmaxs, hits_c012s, filt = dataset.next_batch(batch_size)
         if model.configuration == "soft_weights":
             labels = weights / tf.tile(tf.reshape(tf.reduce_sum(weights, axis=1), (-1, 1)), 
                                     (1, weights.shape[-1]))
@@ -67,6 +67,9 @@ def compute_loss(model, dataset, batch_size):
             labels = c012s
         if model.configuration == "regr_weights":
             labels = weights
+        if filtered:
+            x = x[filt == 1.0]
+            labels = labels[filt == 1.0]
         losses.append(model.loss(labels, model.predict_on_batch(x)))
     return np.mean(losses)
 
