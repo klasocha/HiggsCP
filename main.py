@@ -16,6 +16,7 @@ from plots.results_analysis_5 import draw as results_analysis_5
 from tests.test_parsed_data import test_parsed_data, show_example_records
 from tests.test_unwt_evt_1 import test_on_unwt_events as test_on_unwt_events_1
 from tests.test_unwt_evt_2 import test_on_unwt_events as test_on_unwt_events_2
+from tests.test_all_evt_1 import test_on_all_events as test_on_all_events_1
 from tests.test_labels import test_labels
 from utilities.prepare_rhorho import prepare_rhorho
 
@@ -138,7 +139,8 @@ parser.add_argument("--datasets", dest="DATASETS", default=2, type=int, help="nu
 # Main controller
 parser.add_argument("--action", dest="ACTION", choices=["download_and_prepare_original", "download_and_preprocess",  
                     "train", "continue_training", "predict_train_and_valid", "plot", "test_parsed_data", 
-                    "test_model_on_unwt_events", "predict_test", "test_labels", "experimental"], 
+                    "test_model_on_unwt_events", "predict_test", "test_labels", "experimental",
+                    "test_model_on_all_events"], 
                     default="train")
 parser.add_argument("--keras", dest="KERAS", choices=["v2", "v3"], default="v3", help="the version of the Keras engine")
 
@@ -208,6 +210,26 @@ if args.ACTION == "test_model_on_unwt_events":
         distribution of the predicted alphaCP max.
         """)
         test_on_unwt_events_2(args)
+
+if args.ACTION == "test_model_on_all_events":
+    # $ `python main.py --action "test_model_on_all_events" --input "data" 
+    # --output "plots/figures/test_model_on_all_events" --num_classes "21" 
+    # --training_method "soft_weights" --model_location "model_1" 
+    # --features "Variant-All"`
+    if args.TRAINING_METHOD not in ["regr_argmaxs", "soft_argmaxs"]:
+        print(""" 
+        This part was created to test the trained model by feeding it with
+        all events and then creating a plot showing the summed
+        distribution of the predicted weights.
+        """)
+        test_on_all_events_1(args)
+    else:
+        print(""" 
+        This part was created to test the trained model by feeding it with
+        all events and then creating a plot showing the
+        distribution of the predicted alphaCP max.
+        """)
+        
 
 if args.ACTION == "test_labels":
     # $ python main.py --action "test_labels" --input "data" 
