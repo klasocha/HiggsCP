@@ -15,64 +15,64 @@ source .venv/bin/activate
 
 # Unweighted events test
 python main.py --action "test_model_on_unwt_events" --input "data" \
---output "plots/figures/test_model_on_unwt_events/soft_weights" --num_classes "51" \
+--output "plots/figures/test_model_on_unwt_events/variant_all/soft_weights" --num_classes "51" \
 --hypothesis "4" --training_method "soft_weights" --model_location "51_classes_variant_all" \
 --features "Variant-All"
 
 python main.py --action "test_model_on_unwt_events" --input "data" \
---output "plots/figures/test_model_on_unwt_events/regr_weights" --num_classes "51" \
+--output "plots/figures/test_model_on_unwt_events/variant_all/regr_weights" --num_classes "51" \
 --hypothesis "4" --training_method "regr_weights" --model_location "51_classes_variant_all" \
 --features "Variant-All"
 
 python main.py --action "test_model_on_unwt_events" --input "data" \
---output "plots/figures/test_model_on_unwt_events/soft_c012s" --num_classes "51" \
+--output "plots/figures/test_model_on_unwt_events/variant_all/soft_c012s" --num_classes "51" \
 --hypothesis "4" --training_method "soft_c012s" --model_location "variant_all/51_classes" \
 --features "Variant-All"
 
 python main.py --action "test_model_on_unwt_events" --input "data" \
---output "plots/figures/test_model_on_unwt_events/regr_c012s" --num_classes "51" \
+--output "plots/figures/test_model_on_unwt_events/variant_all/regr_c012s" --num_classes "51" \
 --hypothesis "4" --training_method "regr_c012s" --model_location "51_classes_variant_all" \
 --features "Variant-All"
 
 python main.py --action "test_model_on_unwt_events" --input "data" \
---output "plots/figures/test_model_on_unwt_events/soft_argmaxs" --num_classes "51" \
+--output "plots/figures/test_model_on_unwt_events/variant_all/soft_argmaxs" --num_classes "51" \
 --hypothesis "4" --training_method "soft_argmaxs" --model_location "51_classes_variant_all" \
 --features "Variant-All"
 
 python main.py --action "test_model_on_unwt_events" --input "data" \
---output "plots/figures/test_model_on_unwt_events/regr_argmaxs" --num_classes "51" \
+--output "plots/figures/test_model_on_unwt_events/variant_all/regr_argmaxs" --num_classes "51" \
 --hypothesis "4" --training_method "regr_argmaxs" --model_location "51_classes_variant_all" \
 --features "Variant-All"
 
 
 # All events test
 python main.py --action "test_model_on_all_events" --input "data" \
---output "plots/figures/test_model_on_all_events/soft_weights" --num_classes "51" \
+--output "plots/figures/test_model_on_all_events/variant_all/soft_weights" --num_classes "51" \
 --training_method "soft_weights" --model_location "51_classes_variant_all" \
 --features "Variant-All"
 
 python main.py --action "test_model_on_all_events" --input "data" \
---output "plots/figures/test_model_on_all_events/regr_weights" --num_classes "51" \
+--output "plots/figures/test_model_on_all_events/variant_all/regr_weights" --num_classes "51" \
 --training_method "regr_weights" --model_location "51_classes_variant_all" \
 --features "Variant-All"
 
 python main.py --action "test_model_on_all_events" --input "data" \
---output "plots/figures/test_model_on_all_events/soft_c012s" --num_classes "51" \
+--output "plots/figures/test_model_on_all_events/variant_all/soft_c012s" --num_classes "51" \
 --training_method "soft_c012s" --model_location "variant_all/51_classes" \
 --features "Variant-All"
 
 python main.py --action "test_model_on_all_events" --input "data" \
---output "plots/figures/test_model_on_all_events/regr_c012s" --num_classes "51" \
+--output "plots/figures/test_model_on_all_events/variant_all/regr_c012s" --num_classes "51" \
 --training_method "regr_c012s" --model_location "51_classes_variant_all" \
 --features "Variant-All"
 
 python main.py --action "test_model_on_all_events" --input "data" \
---output "plots/figures/test_model_on_all_events/soft_argmaxs" --num_classes "51" \
+--output "plots/figures/test_model_on_all_events/variant_all/soft_argmaxs" --num_classes "51" \
 --training_method "soft_argmaxs" --model_location "51_classes_variant_all" \
 --features "Variant-All"
 
 python main.py --action "test_model_on_all_events" --input "data" \
---output "plots/figures/test_model_on_all_events/regr_argmaxs" --num_classes "51" \
+--output "plots/figures/test_model_on_all_events/variant_all/regr_argmaxs" --num_classes "51" \
 --training_method "regr_argmaxs" --model_location "51_classes_variant_all" \
 --features "Variant-All"
 
