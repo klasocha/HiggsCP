@@ -71,7 +71,10 @@ class EventDatasets(object):
             data = (data - means) / stds
             # Saving std and mean
             std_and_means = [stds, means]
-            with open(os.path.join(args.IN, f"training_std_and_mean_{args.FEAT}.npy"), 'wb') as f:
+            with open(
+                os.path.join(
+                    args.IN, f"training_std_and_mean_{args.FEAT}_{args.NUM_CLASSES}.npy"), 
+                    'wb') as f:
                 np.save(f, std_and_means)
 
         if filtered:

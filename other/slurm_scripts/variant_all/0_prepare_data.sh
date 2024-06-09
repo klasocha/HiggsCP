@@ -22,13 +22,4 @@ python main.py --action "download_and_preprocess" --input "data" \
 python main.py --action "download_and_preprocess" --input "data" \
 --features "Variant-All" --num_classes "51" --hits_c012s "hits_c2s"
 
-python main.py --action "download_and_preprocess" --input "data" \
---features "Variant-All" --num_classes "21" --hits_c012s "hits_c0s"
-
-python main.py --action "download_and_preprocess" --input "data" \
---features "Variant-All" --num_classes "21" --hits_c012s "hits_c1s"
-
-python main.py --action "download_and_preprocess" --input "data" \
---features "Variant-All" --num_classes "21" --hits_c012s "hits_c2s"
-
 deactivate
