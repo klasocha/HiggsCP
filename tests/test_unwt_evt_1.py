@@ -1,3 +1,6 @@
+# Testing model predictions on the events filtered by a specifiv hypothesis
+# and an unweighted events hits mask (soft/regr_weights, soft/regr_c012s)
+
 from utilities.data_utils import read_np
 import os, pickle, numpy as np
 from utilities.tf_model import NeuralNetwork
@@ -142,31 +145,26 @@ def test_on_unwt_events(args):
     if args.TRAINING_METHOD in ["soft_c012s", "regr_c012s"]:
         hypothesis = round(hypothesis / (n_classes - 1) * (discr_level - 1))
 
-    # Testing for negative weights
+    # Removing predictions containing negative weights
     negs = np.where(preds < 0, True, False)
     negs = np.sum(negs, axis=1)
     negs = np.where(negs > 0, True, False)
     negs_n = np.sum(negs)
-    # Replacing predictions containing negative weights by zeroes
-    lambda_fun = np.vectorize(lambda x : 0)
     if negs_n > 0:
-        preds_zero_neg = np.copy(preds) 
-        preds_zero_neg[negs] = lambda_fun(preds_zero_neg[negs])
+        preds_without_neg = preds[negs == False]
     print(f"{negs_n} (out of {len(preds)}) predictions lead to negative weights")
 
     # Normalising weights to the probability distribution
-    if args.TRAINING_METHOD != "soft_weights":
-        if np.sum(np.sum(preds, axis=1).reshape((preds.shape[0], 1)) == 0) != 0:
-            print("Softmax normalisation will be applied on predictions")
-            preds = np.exp(preds) / np.sum(np.exp(preds), axis=1).reshape((preds.shape[0], 1))
-        else:
-            print("Normalisation will be applied on predictions")
-            preds = preds / np.sum(preds, axis=1).reshape((preds.shape[0], 1))
-        if negs_n > 0:
-            preds_zero_neg = np.exp(preds_zero_neg) / np.sum(
-                np.exp(preds_zero_neg), axis=1).reshape((preds_zero_neg.shape[0], 1))
-
-
+    if negs_n == 0:
+        print("Normalisation will be applied on predictions")
+        preds = preds / np.sum(preds, axis=1).reshape((preds.shape[0], 1))
+    else:
+        print("Softmax normalisation will be applied on predictions as some",
+              "of them contain negative weights")
+        preds = np.exp(preds) / np.sum(np.exp(preds), axis=1).reshape((preds.shape[0], 1))
+        print("Normalisation will be applied on predictions without negative weights")
+        preds_without_neg = preds_without_neg / np.sum(
+            preds_without_neg, axis=1).reshape((preds_without_neg.shape[0], 1))
     true_weights = true_weights / np.sum(true_weights, axis=1).reshape((true_weights.shape[0], 1))
 
     # Creating a plot showing the summed distribution of Wt and computing the needed values
@@ -204,7 +202,12 @@ def test_on_unwt_events(args):
     # Plotting the same for preprocessed predictions (those containing
     # negative weights are set to zero)
     if negs_n > 0:
-        summed_wt = np.sum(preds_zero_neg, axis=0)
+        summed_wt = np.sum(preds_without_neg, axis=0)
+
+        # Compensating the lack of predictions containing negative weights to
+        # keep the OY axis scale relative to summed_true_wt
+        summed_wt += (negs_n / discr_level) 
+
         predicted_argmax = np.argmax(summed_wt)
         min_summed_wt, max_summed_wt = np.min(summed_wt), np.max(summed_wt)
         relative_amplitude = 2 * (max_summed_wt - min_summed_wt) / (max_summed_wt + min_summed_wt)
@@ -215,7 +218,7 @@ def test_on_unwt_events(args):
             y=np.roll(summed_wt[:-1], int((discr_level - 1) / 2)),
             true_weights=np.roll(summed_true_wt[:-1], int((discr_level - 1) / 2)),
             output_path=args.OUT,
-            filename= f"{args.TRAINING_METHOD}_hyp_{hypothesis}_summed_dist_zeroed_neg",
+            filename= f"{args.TRAINING_METHOD}_hyp_{hypothesis}_summed_dist_without_neg",
             title="Summed distribution",
             color=["black", "red"],
             info_table=[hypothesis, 
@@ -225,11 +228,10 @@ def test_on_unwt_events(args):
                         relative_amplitude,
                         chi2_nf])
 
-        # Creating a plot showing some sample events predictied by the model
         draw_distribution(
             x=np.roll(np.arange(0, discr_level - 1), int((discr_level - 1) / 2)),
-            y=np.roll(preds_zero_neg[:, :-1], axis=1, shift=int((discr_level - 1) / 2)),
+            y=np.roll(preds_without_neg[:, :-1], axis=1, shift=int((discr_level - 1) / 2)),
             output_path=args.OUT,
-            filename=f"{args.TRAINING_METHOD}_hyp_{hypothesis}_samples_zeroed_neg",
+            filename=f"{args.TRAINING_METHOD}_hyp_{hypothesis}_samples_without_neg",
             title="Event spin weight",
             multiple=True)

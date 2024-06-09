@@ -1,3 +1,6 @@
+# Testing model predictions on the events filtered by a specifiv hypothesis
+# and an unweighted events hits mask (soft/regr_argmaxs)
+
 from utilities.data_utils import read_np
 import os, pickle, numpy as np
 from utilities.tf_model import NeuralNetwork
@@ -69,7 +72,7 @@ def draw_distribution(preds, x, true_values, title, output_path, filename,
 def test_on_unwt_events(args):
     """ Feed a pretrained NN with unweighted events (the whole data set is used)
     filtered according to a chosen hypothesis and create a double check plot 
-    showing the distribution of the predicted weights """
+    showing the distribution of the predicted alphaCP argmaxs """
 
     discr_level = int(args.NBINS) if args.NBINS is not None and \
         args.TRAINING_METHOD != "soft_argmaxs" else int(args.NUM_CLASSES)
@@ -153,7 +156,7 @@ def test_on_unwt_events(args):
     relative_amplitude = 2 * (preds_max_bin - preds_min_bin) / (preds_max_bin + preds_min_bin)
     predicted_hypothesis = np.argmax(preds_counts)
     actual_hypothesis = np.argmax(true_counts)
-    chi2_nf = np.sum(np.square(true_counts - preds_counts) / true_counts) / discr_level
+    chi2_nf = np.sum(np.square(true_counts - preds_counts) / true_counts) / (discr_level - 1)
 
     draw_distribution(
         preds=np.roll(preds_counts, int((discr_level - 1) / 2)),
