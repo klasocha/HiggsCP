@@ -162,9 +162,16 @@ def test_on_unwt_events(args):
         print("Softmax normalisation will be applied on predictions as some",
               "of them contain negative weights")
         preds = np.exp(preds) / np.sum(np.exp(preds), axis=1).reshape((preds.shape[0], 1))
-        print("Normalisation will be applied on predictions without negative weights")
-        preds_without_neg = preds_without_neg / np.sum(
-            preds_without_neg, axis=1).reshape((preds_without_neg.shape[0], 1))
+        if np.sum(np.sum(preds_without_neg, axis=1).reshape((preds_without_neg.shape[0], 1)) == 0) > 0:
+            print("Softmax normalisation will be applied on predictions without",
+              "negative weights as some of them sum up to zero")
+            preds_without_neg = np.exp(preds_without_neg) / np.sum(
+                np.exp(preds_without_neg), axis=1).reshape((preds_without_neg.shape[0], 1))
+        else:
+            print("Normalisation will be applied on predictions without negative weights")
+            preds_without_neg = preds_without_neg / np.sum(
+                preds_without_neg, axis=1).reshape((preds_without_neg.shape[0], 1))
+            
     true_weights = true_weights / np.sum(true_weights, axis=1).reshape((true_weights.shape[0], 1))
 
     # Creating a plot showing the summed distribution of Wt and computing the needed values
