@@ -3,7 +3,7 @@
 .venv/
 data/
 data_original/
-data_original_z/
+data_z/
 plots/figures/
 temp_results/
 results/

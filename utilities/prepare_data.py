@@ -13,8 +13,9 @@ def prepare_data(args):
     num_classes = args.NUM_CLASSES
 
     # ==================================== DATA PREPARATION ============================================
-    print("\033[1mDownloading data...\033[0m")
-    download_data(args)
+    if args.EXP != "Z":
+        print("\033[1mDownloading data...\033[0m")
+        download_data(args)
     
     print("\033[1mPreprocessing data...\033[0m")
     data, weights, argmaxs, perm, c012s, hits_argmaxs, hits_c012s = preprocess_data(args)
