@@ -24,7 +24,8 @@ def read_raw_asci(name, num_particles):
     lines = lines[find_first_line(lines, "TUPLE"): find_first_line(lines, "Analysed in total:")]
     
     # Ignoring the debug lines.
-    lines = [line for line in lines if not line.startswith("Analysed:")]
+    lines = [line for line in lines if not line.startswith("Analysed:") and \
+             not line.startswith("Tauspinner::")] # this lines may appear in Z-background data
     
     # Finding the indices of the lines starting with the examples description
     ids = [int(idx) for idx, line in enumerate(lines) if line.startswith("TUPLE")]

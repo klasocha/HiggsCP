@@ -9,18 +9,38 @@ def download(args):
     if not path.exists(data_path):
         mkdir(data_path)
     
-    for i in range(0, 21):
-        if i < 10:
-            filename = f"pythia.H.rhorho.1M.a.CPmix_0{i}.outTUPLE_labFrame"
-        else:
-            filename = f"pythia.H.rhorho.1M.a.CPmix_{i}.outTUPLE_labFrame"
-        filepath = path.join(data_path, filename)
-    
-        if path.exists(filepath) and not args.FORCE_DOWNLOAD:
-            print(f"Original data file \"{filepath}\" already exists.\nDownloading has been cancelled.",
-                "If you want to force download, use \"--force_download\" option.\n", sep=linesep)
-            continue
+    if args.EXP == "Z":
+        for i in range(0, 21, 2):
+            if i == 0:
+                filename = f"pythia.Z_65_155.taupol.rhorho.1M.CPmix_0.outTUPLE_labFrame"
+            elif i < 10:
+                filename = f"pythia.Z_65_155.taupol.rhorho.1M.CPmix_0{i}.outTUPLE_labFrame"
+            else:
+                filename = f"pythia.Z_65_155.taupol.rhorho.1M.CPmix_{i}.outTUPLE_labFrame"
+            filepath = path.join(data_path, filename)
+        
+            if path.exists(filepath) and not args.FORCE_DOWNLOAD:
+                print(f"Original data file \"{filepath}\" already exists.\nDownloading has been cancelled.",
+                    "If you want to force download, use \"--force_download\" option.\n", sep=linesep)
+                continue
 
-        print(f"Downloading {filename} and saving it in {data_path}/ ...", sep='\r')
-        urlretrieve(config.DATA_URL + filename, filepath)
+            print(f"Downloading {filename} and saving it in {data_path}/ ...", sep='\r')
+            urlretrieve(config.DATA_URL + filename, filepath)
+    
+    else:    
+        for i in range(0, 21):
+            if i < 10:
+                filename = f"pythia.H.rhorho.1M.a.CPmix_0{i}.outTUPLE_labFrame"
+            else:
+                filename = f"pythia.H.rhorho.1M.a.CPmix_{i}.outTUPLE_labFrame"
+            filepath = path.join(data_path, filename)
+        
+            if path.exists(filepath) and not args.FORCE_DOWNLOAD:
+                print(f"Original data file \"{filepath}\" already exists.\nDownloading has been cancelled.",
+                    "If you want to force download, use \"--force_download\" option.\n", sep=linesep)
+                continue
+
+            print(f"Downloading {filename} and saving it in {data_path}/ ...", sep='\r')
+            urlretrieve(config.DATA_URL + filename, filepath)
+    
     print()

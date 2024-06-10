@@ -20,6 +20,7 @@ from tests.test_all_evt_1 import test_on_all_events as test_on_all_events_1
 from tests.test_all_evt_2 import test_on_all_events as test_on_all_events_2
 from tests.test_labels import test_labels
 from utilities.prepare_rhorho import prepare_rhorho
+from utilities.prepare_z import prepare_z
 
 
 # =============================== GETTING ALL THE ARGUMENTS ============================================
@@ -137,6 +138,10 @@ parser.add_argument("--source-2", dest="SOURCE_2",
                     help="the second directory containing data to be compared")
 parser.add_argument("--datasets", dest="DATASETS", default=2, type=int, help="number of datasets to prepare")
 
+# Z-background experiment
+parser.add_argument("--exp", dest="EXP", default="RhoRho", choices=["RhoRho", "Z"],
+                    help="Z for using Z-background data")
+
 # Main controller
 parser.add_argument("--action", dest="ACTION", choices=["download_and_prepare_original", "download_and_preprocess",  
                     "train", "continue_training", "predict_train_and_valid", "plot", "test_parsed_data", 
@@ -152,7 +157,10 @@ args = parser.parse_args()
 if args.ACTION == "download_and_prepare_original":
     # $ python main.py --action "download_and_prepare_original" --input "data_original"
     download_original_data(args)
-    prepare_rhorho(args)
+    if args.EXP == "Z":
+        prepare_z(args)
+    else:
+        prepare_rhorho(args)
 
 if args.ACTION == "download_and_preprocess":
     # $ python main.py --action "download_and_preprocess" --input "data" --features Variant-All
