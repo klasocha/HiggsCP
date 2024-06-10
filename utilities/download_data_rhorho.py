@@ -38,9 +38,11 @@ def download_weights(args):
     
     for index in CPmix_index:
         filename = 'rhorho_raw.w_' + index + '.npy'
-        print(f"Downloading {filename}")
+        if args.EXP != "Z":
+            print(f"Downloading {filename}")
         filepath = path.join(data_path, filename)
-        urlretrieve(config.DATA_URL + filename, filepath)
+        if args.EXP != "Z":
+            urlretrieve(config.DATA_URL + filename, filepath)
         weights.append(np.load(filepath))
    
     # Joining and then saving all the parts together in a single file
