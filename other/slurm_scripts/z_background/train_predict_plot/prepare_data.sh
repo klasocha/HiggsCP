@@ -14,6 +14,7 @@ module load python/3.11.3-gcccore-12.3.0
 source .venv/bin/activate
 
 mkdir data_z
-python main.py --action "download_and_prepare_original" --input "data_z" --exp "Z"
 scp data/unwt_multiclass_51.npy data_z/
+python main.py --action "download_and_prepare_original" --input "data_z" --exp "Z"
+
 deactivate
