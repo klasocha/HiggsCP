@@ -40,9 +40,9 @@ def draw_distribution(x, y, title, output_path, filename, true_weights=None, col
                     " (" + r"${{\alpha^{CP}}_{max}}$" + " = " + \
                         ", ".join(f"{num}" for num in info_table[2]) + " rad)"],
 
-                    ["Predicted idx: " + ", ".join(f"{num}" for num in info_table[0]) + \
+                    ["Predicted idx: " + ", ".join(f"{num}" for num in info_table[1]) + \
                     " (" + r"${{\alpha^{CP}}_{max}}$" + " = " + \
-                        ", ".join(f"{num}" for num in info_table[2]) + " rad)"],
+                        ", ".join(f"{num}" for num in info_table[3]) + " rad)"],
                     
                     ["Relative amplitude: " + ", ".join(f"{num}" for num in info_table[4])],
                     [r"${{\chi^2}/Nf}$" + " = " + ", ".join(f"{num}" for num in info_table[5])]]
