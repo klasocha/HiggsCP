@@ -14,23 +14,42 @@ def draw_distribution(x, y, title, output_path, filename, true_weights=None, col
     
     if not multiple:
         fig, (ax1, ax2) = plt.subplots(2, height_ratios=[1, 3])
-        fig.set_size_inches(9, 6)
-        ax2.plot(np.arange(len(x)), y, color=color[0], label="Predicted")
-        ax2.plot(np.arange(len(x)), true_weights, linestyle="dotted", color=color[1], label="True")
-        ax2.legend()
+        fig.set_size_inches(10, 6)
+        
+        # Normalising input vectors to be able to compare different plots along the OY axis
+        for i in range(len(y)):
+            y[i] = y[i] / np.sum(y[i])
+            true_weights[i] = true_weights[i] / np.sum(true_weights[i])
+
+        for i in range(len(y)):
+            ax2.plot(np.arange(len(x)), y[i], color=color[i % len(y)], 
+                     label="Predicted (" + r"${{\alpha^{CP}_{max}}}$" + f"={round(info_table[3][i], 1)})")
+            ax2.plot(np.arange(len(x)), true_weights[i], color=color[i % len(y)], linestyle="dotted", 
+                     label="True (" + r"${{\alpha^{CP}_{max}}}$" + f"={round(info_table[2][i], 1)})")
+        
+        ax2.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
         ax2.set_ylabel(r"$\sum_{i=0}^N Wt_i$", rotation=0, labelpad=20)
         ax2.set_title(title)
 
-        table_vals=[[f"Hypothesis idx: {info_table[0]}" + \
-                    " (" + r"${{\alpha^{CP}}_{max}}$" + f" = {info_table[2]:0,.2f} rad)"],
-                    [f"Predicted idx: {info_table[1]}" + \
-                    " (" + r"${{\alpha^{CP}}_{max}}$" + f" = {info_table[3]:0,.2f} rad)"],
-                    [f"Relative amplitude: {info_table[4]:0,.2f}"],
-                    [r"${{\chi^2}/Nf}$" + f" = {info_table[5]:0,.2f}"]]
+        for i in range(2, 4):
+            info_table[i] = [round(value, 1) for value in info_table[i]]
+        for i in range(4, 6):
+            info_table[i] = [round(value, 2) for value in info_table[i]]
+
+        table_vals=[["Hypothesis idx: " + ", ".join(f"{num}" for num in info_table[0]) + \
+                    " (" + r"${{\alpha^{CP}}_{max}}$" + " = " + \
+                        ", ".join(f"{num}" for num in info_table[2]) + " rad)"],
+
+                    ["Predicted idx: " + ", ".join(f"{num}" for num in info_table[0]) + \
+                    " (" + r"${{\alpha^{CP}}_{max}}$" + " = " + \
+                        ", ".join(f"{num}" for num in info_table[2]) + " rad)"],
+                    
+                    ["Relative amplitude: " + ", ".join(f"{num}" for num in info_table[4])],
+                    [r"${{\chi^2}/Nf}$" + " = " + ", ".join(f"{num}" for num in info_table[5])]]
         
         ax1.axis('off')
         ax1.axis('tight')
-        table = ax1.table(cellText=table_vals, colWidths = [0.6],
+        table = ax1.table(cellText=table_vals, colWidths = [1.0],
                           cellLoc="left", loc='upper left')
         table.set_fontsize(12)
         
@@ -74,7 +93,10 @@ def test_on_unwt_events(args):
     discr_level = int(args.NBINS) if args.NBINS is not None and \
         args.TRAINING_METHOD in ["soft_c012s", "regr_c012s"] else int(args.NUM_CLASSES)
     n_classes = int(args.NUM_CLASSES)
-    hypothesis = int(args.HYPOTHESIS)
+
+    # Parsing 3 chosen hypotheses (e.g. --hypothesis "0-5-23")
+    hypotheses = args.HYPOTHESIS.split('-')
+    hypotheses = [int(hyp) for hyp in hypotheses]
 
     # Loading and standardising the input data (features)
     X_path = os.path.join(args.IN, f"rhorho_event_{args.FEAT}.obj")
@@ -88,11 +110,14 @@ def test_on_unwt_events(args):
     # Loading the unweighted events weights
     unwt_path = os.path.join(os.path.normpath(args.IN), f"unwt_multiclass_{args.NUM_CLASSES}.npy") 
     unwt = read_np(unwt_path)
+    unwt[100000:] = 0.0
 
-    # Filtering the features according to the chosen hypothesis
+    # Filtering the features according to the chosen hypotheses
     # defining the unweighted events mask
-    unwt = unwt[:, hypothesis]
-    X = X[unwt == 1.0]
+    features = []
+    for hyp in hypotheses:
+        mask = unwt[:, hyp]
+        features.append(X[mask == 1.0])
 
     # Preparing the model
     model = NeuralNetwork(
@@ -107,34 +132,41 @@ def test_on_unwt_events(args):
     model.build()
 
     # Loading weights and making predictions
+    preds = []
+
     if args.TRAINING_METHOD in ["soft_weights", "regr_weights", "regr_c012s"]:
         model.load_weights(os.path.join(
             "results", args.TRAINING_METHOD, args.MODEL_LOCATION, 
             "model_state", "model.weights.h5"))
-        preds = model.predict(X)
-
+        for i in range(len(hypotheses)):
+            preds.append(model.predict(features[i]))
+    
     if args.TRAINING_METHOD == "soft_c012s":
-        c012s = np.zeros((X.shape[0], 3))
-        for i in range(3):
-            model.load_weights(os.path.join(
-            "results", args.TRAINING_METHOD, 
-            os.path.normpath(f"{args.MODEL_LOCATION}_c{i}"), 
-            "model_state", "model.weights.h5"))
-            coefficients = model.predict(X)
-            c012s[:, i] = np.argmax(coefficients, axis=1)
-            if i == 0:
-                c012s[:, i] = c012s[:, i] * (2. / (n_classes - 1))
-            else:
-                c012s[:, i] = c012s[:, i] * (2. / (n_classes - 1)) - 1.0
-        preds = calc_weights(discr_level, c012s)
+        for i in range(len(hypotheses)):
+            c012s = np.zeros((features[i].shape[0], 3))
+            for j in range(3):
+                model.load_weights(os.path.join(
+                "results", args.TRAINING_METHOD, 
+                os.path.normpath(f"{args.MODEL_LOCATION}_c{j}"), 
+                "model_state", "model.weights.h5"))
+                coefficients = model.predict(features[i])
+                c012s[:, j] = np.argmax(coefficients, axis=1)
+                if j == 0:
+                    c012s[:, j] = c012s[:, j] * (2. / (n_classes - 1))
+                else:
+                    c012s[:, j] = c012s[:, j] * (2. / (n_classes - 1)) - 1.0
+            preds.append(calc_weights(discr_level, c012s))
     
     if args.TRAINING_METHOD == "regr_c012s":
-        preds = calc_weights(discr_level, preds)
+        for i in range(len(hypotheses)):
+            preds[i] = calc_weights(discr_level, preds[i])
 
     # Loading the true coefficients and calculating true weights
     true_c012s = read_np(os.path.join(args.IN, "c012s.npy"))
-    true_c012s = true_c012s[unwt == 1.0]
-    true_weights = calc_weights(discr_level, true_c012s)
+    true_weights = []
+    for hyp in hypotheses:
+        c012s = true_c012s[unwt[:, hyp] == 1.0]
+        true_weights.append(calc_weights(discr_level, c012s))
 
     # Creating a directory for storing the plots
     if not os.path.exists(os.path.normpath(args.OUT)):
@@ -143,102 +175,113 @@ def test_on_unwt_events(args):
     # Recomputing hypothesis index if the level of discretisation is different
     # from the number of classes the model works with
     if args.TRAINING_METHOD in ["soft_c012s", "regr_c012s"]:
-        hypothesis = round(hypothesis / (n_classes - 1) * (discr_level - 1))
+        for i in range(len(hypotheses)):
+            hypotheses[i] = round(hypotheses[i] / (n_classes - 1) * (discr_level - 1))
 
     # Removing predictions containing negative weights
-    negs = np.where(preds < 0, True, False)
-    negs = np.sum(negs, axis=1)
-    negs = np.where(negs > 0, True, False)
-    negs_n = np.sum(negs)
-    if negs_n > 0:
-        preds_without_neg = preds[negs == False]
-    print(f"{negs_n} (out of {len(preds)}) predictions lead to negative weights")
+    preds_without_neg = []
+    negs_n = []
 
-    # Normalising weights to the probability distribution
-    if negs_n == 0:
-        print("Normalisation will be applied on predictions")
-        preds = preds / np.sum(preds, axis=1).reshape((preds.shape[0], 1))
-    else:
-        print("Softmax normalisation will be applied on predictions as some",
-              "of them contain negative weights")
-        preds = np.exp(preds) / np.sum(np.exp(preds), axis=1).reshape((preds.shape[0], 1))
-        if np.sum(np.sum(preds_without_neg, axis=1).reshape((preds_without_neg.shape[0], 1)) == 0) > 0:
-            print("Softmax normalisation will be applied on predictions without",
-              "negative weights as some of them sum up to zero")
-            preds_without_neg = np.exp(preds_without_neg) / np.sum(
-                np.exp(preds_without_neg), axis=1).reshape((preds_without_neg.shape[0], 1))
+    for i in range(len(hypotheses)):
+        print(f"Hypothesis #{hypotheses[i]}")
+        negs = np.where(preds[i] < 0, True, False)
+        negs = np.sum(negs, axis=1)
+        negs = np.where(negs > 0, True, False)
+        negs_n.append(np.sum(negs))
+        if negs_n[i] > 0:
+            preds_without_neg.append(preds[i][negs == False])
+        print(f"{negs_n[i]} (out of {len(preds[i])}) predictions lead to negative weights")
+
+        # Normalising weights to the probability distribution
+        if negs_n[i] == 0:
+            print("Normalisation will be applied on predictions")
+            preds[i] = preds[i] / np.sum(preds[i], axis=1).reshape((preds[i].shape[0], 1))
         else:
-            print("Normalisation will be applied on predictions without negative weights")
-            preds_without_neg = preds_without_neg / np.sum(
-                preds_without_neg, axis=1).reshape((preds_without_neg.shape[0], 1))
+            print("Softmax normalisation will be applied on predictions as some",
+                "of them contain negative weights")
+            preds[i] = np.exp(preds[i]) / np.sum(
+                np.exp(preds[i]), axis=1).reshape((preds[i].shape[0], 1))
+            if np.sum(np.sum(preds_without_neg[i], axis=1).reshape(
+                (preds_without_neg[i].shape[0], 1)) == 0) > 0:
+                print("Softmax normalisation will be applied on predictions without",
+                "negative weights as some of them sum up to zero")
+                preds_without_neg[i] = np.exp(preds_without_neg[i]) / np.sum(
+                    np.exp(preds_without_neg[i]), axis=1).reshape(
+                        (preds_without_neg[i].shape[0], 1))
+            else:
+                print("Normalisation will be applied on predictions without negative weights")
+                preds_without_neg[i] = preds_without_neg[i] / np.sum(
+                    preds_without_neg[i], axis=1).reshape(
+                        (preds_without_neg[i].shape[0], 1))
             
-    true_weights = true_weights / np.sum(true_weights, axis=1).reshape((true_weights.shape[0], 1))
+        true_weights[i] = true_weights[i] / np.sum(
+            true_weights[i], axis=1).reshape((true_weights[i].shape[0], 1))
+        print()
 
-    # Creating a plot showing the summed distribution of Wt and computing the needed values
-    summed_wt = np.sum(preds, axis=0)
-    predicted_argmax = np.argmax(summed_wt)
-    summed_true_wt = np.sum(true_weights, axis=0)
-    min_summed_wt, max_summed_wt = np.min(summed_wt), np.max(summed_wt)
-    relative_amplitude = 2 * (max_summed_wt - min_summed_wt) / (max_summed_wt + min_summed_wt)
-    chi2_nf = np.sum(np.square(summed_true_wt - summed_wt) / summed_true_wt) / discr_level 
+    # Computing the needed values
+    summed_wt, predicted_argmax, summed_true_wt, relative_amplitude, chi2_nf = \
+        [], [], [], [], []
 
+    for i in range(len(hypotheses)):
+        summed_wt.append(np.sum(preds[i], axis=0))
+        predicted_argmax.append(np.argmax(summed_wt[i]))
+        summed_true_wt.append(np.sum(true_weights[i], axis=0))
+        min_summed_wt, max_summed_wt = np.min(summed_wt[i]), np.max(summed_wt[i])
+        relative_amplitude.append(2 * (max_summed_wt - min_summed_wt) / (max_summed_wt + min_summed_wt))
+        chi2_nf.append(np.sum(np.square(summed_true_wt[i] - summed_wt[i]) / summed_true_wt[i]) / discr_level) 
+    
+    summed_wt, summed_true_wt = np.array(summed_wt), np.array(summed_true_wt)
+
+    # Creating a plot showing the summed distribution of Wt
     draw_distribution(
         x=np.roll(np.arange(0, discr_level - 1), int((discr_level - 1) / 2)),
-        y=np.roll(summed_wt[:-1], int((discr_level - 1) / 2)),
-        true_weights=np.roll(summed_true_wt[:-1], int((discr_level - 1) / 2)),
+        y=np.roll(summed_wt[:, :-1], int((discr_level - 1) / 2), axis=1),
+        true_weights=np.roll(summed_true_wt[:, :-1], int((discr_level - 1) / 2), axis=1),
         output_path=args.OUT,
-        filename= f"{args.TRAINING_METHOD}_hyp_{hypothesis}_summed_dist",
+        filename=f"{args.TRAINING_METHOD}_hyp_{args.HYPOTHESIS.replace('-', '_')}_summed_dist",
         title="Summed distribution",
-        color=["black", "red"],
-        info_table=[hypothesis, 
+        color=["black", "red", "blue"],
+        info_table=[hypotheses, 
                     predicted_argmax,
-                    hypothesis / (discr_level - 1) * 2 * np.pi, 
-                    predicted_argmax / (discr_level - 1) * 2 * np.pi,
+                    np.array(hypotheses) / (discr_level - 1) * 2 * np.pi, 
+                    np.array(predicted_argmax) / (discr_level - 1) * 2 * np.pi,
                     relative_amplitude,
                     chi2_nf])
 
     # Creating a plot showing some sample events predictied by the model
-    draw_distribution(
-        x=np.roll(np.arange(0, discr_level - 1), int((discr_level - 1) / 2)),
-        y=np.roll(preds[:, :-1], axis=1, shift=int((discr_level - 1) / 2)),
-        output_path=args.OUT,
-        filename=f"{args.TRAINING_METHOD}_hyp_{hypothesis}_samples",
-        title="Event spin weight",
-        multiple=True)
+    for i in range(len(hypotheses)):
+        draw_distribution(
+            x=np.roll(np.arange(0, discr_level - 1), int((discr_level - 1) / 2)),
+            y=np.roll(preds[i][:, :-1], axis=1, shift=int((discr_level - 1) / 2)),
+            output_path=args.OUT,
+            filename=f"{args.TRAINING_METHOD}_hyp_{hypotheses[i]}_samples",
+            title="Event spin weight",
+            multiple=True)
     
     # Plotting the same for preprocessed predictions (those containing
     # negative weights are set to zero)
-    if negs_n > 0:
-        summed_wt = np.sum(preds_without_neg, axis=0)
+    if np.sum(negs_n) > 0:
+        summed_wt, predicted_argmax, relative_amplitude, chi2_nf = [], [], [], []
+        for i in range(len(hypotheses)):
+            summed_wt.append(np.sum(preds_without_neg[i], axis=0))
+            predicted_argmax.append(np.argmax(summed_wt[i]))
+            min_summed_wt, max_summed_wt = np.min(summed_wt[i]), np.max(summed_wt[i])
+            relative_amplitude.append(2 * (max_summed_wt - min_summed_wt) / (max_summed_wt + min_summed_wt))
+            chi2_nf.append(np.sum(np.square(summed_true_wt[i] - summed_wt[i]) / summed_true_wt[i]) / discr_level) 
 
-        # Compensating the lack of predictions containing negative weights to
-        # keep the OY axis scale relative to summed_true_wt
-        summed_wt += (negs_n / discr_level) 
-
-        predicted_argmax = np.argmax(summed_wt)
-        min_summed_wt, max_summed_wt = np.min(summed_wt), np.max(summed_wt)
-        relative_amplitude = 2 * (max_summed_wt - min_summed_wt) / (max_summed_wt + min_summed_wt)
-        chi2_nf = np.sum(np.square(summed_true_wt - summed_wt) / summed_true_wt) / discr_level 
-
+        summed_wt = np.array(summed_wt)
+        
         draw_distribution(
             x=np.roll(np.arange(0, discr_level - 1), int((discr_level - 1) / 2)),
-            y=np.roll(summed_wt[:-1], int((discr_level - 1) / 2)),
-            true_weights=np.roll(summed_true_wt[:-1], int((discr_level - 1) / 2)),
+            y=np.roll(summed_wt[:, :-1], int((discr_level - 1) / 2), axis=1),
+            true_weights=np.roll(summed_true_wt[:, :-1], int((discr_level - 1) / 2), axis=1),
             output_path=args.OUT,
-            filename= f"{args.TRAINING_METHOD}_hyp_{hypothesis}_summed_dist_without_neg",
+            filename=f"{args.TRAINING_METHOD}_hyp_{args.HYPOTHESIS.replace('-', '_')}_summed_dist_without_neg",
             title="Summed distribution",
-            color=["black", "red"],
-            info_table=[hypothesis, 
+            color=["black", "red", "blue"],
+            info_table=[hypotheses, 
                         predicted_argmax,
-                        hypothesis / (discr_level - 1) * 2 * np.pi, 
-                        predicted_argmax / (discr_level - 1) * 2 * np.pi,
+                        np.array(hypotheses) / (discr_level - 1) * 2 * np.pi, 
+                        np.array(predicted_argmax) / (discr_level - 1) * 2 * np.pi,
                         relative_amplitude,
                         chi2_nf])
-
-        draw_distribution(
-            x=np.roll(np.arange(0, discr_level - 1), int((discr_level - 1) / 2)),
-            y=np.roll(preds_without_neg[:, :-1], axis=1, shift=int((discr_level - 1) / 2)),
-            output_path=args.OUT,
-            filename=f"{args.TRAINING_METHOD}_hyp_{hypothesis}_samples_without_neg",
-            title="Event spin weight",
-            multiple=True)

@@ -126,7 +126,7 @@ parser.add_argument("--show", dest="SHOW", action="store_true",
 parser.add_argument("--option", dest="OPTION", choices=plot_types.keys(), default="PHISTAR-DISTRIBUTION",
                     help='specify what script for drawing the plots you want to run')
 parser.add_argument("--hypothesis", dest="HYPOTHESIS", default="None", 
-                    help="Hypothesis: the alphaCP class (e.g. 02)")
+                    help="Hypothesis: the alphaCP class (e.g. 02) or several classes \"#-#-#\"")
 parser.add_argument("--dataset", dest="DATASET", help="dataset (train/valid/test)")
 parser.add_argument("--binning", dest="NBINS", 
                     help="number of classes used for plotting histograms, computing weights via C0/C1/C2, etc.")
