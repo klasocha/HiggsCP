@@ -26,31 +26,49 @@ def bins_fun(classes, data, num_classes, periodicity):
                     hits[0] += 1.0
 
     lambda_fun = np.vectorize(lambda x: count_bins(x))
-    data = lambda_fun(data)    
+    lambda_fun(data)    
     return hits
 
 
 def draw_distribution(preds, x, true_values, title, output_path, filename, 
                       color=None, info_table=None):
     fig, (ax1, ax2) = plt.subplots(2, height_ratios=[1, 3])
-    fig.set_size_inches(9, 6)
-    ax2.step(np.arange(len(x)), preds, color=color[0], where="mid", label="Predicted")
-    ax2.step(np.arange(len(x)), true_values, color=color[1], where="mid", label="True")
-    ax2.legend()
+    fig.set_size_inches(10, 6)
+
+    for i in range(len(preds)):
+        ax2.step(np.arange(len(x)), preds[i], color=color[i % len(color)], where="mid", 
+                 label="Predicted (" + r"${{\alpha^{CP}_{max}}}$" + f"={round(info_table[3][i], 1)})")
+        ax2.step(np.arange(len(x)), true_values[i], color=color[i % len(color)], where="mid", 
+                 label="True (" + r"${{\alpha^{CP}_{max}}}$" + f"={round(info_table[6][i], 1)})",
+                 linestyle="dotted")
+    
+    ax2.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
     ax2.set_ylabel("Entries", rotation=0, labelpad=10, loc="top")
     ax2.set_title(title)
 
-    table_vals=[[f"Hypothesis idx: {info_table[0]}" + \
-                " (" + r"${{\alpha^{CP}}_{max}}$" + f" = {info_table[1]:0,.2f} rad)"],
-                [f"Actual hypothesis idx: {info_table[6]}" + \
-                " (" + r"${{\alpha^{CP}}_{max}}$" + f" = {info_table[7]:0,.2f} rad)"],
-                [f"Predicted idx: {info_table[3]}" + \
-                " (" + r"${{\alpha^{CP}}_{max}}$" + f" = {info_table[4]:0,.2f} rad)"],
-                [f"Relative amplitude: {info_table[2]:0,.2f}"],
-                [r"${{\chi^2}/Nf}$" + f" = {info_table[5]:0,.2f}"]]    
+    for i in [2, 5]:
+        info_table[i] = [round(value, 2) for value in info_table[i]]
+    for i in [1, 4, 7]:
+        info_table[i] = [round(value, 1) for value in info_table[i]]
+    
+    table_vals=[["Hypothesis idx: " + ", ".join(f"{num}" for num in info_table[0]) + \
+                " (" + r"${{\alpha^{CP}}_{max}}$" + " = " + \
+                    ", ".join(f"{num}" for num in info_table[1]) + " rad)"],
+
+                ["Actual hypothesis idx: " + ", ".join(f"{num}" for num in info_table[6]) + \
+                " (" + r"${{\alpha^{CP}}_{max}}$" + " = " + \
+                    ", ".join(f"{num}" for num in info_table[7]) + " rad)"],
+
+                ["Predicted idx: " + ", ".join(f"{num}" for num in info_table[3]) + \
+                " (" + r"${{\alpha^{CP}}_{max}}$" + " = " + \
+                    ", ".join(f"{num}" for num in info_table[4]) + " rad)"],
+                
+                ["Relative amplitude: " + ", ".join(f"{num}" for num in info_table[2])],
+                [r"${{\chi^2}/Nf}$" + " = " + ", ".join(f"{num}" for num in info_table[5])]]
+    
     ax1.axis('off')
     ax1.axis('tight')
-    table = ax1.table(cellText=table_vals, colWidths = [0.6],
+    table = ax1.table(cellText=table_vals, colWidths = [1.0],
                       cellLoc="left", loc='upper left')
     table.set_fontsize(12)
     
@@ -77,7 +95,10 @@ def test_on_unwt_events(args):
     discr_level = int(args.NBINS) if args.NBINS is not None and \
         args.TRAINING_METHOD != "soft_argmaxs" else int(args.NUM_CLASSES)
     n_classes = int(args.NUM_CLASSES)
-    hypothesis = int(args.HYPOTHESIS)
+    
+    # Parsing 3 chosen hypotheses (e.g. --hypothesis "0-5-23")
+    hypotheses = args.HYPOTHESIS.split('-')
+    hypotheses = [int(hyp) for hyp in hypotheses]
 
     # Loading and standardising the input data (features)
     X_path = os.path.join(args.IN, f"rhorho_event_{args.FEAT}.obj")
@@ -95,8 +116,10 @@ def test_on_unwt_events(args):
 
     # Filtering the features according to the chosen hypothesis
     # defining the unweighted events mask
-    unwt = unwt[:, hypothesis]
-    X = X[unwt == 1.0]
+    features = []
+    for hyp in hypotheses:
+        mask = unwt[:, hyp]
+        features.append(X[mask == 1.0])
 
     # Preparing the model
     model = NeuralNetwork(
@@ -111,26 +134,31 @@ def test_on_unwt_events(args):
     model.build()
 
     # Loading model weights and making predictions
+    preds = []
+
     model.load_weights(os.path.join(
     "results", args.TRAINING_METHOD, args.MODEL_LOCATION, 
     "model_state", "model.weights.h5"))
-    preds = model.predict(X)
+    for i in range(len(hypotheses)):
+        preds.append(model.predict(features[i]))
   
-    if args.TRAINING_METHOD == "soft_argmaxs":
-        preds = np.argmax(preds, axis=1)
-        preds = preds * 2 * np.pi / (n_classes - 1)
-    
-    if args.TRAINING_METHOD == "regr_argmaxs":
-        # Shifting the predictions to the range [0, 2pi]
-        for i in range(len(preds)):
-            while preds[i] > (2 * np.pi):
-                preds[i] -= 2 * np.pi
-            while preds[i] < 0:
-                preds[i] += 2 * np.pi
+        if args.TRAINING_METHOD == "soft_argmaxs":
+            preds[i] = np.argmax(preds[i], axis=1)
+            preds[i] = preds[i] * 2 * np.pi / (n_classes - 1)
+        
+        if args.TRAINING_METHOD == "regr_argmaxs":
+            # Shifting the predictions to the range [0, 2pi]
+            for j in range(len(preds[i])):
+                while preds[i][j] > (2 * np.pi):
+                    preds[i][j] -= 2 * np.pi
+                while preds[i][j] < 0:
+                    preds[i][j] += 2 * np.pi
 
     # Loading and filtering true alphaCPmax values
-    true_argmaxs = read_np(os.path.join(args.IN, "argmaxs.npy"))
-    true_argmaxs = true_argmaxs[unwt == 1.0]
+    t_argmaxs = read_np(os.path.join(args.IN, "argmaxs.npy"))
+    true_argmaxs = []
+    for hyp in hypotheses:
+        true_argmaxs.append(t_argmaxs[unwt[:, hyp] == 1.0])
     
     # Creating a directory for storing the plots
     if not os.path.exists(os.path.normpath(args.OUT)):
@@ -139,38 +167,47 @@ def test_on_unwt_events(args):
     # Recomputing hypothesis index if the level of discretisation is different
     # from the number of classes the model works with
     if args.TRAINING_METHOD == "regr_argmaxs":
-        hypothesis = round(hypothesis / (n_classes - 1) * (discr_level - 1))
+        for i in range(len(hypotheses)):
+            hypotheses[i] = round(hypotheses[i] / (n_classes - 1) * (discr_level - 1))
 
-    # Creating a plot showing the distribution of argmaxs and computing the needed values
+    # Computing the needed values
     classes = np.linspace(0, 2 + 2/(discr_level - 1), (discr_level + 1)) * np.pi
-    true_counts = bins_fun(classes, true_argmaxs, discr_level, True)
     periodicity = True if args.TRAINING_METHOD == "regr_argmaxs" else False
-    preds_counts = bins_fun(classes, preds, discr_level, periodicity)
+    true_counts, preds_counts, relative_amplitude, chi2_nf = [], [], [], []
+    predicted_hypothesis, actual_hypothesis = [], []
 
-    # Getting rid of the last class (360° = 0°, bins_fun() takes into account this)
-    preds_counts = preds_counts[:-1]
-    true_counts = true_counts[:-1]
+    for i in range(len(hypotheses)):
+        true_counts.append(bins_fun(classes, true_argmaxs[i], discr_level, True))
+        preds_counts.append(bins_fun(classes, preds[i], discr_level, periodicity))
     
-    preds_max_bin = preds_counts.max()
-    preds_min_bin = preds_counts.min()
-    relative_amplitude = 2 * (preds_max_bin - preds_min_bin) / (preds_max_bin + preds_min_bin)
-    predicted_hypothesis = np.argmax(preds_counts)
-    actual_hypothesis = np.argmax(true_counts)
-    chi2_nf = np.sum(np.square(true_counts - preds_counts) / true_counts) / (discr_level - 1)
+        # Getting rid of the last class (360° = 0°, bins_fun() takes into account this)
+        preds_counts[i] = preds_counts[i][:-1]
+        true_counts[i] = true_counts[i][:-1]
+    
+        preds_max_bin = preds_counts[i].max()
+        preds_min_bin = preds_counts[i].min()
+        relative_amplitude.append(2 * (preds_max_bin - preds_min_bin) / (preds_max_bin + preds_min_bin))
+        predicted_hypothesis.append(np.argmax(preds_counts[i]))
+        actual_hypothesis.append(np.argmax(true_counts[i]))
+        chi2_nf.append(np.sum(np.square(
+            true_counts[i] - preds_counts[i]) / true_counts[i]) / (discr_level - 1))
 
+    preds_counts, true_counts = np.array(preds_counts), np.array(true_counts)
+
+    # Creating a plot showing the distribution of argmaxs
     draw_distribution(
-        preds=np.roll(preds_counts, int((discr_level - 1) / 2)),
+        preds=np.roll(preds_counts, int((discr_level - 1) / 2), axis=1),
         x=np.roll(np.arange(0, discr_level - 1), int((discr_level - 1) / 2)),
-        true_values=np.roll(true_counts, int((discr_level - 1) / 2)),
+        true_values=np.roll(true_counts, int((discr_level - 1) / 2), axis=1),
         output_path=args.OUT,
-        filename= f"{args.TRAINING_METHOD}_hyp_{hypothesis}_dist",
+        filename=f"{args.TRAINING_METHOD}_hyp_{args.HYPOTHESIS.replace('-', '_')}_dist",
         title="Distribution",
-        color=["black", "red"],
-        info_table=[hypothesis, 
-            hypothesis / (n_classes - 1) * 2 * np.pi, 
+        color=["black", "red", "blue"],
+        info_table=[hypotheses, 
+            np.array(hypotheses) / (n_classes - 1) * 2 * np.pi, 
             relative_amplitude,
             predicted_hypothesis,
-            predicted_hypothesis / (n_classes - 1) * 2 * np.pi,
+            np.array(predicted_hypothesis) / (n_classes - 1) * 2 * np.pi,
             chi2_nf,
             actual_hypothesis,
-            actual_hypothesis / (n_classes - 1) * 2 * np.pi])
+            np.array(actual_hypothesis) / (n_classes - 1) * 2 * np.pi])

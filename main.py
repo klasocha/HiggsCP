@@ -203,7 +203,7 @@ if args.ACTION == "test_parsed_data":
 if args.ACTION == "test_model_on_unwt_events":
     # $ python main.py --action "test_model_on_unwt_events" --input "data" 
     # --output "plots/figures/test_model_on_unwt_events" --num_classes "21" 
-    # --hypothesis "0" --training_method "soft_weights" --model_location "model_1" 
+    # --hypothesis "0-10-15" --training_method "soft_weights" --model_location "model_1" 
     # --features "Variant-All"
     if args.TRAINING_METHOD not in ["regr_argmaxs", "soft_argmaxs"]:
         print(""" 

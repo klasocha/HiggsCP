@@ -1,4 +1,4 @@
-# Testing model predictions on the events filtered by a specifiv hypothesis
+# Testing model predictions on the events filtered by specific hypotheses
 # and an unweighted events hits mask (soft/regr_weights, soft/regr_c012s)
 
 from utilities.data_utils import read_np
@@ -22,9 +22,9 @@ def draw_distribution(x, y, title, output_path, filename, true_weights=None, col
             true_weights[i] = true_weights[i] / np.sum(true_weights[i])
 
         for i in range(len(y)):
-            ax2.plot(np.arange(len(x)), y[i], color=color[i % len(y)], 
+            ax2.plot(np.arange(len(x)), y[i], color=color[i % len(color)], 
                      label="Predicted (" + r"${{\alpha^{CP}_{max}}}$" + f"={round(info_table[3][i], 1)})")
-            ax2.plot(np.arange(len(x)), true_weights[i], color=color[i % len(y)], linestyle="dotted", 
+            ax2.plot(np.arange(len(x)), true_weights[i], color=color[i % len(color)], linestyle="dotted", 
                      label="True (" + r"${{\alpha^{CP}_{max}}}$" + f"={round(info_table[2][i], 1)})")
         
         ax2.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
@@ -87,7 +87,7 @@ def calc_weights(num_classes, coeffs):
 
 def test_on_unwt_events(args):
     """ Feed a pretrained NN with unweighted events (the whole data set is used)
-    filtered according to a chosen hypothesis and create a double check plot 
+    filtered according to chosen hypotheses and create a double check plot 
     showing the summed distribution of the predicted weights """
 
     discr_level = int(args.NBINS) if args.NBINS is not None and \
@@ -108,9 +108,9 @@ def test_on_unwt_events(args):
     X = (X - mean) / std
 
     # Loading the unweighted events weights
-    unwt_path = os.path.join(os.path.normpath(args.IN), f"unwt_multiclass_{args.NUM_CLASSES}.npy") 
+    unwt_path = os.path.join(os.path.normpath(args.IN), 
+                             f"unwt_multiclass_{args.NUM_CLASSES}.npy") 
     unwt = read_np(unwt_path)
-    unwt[100000:] = 0.0
 
     # Filtering the features according to the chosen hypotheses
     # defining the unweighted events mask
