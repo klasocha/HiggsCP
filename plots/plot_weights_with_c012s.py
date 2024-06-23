@@ -5,7 +5,7 @@ Try to run it as the following (let us suppose the coefficients are stored in "d
 and you want to save the resul in "plots/figures/"):
 
     $ python main.py --action "plot" --option "WEIGHTS-FOR-EVENT-VIA-C012" --input "data" 
-      --output "plots/figures" --format "png" --show 
+      --output "plots/figures" --show 
 """
 
 import numpy as np
@@ -68,10 +68,13 @@ def draw_distribution(weights, c0, alphaCP_range, args):
             raise
 
     # Saving the plot
-    output_path = os.path.join(output_path, f"weights_c012s_vs_c12s.{args.FORMAT}")
-    plt.savefig(output_path)
-    print(f"Wt(alphaCP) subplots have been saved in {output_path}")
-
+    filename = "weights_c012s_vs_c12s"
+    for format in ["pdf", "png", "eps"]:
+        plt.savefig(os.path.join(os.path.normpath(output_path), f"{filename}.{format}"))
+    print(f"Wt(alphaCP) subplots have been saved as {os.path.join(os.path.normpath(output_path), filename)}")
+    
     # Showing the plot
     if args.SHOW:
         plt.show()
+
+    plt.clf()

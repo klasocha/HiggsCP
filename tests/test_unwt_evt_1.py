@@ -16,11 +16,6 @@ def draw_distribution(x, y, title, output_path, filename, true_weights=None, col
         fig, (ax1, ax2) = plt.subplots(2, height_ratios=[1, 3])
         fig.set_size_inches(10, 6)
         
-        # Normalising input vectors to be able to compare different plots along the OY axis
-        for i in range(len(y)):
-            y[i] = y[i] / np.sum(y[i])
-            true_weights[i] = true_weights[i] / np.sum(true_weights[i])
-
         for i in range(len(y)):
             ax2.plot(np.arange(len(x)), y[i], color=color[i % len(color)], 
                      label="Predicted (" + r"${{\alpha^{CP}_{max}}}$" + f"={round(info_table[3][i], 1)})")
@@ -226,6 +221,11 @@ def test_on_unwt_events(args):
         summed_wt.append(np.sum(preds[i], axis=0))
         predicted_argmax.append(np.argmax(summed_wt[i]))
         summed_true_wt.append(np.sum(true_weights[i], axis=0))
+
+        # Normalising summed distributions (to be able to compare them on the same plot)
+        summed_wt[i] = summed_wt[i] / np.sum(summed_wt[i])
+        summed_true_wt[i] = summed_true_wt[i] / np.sum(summed_true_wt[i])
+
         min_summed_wt, max_summed_wt = np.min(summed_wt[i]), np.max(summed_wt[i])
         relative_amplitude.append(2 * (max_summed_wt - min_summed_wt) / (max_summed_wt + min_summed_wt))
         chi2_nf.append(np.sum(np.square(summed_true_wt[i] - summed_wt[i]) / summed_true_wt[i]) / discr_level) 
@@ -265,6 +265,10 @@ def test_on_unwt_events(args):
         for i in range(len(hypotheses)):
             summed_wt.append(np.sum(preds_without_neg[i], axis=0))
             predicted_argmax.append(np.argmax(summed_wt[i]))
+            
+            # Normalising summed distributions (to be able to compare them on the same plot)
+            summed_wt[i] = summed_wt[i] / np.sum(summed_wt[i])
+
             min_summed_wt, max_summed_wt = np.min(summed_wt[i]), np.max(summed_wt[i])
             relative_amplitude.append(2 * (max_summed_wt - min_summed_wt) / (max_summed_wt + min_summed_wt))
             chi2_nf.append(np.sum(np.square(summed_true_wt[i] - summed_wt[i]) / summed_true_wt[i]) / discr_level) 
