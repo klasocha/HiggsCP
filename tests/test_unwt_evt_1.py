@@ -28,8 +28,9 @@ def draw_distribution(x, y, title, output_path, filename, true_weights=None, col
 
         for i in range(2, 4):
             info_table[i] = [round(value, 1) for value in info_table[i]]
-        for i in range(4, 6):
-            info_table[i] = [round(value, 2) for value in info_table[i]]
+        
+        info_table[4] = [round(value, 2) for value in info_table[4]]
+        info_table[5] = [f"{value:.2e}" for value in info_table[5]]
 
         table_vals=[["Hypothesis idx: " + ", ".join(f"{num}" for num in info_table[0]) + \
                     " (" + r"${{\alpha^{CP}}_{max}}$" + " = " + \

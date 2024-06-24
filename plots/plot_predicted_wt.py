@@ -5,7 +5,7 @@ as a function of the class index for two example events.
 
     $ python main.py --action "plot" --option "WEIGHTS-FOR-PREDICTED" 
     --input "results/soft_weights/51_classes_variant_all/predictions/" 
-    --output "plots/figures" --use_filtered_data --features "Variant-All" --show 
+    --output "plots/figures" --use_filtered_data --features "Variant-All" 
     --training_method "soft_weights" --dataset "test" --num_classes 51
 """
 

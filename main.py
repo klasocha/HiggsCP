@@ -9,6 +9,7 @@ from plots.plot_calc_c012s import draw as c012s_dist
 from plots.plot_weights_with_c012s import draw as weights_with_c012s
 from plots.plot_unwt_weights import draw as unwt_weights
 from plots.plot_predicted_wt import draw as predicted_weights
+from plots.plot_predicted_c012s import draw as predicted_c012s
 from plots.results_analysis_1 import draw as results_analysis_1
 from plots.results_analysis_2 import draw as results_analysis_2
 from plots.results_analysis_3 import draw as results_analysis_3
@@ -118,7 +119,8 @@ plot_types = {"PHISTAR-DISTRIBUTION" : phistar_dist, # Variant-1.1 should be pre
          "RESULTS_ANALYSIS_3": results_analysis_3, # "soft_argmaxs"
          "RESULTS_ANALYSIS_4": results_analysis_4, # "regr_c012s"
          "RESULTS_ANALYSIS_5": results_analysis_5, # "regr_argmaxs"
-         "WEIGHTS-FOR-PREDICTED": predicted_weights # predicted weights ("soft_weights") vs true weights
+         "WEIGHTS-FOR-PREDICTED": predicted_weights, # predicted weights ("soft_weights") vs true weights
+         "C012S-FOR-PREDICTED" : predicted_c012s # predicted c012s ("soft_c012s") vs true c012s
          }
 parser.add_argument("--output", dest="OUT", help="output path for plots", default="figures")
 parser.add_argument("--format", dest="FORMAT", 
