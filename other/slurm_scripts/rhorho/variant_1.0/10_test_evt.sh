@@ -46,34 +46,34 @@ python main.py --action "test_model_on_unwt_events" --input "data" \
 
 
 # All events test
-# python main.py --action "test_model_on_all_events" --input "data" \
-# --output "plots/figures/test_model_on_all_events/51_classes_variant_1.0/soft_weights" --num_classes "51" \
-# --training_method "soft_weights" --model_location "51_classes_variant_1.0" \
-# --features "Variant-1.0"
+python main.py --action "test_model_on_all_events" --input "data" \
+--output "plots/figures/test_model_on_all_events/51_classes_variant_1.0/soft_weights" --num_classes "51" \
+--training_method "soft_weights" --model_location "51_classes_variant_1.0" \
+--features "Variant-1.0"
 
-# python main.py --action "test_model_on_all_events" --input "data" \
-# --output "plots/figures/test_model_on_all_events/51_classes_variant_1.0/regr_weights" --num_classes "51" \
-# --training_method "regr_weights" --model_location "51_classes_variant_1.0" \
-# --features "Variant-1.0"
+python main.py --action "test_model_on_all_events" --input "data" \
+--output "plots/figures/test_model_on_all_events/51_classes_variant_1.0/regr_weights" --num_classes "51" \
+--training_method "regr_weights" --model_location "51_classes_variant_1.0" \
+--features "Variant-1.0"
 
-# python main.py --action "test_model_on_all_events" --input "data" \
-# --output "plots/figures/test_model_on_all_events/51_classes_variant_1.0/soft_c012s" --num_classes "51" \
-# --training_method "soft_c012s" --model_location "variant_1.0/51_classes" \
-# --features "Variant-1.0"
+python main.py --action "test_model_on_all_events" --input "data" \
+--output "plots/figures/test_model_on_all_events/51_classes_variant_1.0/soft_c012s" --num_classes "51" \
+--training_method "soft_c012s" --model_location "variant_1.0/51_classes" \
+--features "Variant-1.0"
 
-# python main.py --action "test_model_on_all_events" --input "data" \
-# --output "plots/figures/test_model_on_all_events/51_classes_variant_1.0/regr_c012s" --num_classes "51" \
-# --training_method "regr_c012s" --model_location "51_classes_variant_1.0" \
-# --features "Variant-1.0"
+python main.py --action "test_model_on_all_events" --input "data" \
+--output "plots/figures/test_model_on_all_events/51_classes_variant_1.0/regr_c012s" --num_classes "51" \
+--training_method "regr_c012s" --model_location "51_classes_variant_1.0" \
+--features "Variant-1.0"
 
-# python main.py --action "test_model_on_all_events" --input "data" \
-# --output "plots/figures/test_model_on_all_events/51_classes_variant_1.0/soft_argmaxs" --num_classes "51" \
-# --training_method "soft_argmaxs" --model_location "51_classes_variant_1.0" \
-# --features "Variant-1.0"
+python main.py --action "test_model_on_all_events" --input "data" \
+--output "plots/figures/test_model_on_all_events/51_classes_variant_1.0/soft_argmaxs" --num_classes "51" \
+--training_method "soft_argmaxs" --model_location "51_classes_variant_1.0" \
+--features "Variant-1.0"
 
-# python main.py --action "test_model_on_all_events" --input "data" \
-# --output "plots/figures/test_model_on_all_events/51_classes_variant_1.0/regr_argmaxs" --num_classes "51" \
-# --training_method "regr_argmaxs" --model_location "51_classes_variant_1.0" \
-# --features "Variant-1.0"
+python main.py --action "test_model_on_all_events" --input "data" \
+--output "plots/figures/test_model_on_all_events/51_classes_variant_1.0/regr_argmaxs" --num_classes "51" \
+--training_method "regr_argmaxs" --model_location "51_classes_variant_1.0" \
+--features "Variant-1.0"
 
 deactivate
