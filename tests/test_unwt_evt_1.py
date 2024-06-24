@@ -90,7 +90,7 @@ def test_on_unwt_events(args):
         args.TRAINING_METHOD in ["soft_c012s", "regr_c012s"] else int(args.NUM_CLASSES)
     n_classes = int(args.NUM_CLASSES)
 
-    # Parsing 3 chosen hypotheses (e.g. --hypothesis "0-5-23")
+    # Parsing chosen hypotheses (e.g. --hypothesis "0-5-23")
     hypotheses = args.HYPOTHESIS.split('-')
     hypotheses = [int(hyp) for hyp in hypotheses]
 
