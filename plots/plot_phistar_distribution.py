@@ -74,38 +74,79 @@ def draw_distribution(variable, output_name, args, labels=None, weights=None,
 
 def draw_mult_dist(phistar, hypotheses, args, titles, weights, colors, alphaCP):
     """ Draw phistar distribution (multiple hypotheses) """
-    fig, (ax1, ax2) = plt.subplots(ncols=2)
-    fig.set_size_inches(13, 5)
+    fig, axs = plt.subplots(2, 2, figsize=(16, 7),
+                            gridspec_kw={'height_ratios': [5, 1]})
+
 
     # Left subplot
+    relative_amplitude_neg = []
     for i in range(len(hypotheses)):
         counts, bins = np.histogram(phistar[0], weights=weights[0][i], bins=25)
-        ax1.scatter(bins[:-1], counts, marker='^', lw=1, ls='dashed', c=colors[i % len(colors)],
+        axs[0, 0].scatter(bins[:-1], counts, marker='^', lw=1, ls='dashed', c=colors[i % len(colors)],
                     label=r"${\alpha^{CP}}$ = " + f"{alphaCP[i]} [rad]")
-        ax1.set_title(titles[0])
-    ax1.set_ylim(0, np.max(counts) * 1.5)
-    ax1.legend()
-    ax1.set_xlabel(r"${\phi_{\rho \rho}}$", loc="right")
-    ax1.set_ylabel("Entries", loc="top")
-    ax1.yaxis.set_major_formatter(ticker.ScalarFormatter(useMathText=True))
-    ax1.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+        
+        max_bin = counts.max()
+        min_bin = counts.min()
+        relative_amplitude_neg.append(np.round(
+            2 * (max_bin - min_bin) / (max_bin + min_bin),
+            2))
+    
+    axs[0, 0].set_title(titles[0])
+    axs[0, 0].set_ylim(np.min(counts) / 2, np.max(counts) * 1.5)
+    axs[0, 0].legend()
+    axs[0, 0].set_xlabel(r"${\phi_{\rho \rho}}$", loc="right")
+    axs[0, 0].set_ylabel("Entries", loc="top")
+    axs[0, 0].yaxis.set_major_formatter(ticker.ScalarFormatter(useMathText=True))
+    axs[0, 0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     
     # Right subplot
+    relative_amplitude_pos = []
     for i in range(len(hypotheses)):
         counts, bins = np.histogram(phistar[1], weights=weights[1][i], bins=25)
-        ax2.scatter(bins[:-1], counts, marker='^', lw=1, ls='dashed', c=colors[i % len(colors)],
+        axs[0, 1].scatter(bins[:-1], counts, marker='^', lw=1, ls='dashed', c=colors[i % len(colors)],
                     label=r"${\alpha^{CP}}$ = " + f"{alphaCP[i]} [rad]")
-        ax2.set_title(titles[1])
-    ax2.set_ylim(0, np.max(counts) * 1.5)
-    ax2.legend()
-    ax2.set_xlabel(r"${\phi_{\rho \rho}}$", loc="right")
-    ax2.set_ylabel("Entries", loc="top")
-    ax2.yaxis.set_major_formatter(ticker.ScalarFormatter(useMathText=True))
-    ax2.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+        
+        max_bin = counts.max()
+        min_bin = counts.min()
+        relative_amplitude_pos.append(np.round(
+            2 * (max_bin - min_bin) / (max_bin + min_bin),
+            2))
+        
+    axs[0, 1].set_title(titles[1])
+    axs[0, 1].set_ylim(np.min(counts) / 2, np.max(counts) * 1.5)
+    axs[0, 1].legend()
+    axs[0, 1].set_xlabel(r"${\phi_{\rho \rho}}$", loc="right")
+    axs[0, 1].set_ylabel("Entries", loc="top")
+    axs[0, 1].yaxis.set_major_formatter(ticker.ScalarFormatter(useMathText=True))
+    axs[0, 1].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     
-    plt.subplots_adjust(wspace=0.4, bottom=0.2)
+    # Left info table
+    table_vals=[
+        ["Relative amplitude: " + ", ".join(f"{num}" for num in relative_amplitude_neg)]
+    ]
+    axs[1, 0].axis('off')
+    axs[1, 0].axis('tight')
+    table = axs[1, 0].table(cellText=table_vals, colWidths=[1.0],
+                        cellLoc="left", loc='upper left')
+    table.set_fontsize(12)
+    for _, cell in table.get_celld().items():
+        cell.set_linewidth(0)
+    
+    # Right info table
+    table_vals=[
+         ["Relative amplitude: " + ", ".join(f"{num}" for num in relative_amplitude_pos)]
+    ]
+    axs[1, 1].axis('off')
+    axs[1, 1].axis('tight')
+    table = axs[1, 1].table(cellText=table_vals, colWidths=[1.0],
+                        cellLoc="left", loc='upper left')
+    table.set_fontsize(12)
+    for _, cell in table.get_celld().items():
+        cell.set_linewidth(0)
 
-   # Showing and saving the plot
+    plt.subplots_adjust(wspace=0.4, hspace=0.2)
+
+    # Showing and saving the plot
     output_path = os.path.join(os.path.normpath(args.OUT), "phistar_dist", 
                                f"phistar_y1y2_multiple_hypotheses")
     if not os.path.exists(output_path):
