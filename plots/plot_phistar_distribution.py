@@ -11,12 +11,17 @@ Then you need to run "plots.py" in the following manner (hypothesis is an alphaC
 weighted distribution plots): 
 
     $ python main.py --action "plot" --option "PHISTAR-DISTRIBUTION" --input "data" --output "plots/figures" 
-    --format "png" --show --num_classes "51" --feature "Variant-1.1" --hypothesis "0-4-46" 
+    --format "png" --show --num_classes "51" --feature "Variant-1.1"
 
 Or for the unweighted events:
 
     $ python main.py --action "plot" --option PHISTAR-DISTRIBUTION --input "data" --output "plots/figures" 
-    --format "png" --show --num_classes 51 --feature "Variant-1.1" --hypothesis "0-4-46" --use_unweighted_events
+    --format "png" --show --num_classes 51 --feature "Variant-1.1" --use_unweighted_events
+
+You can also plot phistar distribution filtered by the given hypotheses:
+
+    $ python main.py --action "plot" --option PHISTAR-DISTRIBUTION --input "data" --output "plots/figures" 
+    --format "png" --show --num_classes 51 --feature "Variant-1.1" --hypothesis "0-4-46" 
 
 Notice: hypotheses range depends on the number of classes. For example, if --num_classes=21, then
 you can set --hypothesis from 0 to 20 (where 0 means 0 rad, 20 means 6.28 rad). Alternatively,
@@ -41,9 +46,10 @@ def draw_distribution(variable, output_name, args, labels=None, weights=None,
     if weights is None:
         plt.hist(variable, histtype='step', bins=50, color = 'black', label=labels)
     else:
-        for v, w, l, c in zip(variable, weights, labels, colors):
+        markers = ['o', '^', 'v']
+        for v, w, l, c, i in zip(variable, weights, labels, colors, range(0, len(markers))):
             counts, bins = np.histogram(v, weights=w, bins=25)
-            plt.scatter(bins[:-1], counts, marker='^', lw=1, ls='dashed',
+            plt.scatter(bins[:-1], counts, marker=markers[i], lw=1, ls='dashed',
                         label=l, c=c)
             plt.ylim(0, np.max(counts) * 2)
             plt.title(r"${\alpha^{CP}}$ = " + title)
@@ -80,9 +86,11 @@ def draw_mult_dist(phistar, hypotheses, args, titles, weights, colors, alphaCP):
 
     # Left subplot
     relative_amplitude_neg = []
+    markers = ['o', '^', 'v']
     for i in range(len(hypotheses)):
         counts, bins = np.histogram(phistar[0], weights=weights[0][i], bins=25)
-        axs[0, 0].scatter(bins[:-1], counts, marker='^', lw=1, ls='dashed', c=colors[i % len(colors)],
+        axs[0, 0].scatter(bins[:-1], counts, marker=markers[i % len(markers)], 
+                          lw=1, ls='dashed', c=colors[i % len(colors)],
                     label=r"${\alpha^{CP}}$ = " + f"{alphaCP[i]} [rad]")
         
         max_bin = counts.max()
@@ -103,7 +111,8 @@ def draw_mult_dist(phistar, hypotheses, args, titles, weights, colors, alphaCP):
     relative_amplitude_pos = []
     for i in range(len(hypotheses)):
         counts, bins = np.histogram(phistar[1], weights=weights[1][i], bins=25)
-        axs[0, 1].scatter(bins[:-1], counts, marker='^', lw=1, ls='dashed', c=colors[i % len(colors)],
+        axs[0, 1].scatter(bins[:-1], counts, marker=markers[i % len(markers)], 
+                          lw=1, ls='dashed', c=colors[i % len(colors)],
                     label=r"${\alpha^{CP}}$ = " + f"{alphaCP[i]} [rad]")
         
         max_bin = counts.max()
