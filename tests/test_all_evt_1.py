@@ -11,7 +11,7 @@ import matplotlib.ticker as ticker
 def draw_distribution(x, y, title, output_path, filename, true_weights=None, 
                       color=None, info_table=None, argmax_dist=False):
     
-    fig, (ax1, ax2) = plt.subplots(2, height_ratios=[1, 3])
+    fig, (ax1, ax2) = plt.subplots(2, height_ratios=[1, 6])
     fig.set_size_inches(9, 6)
     ax2.plot(np.arange(len(x)), y, color=color[0], label="Predicted")
     ax2.plot(np.arange(len(x)), true_weights, linestyle="dotted", 
@@ -23,8 +23,7 @@ def draw_distribution(x, y, title, output_path, filename, true_weights=None,
         ax2.set_ylabel(r"$\sum_{i=0}^N Wt_i$", rotation=0, labelpad=20)
     ax2.set_title(title)
 
-    table_vals=[[f"Relative amplitude: {info_table[0]:0,.2f}"],
-                [r"${{\chi^2}/Nf}$" + f" = {info_table[1]:0,.2f}"]]
+    table_vals=[[f"Relative amplitude: {info_table[0]:0,.2f}"]]
     
     ax1.axis('off')
     ax1.axis('tight')
@@ -160,8 +159,6 @@ def test_on_all_events(args):
     min_summed_wt, max_summed_wt = np.min(summed_wt), np.max(summed_wt)
     relative_amplitude = 2 * (max_summed_wt - min_summed_wt) / \
         (max_summed_wt + min_summed_wt)
-    chi2_nf = np.sum(np.square(summed_true_wt - summed_wt) / \
-                     summed_true_wt) / discr_level 
 
     draw_distribution(
         x=np.roll(np.arange(0, discr_level - 1), int((discr_level - 1) / 2)),
@@ -171,7 +168,7 @@ def test_on_all_events(args):
         filename= f"{args.TRAINING_METHOD}_all_events_summed_dist",
         title="Summed distribution",
         color=["black", "red"],
-        info_table=[relative_amplitude, chi2_nf])
+        info_table=[relative_amplitude])
 
     # Creating a plot showing Wt argmax distribution
     argmax_wt, _ = np.histogram(np.argmax(preds, axis=1), 
@@ -188,8 +185,6 @@ def test_on_all_events(args):
     min_argmax_wt, max_argmax_wt = np.min(argmax_wt), np.max(argmax_wt)
     relative_amplitude = 2 * (max_argmax_wt - min_argmax_wt) / \
         (max_argmax_wt + min_argmax_wt)
-    chi2_nf = np.sum(np.square(argmax_true_wt - argmax_wt) / \
-                     argmax_true_wt) / discr_level 
     draw_distribution(
         x=np.roll(np.arange(0, discr_level - 1), int((discr_level - 1) / 2)),
         y=np.roll(argmax_wt[:-1], int((discr_level - 1) / 2)),
@@ -198,7 +193,7 @@ def test_on_all_events(args):
         filename= f"{args.TRAINING_METHOD}_all_events_argmax_dist",
         title="Wt argmax distribution",
         color=["black", "red"],
-        info_table=[relative_amplitude, chi2_nf],
+        info_table=[relative_amplitude],
         argmax_dist=True)
     
     # Plotting the same for preprocessed predictions (those containing
@@ -213,8 +208,6 @@ def test_on_all_events(args):
         min_summed_wt, max_summed_wt = np.min(summed_wt), np.max(summed_wt)
         relative_amplitude = 2 * (max_summed_wt - min_summed_wt) / \
             (max_summed_wt + min_summed_wt)
-        chi2_nf = np.sum(np.square(summed_true_wt - summed_wt) / \
-                         summed_true_wt) / discr_level 
 
         draw_distribution(
             x=np.roll(np.arange(0, discr_level - 1), int((discr_level - 1) / 2)),
@@ -224,7 +217,7 @@ def test_on_all_events(args):
             filename= f"{args.TRAINING_METHOD}_all_events_summed_dist_without_neg",
             title="Summed distribution",
             color=["black", "red"],
-            info_table=[relative_amplitude, chi2_nf])
+            info_table=[relative_amplitude])
 
         argmax_wt, _ = np.histogram(np.argmax(preds_without_neg, axis=1),
                                     bins=np.arange(0, discr_level + 1))
@@ -241,8 +234,6 @@ def test_on_all_events(args):
         min_argmax_wt, max_argmax_wt = np.min(argmax_wt), np.max(argmax_wt)
         relative_amplitude = 2 * (max_argmax_wt - min_argmax_wt) / \
             (max_argmax_wt + min_argmax_wt)
-        chi2_nf = np.sum(np.square(argmax_true_wt - argmax_wt) / \
-                        argmax_true_wt) / discr_level 
         
         draw_distribution(
             x=np.roll(np.arange(0, discr_level - 1), int((discr_level - 1) / 2)),
@@ -252,5 +243,5 @@ def test_on_all_events(args):
             filename= f"{args.TRAINING_METHOD}_all_events_argmax_dist_without_neg",
             title="Wt argmax distribution",
             color=["black", "red"],
-            info_table=[relative_amplitude, chi2_nf],
+            info_table=[relative_amplitude],
             argmax_dist=True)
