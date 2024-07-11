@@ -10,7 +10,7 @@ class RhoRhoEvent(object):
     high-energy physics experiments. """
 
     def __init__(self, data, args):
-        # p = [[n, pi-, pi0, an, pi+, pi0], ...]
+        # p = [[n, pi-, pi0, n, pi+, pi0], ...]
         # Therefore we have 6 vectors in the original data per event
 
         p = [Particle(data[:, 5 * i:5 * i + 4]) for i in range(6)]
