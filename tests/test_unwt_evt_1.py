@@ -13,7 +13,7 @@ def draw_distribution(x, y, title, output_path, filename, true_weights=None, col
                       info_table=None, multiple=False):
     
     if not multiple:
-        fig, (ax1, ax2) = plt.subplots(2, height_ratios=[1, 3])
+        fig, (ax1, ax2) = plt.subplots(2, height_ratios=[1, 4])
         fig.set_size_inches(10, 6)
         
         for i in range(len(y)):
@@ -30,7 +30,6 @@ def draw_distribution(x, y, title, output_path, filename, true_weights=None, col
             info_table[i] = [round(value, 1) for value in info_table[i]]
         
         info_table[4] = [round(value, 2) for value in info_table[4]]
-        info_table[5] = [f"{value:.2e}" for value in info_table[5]]
 
         table_vals=[["Hypothesis idx: " + ", ".join(f"{num}" for num in info_table[0]) + \
                     " (" + r"${{\alpha^{CP}}_{max}}$" + " = " + \
@@ -40,8 +39,7 @@ def draw_distribution(x, y, title, output_path, filename, true_weights=None, col
                     " (" + r"${{\alpha^{CP}}_{max}}$" + " = " + \
                         ", ".join(f"{num}" for num in info_table[3]) + " rad)"],
                     
-                    ["Relative amplitude: " + ", ".join(f"{num}" for num in info_table[4])],
-                    [r"${{\chi^2}/Nf}$" + " = " + ", ".join(f"{num}" for num in info_table[5])]]
+                    ["Relative amplitude: " + ", ".join(f"{num}" for num in info_table[4])]]
         
         ax1.axis('off')
         ax1.axis('tight')
@@ -215,8 +213,8 @@ def test_on_unwt_events(args):
         print()
 
     # Computing the needed values
-    summed_wt, predicted_argmax, summed_true_wt, relative_amplitude, chi2_nf = \
-        [], [], [], [], []
+    summed_wt, predicted_argmax, summed_true_wt, relative_amplitude = \
+        [], [], [], []
 
     for i in range(len(hypotheses)):
         summed_wt.append(np.sum(preds[i], axis=0))
@@ -229,7 +227,6 @@ def test_on_unwt_events(args):
 
         min_summed_wt, max_summed_wt = np.min(summed_wt[i]), np.max(summed_wt[i])
         relative_amplitude.append(2 * (max_summed_wt - min_summed_wt) / (max_summed_wt + min_summed_wt))
-        chi2_nf.append(np.sum(np.square(summed_true_wt[i] - summed_wt[i]) / summed_true_wt[i]) / discr_level) 
     
     summed_wt, summed_true_wt = np.array(summed_wt), np.array(summed_true_wt)
 
@@ -246,8 +243,7 @@ def test_on_unwt_events(args):
                     predicted_argmax,
                     np.array(hypotheses) / (discr_level - 1) * 2 * np.pi, 
                     np.array(predicted_argmax) / (discr_level - 1) * 2 * np.pi,
-                    relative_amplitude,
-                    chi2_nf])
+                    relative_amplitude])
 
     # Creating a plot showing some sample events predictied by the model
     for i in range(len(hypotheses)):
@@ -262,7 +258,7 @@ def test_on_unwt_events(args):
     # Plotting the same for preprocessed predictions (those containing
     # negative weights are set to zero)
     if np.sum(negs_n) > 0:
-        summed_wt, predicted_argmax, relative_amplitude, chi2_nf = [], [], [], []
+        summed_wt, predicted_argmax, relative_amplitude = [], [], []
         for i in range(len(hypotheses)):
             summed_wt.append(np.sum(preds_without_neg[i], axis=0))
             predicted_argmax.append(np.argmax(summed_wt[i]))
@@ -272,7 +268,6 @@ def test_on_unwt_events(args):
 
             min_summed_wt, max_summed_wt = np.min(summed_wt[i]), np.max(summed_wt[i])
             relative_amplitude.append(2 * (max_summed_wt - min_summed_wt) / (max_summed_wt + min_summed_wt))
-            chi2_nf.append(np.sum(np.square(summed_true_wt[i] - summed_wt[i]) / summed_true_wt[i]) / discr_level) 
 
         summed_wt = np.array(summed_wt)
         
@@ -288,5 +283,4 @@ def test_on_unwt_events(args):
                         predicted_argmax,
                         np.array(hypotheses) / (discr_level - 1) * 2 * np.pi, 
                         np.array(predicted_argmax) / (discr_level - 1) * 2 * np.pi,
-                        relative_amplitude,
-                        chi2_nf])
+                        relative_amplitude])

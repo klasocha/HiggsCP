@@ -32,7 +32,7 @@ def bins_fun(classes, data, num_classes, periodicity):
 
 def draw_distribution(preds, x, true_values, title, output_path, filename, 
                       color=None, info_table=None):
-    fig, (ax1, ax2) = plt.subplots(2, height_ratios=[1, 3])
+    fig, (ax1, ax2) = plt.subplots(2, height_ratios=[1, 4])
     fig.set_size_inches(10, 6)
 
     for i in range(len(preds)):
@@ -46,25 +46,23 @@ def draw_distribution(preds, x, true_values, title, output_path, filename,
     ax2.set_ylabel("Entries", rotation=0, labelpad=10, loc="top")
     ax2.set_title(title)
 
-    for i in [2, 5]:
-        info_table[i] = [round(value, 2) for value in info_table[i]]
-    for i in [1, 4, 7]:
+    info_table[2] = [round(value, 2) for value in info_table[2]]
+    for i in [1, 4, 6]:
         info_table[i] = [round(value, 1) for value in info_table[i]]
     
     table_vals=[["Hypothesis idx: " + ", ".join(f"{num}" for num in info_table[0]) + \
                 " (" + r"${{\alpha^{CP}}_{max}}$" + " = " + \
                     ", ".join(f"{num}" for num in info_table[1]) + " rad)"],
 
-                ["Actual hypothesis idx: " + ", ".join(f"{num}" for num in info_table[6]) + \
+                ["Actual hypothesis idx: " + ", ".join(f"{num}" for num in info_table[5]) + \
                 " (" + r"${{\alpha^{CP}}_{max}}$" + " = " + \
-                    ", ".join(f"{num}" for num in info_table[7]) + " rad)"],
+                    ", ".join(f"{num}" for num in info_table[6]) + " rad)"],
 
                 ["Predicted idx: " + ", ".join(f"{num}" for num in info_table[3]) + \
                 " (" + r"${{\alpha^{CP}}_{max}}$" + " = " + \
                     ", ".join(f"{num}" for num in info_table[4]) + " rad)"],
                 
-                ["Relative amplitude: " + ", ".join(f"{num}" for num in info_table[2])],
-                [r"${{\chi^2}/Nf}$" + " = " + ", ".join(f"{num}" for num in info_table[5])]]
+                ["Relative amplitude: " + ", ".join(f"{num}" for num in info_table[2])]]
     
     ax1.axis('off')
     ax1.axis('tight')
@@ -173,7 +171,7 @@ def test_on_unwt_events(args):
     # Computing the needed values
     classes = np.linspace(0, 2 + 2/(discr_level - 1), (discr_level + 1)) * np.pi
     periodicity = True if args.TRAINING_METHOD == "regr_argmaxs" else False
-    true_counts, preds_counts, relative_amplitude, chi2_nf = [], [], [], []
+    true_counts, preds_counts, relative_amplitude = [], [], []
     predicted_hypothesis, actual_hypothesis = [], []
 
     for i in range(len(hypotheses)):
@@ -189,8 +187,6 @@ def test_on_unwt_events(args):
         relative_amplitude.append(2 * (preds_max_bin - preds_min_bin) / (preds_max_bin + preds_min_bin))
         predicted_hypothesis.append(np.argmax(preds_counts[i]))
         actual_hypothesis.append(np.argmax(true_counts[i]))
-        chi2_nf.append(np.sum(np.square(
-            true_counts[i] - preds_counts[i]) / true_counts[i]) / (discr_level - 1))
 
     preds_counts, true_counts = np.array(preds_counts), np.array(true_counts)
 
@@ -208,6 +204,5 @@ def test_on_unwt_events(args):
             relative_amplitude,
             predicted_hypothesis,
             np.array(predicted_hypothesis) / (n_classes - 1) * 2 * np.pi,
-            chi2_nf,
             actual_hypothesis,
             np.array(actual_hypothesis) / (n_classes - 1) * 2 * np.pi])

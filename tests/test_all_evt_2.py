@@ -31,7 +31,7 @@ def bins_fun(classes, data, num_classes, periodicity):
 
 def draw_distribution(preds, x, true_values, title, output_path, filename, 
                       color=None, info_table=None):
-    fig, (ax1, ax2) = plt.subplots(2, height_ratios=[1, 3])
+    fig, (ax1, ax2) = plt.subplots(2, height_ratios=[1, 6])
     fig.set_size_inches(9, 6)
     ax2.step(np.arange(len(x)), preds, color=color[0], where="mid", label="Predicted")
     ax2.step(np.arange(len(x)), true_values, color=color[1], where="mid", label="True")
@@ -39,8 +39,7 @@ def draw_distribution(preds, x, true_values, title, output_path, filename,
     ax2.set_ylabel("Entries", rotation=0, labelpad=10, loc="top")
     ax2.set_title(title)
 
-    table_vals=[[f"Relative amplitude: {info_table[0]:0,.2f}"],
-                [r"${{\chi^2}/Nf}$" + f" = {info_table[1]:0,.2f}"]]
+    table_vals=[[f"Relative amplitude: {info_table[0]:0,.2f}"]]
        
     ax1.axis('off')
     ax1.axis('tight')
@@ -131,7 +130,6 @@ def test_on_all_events(args):
     preds_max_bin = preds_counts.max()
     preds_min_bin = preds_counts.min()
     relative_amplitude = 2 * (preds_max_bin - preds_min_bin) / (preds_max_bin + preds_min_bin)
-    chi2_nf = np.sum(np.square(true_counts - preds_counts) / true_counts) / (discr_level - 1)
 
     draw_distribution(
         preds=np.roll(preds_counts, int((discr_level - 1) / 2)),
@@ -141,4 +139,4 @@ def test_on_all_events(args):
         filename= f"{args.TRAINING_METHOD}_all_events_dist",
         title="Distribution",
         color=["black", "red"],
-        info_table=[relative_amplitude, chi2_nf])
+        info_table=[relative_amplitude])
