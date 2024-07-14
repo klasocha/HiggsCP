@@ -85,4 +85,4 @@ The files containing predictions should appear in
 `results/soft_weights/51_classes_variant_all/predictions`.
 
 ---
-Last update: 11 July 2024
+Last update: 14 July 2024
