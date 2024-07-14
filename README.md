@@ -41,8 +41,7 @@ to the appropriate hypotheses. All the files will be in this case available in
 the server and contain a panoply of the parsed kinematic vectors and weights,
 and then preprocess it:
 ```shell
-$ python main.py --action "download_prepared_and_preprocess" --input "data" 
---features "Variant-All" --num_classes "51"
+$ python main.py --action "download_prepared_and_preprocess" --input "data" --features "Variant-All" --num_classes "51"
 ```
 Please notice that the above examples invoke the preprocessing step for the 
 given number of classes defining the discretisation level. In that case, we 
@@ -52,42 +51,38 @@ in range `[3; )`. See details in `documentation.pdf`
 3. Preprocessing data downloaded and prepared by using the first command 
 mentioned above:
 ```shell
-$ python main.py --action "preprocess" --input "data" --features Variant-All 
---num_classes "51"
+$ python main.py --action "preprocess" --input "data" --features Variant-All --num_classes "51"
 ```
 
-## Model Training (to be updated)
+
+## Model Training
 
 To train the model you should specify its configuration, level of discretisation
-stated as the number of classes, the number of epochs, as well as the input/output paths. 
-Let's take a look at the following example:
+stated as the number of classes, the number of epochs, as well as the 
+input/output paths. Let's take a look at the following example:
 
 ```shell
-$ python main.py --action "train" --input "data" --num_classes "11" --epochs "2" --training_method "soft_weights" --model_location "model_1"
+$ python main.py --action "train" --input "data" --num_classes "51" --epochs 25 --training_method "soft_weights" --model_location "results/soft_weights/51_classes_variant_all" --features Variant-All
 ```
-This command will load the data sets stored in `data/` and then start training the model over
-3 epochs. The results will be stored in `results/soft_weights/model_1/`. The output path,
-of course, corresponds to the model configuration we chose.
+This command will load the data sets stored in `data/` and then start training 
+the model over 25 epochs. The results will be stored in 
+`results/soft_weights/model_1/`. The output path, of course, corresponds to the 
+model configuration.
 
-If you want to restore the model weights in order to continue training, 
-you can run the program again as shown below:
 
-```shell
-$ python main.py --action "continue_training" --input "data" --num_classes "11" --epochs "3" --training_method "soft_weights" --model_location "model_1"
-```
+## Making Predictions
 
-## 🌀 Making Predictions (to be updated)
 You can use the pre-trained model weights to make predictions. The following
-command prepares predictions on training and validation data:
+example shows how to get predictions on training and validation data for
+a model which has been previously saved in 
+`results/soft_weights/51_classes_variant_all`:
 
 ```shell
-$ python main.py --action "predict_train_and_valid" --input "data" --num_classes "11" --model_location "model_1"
+$ python main.py --action "predict_train_and_valid" --input "data" --num_classes "51" --model_location "51_classes_variant_all"
 ```
 
-The files containing predictions should appear in `results/soft_weights/model_1/predictions`.
-
-Feel free to take a look at the module reponsible for running the inference to
-adapt the code to your input data set.
+The files containing predictions should appear in 
+`results/soft_weights/51_classes_variant_all/predictions`.
 
 ---
 Last update: 11 July 2024
