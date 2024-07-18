@@ -26,21 +26,33 @@ def download(args):
 
             print(f"Downloading {filename} and saving it in {data_path}/ ...", sep='\r')
             urlretrieve(config.DATA_URL + filename, filepath)
-    
-    else:    
-        for i in range(0, 21):
-            if i < 10:
-                filename = f"pythia.H.rhorho.1M.a.CPmix_0{i}.outTUPLE_labFrame"
-            else:
-                filename = f"pythia.H.rhorho.1M.a.CPmix_{i}.outTUPLE_labFrame"
-            filepath = path.join(data_path, filename)
+    else:
+        if args.DATA_FORMAT == "v1":    
+            for i in range(0, 21):
+                if i < 10:
+                    filename = f"pythia.H.rhorho.1M.a.CPmix_0{i}.outTUPLE_labFrame"
+                else:
+                    filename = f"pythia.H.rhorho.1M.a.CPmix_{i}.outTUPLE_labFrame"
+                filepath = path.join(data_path, filename)
+
+                if path.exists(filepath) and not args.FORCE_DOWNLOAD:
+                    print(f"Original data file \"{filepath}\" already exists.\nDownloading has been cancelled.",
+                        "If you want to force download, use \"--force_download\" option.\n", sep=linesep)
+                    continue
+
+                print(f"Downloading {filename} and saving it in {data_path}/ ...", sep='\r')
+                urlretrieve(config.DATA_URL + filename, filepath)
         
+        # New data format (Run 2)
+        elif args.DATA_FORMAT == "v2":
+            filename = config.DATA_RUN_2_FILE
+            filepath = path.join(data_path, filename)
+            
             if path.exists(filepath) and not args.FORCE_DOWNLOAD:
                 print(f"Original data file \"{filepath}\" already exists.\nDownloading has been cancelled.",
                     "If you want to force download, use \"--force_download\" option.\n", sep=linesep)
-                continue
+            else:
+                print(f"Downloading {filename} and saving it in {data_path}/ ...", sep='\r')
+                urlretrieve(config.DATA_RUN_2_URL + filename, filepath)
 
-            print(f"Downloading {filename} and saving it in {data_path}/ ...", sep='\r')
-            urlretrieve(config.DATA_URL + filename, filepath)
-    
     print()

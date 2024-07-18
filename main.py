@@ -192,6 +192,11 @@ parser.add_argument("--exp", dest="EXP", default="RhoRho",
                     choices=["RhoRho", "Z"], 
                     help="Z for using Z-background data")
 
+# New data format
+parser.add_argument("--data_format", dest="DATA_FORMAT", default="v1",
+                    choices=["v1", "v2"], 
+                    help="input data format version (v1, v2 etc.)")
+
 # Main controller
 parser.add_argument("--action", dest="ACTION", 
                     choices=["download_and_prepare_original", 
