@@ -4,6 +4,7 @@
 data/
 data_original/
 data_z/
+data_new_format/
 plots/figures/
 temp_results/
 results/
