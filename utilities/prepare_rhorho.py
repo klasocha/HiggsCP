@@ -2,7 +2,7 @@
 saved them as prepared "rhorho_raw.*.npy: files """
 import numpy as np
 from .prepare_utils import read_raw_asci
-import os
+import os, config
 
 
 def read_raw_all(kind, args):
@@ -14,12 +14,22 @@ def read_raw_all(kind, args):
     all_data = []
     all_weights = []
 
-    for letter in ["a"][:args.DATASETS]:
-        name = os.path.join(data_path, "pythia.H.rhorho.1M.%s.%s.outTUPLE_labFrame" % (letter, kind))
-        print(f"  ==> {letter}, {name}")
-        data, weights = read_raw_asci(name, num_particles=7)
+    if args.DATA_FORMAT == "v1":
+        for letter in ["a"][:args.DATASETS]:
+            name = os.path.join(data_path, "pythia.H.rhorho.1M.%s.%s.outTUPLE_labFrame" % (letter, kind))
+            print(f"  ==> {letter}, {name}")
+            # one header (TUPLE), six momenta
+            data, weights = read_raw_asci(name, num_particles=1+6)
+            all_data += [data]
+            all_weights += [weights]
+    
+    if args.DATA_FORMAT == "v2":
+        name = os.path.join(data_path, config.DATA_RUN_2_FILE)
+        # one header (TUPLE), nine lines containing vectors/numbers
+        data, weights = read_raw_asci(name, num_particles=1+9)
         all_data += [data]
         all_weights += [weights]
+
     all_data = np.concatenate(all_data)
     all_weights = np.concatenate(all_weights)
     
@@ -31,34 +41,46 @@ def prepare_rhorho(args):
     data_copy = []
     n_events = 0
 
-    for i in range(0, 21):
-        if i < 10:
-            filename = f"CPmix_0{i}"
-        else:
-            filename = f"CPmix_{i}"
-        
+    if args.DATA_FORMAT == "v1":
+        for i in range(0, 21):
+            if i < 10:
+                filename = f"CPmix_0{i}"
+            else:
+                filename = f"CPmix_{i}"
+            
+            # Loading data and parsing it to data and weights
+            data, weights = read_raw_all(filename, args)
+
+            # Verifying data, as it should be the same for all the CPmix_CLASS_INDEX cases
+            if i == 0:
+                data_copy = data
+                n_events = len(weights)
+            np.testing.assert_almost_equal(data_copy, data)
+
+            # Saving the weights
+            if i < 10:
+                weights_path = f"rhorho_raw.w_0{i}.npy"
+            else:
+                weights_path = f"rhorho_raw.w_{i}.npy"
+            with open(os.path.join(data_path, weights_path), "wb") as f:
+                np.save(f, weights)
+    
+    if args.DATA_FORMAT == "v2":
         # Loading data and parsing it to data and weights
-        data, weights = read_raw_all(filename, args)
-
-        # Verifying data, as it should be the same for all the CPmix_CLASS_INDEX cases
-        if i == 0:
-            data_copy = data
-            n_events = len(weights)
-        np.testing.assert_almost_equal(data_copy, data)
-
-        # Saving the weights
-        if i < 10:
-            weights_path = f"rhorho_raw.w_0{i}.npy"
-        else:
-            weights_path = f"rhorho_raw.w_{i}.npy"
-        np.save(os.path.join(data_path, weights_path), weights)
+        data, weights = read_raw_all(config.DATA_RUN_2_FILE, args)
+        n_events = len(weights)
+        data_copy = data
+        with open(os.path.join(data_path, "rhorho_raw.w.npy"), "wb") as f:
+            np.save(f, weights)
 
     # Preparing permutations for data shuffling
     np.random.seed(123)
     perm = np.random.permutation(n_events)
 
     # Saving the data and permutations
-    np.save(os.path.join(data_path, "rhorho_raw.data.npy"), data_copy)
-    np.save(os.path.join(data_path, "rhorho_raw.perm.npy"), perm)
+    with open(os.path.join(data_path, "rhorho_raw.data.npy"), "wb") as f:
+        np.save(f, data_copy)
+    with open(os.path.join(data_path, "rhorho_raw.perm.npy"), "wb") as f:
+        np.save(f, perm)
 
     print(f"In total: prepared {len(weights)} events.")

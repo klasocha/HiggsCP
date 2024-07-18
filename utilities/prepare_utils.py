@@ -21,10 +21,10 @@ def read_raw_asci(name, num_particles):
 
     # Filtering out unnecessary lines.
     # The interesting lines start with the first "TUPLE" and end at "Analysed in total".
-    lines = lines[find_first_line(lines, "TUPLE"): find_first_line(lines, "Analysed in total:")]
+    lines = lines[find_first_line(lines, "TUPLE"): find_first_line(lines, "Analysed in total")]
     
     # Ignoring the debug lines.
-    lines = [line for line in lines if not line.startswith("Analysed:") and \
+    lines = [line for line in lines if not line.startswith("Analysed") and \
              not line.startswith("Tauspinner::")] # this lines may appear in Z-background data
     
     # Finding the indices of the lines starting with the examples description
@@ -32,6 +32,7 @@ def read_raw_asci(name, num_particles):
 
     # Ensuring there are `num_particles` particles for each example
     temp_list = [i for i in range(0, num_particles * len(ids), num_particles)]
+
     assert ids == temp_list, \
         f"Debugging (prepare_utils.py) - number of lines to be parsed ({num_particles}) does not match the expected value {int(len(lines) / len(ids))}"
 
