@@ -45,10 +45,13 @@ class RhoRhoEvent(object):
         p_tau2_nu, l_tau2_pi, p_tau2_rho, p_tau2 = get_tau2(p)
 
         # Flag defining whether neutrinos are available or not
-        neutrinos = False if args.DATA_FORMAT == "v2" else True
+        if args.DATA_FORMAT == "v2":
+            neutrinos = False
+        if args.DATA_FORMAT == "v1":
+            neutrinos = True
 
         # Checking "neutrinos" vs "feature set" compatibility
-        if args.FEAT not in ["Variant-1.0", "Variant-1.1"]:
+        if args.FEAT not in ["Variant-1.0", "Variant-1.1"] and not neutrinos:
             print("Only Variant-1.0 and Variant-1.1 can be prepared without neutrinos!")
             exit()
 
@@ -113,9 +116,7 @@ class RhoRhoEvent(object):
                 cols += [y1, y2]
 
             if args.DATA_FORMAT == "v2":
-                print("phistar[0:2]", phistar[0:2])
                 cols += [phistar]
-                print("cols[0:2]", cols[0:2])
 
         #------------------------------------------------------------
 
