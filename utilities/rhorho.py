@@ -13,29 +13,44 @@ class RhoRhoEvent(object):
         # p = [[n, pi-, pi0, n, pi+, pi0], ...]
         # Therefore we have 6 vectors in the original data per event
 
-        p = [Particle(data[:, 5 * i:5 * i + 4]) for i in range(6)]
+        if args.DATA_FORMAT == "v1":
+            p = [Particle(data[:, 5*i : 5*i + 4]) for i in range(6)]
+
+        if args.DATA_FORMAT == "v2":  
+            p = [Particle(data[:, 4*i : 4*i + 4]) for i in range(6)]  
+            phistar = data[:, -2] # phi* values
+            m_mlm = data[:, -1]   # tautau invariant mass values
+
         cols = []
         self.labels_suppl = []
         self.cols_suppl = []
 
         def get_tau1(p):
-            tau1_nu  = p[0]
+            tau1_nu  = p[0] if args.DATA_FORMAT == "v1" else None
             tau1_pi  = p[1:3]
             tau1_rho = tau1_pi[0] + tau1_pi[1]
-            tau1     = tau1_rho+tau1_nu
+            tau1     = tau1_rho + tau1_nu if args.DATA_FORMAT == "v1" else None
 
             return tau1_nu, tau1_pi, tau1_rho, tau1
 
         def get_tau2(p):
-            tau2_nu = p[3]
+            tau2_nu = p[3] if args.DATA_FORMAT == "v1" else None
             tau2_pi = p[4:6]
             tau2_rho = tau2_pi[0] + tau2_pi[1]
-            tau2 = tau2_rho+tau2_nu
+            tau2 = tau2_rho + tau2_nu if args.DATA_FORMAT == "v1" else None
 
             return tau2_nu, tau2_pi, tau2_rho, tau2
 
-        p_tau1_nu, l_tau1_pi, p_tau1_rho,  p_tau1 = get_tau1(p) # p- particle, l-list
-        p_tau2_nu, l_tau2_pi, p_tau2_rho,  p_tau2 = get_tau2(p)
+        p_tau1_nu, l_tau1_pi, p_tau1_rho, p_tau1 = get_tau1(p) # p- particle, l-list
+        p_tau2_nu, l_tau2_pi, p_tau2_rho, p_tau2 = get_tau2(p)
+
+        # Flag defining whether neutrinos are available or not
+        neutrinos = False if args.DATA_FORMAT == "v2" else True
+
+        # Checking "neutrinos" vs "feature set" compatibility
+        if args.FEAT not in ["Variant-1.0", "Variant-1.1"]:
+            print("Only Variant-1.0 and Variant-1.1 can be prepared without neutrinos!")
+            exit()
 
         rho_rho = p_tau1_rho + p_tau2_rho
 
@@ -58,7 +73,6 @@ class RhoRhoEvent(object):
             part   = boost_and_rotate(p_tau2, PHI, THETA, rho_rho)
             cols.append(part.vec)
             
-
         if args.FEAT == "Variant-4.1":
             p_tau1_approx = scale_lifetime(p_tau1)
             part   = boost_and_rotate(p_tau1_approx, PHI, THETA, rho_rho)
@@ -88,91 +102,97 @@ class RhoRhoEvent(object):
                 cols.append(rho.vec)
                 cols.append(rho.recalculated_mass)
 
-            # As part of "data exploration" we would like to plot the distributions 
-            # of these variables using weights for different hypotheses of alphaCP, 
-            # without conditioning on the sign of y1*y2, and separately grouping y1*y1>0, y1*y2<0.            
-            phistar = get_acoplanar_angle(p[1], p[2], p[4], p[5], rho_rho)
-            y1 = get_y(p[1], p[2], rho_rho)
-            y2 = get_y(p[4], p[5], rho_rho)
-            cols += [phistar]
-            cols += [y1, y2]
+            if args.DATA_FORMAT == "v1":
+                # As part of "data exploration" we would like to plot the distributions 
+                # of these variables using weights for different hypotheses of alphaCP, 
+                # without conditioning on the sign of y1*y2, and separately grouping y1*y1>0, y1*y2<0.            
+                phistar = get_acoplanar_angle(p[1], p[2], p[4], p[5], rho_rho)
+                y1 = get_y(p[1], p[2], rho_rho)
+                y2 = get_y(p[4], p[5], rho_rho)
+                cols += [phistar]
+                cols += [y1, y2]
+
+            if args.DATA_FORMAT == "v2":
+                print("phistar[0:2]", phistar[0:2])
+                cols += [phistar]
+                print("cols[0:2]", cols[0:2])
 
         #------------------------------------------------------------
 
         pb_tau1_h  = boost_and_rotate(p_tau1_rho, PHI, THETA, rho_rho)
         pb_tau2_h  = boost_and_rotate(p_tau2_rho, PHI, THETA, rho_rho)
-        pb_tau1_nu = boost_and_rotate(p_tau1_nu, PHI, THETA, rho_rho)
-        pb_tau2_nu = boost_and_rotate(p_tau2_nu, PHI, THETA, rho_rho)
+    
+        if neutrinos:
+            pb_tau1_nu = boost_and_rotate(p_tau1_nu, PHI, THETA, rho_rho)
+            pb_tau2_nu = boost_and_rotate(p_tau2_nu, PHI, THETA, rho_rho)
 
-        #------------------------------------------------------------
+            #------------------------------------------------------------
 
-        v_ETmiss_x = p_tau1_nu.x + p_tau2_nu.x
-        v_ETmiss_y = p_tau1_nu.y + p_tau2_nu.y
+            v_ETmiss_x = p_tau1_nu.x + p_tau2_nu.x
+            v_ETmiss_y = p_tau1_nu.y + p_tau2_nu.y
         
-        if args.FEAT == "Variant-2.2":
-            cols += [v_ETmiss_x, v_ETmiss_y]
+            if args.FEAT == "Variant-2.2":
+                cols += [v_ETmiss_x, v_ETmiss_y]
 
-        #------------------------------------------------------------
+            #------------------------------------------------------------
 
-        if args.METHOD == "A":
-            va_alpha1, va_alpha2 = approx_alpha_A(v_ETmiss_x, v_ETmiss_y, p_tau1_rho, p_tau2_rho)
-        elif args.METHOD == "B":
-            va_alpha1, va_alpha2 = approx_alpha_B(v_ETmiss_x, v_ETmiss_y, p_tau1_rho, p_tau2_rho)
-        elif args.METHOD == "C":
-            va_alpha1, va_alpha2 = approx_alpha_C(v_ETmiss_x, v_ETmiss_y, p_tau1_rho, p_tau2_rho)
+            if args.METHOD == "A":
+                va_alpha1, va_alpha2 = approx_alpha_A(v_ETmiss_x, v_ETmiss_y, p_tau1_rho, p_tau2_rho)
+            elif args.METHOD == "B":
+                va_alpha1, va_alpha2 = approx_alpha_B(v_ETmiss_x, v_ETmiss_y, p_tau1_rho, p_tau2_rho)
+            elif args.METHOD == "C":
+                va_alpha1, va_alpha2 = approx_alpha_C(v_ETmiss_x, v_ETmiss_y, p_tau1_rho, p_tau2_rho)
 
-        #------------------------------------------------------------
+            #------------------------------------------------------------
 
-        va_tau1_nu_long = va_alpha1 * pb_tau1_h.z
-        va_tau2_nu_long = va_alpha2 * pb_tau2_h.z
+            va_tau1_nu_long = va_alpha1 * pb_tau1_h.z
+            va_tau2_nu_long = va_alpha2 * pb_tau2_h.z
 
-        va_tau1_nu_E = approx_E_nu(pb_tau1_h, va_tau1_nu_long)
-        va_tau2_nu_E = approx_E_nu(pb_tau2_h, va_tau2_nu_long)
+            va_tau1_nu_E = approx_E_nu(pb_tau1_h, va_tau1_nu_long)
+            va_tau2_nu_E = approx_E_nu(pb_tau2_h, va_tau2_nu_long)
 
-        #------------------------------------------------------------
+            #------------------------------------------------------------
+            va_tau1_square_diff = np.square(va_tau1_nu_E) - np.square(va_tau1_nu_long)
+            va_tau1_square_diff = np.where(va_tau1_square_diff < 0, 0, va_tau1_square_diff)
         
-        va_tau1_square_diff = np.square(va_tau1_nu_E) - np.square(va_tau1_nu_long)
-        va_tau1_square_diff = np.where(va_tau1_square_diff < 0, 0, va_tau1_square_diff)
+            va_tau2_square_diff = np.square(va_tau2_nu_E) - np.square(va_tau2_nu_long)
+            va_tau2_square_diff = np.where(va_tau2_square_diff < 0, 0, va_tau2_square_diff)
         
-        va_tau2_square_diff = np.square(va_tau2_nu_E) - np.square(va_tau2_nu_long)
-        va_tau2_square_diff = np.where(va_tau2_square_diff < 0, 0, va_tau2_square_diff)
-        
-        va_tau1_nu_trans = np.sqrt(va_tau1_square_diff)
-        va_tau2_nu_trans = np.sqrt(va_tau2_square_diff)
+            va_tau1_nu_trans = np.sqrt(va_tau1_square_diff)
+            va_tau2_nu_trans = np.sqrt(va_tau2_square_diff)
  
-        v_tau1_nu_phi    = np.arctan2(pb_tau1_nu.x, pb_tau1_nu.y) # boosted
-        v_tau2_nu_phi    = np.arctan2(pb_tau2_nu.x, pb_tau2_nu.y)
-        vn_tau1_nu_phi   = smear_exp(v_tau1_nu_phi, beta_noise)
-        vn_tau2_nu_phi   = smear_exp(v_tau2_nu_phi, beta_noise)
+            v_tau1_nu_phi    = np.arctan2(pb_tau1_nu.x, pb_tau1_nu.y) # boosted
+            v_tau2_nu_phi    = np.arctan2(pb_tau2_nu.x, pb_tau2_nu.y)
+            vn_tau1_nu_phi   = smear_exp(v_tau1_nu_phi, beta_noise)
+            vn_tau2_nu_phi   = smear_exp(v_tau2_nu_phi, beta_noise)
 
-        tau1_sin_phi = np.sin(vn_tau1_nu_phi)
-        tau1_cos_phi = np.cos(vn_tau1_nu_phi)
-        tau2_sin_phi = np.sin(vn_tau2_nu_phi)
-        tau2_cos_phi = np.cos(vn_tau2_nu_phi)
+            tau1_sin_phi = np.sin(vn_tau1_nu_phi)
+            tau1_cos_phi = np.cos(vn_tau1_nu_phi)
+            tau2_sin_phi = np.sin(vn_tau2_nu_phi)
+            tau2_cos_phi = np.cos(vn_tau2_nu_phi)
 
-        #------------------------------------------------------------
+            #------------------------------------------------------------
 
-        ve_x1_cms = pb_tau1_h.z / (pb_tau1_h + pb_tau1_nu).z
-        ve_x2_cms = pb_tau2_h.z / (pb_tau2_h + pb_tau2_nu).z
+            ve_x1_cms = pb_tau1_h.z / (pb_tau1_h + pb_tau1_nu).z
+            ve_x2_cms = pb_tau2_h.z / (pb_tau2_h + pb_tau2_nu).z
 
-        ve_alpha1_cms = 1/ve_x1_cms - 1
-        ve_alpha2_cms = 1/ve_x2_cms - 1
+            ve_alpha1_cms = 1/ve_x1_cms - 1
+            ve_alpha2_cms = 1/ve_x2_cms - 1
 
-        ve_tau1_nu_long = ve_alpha1_cms * pb_tau1_h.z
-        ve_tau2_nu_long = ve_alpha2_cms * pb_tau2_h.z
+            ve_tau1_nu_long = ve_alpha1_cms * pb_tau1_h.z
+            ve_tau2_nu_long = ve_alpha2_cms * pb_tau2_h.z
 
-        ve_tau1_nu_E = approx_E_nu(pb_tau1_h, ve_tau1_nu_long)
-        ve_tau2_nu_E = approx_E_nu(pb_tau2_h, ve_tau2_nu_long)
+            ve_tau1_nu_E = approx_E_nu(pb_tau1_h, ve_tau1_nu_long)
+            ve_tau2_nu_E = approx_E_nu(pb_tau2_h, ve_tau2_nu_long)
 
-        ve_tau1_square_diff = np.square(ve_tau1_nu_E) - np.square(ve_tau1_nu_long)
-        ve_tau1_square_diff = np.where(ve_tau1_square_diff < 0, 0, ve_tau1_square_diff)
+            ve_tau1_square_diff = np.square(ve_tau1_nu_E) - np.square(ve_tau1_nu_long)
+            ve_tau1_square_diff = np.where(ve_tau1_square_diff < 0, 0, ve_tau1_square_diff)
         
-        ve_tau2_square_diff = np.square(ve_tau2_nu_E) - np.square(ve_tau2_nu_long)
-        ve_tau2_square_diff = np.where(ve_tau2_square_diff < 0, 0, ve_tau2_square_diff)
+            ve_tau2_square_diff = np.square(ve_tau2_nu_E) - np.square(ve_tau2_nu_long)
+            ve_tau2_square_diff = np.where(ve_tau2_square_diff < 0, 0, ve_tau2_square_diff)
 
-        ve_tau1_nu_trans = np.sqrt(ve_tau1_square_diff)
-        ve_tau2_nu_trans = np.sqrt(ve_tau2_square_diff)
-
+            ve_tau1_nu_trans = np.sqrt(ve_tau1_square_diff)
+            ve_tau2_nu_trans = np.sqrt(ve_tau2_square_diff)
 
         if args.FEAT in ["Variant-2.1", "Variant-2.2"]:
             cols += [va_tau1_nu_long, va_tau2_nu_long, va_tau1_nu_E, va_tau2_nu_E, va_tau1_nu_trans, va_tau2_nu_trans]
@@ -268,22 +288,23 @@ class RhoRhoEvent(object):
         if len(self.cols_suppl) >0 :
             self.cols_suppl = np.concatenate(self.cols_suppl, 1)
 
-        # For smeared in Variant-3.1
-        if args.BETA > 0:
-            vn_tau1_nu_phi = smear_polynomial(v_tau1_nu_phi, args.BETA, args.pol_b, args.pol_c)
-            vn_tau2_nu_phi = smear_polynomial(v_tau2_nu_phi, args.BETA, args.pol_b, args.pol_c)
+        if neutrinos:
+            # For smeared in Variant-3.1
+            if args.BETA > 0:
+                vn_tau1_nu_phi = smear_polynomial(v_tau1_nu_phi, args.BETA, args.pol_b, args.pol_c)
+                vn_tau2_nu_phi = smear_polynomial(v_tau2_nu_phi, args.BETA, args.pol_b, args.pol_c)
 
-            tau1_sin_phi = np.sin(vn_tau1_nu_phi)
-            tau1_cos_phi = np.cos(vn_tau1_nu_phi)
-            tau2_sin_phi = np.sin(vn_tau2_nu_phi)
-            tau2_cos_phi = np.cos(vn_tau2_nu_phi)
+                tau1_sin_phi = np.sin(vn_tau1_nu_phi)
+                tau1_cos_phi = np.cos(vn_tau1_nu_phi)
+                tau2_sin_phi = np.sin(vn_tau2_nu_phi)
+                tau2_cos_phi = np.cos(vn_tau2_nu_phi)
 
-        self.valid_cols = [va_tau1_nu_trans * tau1_sin_phi, va_tau2_nu_trans * tau2_sin_phi,
-                            va_tau1_nu_trans * tau1_cos_phi, va_tau2_nu_trans * tau2_cos_phi]
+            self.valid_cols = [va_tau1_nu_trans * tau1_sin_phi, va_tau2_nu_trans * tau2_sin_phi,
+                                va_tau1_nu_trans * tau1_cos_phi, va_tau2_nu_trans * tau2_cos_phi]
 
         # The list of labels for monitoring the features
         if args.FEAT   == "Variant-1.0":
-                self.labels = ["tau1_pi_px", "tau1_pi_py", "tau1_pi_pz", "tau1_pi_e", "tau1_pi0_px", "tau1_pi0_py", "tau1_pi0_pz", "tau1_pi0_e",
+            self.labels = ["tau1_pi_px", "tau1_pi_py", "tau1_pi_pz", "tau1_pi_e", "tau1_pi0_px", "tau1_pi0_py", "tau1_pi0_pz", "tau1_pi0_e",
                             "tau2_pi_px", "tau2_pi_py", "tau2_pi_pz", "tau2_pi_e", "tau2_pi0_px", "tau2_pi0_py", "tau2_pi0_pz", "tau2_pi0_e"]
         
         elif args.FEAT == "Variant-1.1":
@@ -292,7 +313,10 @@ class RhoRhoEvent(object):
                         "tau1_rho_px", "tau1_rho_py", "tau1_rho_pz", "tau1_rho_e", "tau1_rho_mass",
                         "tau2_rho_px", "tau2_rho_py", "tau2_rho_pz", "tau2_rho_e", "tau2_rho_mass",
                         "aco_angle", "tau1_y", "tau2_y"]
-            
+            # Removing y1, y2 if they were never computed
+            if args.DATA_FORMAT == "v2":
+                self.labels = self.labels[:-2]
+
         elif args.FEAT ==  "Variant-2.0":
             self.labels = ["tau1_pi_px", "tau1_pi_py", "tau1_pi_pz", "tau1_pi_e", "tau1_pi0_px", "tau1_pi0_py", "tau1_pi0_pz", "tau1_pi0_e",
                         "tau2_pi_px", "tau2_pi_py", "tau2_pi_pz", "tau2_pi_e", "tau2_pi0_px", "tau2_pi0_py", "tau2_pi0_pz", "tau2_pi0_e",

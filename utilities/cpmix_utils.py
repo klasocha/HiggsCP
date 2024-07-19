@@ -116,7 +116,13 @@ def preprocess_data(args):
         ccovs  = np.zeros((data_len, 3, 3))
         
         # Values of CPmix at which data were generated
-        x = np.array([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0]) * np.pi
+        if args.DATA_FORMAT == "v1":
+            x = np.array([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0]) * np.pi
+        if args.DATA_FORMAT == "v2":
+            # alphaCP = 2 * phiCP
+            x = np.array([0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 
+                          2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6]) * 100 / 180 * np.pi
+            
         print("Calculating C0/C1/C2 and the covariance with scipy.optimize.curve_fit()")
         for i in range(data_len):
             if i % 10000 == 0:

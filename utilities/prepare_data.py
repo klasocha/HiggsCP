@@ -19,27 +19,28 @@ def prepare_data(args, preprocess_only=False):
         download_data(args)
     
     print("\033[1mPreprocessing data...\033[0m")
-    if preprocess_only:
-        weights = []
-        CPmix_index = [
-            "00", # scalar
-            "02", "04", "06", "08", 
-            "10", # pseudoscalar
-            "12", "14", "16", "18", 
-            "20"  # scalar
-        ] 
+    if args.DATA_FORMAT == "v1":
+        if preprocess_only:
+            weights = []
+            CPmix_index = [
+                "00", # scalar
+                "02", "04", "06", "08", 
+                "10", # pseudoscalar
+                "12", "14", "16", "18", 
+                "20"  # scalar
+            ] 
+            
+            for index in CPmix_index:
+                filename = 'rhorho_raw.w_' + index + '.npy'
+                filepath = os.path.join(args.IN, filename)
+                with open(filepath, "rb") as f:
+                    weights.append(np.load(f))
         
-        for index in CPmix_index:
-            filename = 'rhorho_raw.w_' + index + '.npy'
-            filepath = os.path.join(args.IN, filename)
-            with open(filepath, "rb") as f:
-                weights.append(np.load(f))
-    
-        # Joining and then saving all the parts together in a single file
-        weights = np.stack(weights)
-        all_weights_output_path = os.path.join(args.IN, "rhorho_raw.w.npy")
-        with open(all_weights_output_path, "wb") as f:
-            np.save(f, weights)
+            # Joining and then saving all the parts together in a single file
+            weights = np.stack(weights)
+            all_weights_output_path = os.path.join(args.IN, "rhorho_raw.w.npy")
+            with open(all_weights_output_path, "wb") as f:
+                np.save(f, weights)
             
     data, weights, argmaxs, perm, c012s, hits_argmaxs, \
         hits_c012s = preprocess_data(args)

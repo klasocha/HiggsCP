@@ -67,11 +67,24 @@ def prepare_rhorho(args):
     
     if args.DATA_FORMAT == "v2":
         # Loading data and parsing it to data and weights
-        data, weights = read_raw_all(config.DATA_RUN_2_FILE, args)
-        n_events = len(weights)
-        data_copy = data
+        data, independent_weights = read_raw_all(config.DATA_RUN_2_FILE, args)
+        # Picking only "rho-rho" events
+        mask_rho1 = data[:, 4] == 1
+        mask_rho2 = data[:, 17] == 1
+        mask_rhorho = mask_rho1 * mask_rho2
+        data_copy = data[mask_rhorho]
+        independent_weights = independent_weights[mask_rhorho]
+        # Removing "rho-rho" identifiers
+        data_copy = np.delete(data_copy, [4, 17], axis=1)
+        # Saving weights which do not depend on alphaCP
+        n_events = len(independent_weights)
+        with open(os.path.join(data_path, "rhorho_raw.w_independent.npy"), "wb") as f:
+            np.save(f, independent_weights)
+        # Saving alphaCP-dependent weights (phiCP 18 hypotheses: 0°-180°)
         with open(os.path.join(data_path, "rhorho_raw.w.npy"), "wb") as f:
-            np.save(f, weights)
+            np.save(f, data_copy[:, 25:-1])
+        # Removing alphaCP-dependent weights from the data
+        data_copy = np.delete(data_copy, [col for col in range(25, 25 + 18)], axis=1)
 
     # Preparing permutations for data shuffling
     np.random.seed(123)
@@ -83,4 +96,4 @@ def prepare_rhorho(args):
     with open(os.path.join(data_path, "rhorho_raw.perm.npy"), "wb") as f:
         np.save(f, perm)
 
-    print(f"In total: prepared {len(weights)} events.")
+    print(f"In total: prepared {n_events} events.")
