@@ -10,7 +10,7 @@ import matplotlib.ticker as ticker
 
 
 def draw_distribution(x, y, title, output_path, filename, true_weights=None, color=None, 
-                      info_table=None, multiple=False):
+                      info_table=None, multiple=False, data_format="v1"):
     
     if not multiple:
         fig, (ax1, ax2) = plt.subplots(2, height_ratios=[1, 4])
@@ -23,7 +23,10 @@ def draw_distribution(x, y, title, output_path, filename, true_weights=None, col
                      label="True (" + r"${{\alpha^{CP}_{max}}}$" + f"={round(info_table[2][i], 1)})")
         
         ax2.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
-        ax2.set_ylabel(r"$\sum_{i=0}^N Wt_i$", rotation=0, labelpad=20)
+        if data_format == "v1":
+            ax2.set_ylabel(r"$\sum_{i=0}^N Wt_i$", rotation=0, labelpad=20)
+        if data_format == "v2":
+            ax2.set_ylabel(r"$\sum_{i=0}^N Wt_i * W_i$", rotation=0, labelpad=30)
         ax2.set_title(title)
 
         for i in range(2, 4):
@@ -175,15 +178,19 @@ def test_on_unwt_events(args):
     # Removing predictions containing negative weights
     preds_without_neg = []
     negs_n = []
+    negs_masks = []
 
     for i in range(len(hypotheses)):
         print(f"Hypothesis #{hypotheses[i]}")
         negs = np.where(preds[i] < 0, True, False)
         negs = np.sum(negs, axis=1)
         negs = np.where(negs > 0, True, False)
+        negs_masks.append(negs)
         negs_n.append(np.sum(negs))
         if negs_n[i] > 0:
             preds_without_neg.append(preds[i][negs == False])
+        else:
+            preds_without_neg.append(preds[i])
         print(f"{negs_n[i]} (out of {len(preds[i])}) predictions lead to negative weights")
 
         # Normalising weights to the probability distribution
@@ -212,14 +219,29 @@ def test_on_unwt_events(args):
             true_weights[i], axis=1).reshape((true_weights[i].shape[0], 1))
         print()
 
+    # Loading the weights that do not depend on alphaCP (Run 2 format)
+    if args.DATA_FORMAT == "v2":
+        w_independent = []
+        for hyp in hypotheses:
+            w_independent.append(
+                read_np(os.path.join(
+                    args.IN, "rhorho_raw.w_independent.npy"))[unwt[:, hyp] == 1.0])
+
     # Computing the needed values
     summed_wt, predicted_argmax, summed_true_wt, relative_amplitude = \
         [], [], [], []
 
     for i in range(len(hypotheses)):
-        summed_wt.append(np.sum(preds[i], axis=0))
+        # Defining each entry weight
+        if args.DATA_FORMAT == "v1":
+            dist_weights = 1.0
+        if args.DATA_FORMAT == "v2":
+            dist_weights = w_independent[i]
+            dist_weights = dist_weights[:, np.newaxis]
+
+        summed_wt.append(np.sum(preds[i] * dist_weights, axis=0))
         predicted_argmax.append(np.argmax(summed_wt[i]))
-        summed_true_wt.append(np.sum(true_weights[i], axis=0))
+        summed_true_wt.append(np.sum(true_weights[i] * dist_weights, axis=0))
 
         # Normalising summed distributions (to be able to compare them on the same plot)
         summed_wt[i] = summed_wt[i] / np.sum(summed_wt[i])
@@ -243,7 +265,8 @@ def test_on_unwt_events(args):
                     predicted_argmax,
                     np.array(hypotheses) / (discr_level - 1) * 2 * np.pi, 
                     np.array(predicted_argmax) / (discr_level - 1) * 2 * np.pi,
-                    relative_amplitude])
+                    relative_amplitude],
+        data_format=args.DATA_FORMAT)
 
     # Creating a plot showing some sample events predictied by the model
     for i in range(len(hypotheses)):
@@ -259,8 +282,17 @@ def test_on_unwt_events(args):
     # negative weights are set to zero)
     if np.sum(negs_n) > 0:
         summed_wt, predicted_argmax, relative_amplitude = [], [], []
+
         for i in range(len(hypotheses)):
-            summed_wt.append(np.sum(preds_without_neg[i], axis=0))
+            # Defining each entry weight
+            if args.DATA_FORMAT == "v1":
+                dist_weights = 1.0
+            if args.DATA_FORMAT == "v2":
+                dist_weights = w_independent[i]
+                dist_weights = dist_weights[:, np.newaxis]
+                dist_weights = dist_weights[negs_masks[i] == False]
+
+            summed_wt.append(np.sum(preds_without_neg[i] * dist_weights, axis=0))
             predicted_argmax.append(np.argmax(summed_wt[i]))
             
             # Normalising summed distributions (to be able to compare them on the same plot)
@@ -283,4 +315,5 @@ def test_on_unwt_events(args):
                         predicted_argmax,
                         np.array(hypotheses) / (discr_level - 1) * 2 * np.pi, 
                         np.array(predicted_argmax) / (discr_level - 1) * 2 * np.pi,
-                        relative_amplitude])
+                        relative_amplitude],
+            data_format=args.DATA_FORMAT)
