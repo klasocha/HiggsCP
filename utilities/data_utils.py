@@ -52,17 +52,21 @@ class EventDatasets(object):
                  hits_c012s, args, filtered=False, raw=False, miniset=False):
         data = event.cols[:, :-1]
         filt = event.cols[:, -1]
-
+        
+        # Split points for the training, validation, test data set
+        data_len = len(data)
+        split_1 = round(data_len * 0.1)
+        split_2 = round(data_len * 0.2)
+        split_3 = round(data_len * 0.3)
+        
         if miniset:
             print("The mini version of the training data set will be used.")
-            train_ids = perm[-300000:-200000]
-            print(len(train_ids))
-            valid_ids = perm[-200000:-100000]
-            test_ids = perm[-100000:]
+            train_ids = perm[-split_3:-split_2]
         else:
-            train_ids = perm[:-200000]
-            valid_ids = perm[-200000:-100000]
-            test_ids = perm[-100000:]
+            train_ids = perm[:-split_2]
+       
+        valid_ids = perm[-split_2:-split_1]
+        test_ids = perm[-split_1:]
 
         if not raw:
             print("Data (input features) will be standardised.")

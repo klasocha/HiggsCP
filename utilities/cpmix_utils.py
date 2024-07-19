@@ -49,6 +49,8 @@ def calc_hits_c012s(classes, c012s, data_len, num_classes):
         hits_c0s[i] = hits_fun(classes, c012s[i][0], num_classes)
         hits_c1s[i] = hits_fun(classes, c012s[i][1] + 1.0, num_classes)
         hits_c2s[i] = hits_fun(classes, c012s[i][2] + 1.0, num_classes)
+    if data_len < 10000:
+        print(f"{data_len} events have been processed...", end='\r')
     print()
     return hits_c0s, hits_c1s, hits_c2s
 
@@ -82,6 +84,8 @@ def calc_weights_and_argmaxs(c012s, data_len, num_classes):
 
         argmaxs[i] = arg_max
         hits_argmaxs[i] = hits_fun(classes_for_hits_fun, arg_max, num_classes, True)
+    if data_len < 10000:
+        print(f"{data_len} events have been processed...", end='\r')
     print()
     return weights, argmaxs, hits_argmaxs
 
@@ -100,7 +104,10 @@ def preprocess_data(args):
     # Reading the data
     print("Loading raw data")
     data = read_np(os.path.join(data_path, suffix + "_raw.data.npy"))
-    w = read_np(os.path.join(data_path, suffix + "_raw.w.npy")).swapaxes(0, 1)
+    if args.DATA_FORMAT == "v1":
+        w = read_np(os.path.join(data_path, suffix + "_raw.w.npy")).swapaxes(0, 1)
+    if args.DATA_FORMAT == "v2":
+        w = read_np(os.path.join(data_path, suffix + "_raw.w.npy"))
     perm = read_np(os.path.join(data_path, suffix + "_raw.perm.npy"))
     print(f"Read {data.shape[0]} events")
 
@@ -121,7 +128,7 @@ def preprocess_data(args):
         if args.DATA_FORMAT == "v2":
             # alphaCP = 2 * phiCP
             x = np.array([0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 
-                          2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6]) * 100 / 180 * np.pi
+                          2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4]) * 100 / 180 * np.pi
             
         print("Calculating C0/C1/C2 and the covariance with scipy.optimize.curve_fit()")
         for i in range(data_len):
