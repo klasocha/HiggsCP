@@ -43,7 +43,7 @@ parser.add_argument("--force_download", dest="FORCE_DOWNLOAD",
 parser.add_argument("--num_classes", dest="NUM_CLASSES", type=int, default=0,
                     help="number of classes used for discretisation")
 parser.add_argument("--reuse_weights", dest="REUSE_WEIGHTS", 
-                    action="store_true", default=False,
+                    action="store_true", default=True,
                     help="set this flag to True if you want to reuse the " +
                     "calculated weights")
 parser.add_argument("--hits_c012s", dest="HITS_C012s", 

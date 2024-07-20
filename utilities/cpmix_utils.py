@@ -195,19 +195,20 @@ def preprocess_data(args):
     if args.EXP != "Z":
         # Unweighting the events and saving the "hits"
         unweighted_events_weights_filename = f"unwt_multiclass_{num_classes}.npy"
-        weights_normalised = weights / 2
-        data_len = len(weights_normalised)
-        unweighted_events = []
-        monte_carlo = lambda x : 0.0 if x < np.random.random() else 1.0
-
-        print(f"Unweighting the events...", end='\r')
-        unweighted_events = np.vectorize(monte_carlo)(weights_normalised)
-        
         output_path = os.path.join(data_path, unweighted_events_weights_filename)
-        with open(output_path, "wb") as f:
-            np.save(f, unweighted_events)
-        print(f"Weights of the unweighted events have been saved in {output_path}")
-
+        if args.FORCE_DOWNLOAD or not (reuse_weights and os.path.exists(output_path) \
+            and read_np(output_path).shape[1] == num_classes):
+            weights_normalised = weights / 2
+            data_len = len(weights_normalised)
+            unweighted_events = []
+            monte_carlo = lambda x : 0.0 if x < np.random.random() else 1.0
+            print(f"Unweighting the events...", end='\r')
+            unweighted_events = np.vectorize(monte_carlo)(weights_normalised)
+            
+            with open(output_path, "wb") as f:
+                np.save(f, unweighted_events)
+            print(f"Weights of the unweighted events have been saved in {output_path}")
+        
     # TODO: Revisit
     # Comment from ERW:
     # Here, argmax values are represented as fractions of pi, not as class indices.
