@@ -204,7 +204,8 @@ def preprocess_data(args):
         unweighted_events = np.vectorize(monte_carlo)(weights_normalised)
         
         output_path = os.path.join(data_path, unweighted_events_weights_filename)
-        np.save(output_path, unweighted_events)
+        with open(output_path, "wb") as f:
+            np.save(f, unweighted_events)
         print(f"Weights of the unweighted events have been saved in {output_path}")
 
     # TODO: Revisit
