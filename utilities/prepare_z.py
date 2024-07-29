@@ -5,7 +5,7 @@ from .prepare_utils import read_raw_asci
 import os
 
 
-def read_raw_all(kind, args):
+def read_raw_all(args, kind=None):
     """ Read the original raw data and use src_py.prepare_utils.read_raw_asci to parse it
     as data and weights ready for being saved as "rhorho_raw.*.npy files". """
     print(f"Reading and parsing the raw data containing {kind}")
@@ -40,7 +40,7 @@ def prepare_z(args):
             filename = f"CPmix_{i}"
         
         # Loading data and parsing it to data and weights
-        data, weights = read_raw_all(filename, args)
+        data, weights = read_raw_all(args, kind=filename)
 
         # Verifying data, as it should be the same for all the CPmix_CLASS_INDEX cases
         if i == 0:

@@ -5,6 +5,7 @@ from .cpmix_utils import preprocess_data
 from .download_data_rhorho import download_data
 from .rhorho import RhoRhoEvent
 from .data_utils import EventDatasets
+import config
 
 
 def prepare_data(args, preprocess_only=False):
@@ -41,7 +42,29 @@ def prepare_data(args, preprocess_only=False):
             all_weights_output_path = os.path.join(args.IN, "rhorho_raw.w.npy")
             with open(all_weights_output_path, "wb") as f:
                 np.save(f, weights)
-            
+
+    if args.DATA_FORMAT == "v2":
+        if preprocess_only:
+            indices = range(0, len(config.DATA_RUN_2_FILES))
+            kinds = ["w", "data", "w_independent"]
+
+            for kind in kinds:
+                if not os.path.exists(os.path.join(args.IN, f"rhorho_raw.{kind}.npy")):
+                    objects = None
+                    for i in indices:
+                        filename = f"rhorho_raw.{kind}_{i}.npy"
+                        with open(os.path.join(args.IN, filename), "rb") as f:
+                            if i == 0:
+                                objects = np.load(f)
+                            else:
+                                objects = np.append(objects, np.load(f), axis=0)
+                    with open(os.path.join(args.IN, f"rhorho_raw.{kind}.npy"), "wb") as f:
+                        np.save(f, objects)
+                
+                    if os.path.exists(os.path.join(args.IN, f"rhorho_raw.{kind}.npy")):
+                        for i in indices:
+                            os.remove(os.path.normpath(os.path.join(args.IN, f"rhorho_raw.{kind}_{i}.npy")))
+
     data, weights, argmaxs, perm, c012s, hits_argmaxs, \
         hits_c012s = preprocess_data(args)
 

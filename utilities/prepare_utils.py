@@ -1,5 +1,14 @@
 """ This program implement the parsing mechanism utilised by prepare_rhorho.py.
-It extract weights ("TUPLE w") and vectors (x, y, z, energy) from the original data """
+It extract weights ("TUPLE w") and vectors (x, y, z, energy) from the original data. 
+
+=======================================================================================
+This script can be updated. If we know the number of lines containing data relevant
+to each event (num_particles) and the position of "TUPLE" tags (ids), we do not need
+to skip the debugging lines / logs to extract numbers. We may start with the place
+where the word "TUPLE" is placed and then read the rest of the (num_particles - 1)
+lines. Doing that for each event should lead to parsing the data correctly.
+=======================================================================================
+"""
 import numpy as np
 
 
@@ -23,13 +32,15 @@ def read_raw_asci(name, num_particles):
     # The interesting lines start with the first "TUPLE" and end at "Analysed in total".
     lines = lines[find_first_line(lines, "TUPLE"): find_first_line(lines, "Analysed in total")]
     
-    # Ignoring the debug lines.
+    # Ignoring the debugging lines.
     lines = [line for line in lines if not line.startswith("Analysed") and \
-             not line.startswith("Tauspinner::")] # this lines may appear in Z-background data
+             # These lines may appear in Z-background data:
+             not line.startswith("Tauspinner::") and \
+             # These lines may appear in data formatted as Run 2 events:
+             not line.startswith("New file starting")]
     
     # Finding the indices of the lines starting with the examples description
     ids = [int(idx) for idx, line in enumerate(lines) if line.startswith("TUPLE")]
-
     # Ensuring there are `num_particles` particles for each example
     temp_list = [i for i in range(0, num_particles * len(ids), num_particles)]
 

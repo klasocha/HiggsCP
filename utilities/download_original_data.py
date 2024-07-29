@@ -45,14 +45,13 @@ def download(args):
         
         # New data format (Run 2)
         elif args.DATA_FORMAT == "v2":
-            filename = config.DATA_RUN_2_FILE
-            filepath = path.join(data_path, filename)
-            
-            if path.exists(filepath) and not args.FORCE_DOWNLOAD:
-                print(f"Original data file \"{filepath}\" already exists.\nDownloading has been cancelled.",
-                    "If you want to force download, use \"--force_download\" option.\n", sep=linesep)
-            else:
-                print(f"Downloading {filename} and saving it in {data_path}/ ...", sep='\r')
-                urlretrieve(config.DATA_RUN_2_URL + filename, filepath)
+            for filename in config.DATA_RUN_2_FILES:
+                filepath = path.join(data_path, filename)
+                if path.exists(filepath) and not args.FORCE_DOWNLOAD:
+                    print(f"Original data file \"{filepath}\" already exists.\nDownloading has been cancelled.",
+                        "If you want to force download, use \"--force_download\" option.\n", sep=linesep)
+                else:
+                    print(f"Downloading {filename} and saving it in {data_path}/ ...", sep='\r')
+                    urlretrieve(config.DATA_RUN_2_URL + filename, filepath)
 
     print()
