@@ -13,13 +13,15 @@ cd $SLURM_SUBMIT_DIR
 module load python/3.11.3-gcccore-12.3.0
 source .venv/bin/activate
 
-python main.py --action "download_and_preprocess" --input "data" \
+python main.py --action "download_and_prepare_original" --input "data"
+
+python main.py --action "preprocess" --input "data" \
 --features "Variant-All" --num_classes "51" --hits_c012s "hits_c0s" --exp $EXP
 
-python main.py --action "download_and_preprocess" --input "data" \
+python main.py --action "preprocess" --input "data" \
 --features "Variant-All" --num_classes "51" --hits_c012s "hits_c1s" --exp $EXP
 
-python main.py --action "download_and_preprocess" --input "data" \
+python main.py --action "preprocess" --input "data" \
 --features "Variant-All" --num_classes "51" --hits_c012s "hits_c2s" --exp $EXP
 
 deactivate

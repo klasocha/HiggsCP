@@ -13,13 +13,15 @@ cd $SLURM_SUBMIT_DIR
 module load python/3.11.3-gcccore-12.3.0
 source .venv/bin/activate
 
-python main.py --action "download_and_preprocess" --input "data_new_format" \
+python main.py --action "download_and_prepare_original" --input "data_new_format" --data_format "v2"
+
+python main.py --action "preprocess" --input "data_new_format" \
 --features "Variant-1.0" --num_classes "51" --hits_c012s "hits_c0s" --exp $EXP --data_format "v2"
 
-python main.py --action "download_and_preprocess" --input "data_new_format" \
+python main.py --action "preprocess" --input "data_new_format" \
 --features "Variant-1.0" --num_classes "51" --hits_c012s "hits_c1s" --exp $EXP --data_format "v2"
 
-python main.py --action "download_and_preprocess" --input "data_new_format" \
+python main.py --action "preprocess" --input "data_new_format" \
 --features "Variant-1.0" --num_classes "51" --hits_c012s "hits_c2s" --exp $EXP --data_format "v2"
 
 deactivate
