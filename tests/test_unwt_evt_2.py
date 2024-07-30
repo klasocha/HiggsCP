@@ -38,7 +38,7 @@ def draw_distribution(preds, x, true_values, title, output_path, filename,
 
     for i in range(len(preds)):
         ax2.step(np.arange(len(x)), preds[i], color=color[i % len(color)], where="mid", 
-                 label="Predicted (" + r"${{\alpha^{CP}_{max}}}$" + f"={round(info_table[3][i], 1)})")
+                 label="Predicted (" + r"${{\alpha^{CP}_{max}}}$" + f"={round(info_table[4][i], 1)})")
         ax2.step(np.arange(len(x)), true_values[i], color=color[i % len(color)], where="mid", 
                  label="True (" + r"${{\alpha^{CP}_{max}}}$" + f"={round(info_table[6][i], 1)})",
                  linestyle="dotted")
