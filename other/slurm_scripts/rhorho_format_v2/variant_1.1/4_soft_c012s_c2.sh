@@ -15,23 +15,23 @@ source .venv/bin/activate
 
 
 # Training
-python main.py --action "train" --input "data" --num_classes "51" --epochs $EPOCHS \
+python main.py --action "train" --input "data_new_format" --num_classes "51" --epochs $EPOCHS \
 --training_method "soft_c012s" --model_location "variant_1.1/51_classes_c2" \
 --hits_c012s "hits_c2s" --features Variant-1.1
 
 # Prediction (test)
-python main.py --action "predict_test" --input "data" --num_classes "51" \
+python main.py --action "predict_test" --input "data_new_format" --num_classes "51" \
 --training_method "soft_c012s" --model_location "variant_1.1/51_classes_c2" \
 --features Variant-1.1 --hits_c012s "hits_c2s" --use_filtered_data
-python main.py --action "predict_test" --input "data" --num_classes "51" \
+python main.py --action "predict_test" --input "data_new_format" --num_classes "51" \
 --training_method "soft_c012s" --model_location "variant_1.1/51_classes_c2" \
 --features Variant-1.1 --hits_c012s "hits_c2s"
 
 # Prediction (training and validation)
-python main.py --action "predict_train_and_valid" --input "data" --num_classes "51" \
+python main.py --action "predict_train_and_valid" --input "data_new_format" --num_classes "51" \
 --training_method "soft_c012s" --model_location "variant_1.1/51_classes_c2" \
 --features Variant-1.1 --hits_c012s "hits_c2s" --use_filtered_data
-python main.py --action "predict_train_and_valid" --input "data" --num_classes "51" \
+python main.py --action "predict_train_and_valid" --input "data_new_format" --num_classes "51" \
 --training_method "soft_c012s" --model_location "variant_1.1/51_classes_c2" \
 --features Variant-1.1 --hits_c012s "hits_c2s"
 

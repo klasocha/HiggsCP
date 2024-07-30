@@ -14,23 +14,23 @@ module load python/3.11.3-gcccore-12.3.0
 source .venv/bin/activate
     	
 # Training
-python main.py --action "train" --input "data" --num_classes "51" --epochs $EPOCHS \
+python main.py --action "train" --input "data_new_format" --num_classes "51" --epochs $EPOCHS \
 --training_method "regr_argmaxs" --model_location "51_classes_variant_1.1" \
 --features Variant-1.1 --keras "v2"
 
 # Prediction (test)
-python main.py --action "predict_test" --input "data" --num_classes "51" \
+python main.py --action "predict_test" --input "data_new_format" --num_classes "51" \
 --training_method "regr_argmaxs" --model_location "51_classes_variant_1.1" \
 --features Variant-1.1 --use_filtered_data --keras "v2"
-python main.py --action "predict_test" --input "data" --num_classes "51" \
+python main.py --action "predict_test" --input "data_new_format" --num_classes "51" \
 --training_method "regr_argmaxs" --model_location "51_classes_variant_1.1" \
 --features Variant-1.1 --keras "v2"
 
 # Prediction (train_and_valid)
-python main.py --action "predict_train_and_valid" --input "data" --num_classes "51" \
+python main.py --action "predict_train_and_valid" --input "data_new_format" --num_classes "51" \
 --training_method "regr_argmaxs" --model_location "51_classes_variant_1.1" \
 --features Variant-1.1 --use_filtered_data --keras "v2"
-python main.py --action "predict_train_and_valid" --input "data" --num_classes "51" \
+python main.py --action "predict_train_and_valid" --input "data_new_format" --num_classes "51" \
 --training_method "regr_argmaxs" --model_location "51_classes_variant_1.1" \
 --features Variant-1.1 --keras "v2"
 
