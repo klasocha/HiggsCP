@@ -13,7 +13,6 @@ cd $SLURM_SUBMIT_DIR
 module load python/3.11.3-gcccore-12.3.0
 source .venv/bin/activate
 
-
 # Training
 python main.py --action "train" --input "data_new_format" --num_classes "51" --epochs $EPOCHS \
 --training_method "soft_c012s" --model_location "variant_1.0/51_classes_c2" \

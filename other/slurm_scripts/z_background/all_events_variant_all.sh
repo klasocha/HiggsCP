@@ -43,6 +43,6 @@ python main.py --action "test_model_on_all_events" --input "data_z" \
 python main.py --action "test_model_on_all_events" --input "data_z" \
 --output "plots/figures/test_model_on_all_events/51_classes_variant_all/regr_argmaxs" --num_classes "51" \
 --training_method "regr_argmaxs" --model_location "51_classes_variant_all" \
---features "Variant-All"
+--features "Variant-All" --keras "v2"
 
 deactivate

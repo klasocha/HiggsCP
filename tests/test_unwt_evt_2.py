@@ -4,6 +4,7 @@
 from utilities.data_utils import read_np
 import os, pickle, numpy as np
 from utilities.tf_model import NeuralNetwork
+from utilities.tf_model_keras_v2 import NeuralNetwork as NeuralNetwork_keras_v2
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker 
 
@@ -120,15 +121,26 @@ def test_on_unwt_events(args):
         features.append(X[mask == 1.0])
 
     # Preparing the model
-    model = NeuralNetwork(
-        configuration=args.TRAINING_METHOD, 
-        n_features=X.shape[-1], 
-        n_classes=n_classes,
-        n_layers=int(args.LAYERS), 
-        n_units_per_layer=int(args.SIZE),
-        input_noise_rate=0.0,
-        dropout_rate=float(args.DROPOUT),
-        opt=args.OPT)
+    if args.KERAS == "v2":
+        model = NeuralNetwork_keras_v2(
+            configuration=args.TRAINING_METHOD, 
+            n_features=X.shape[-1], 
+            n_classes=n_classes,
+            n_layers=int(args.LAYERS), 
+            n_units_per_layer=int(args.SIZE),
+            input_noise_rate=0.0,
+            dropout_rate=float(args.DROPOUT),
+            opt=args.OPT)
+    else:
+        model = NeuralNetwork(
+            configuration=args.TRAINING_METHOD, 
+            n_features=X.shape[-1], 
+            n_classes=n_classes,
+            n_layers=int(args.LAYERS), 
+            n_units_per_layer=int(args.SIZE),
+            input_noise_rate=0.0,
+            dropout_rate=float(args.DROPOUT),
+            opt=args.OPT)
     model.build()
 
     # Loading model weights and making predictions

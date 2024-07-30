@@ -42,7 +42,7 @@ python main.py --action "test_model_on_unwt_events" --input "data" \
 python main.py --action "test_model_on_unwt_events" --input "data" \
 --output "plots/figures/test_model_on_unwt_events/51_classes_variant_all/regr_argmaxs" --num_classes "51" \
 --hypothesis "0-4-46" --training_method "regr_argmaxs" --model_location "51_classes_variant_all" \
---features "Variant-All"
+--features "Variant-All" --keras "v2"
 
 
 # All events test
@@ -74,6 +74,6 @@ python main.py --action "test_model_on_all_events" --input "data" \
 python main.py --action "test_model_on_all_events" --input "data" \
 --output "plots/figures/test_model_on_all_events/51_classes_variant_all/regr_argmaxs" --num_classes "51" \
 --training_method "regr_argmaxs" --model_location "51_classes_variant_all" \
---features "Variant-All"
+--features "Variant-All" --keras "v2"
 
 deactivate

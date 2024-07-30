@@ -15,13 +15,13 @@ source .venv/bin/activate
 
 python main.py --action "download_and_prepare_original" --input "data_new_format" --data_format "v2"
 
-python main.py --action "preprocess" --input "data" \
---features "Variant-1.1" --num_classes "51" --hits_c012s "hits_c0s" --exp $EXP
+python main.py --action "preprocess" --input "data_new_format" \
+--features "Variant-1.1" --num_classes "51" --hits_c012s "hits_c0s" --exp $EXP --data_format "v2"
 
-python main.py --action "preprocess" --input "data" \
---features "Variant-1.1" --num_classes "51" --hits_c012s "hits_c1s" --exp $EXP
+python main.py --action "preprocess" --input "data_new_format" \
+--features "Variant-1.1" --num_classes "51" --hits_c012s "hits_c1s" --exp $EXP --data_format "v2"
 
-python main.py --action "preprocess" --input "data" \
---features "Variant-1.1" --num_classes "51" --hits_c012s "hits_c2s" --exp $EXP
+python main.py --action "preprocess" --input "data_new_format" \
+--features "Variant-1.1" --num_classes "51" --hits_c012s "hits_c2s" --exp $EXP --data_format "v2"
 
 deactivate
