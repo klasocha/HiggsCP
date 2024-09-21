@@ -102,7 +102,7 @@ def draw_mult_dist(phistar, hypotheses, args, titles, weights, colors, alphaCP):
     axs[0, 0].set_title(titles[0])
     axs[0, 0].set_ylim(np.min(counts) / 2, np.max(counts) * 1.5)
     axs[0, 0].legend()
-    axs[0, 0].set_xlabel(r"${\phi_{\rho \rho}}$", loc="right")
+    axs[0, 0].set_xlabel(r"${\phi{*}}$", loc="right")
     axs[0, 0].set_ylabel("Entries", loc="top")
     axs[0, 0].yaxis.set_major_formatter(ticker.ScalarFormatter(useMathText=True))
     axs[0, 0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
@@ -124,7 +124,7 @@ def draw_mult_dist(phistar, hypotheses, args, titles, weights, colors, alphaCP):
     axs[0, 1].set_title(titles[1])
     axs[0, 1].set_ylim(np.min(counts) / 2, np.max(counts) * 1.5)
     axs[0, 1].legend()
-    axs[0, 1].set_xlabel(r"${\phi_{\rho \rho}}$", loc="right")
+    axs[0, 1].set_xlabel(r"${\phi{*}}$", loc="right")
     axs[0, 1].set_ylabel("Entries", loc="top")
     axs[0, 1].yaxis.set_major_formatter(ticker.ScalarFormatter(useMathText=True))
     axs[0, 1].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
@@ -203,7 +203,7 @@ def draw(args):
     # Loading weights if a hypothesis (alphaCP class) has been provided for the distribution 
     if args.HYPOTHESIS != "None":
         
-        # Preparing the weights relevent to the given hypothesis
+        # Preparing the weights relevant to the given hypothesis
         weights, weights_pos, weights_neg, alphaCP = [], [], [], []
         for hyp, i in zip(hypotheses, range(0, len(hypotheses))):
             if args.USE_UNWEIGHTED_EVENTS:
@@ -226,6 +226,6 @@ def draw(args):
                     alphaCP=alphaCP)
     else: 
         # The same but without taking into account any specific hypothesis in terms of the weights values
-        draw_distribution(variable=phistar, output_name="phistar", xlabel=r"${\phi_{\rho \rho}}$", args=args)
+        draw_distribution(variable=phistar, output_name="phistar", xlabel=r"${\phi{*}}$", args=args)
         draw_distribution(variable=y1, output_name="y1", xlabel="${y_1}$", args=args)
         draw_distribution(variable=y2, output_name="y2", xlabel="${y_2}$", args=args)
