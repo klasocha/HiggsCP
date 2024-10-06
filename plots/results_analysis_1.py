@@ -40,10 +40,7 @@ def draw(args):
     # Preparing the plot
     bins = np.max(delt_argmax) - np.min(delt_argmax) + 1
     plt.hist(delt_argmax_rad, histtype='step', bins=bins, color='black')
-    if args.TRAINING_METHOD == "soft_weights":
-        plt.xlabel(r'$\Delta\alpha^{CP}_{max}$ [rad]')
-    if args.TRAINING_METHOD == "regr_weights":
-        plt.xlabel(r'$\Delta\alpha^{CP}_{max}$ [rad]')
+    plt.xlabel(r'$\Delta\alpha^{CP}_{max}$ [rad]')
     plt.ylabel('Entries')
     plt.gca()
     
