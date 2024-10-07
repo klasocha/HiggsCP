@@ -16,7 +16,7 @@ Making a plot for several feature sets (up to six):
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-from utilities.metrics_utils import  calculate_deltas_signed
+from utilities.metrics_utils import calculate_deltas_signed
 from scipy import stats
 from utilities.data_utils import read_np
 
@@ -90,12 +90,14 @@ def draw(args):
     for i in range(len(feature_list)):
         bins = np.max(delt_argmaxs[i]) - np.min(delt_argmaxs[i]) + 1
         ax2.hist(delt_argmax_rads[i], density=density, histtype='step', bins=bins, 
-                 color=colors[i])
+                 color=colors[i], label=f"Variant-{feature_list[i]}")
+    ax2.legend()    
     
     ax2.set_xlabel(r'$\Delta\alpha^{CP}_{max}$ [rad]')
 
     table_vals=[
-        [r"Classification: $\alpha^{CP}_{max}$"],
+        [r"Classification: $\alpha^{CP}_{max}$ (Variant-" + "/".join(
+            [feature for feature in feature_list]) + ")"],
         [" "],
         ["mean = " + 
          " | ".join([r"{:0.3f} $\pm$ {:0.3f}".format(meanrad, meanraderr) for 

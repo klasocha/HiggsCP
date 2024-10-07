@@ -85,7 +85,8 @@ def draw(args):
     for i in range(len(feature_list)):
         bins = np.max(delt_argmaxs[i]) - np.min(delt_argmaxs[i]) + 1
         ax2.hist(delt_argmax_rads[i], density=density, histtype='step', bins=bins, 
-                 color=colors[i])
+                 color=colors[i], label=f"Variant-{feature_list[i]}")
+    ax2.legend()    
     
     ax2.set_xlabel(r'$\Delta\alpha^{CP}_{max}$ [rad]')
 
