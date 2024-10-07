@@ -3,7 +3,7 @@ between true and predicted values for "soft_weights" and "regr_weights"
 model configurations.
 
 EXAMPLE 1
-args.IN for making a plot for one feature set:
+args.IN for making a plot for one feature set (Variant-All):
     --input "results/regr_weights/51_classes_variant_all/predictions"
 
 EXAMPLE 2
