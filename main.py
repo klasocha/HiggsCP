@@ -69,10 +69,6 @@ parser.add_argument("--beta",  type=float, dest="BETA",
                     help="the beta parameter value for polynomial smearing", 
                     default=0.0)
 parser.add_argument("-f", "--features", dest="FEAT", help="Features", 
-                    choices= ["Variant-All", "Variant-1.0", "Variant-1.1", 
-                              "Variant-2.0", "Variant-2.1", "Variant-2.2", 
-                              "Variant-3.0", "Variant-3.1", "Variant-4.0", 
-                              "Variant-4.1"], 
                     default="Variant-All")
 parser.add_argument("-m", "--method", dest="METHOD", choices=["A", "B", "C"], 
                     default="A")
