@@ -1,5 +1,15 @@
 """ This program prepares a plot showing the mean and std of the difference
-between true and predicted values for the "soft_c012s" model configuration """
+between true and predicted values for the "soft_c012s" model configuration 
+
+EXAMPLE 1
+args.IN for making a plot for one feature set (Variant-All):
+    --input "results/soft_c012s/variant_all/51_classes_c"
+
+EXAMPLE 2
+args.IN for making a plot for several feature sets (up to six):
+    --input "results/soft_c012s/variant_"
+
+"""
 
 import os
 import matplotlib.pyplot as plt
@@ -20,6 +30,13 @@ def calc_weights(num_classes, coeffs):
 
 
 def draw(args):
+    # Parsing chosen feature sets (e.g. --features "Variant-All-1.1")
+    feature_list = args.FEAT.split('-')
+    feature_list = [feature_list[x] for x in range(1, len(feature_list))]
+    features = "Variant"
+    for feature in feature_list:
+        features += '-' + feature 
+
     # Preparing the output directory
     num_classes = int(args.NUM_CLASSES)
     discr_level = int(args.NBINS) if args.NBINS else int(args.NUM_CLASSES)
@@ -29,102 +46,150 @@ def draw(args):
     if not os.path.exists(output_path):
         os.makedirs(output_path)
     filtered = "unfiltered" if not args.USE_FILTERED_DATA else "filtered"
-    filename = f"soft_c012s_delt_argmax_rhorho_{args.FEAT}_nc_{num_classes}_" + \
+    filename = f"soft_c012s_delt_argmax_rhorho_{features}_nc_{num_classes}_" + \
         f"{filtered}_bins_{discr_level}"
     output_path = os.path.join(output_path, filename)
 
     # Loading the coefficients
     dataset = filtered + '_' + args.DATASET
-    c0_input_path = f"{args.IN}0"
-    calc_hits_c0s = read_np(os.path.join(
-        os.path.normpath(c0_input_path), "predictions", f"{dataset}_calc.npy")) 
-    preds_hits_c0s = read_np(os.path.join(
-        os.path.normpath(c0_input_path), "predictions", f"{dataset}_preds.npy")) 
+    
+    calc_hits_c0s = []
+    preds_hits_c0s = []
+    if len(feature_list) == 1:
+        c0_input_path = f"{args.IN}0"
+        calc_hits_c0s.append(read_np(os.path.join(
+            os.path.normpath(c0_input_path), "predictions", f"{dataset}_calc.npy"))) 
+        preds_hits_c0s.append(read_np(os.path.join(
+            os.path.normpath(c0_input_path), "predictions", f"{dataset}_preds.npy"))) 
+    else:
+        for feature in feature_list:
+            c0_input_path = os.path.join(os.path.normpath(args.IN + feature.lower()), 
+                                         f"{num_classes}_classes_c0", "predictions")
+            calc_hits_c0s.append(read_np(os.path.join(c0_input_path, f"{dataset}_calc.npy"))) 
+            preds_hits_c0s.append(read_np(os.path.join(c0_input_path, f"{dataset}_preds.npy")))
 
-    c1_input_path = f"{args.IN}1"
-    calc_hits_c1s = read_np(os.path.join(
-        os.path.normpath(c1_input_path), "predictions", f"{dataset}_calc.npy")) 
-    preds_hits_c1s = read_np(os.path.join(
-        os.path.normpath(c1_input_path), "predictions", f"{dataset}_preds.npy")) 
+    calc_hits_c1s = []
+    preds_hits_c1s = []
+    if len(feature_list) == 1:
+        c1_input_path = f"{args.IN}1"
+        calc_hits_c1s.append(read_np(os.path.join(
+            os.path.normpath(c1_input_path), "predictions", f"{dataset}_calc.npy"))) 
+        preds_hits_c1s.append(read_np(os.path.join(
+            os.path.normpath(c1_input_path), "predictions", f"{dataset}_preds.npy"))) 
+    else:
+        for feature in feature_list:
+            c1_input_path = os.path.join(os.path.normpath(args.IN + feature.lower()), 
+                                         f"{num_classes}_classes_c1", "predictions")
+            calc_hits_c1s.append(read_np(os.path.join(c1_input_path, f"{dataset}_calc.npy"))) 
+            preds_hits_c1s.append(read_np(os.path.join(c1_input_path, f"{dataset}_preds.npy")))
 
-    c2_input_path = f"{args.IN}2"
-    calc_hits_c2s = read_np(os.path.join(
-        os.path.normpath(c2_input_path), "predictions", f"{dataset}_calc.npy")) 
-    preds_hits_c2s = read_np(os.path.join(
-        os.path.normpath(c2_input_path), "predictions", f"{dataset}_preds.npy")) 
+    calc_hits_c2s = []
+    preds_hits_c2s = []
+    if len(feature_list) == 1:
+        c2_input_path = f"{args.IN}2"
+        calc_hits_c2s.append(read_np(os.path.join(
+            os.path.normpath(c2_input_path), "predictions", f"{dataset}_calc.npy"))) 
+        preds_hits_c2s.append(read_np(os.path.join(
+            os.path.normpath(c2_input_path), "predictions", f"{dataset}_preds.npy"))) 
+    else:
+        for feature in feature_list:
+            c2_input_path = os.path.join(os.path.normpath(args.IN + feature.lower()), 
+                                         f"{num_classes}_classes_c2", "predictions")
+            calc_hits_c2s.append(read_np(os.path.join(c2_input_path, f"{dataset}_calc.npy"))) 
+            preds_hits_c2s.append(read_np(os.path.join(c2_input_path, f"{dataset}_preds.npy")))
         
     # Computing the needed values
-    data_len = calc_hits_c0s.shape[0]
+    data_len = calc_hits_c0s[0].shape[0]
 
-    preds_c0s = np.zeros((data_len, 1))
-    calc_c0s = np.zeros((data_len, 1))
+    preds_c0s, preds_c1s, preds_c2s = [], [], []
+    calc_c0s, calc_c1s, calc_c2s = [], [], []
+    calc_c012s, preds_c012s = [], []
+    delt_argmaxs, delt_argmax_rads, meanrads, stdrads, meanraderrs = [], [], [], [], []
+    calc_ws, preds_ws = [], []
     
-    preds_c1s = np.zeros((data_len, 1))
-    calc_c1s = np.zeros((data_len, 1))
-    
-    preds_c2s = np.zeros((data_len, 1))
-    calc_c2s = np.zeros((data_len, 1))
+    for i in range(len(feature_list)):
+        preds_c0s.append(np.zeros((data_len, 1)))
+        calc_c0s.append(np.zeros((data_len, 1)))
+        
+        preds_c1s.append(np.zeros((data_len, 1)))
+        calc_c1s.append(np.zeros((data_len, 1)))
+        
+        preds_c2s.append(np.zeros((data_len, 1)))
+        calc_c2s.append(np.zeros((data_len, 1)))
 
-    for i in range(data_len):
-        preds_c0s[i] = np.argmax(preds_hits_c0s[i])
-        calc_c0s[i] = np.argmax(calc_hits_c0s[i])
-    
-        preds_c1s[i] = np.argmax(preds_hits_c1s[i])
-        calc_c1s[i] = np.argmax(calc_hits_c1s[i])
-    
-        preds_c2s[i] = np.argmax(preds_hits_c2s[i])
-        calc_c2s[i] = np.argmax(calc_hits_c2s[i])    
+        for j in range(data_len):
+            preds_c0s[i][j] = np.argmax(preds_hits_c0s[i][j])
+            calc_c0s[i][j] = np.argmax(calc_hits_c0s[i][j])
+        
+            preds_c1s[i][j] = np.argmax(preds_hits_c1s[i][j])
+            calc_c1s[i][j] = np.argmax(calc_hits_c1s[i][j])
+        
+            preds_c2s[i][j] = np.argmax(preds_hits_c2s[i][j])
+            calc_c2s[i][j] = np.argmax(calc_hits_c2s[i][j])  
 
-    calc_c012s = np.zeros((data_len, 3))
-    preds_c012s = np.zeros((data_len, 3))
+        calc_c012s.append(np.zeros((data_len, 3)))
+        preds_c012s.append(np.zeros((data_len, 3)))
 
-    for i in range(data_len):
-        calc_c012s[i][0] = calc_c0s[i] * (2. / (num_classes - 1))
-        calc_c012s[i][1] = calc_c1s[i] * (2. / (num_classes - 1)) - 1.0
-        calc_c012s[i][2] = calc_c2s[i] * (2. / (num_classes - 1)) - 1.0
+        for j in range(data_len):
+            calc_c012s[i][j][0] = calc_c0s[i][j] * (2. / (num_classes - 1))
+            calc_c012s[i][j][1] = calc_c1s[i][j] * (2. / (num_classes - 1)) - 1.0
+            calc_c012s[i][j][2] = calc_c2s[i][j] * (2. / (num_classes - 1)) - 1.0
 
-        preds_c012s[i][0] = preds_c0s[i] * (2. / (num_classes - 1))
-        preds_c012s[i][1] = preds_c1s[i] * (2. / (num_classes - 1)) - 1.0
-        preds_c012s[i][2] = preds_c2s[i] * (2. / (num_classes - 1)) - 1.0
+            preds_c012s[i][j][0] = preds_c0s[i][j] * (2. / (num_classes - 1))
+            preds_c012s[i][j][1] = preds_c1s[i][j] * (2. / (num_classes - 1)) - 1.0
+            preds_c012s[i][j][2] = preds_c2s[i][j] * (2. / (num_classes - 1)) - 1.0
 
-    k2PI = 2 * np.pi
-    calc_w  =  calc_weights(discr_level, calc_c012s)
-    preds_w =  calc_weights(discr_level, preds_c012s)
-    delt_argmax = calculate_deltas_signed(np.argmax(preds_w[:], axis=1), 
-                                          np.argmax(calc_w[:], axis=1), discr_level)      
-    delt_argmax_rad = delt_argmax * k2PI / (discr_level - 1)
-
-    meanrad = np.mean(delt_argmax) * k2PI / (discr_level - 1)
-    stdrad  = np.std(delt_argmax) * k2PI / (discr_level - 1)
-    meanraderr = stats.sem(delt_argmax) * k2PI / (discr_level - 1)
+        k2PI = 2 * np.pi
+       
+        calc_ws.append(calc_weights(discr_level, calc_c012s[i]))
+        preds_ws.append(calc_weights(discr_level, preds_c012s[i]))
+        delt_argmaxs.append(calculate_deltas_signed(np.argmax(preds_ws[i][:], axis=1), 
+                            np.argmax(calc_ws[i][:], axis=1), discr_level))      
+        delt_argmax_rads.append(delt_argmaxs[i] * k2PI / (discr_level - 1))
+        meanrads.append(np.mean(delt_argmaxs[i]) * k2PI / (discr_level - 1))
+        stdrads.append(np.std(delt_argmaxs[i]) * k2PI / (discr_level - 1))
+        meanraderrs.append(stats.sem(delt_argmaxs[i]) * k2PI / (discr_level - 1))
 
     # Preparing the plot
-    bins = np.max(delt_argmax) - np.min(delt_argmax) + 1
-    plt.hist(delt_argmax_rad, histtype='step', bins=bins, color='black')
-    plt.xlabel(r'$\Delta\alpha^{CP}_{max}$ [rad]')
-    plt.gca()
+    fig, (ax1, ax2) = plt.subplots(2, height_ratios=[1, 6])
+    fig.set_size_inches(7, 6)
+    colors = ['black', 'blue', 'red', 'green', 'violet', 'yellow']
 
-    table_vals=[[r'Classification: $C_0, C_1, C_2$'],
-                [" "],
-                [r"mean = {:0.3f}$\pm$ {:1.3f} [rad]".format(meanrad, meanraderr)],
-                ["std = {:1.3f} [rad]".format(stdrad)]
-                ]
+    if len(feature_list) == 1:
+        ax2.set_ylabel('Entries')
+        density = False
+    else:
+        ax2.set_ylabel('Probability Density')
+        density = True
+    
+    for i in range(len(feature_list)):
+        bins = np.max(delt_argmaxs[i]) - np.min(delt_argmaxs[i]) + 1
+        ax2.hist(delt_argmax_rads[i], density=density, histtype='step', bins=bins, color=colors[i])
+    
+    ax2.set_xlabel(r'$\Delta\alpha^{CP}_{max}$ [rad]')
 
-    table = plt.table(cellText=table_vals,
-                    colWidths = [0.40],
-                    cellLoc="left",
-                    loc='upper right')
-    table.set_fontsize(14)
+    table_vals=[
+        [r'Classification: $C_0, C_1, C_2$'],
+        [" "],
+        ["mean = " + 
+         " | ".join([r"{:0.3f} $\pm$ {:0.3f}".format(meanrad, meanraderr) for 
+                               meanrad, meanraderr in zip(meanrads, meanraderrs)]) + " [rad]"], 
+         ["std = " + 
+         " | ".join(["{:0.3f}".format(stdrad) for stdrad in stdrads]) + " [rad]"]
+    ]
 
+    ax1.axis('off')
+    ax1.axis('tight')
+    table = ax1.table(cellText=table_vals, colWidths = [1.0],
+                        cellLoc="left", loc='upper left')
+    table.set_fontsize(12)
     for _, cell in table.get_celld().items():
         cell.set_linewidth(0)
-
     plt.tight_layout()
 
     # Saving the plot
-    plt.savefig(f"{output_path}.pdf")
-    plt.savefig(f"{output_path}.png")
-    plt.savefig(f"{output_path}.eps")
+    for format in ["pdf", "png", "eps"]:
+        plt.savefig(f"{output_path}.{format}")
     print(f"The plot has been saved as {output_path}")
 
     plt.clf()
