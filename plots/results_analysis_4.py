@@ -1,5 +1,17 @@
 """ This program prepares a plot showing the mean and std of the difference
-between true and predicted values for the "regr_c012s" model configuration """
+between true and predicted values for the "regr_c012s" model configuration 
+
+EXAMPLE 1
+Making a plot for one feature set:
+    --input "results/regr_c012s/51_classes_variant_all/predictions"
+    --features "Variant-All"
+
+EXAMPLE 2
+Making a plot for several feature sets (up to six):
+    --input "results/regr_c012s/51_classes_variant_"
+    --features "Variant-All-4.1-1.1"
+
+"""
 
 import os
 import matplotlib.pyplot as plt

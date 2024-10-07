@@ -2,12 +2,14 @@
 between true and predicted values for the "soft_argmaxs" model configuration 
 
 EXAMPLE 1
-args.IN for making a plot for one feature set (Variant-All):
+Making a plot for one feature set:
     --input "results/soft_argmaxs/51_classes_variant_all/predictions"
+    --features "Variant-All"
 
 EXAMPLE 2
-args.IN for making a plot for several feature sets (up to six):
+Making a plot for several feature sets (up to six):
     --input "results/soft_argmaxs/51_classes_variant_"
+    --features "Variant-All-4.1-1.1"
 
 """
 
