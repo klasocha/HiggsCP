@@ -79,8 +79,9 @@ def draw(args):
         ax2.set_ylabel('Entries')
         density = False
     else:
-        ax2.set_ylabel('Probability Density')
+        ax2.set_ylabel('Normalized to U.I.')
         density = True
+        ax2.set_ylim([0, 4.6])
     
     for i in range(len(feature_list)):
         bins = np.max(delt_argmaxs[i]) - np.min(delt_argmaxs[i]) + 1
