@@ -1,12 +1,14 @@
 """
-This program generates a plot depicting the functional form of the spin weight,
-as well as the spin weight discrete values. The plot helps to
-test the correctness of the weights calculated via the C0/C1/C2 coefficients.
-C0/C1/C2 covariance is used to show the error.
+This program generates a plot depicting the functional form of the spin weight, as well as the spin 
+weight discrete values. The plot helps to test the correctness of the weights calculated via the 
+C0/C1/C2 coefficients. C0/C1/C2 covariance is used to show the error.
 
 Try to run it as the following (let us suppose the coefficients are stored in "data/c012s.npy"
-and the covariance values are stored in "data/ccovs.npy", so you want to save the results in "plots/figures/"): 
-     $ python main.py --action "plot" --option "C012S-WEIGHT" --input "data" --output "plots/figures" --format "png" --show
+and the covariance values are stored in "data/ccovs.npy", so you want to save the results 
+in "plots/figures/"): 
+
+     $ python main.py --action "plot" --option "C012S-WEIGHT" --input "data" --output \
+        "plots/figures" --format "png" --show --data_format "v3"
 """
 import os, errno
 import numpy as np
@@ -17,18 +19,27 @@ from utilities.cpmix_utils import weight_fun
 
 def draw_weights_to_compare(c012s, ccovs, discrete_weights, event_index, args):
     plt.clf()
+    
     # Drawing the true values (generated with an algorithm using Monte Carlo methods)
-    # x_weights = np.array([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2]) * np.pi
-    x_weights = np.linspace(0, 1.7, num=18, retstep=0.1)[0] * np.pi
-    print(discrete_weights[:, event_index].shape, x_weights.shape)
+    if args.DATA_FORMAT in ["v1", "v2"]:
+        # alphaCP ranges from 0 to 360 degrees (0.0 - 2.0 fraction of np.pi)
+        x_weights = np.array([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2]) * np.pi
+    if args.DATA_FORMAT == "v3":
+        # Theta (aka phiCP) ranges from 0 to 170 degrees (needs to be converted to np.pi therefore)
+        x_weights = np.linspace(0, 1.7, num=18, retstep=0.1)[0] * 2 * np.pi / 1.8
+    if args.DATA_FORMAT is None:
+        raise "Specify the data format (e.g. v3)"
+
     plt.scatter(x_weights, discrete_weights[:, event_index], label="Generated")
     
     # Drawing the values computed with the help of the C0/C1/C2 coefficients
     # Notice: we do not use "weights_#.npy", although it already has the values computed via
-    # the coefficients, as they are discrete. We need a continuous range to draw it ideally on the plot
+    # the coefficients, as they are discrete. We need a continuous range to draw it ideally 
+    # on the plot
     x_fit = np.linspace(0, 2 * np.pi)
     plt.plot(x_fit, weight_fun(x_fit, *c012s[event_index]), 
-            label=f"Function \nError: {np.sqrt(np.diag(ccovs[event_index]))}", color="orange")
+            label="Function Error: {:.3f} {:.3f} {:.3f}".format(*np.sqrt(np.diag(ccovs[event_index]))), 
+            color="orange")
     
     # Configuring the plot
     plt.ylim([0.0, 2.5])
@@ -46,9 +57,11 @@ def draw_weights_to_compare(c012s, ccovs, discrete_weights, event_index, args):
             raise
 
     # Showing and saving the plot
-    output_path = os.path.join(os.path.normpath(args.OUT), f"calc_vs_gen_weights_event_{event_index}.{args.FORMAT}")
+    output_path = os.path.join(os.path.normpath(args.OUT), 
+                               f"calc_vs_gen_weights_event_{event_index}.{args.FORMAT}")
     plt.savefig(output_path)
-    print(f"The plot showing the correctness of the calculated C0/C1/C2 has been saved in {output_path}")
+    print("The plot showing the correctness of the calculated",
+          f"C0/C1/C2 has been saved in {output_path}")
 
     if args.SHOW:
         plt.show()
