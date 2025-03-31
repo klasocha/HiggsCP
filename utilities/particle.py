@@ -20,19 +20,19 @@ class Particle(object):
 
     @property
     def x(self):
-        return self.vec[..., 1]
+        return self.vec[..., 0]
     
     @property
     def y(self):
-        return self.vec[..., 2]
+        return self.vec[..., 1]
     
     @property
     def z(self):
-        return self.vec[..., 3]
+        return self.vec[..., 2]
     
     @property
     def e(self):
-        return self.vec[..., 0]
+        return self.vec[..., 3]
 
     @property
     def pt(self):
