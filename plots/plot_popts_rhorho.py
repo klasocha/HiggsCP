@@ -18,7 +18,9 @@ from utilities.cpmix_utils import weight_fun
 def draw_weights_to_compare(c012s, ccovs, discrete_weights, event_index, args):
     plt.clf()
     # Drawing the true values (generated with an algorithm using Monte Carlo methods)
-    x_weights = np.array([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2]) * np.pi
+    # x_weights = np.array([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2]) * np.pi
+    x_weights = np.linspace(0, 1.7, num=18, retstep=0.1)[0] * np.pi
+    print(discrete_weights[:, event_index].shape, x_weights.shape)
     plt.scatter(x_weights, discrete_weights[:, event_index], label="Generated")
     
     # Drawing the values computed with the help of the C0/C1/C2 coefficients
@@ -62,7 +64,7 @@ def draw(args):
 
     c012s = read_np(c012s_path)
     ccovs = read_np(ccovs_path)
-    discrete_weights = read_np(discrete_weights_path)
+    discrete_weights = read_np(discrete_weights_path).T
 
     # Calling the main drawing function for some sample events
     draw_weights_to_compare(c012s, ccovs, discrete_weights, 0, args)

@@ -22,8 +22,6 @@ class RhoRhoEvent(object):
             m_mlm = data[:, -1]   # tautau invariant mass values
 
         if args.DATA_FORMAT == "v3":
-            print(data)
-            print(data.shape)
             p = [Particle(data[:, 4*i : 4*i + 4]) for i in range(6)]
             
         cols = []
@@ -35,10 +33,6 @@ class RhoRhoEvent(object):
             tau1_pi  = p[1:3]
             tau1_rho = tau1_pi[0] + tau1_pi[1]
             tau1     = tau1_rho + tau1_nu if args.DATA_FORMAT == "v1" else None
-            print("1", tau1_nu)
-            print("2", tau1_pi)
-            print("3", tau1_rho)
-            print("4", tau1)
             return tau1_nu, tau1_pi, tau1_rho, tau1
 
         def get_tau2(p):
@@ -46,12 +40,6 @@ class RhoRhoEvent(object):
             tau2_pi = p[4:6]
             tau2_rho = tau2_pi[0] + tau2_pi[1]
             tau2 = tau2_rho + tau2_nu if args.DATA_FORMAT == "v1" else None
-
-            print("11", tau2_nu)
-            print("22", tau2_pi)
-            print("33", tau2_rho)
-            print("44", tau2)
-
             return tau2_nu, tau2_pi, tau2_rho, tau2
 
         p_tau1_nu, l_tau1_pi, p_tau1_rho, p_tau1 = get_tau1(p) # p- particle, l-list
@@ -66,28 +54,14 @@ class RhoRhoEvent(object):
         # Checking "neutrinos" vs "feature set" compatibility
         if args.FEAT not in ["Variant-1.0", "Variant-1.1"] and not neutrinos:
             print("Only Variant-1.0 and Variant-1.1 can be prepared without neutrinos!")
-            exit()
 
         rho_rho = p_tau1_rho + p_tau2_rho
-        print("5", rho_rho.x)
-        print("5", rho_rho.y)
-        print("5", rho_rho.z)
-        print("5", rho_rho.e)
-        print("6", p_tau1_rho.x)
-        print("6", p_tau1_rho.y)
-        print("6", p_tau1_rho.z)
-        print("6", p_tau1_rho.e)
-
         PHI, THETA = calc_angles(p_tau1_rho, rho_rho)
-
-        print("7", PHI, THETA)
-        exit()
         beta_noise = args.BETA
 
         # all particles boosted & rotated
         for i, idx in enumerate([0, 1, 2, 3, 4, 5]):
             part = boost_and_rotate(p[idx], PHI, THETA, rho_rho)
-            print("PART", part.vec)
             if args.FEAT in ["Variant-1.0", "Variant-1.1", "Variant-2.0", "Variant-2.1", "Variant-2.2",
                              "Variant-3.0", "Variant-3.1", "Variant-4.0", "Variant-4.1"]:
                 if idx not in [0, 3]:
