@@ -102,11 +102,13 @@ def prepare_rhorho(args):
                 np.save(f, data_copy)
 
     # Preparing permutations for data shuffling
+    prepare_permutations(n_events, data_path)
+    print(f"In total: prepared {n_events} events.")
+
+
+def prepare_permutations(n_events, data_path):
     np.random.seed(123)
     perm = np.random.permutation(n_events)
-
-    # Saving permutations
     with open(os.path.join(data_path, "rhorho_raw.perm.npy"), "wb") as f:
         np.save(f, perm)
-
-    print(f"In total: prepared {n_events} events.")
+    return perm

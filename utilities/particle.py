@@ -14,25 +14,26 @@ class Particle(object):
         if isinstance(vec, list):
             vec = np.vstack(vec).T
         self.vec = vec
+        print("Vec", vec[0])
 
     def __getitem__(self, key):
         return self.vec[key]
 
     @property
     def x(self):
-        return self.vec[..., 0]
-    
-    @property
-    def y(self):
         return self.vec[..., 1]
     
     @property
-    def z(self):
+    def y(self):
         return self.vec[..., 2]
     
     @property
-    def e(self):
+    def z(self):
         return self.vec[..., 3]
+    
+    @property
+    def e(self):
+        return self.vec[..., 0]
 
     @property
     def pt(self):
@@ -87,18 +88,34 @@ class Particle(object):
 
     def boost_along_z(self, p_pz, p_e):
         m = np.sqrt(p_e * p_e - p_pz * p_pz)
+        print("m", m)
         return Particle([
             self.x, self.y,
             (p_e * self.z + p_pz * self.e) / m,
             (p_pz * self.z + p_e * self.e) / m])
 
     def boost(self, p):
+        print("self", self.x)
+        print("self", self.y)
+        print("self", self.z)
+        print("self", self.e)
+        print("p", p.x)
+        print("p", p.y)
+        print("p", p.z)
+        print("p", p.e)
         p_len = np.sqrt(p.x * p.x + p.y * p.y + p.z * p.z)
+        print("p_len", p_len)
         phi = p.angle_phi
+        print("phi", phi)
         theta = p.rotate_xy(-phi).angle_theta
-
+        print("theta", theta)
         ret = self.rotate_xy(-phi).rotate_xz(-theta)
         ret = ret.boost_along_z(-p_len, p.e)
+        print("ret", ret.x)
+        print("ret", ret.y)
+        print("ret", ret.z)
+        print("ret", ret.e)
+        exit()
         return ret.rotate_xz(theta).rotate_xy(phi)
 
 

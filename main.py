@@ -190,7 +190,7 @@ parser.add_argument("--exp", dest="EXP", default="RhoRho",
 
 # New data format
 parser.add_argument("--data_format", dest="DATA_FORMAT", default="v1",
-                    choices=["v1", "v2"], 
+                    choices=["v1", "v2", "v3"], 
                     help="input data format version (v1, v2 etc.)")
 
 # Main controller

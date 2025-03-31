@@ -2,6 +2,7 @@ import numpy as np
 import os
 from scipy import optimize
 from .data_utils import read_np
+from .prepare_rhorho import prepare_permutations
 
 
 def weight_fun(alphaCP, c0, c1, c2):
@@ -106,11 +107,15 @@ def preprocess_data(args):
     data = read_np(os.path.join(data_path, suffix + "_raw.data.npy"))
     if args.DATA_FORMAT == "v1":
         w = read_np(os.path.join(data_path, suffix + "_raw.w.npy")).swapaxes(0, 1)
+        perm = read_np(os.path.join(data_path, suffix + "_raw.perm.npy"))
     if args.DATA_FORMAT == "v2":
         w = read_np(os.path.join(data_path, suffix + "_raw.w.npy"))
-    perm = read_np(os.path.join(data_path, suffix + "_raw.perm.npy"))
+        perm = read_np(os.path.join(data_path, suffix + "_raw.perm.npy"))
+    if args.DATA_FORMAT == "v3":
+        w = read_np(os.path.join(data_path, suffix + "_raw.w.npy"))
+        perm = prepare_permutations(n_events=w.shape[0], data_path=data_path)
     print(f"Read {data.shape[0]} events")
-
+    
     data_len = data.shape[0]
 
     # Calculating and saving the C coefficients
@@ -125,11 +130,11 @@ def preprocess_data(args):
         # Values of CPmix at which data were generated
         if args.DATA_FORMAT == "v1":
             x = np.array([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0]) * np.pi
-        if args.DATA_FORMAT == "v2":
-            # alphaCP = 2 * phiCP
+        if args.DATA_FORMAT in ["v2", "v3"]:
+            # alphaCP = 2 * phiCP (aka Theta)
             x = np.array([0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 
                           2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4]) * 100 / 180 * np.pi
-            
+        
         print("Calculating C0/C1/C2 and the covariance with scipy.optimize.curve_fit()")
         for i in range(data_len):
             if i % 10000 == 0:

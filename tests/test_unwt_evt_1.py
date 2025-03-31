@@ -23,7 +23,7 @@ def draw_distribution(x, y, title, output_path, filename, true_weights=None, col
                      label="True (" + r"${{\alpha^{CP}_{max}}}$" + f"={round(info_table[2][i], 1)})")
         
         ax2.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
-        if data_format == "v1":
+        if data_format in ["v1", "v3"]:
             ax2.set_ylabel(r"$\sum_{i=0}^N Wt_i$", rotation=0, labelpad=20)
         if data_format == "v2":
             ax2.set_ylabel(r"$\sum_{i=0}^N Wt_i * W_i$", rotation=0, labelpad=30)
@@ -233,7 +233,7 @@ def test_on_unwt_events(args):
 
     for i in range(len(hypotheses)):
         # Defining each entry weight
-        if args.DATA_FORMAT == "v1":
+        if args.DATA_FORMAT in ["v1", "v3"]:
             dist_weights = 1.0
         if args.DATA_FORMAT == "v2":
             dist_weights = w_independent[i]
@@ -285,7 +285,7 @@ def test_on_unwt_events(args):
 
         for i in range(len(hypotheses)):
             # Defining each entry weight
-            if args.DATA_FORMAT == "v1":
+            if args.DATA_FORMAT in ["v1", "v3"]:
                 dist_weights = 1.0
             if args.DATA_FORMAT == "v2":
                 dist_weights = w_independent[i]
