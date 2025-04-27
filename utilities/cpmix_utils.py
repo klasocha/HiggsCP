@@ -114,6 +114,9 @@ def preprocess_data(args):
     if args.DATA_FORMAT == "v3":
         w = read_np(os.path.join(data_path, suffix + "_raw.w.npy"))
         perm = prepare_permutations(n_events=w.shape[0], data_path=data_path)
+        phistar = read_np(os.path.join(data_path, suffix + "_raw.phistar.npy"))
+        phistar = np.reshape(phistar, (phistar.shape[0], 1))
+        data = np.concatenate([data, phistar], axis=1)
     print(f"Read {data.shape[0]} events")
     
     data_len = data.shape[0]

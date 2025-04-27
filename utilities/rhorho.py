@@ -19,11 +19,12 @@ class RhoRhoEvent(object):
         if args.DATA_FORMAT == "v2":  
             p = [Particle(data[:, 4*i : 4*i + 4]) for i in range(6)]  
             phistar = data[:, -2] # phi* values
-            m_mlm = data[:, -1]   # tautau invariant mass values
+            m_mlm = data[:, -1]   # tautau invariant mass values (not used)
 
         if args.DATA_FORMAT == "v3":
             p = [Particle(data[:, 4*i : 4*i + 4]) for i in range(6)]
-            
+            phistar = data[:, -1] # phi* values
+
         cols = []
         self.labels_suppl = []
         self.cols_suppl = []
@@ -104,14 +105,19 @@ class RhoRhoEvent(object):
                 cols.append(rho.vec)
                 cols.append(rho.recalculated_mass)
 
+            cols += [phistar]
+
             # As part of "data exploration" we would like to plot the distributions 
             # of these variables using weights for different hypotheses of alphaCP, 
             # without conditioning on the sign of y1*y2, and separately grouping y1*y1>0, y1*y2<0.            
-            phistar = get_acoplanar_angle(p[1], p[2], p[4], p[5], rho_rho)
-            y1 = get_y(p[1], p[2], rho_rho)
-            y2 = get_y(p[4], p[5], rho_rho)
-            cols += [phistar]
-            cols += [y1, y2]
+            if args.DATA_FORMAT == "v1":
+              # y1 and y2 make grouping possible only in case of the phistar values that are
+              # computed by us. Run 2 (DATA_FORMAT = v2, v3) data does not have such grouping, 
+              # though gives us exact values of phistar itself:
+              phistar = get_acoplanar_angle(p[1], p[2], p[4], p[5], rho_rho)
+              y1 = get_y(p[1], p[2], rho_rho)
+              y2 = get_y(p[4], p[5], rho_rho)
+              cols += [y1, y2]
             
         #------------------------------------------------------------
 
@@ -310,7 +316,7 @@ class RhoRhoEvent(object):
                         "tau2_rho_px", "tau2_rho_py", "tau2_rho_pz", "tau2_rho_e", "tau2_rho_mass",
                         "aco_angle", "tau1_y", "tau2_y"]
             # Removing y1, y2 if they were never computed
-            if args.DATA_FORMAT == "v2":
+            if args.DATA_FORMAT in ["v2", "v3"]:
                 self.labels = self.labels[:-2]
 
         elif args.FEAT ==  "Variant-2.0":
