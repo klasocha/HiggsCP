@@ -105,8 +105,6 @@ class RhoRhoEvent(object):
                 cols.append(rho.vec)
                 cols.append(rho.recalculated_mass)
 
-            cols += [phistar]
-
             # As part of "data exploration" we would like to plot the distributions 
             # of these variables using weights for different hypotheses of alphaCP, 
             # without conditioning on the sign of y1*y2, and separately grouping y1*y1>0, y1*y2<0.            
@@ -115,10 +113,13 @@ class RhoRhoEvent(object):
               # computed by us. Run 2 (DATA_FORMAT = v2, v3) data does not have such grouping, 
               # though gives us exact values of phistar itself:
               phistar = get_acoplanar_angle(p[1], p[2], p[4], p[5], rho_rho)
+              cols += [phistar]
               y1 = get_y(p[1], p[2], rho_rho)
               y2 = get_y(p[4], p[5], rho_rho)
               cols += [y1, y2]
-            
+            else:
+              cols += [phistar]
+
         #------------------------------------------------------------
 
         pb_tau1_h  = boost_and_rotate(p_tau1_rho, PHI, THETA, rho_rho)
