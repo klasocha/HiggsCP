@@ -52,21 +52,22 @@ class EventDatasets(object):
                  hits_c012s, args, filtered=False, raw=False, miniset=False):
         data = event.cols[:, :-1]
         filt = event.cols[:, -1]
-        
+
         # Split points for the training, validation, test data set
         data_len = len(data)
         split_1 = round(data_len * 0.1)
         split_2 = round(data_len * 0.2)
-        split_3 = round(data_len * 0.3)
+        # split_3 = round(data_len * 0.3)
         
         if miniset:
             print("The mini version of the training data set will be used.")
             train_ids = perm[-split_3:-split_2]
         else:
             train_ids = perm[:-split_2]
-       
-        valid_ids = perm[-split_2:-split_1]
-        test_ids = perm[-split_1:]
+
+        valid_ids = perm[-split_2:]
+        # valid_ids = perm[-split_2:-split_1]
+        # test_ids = perm[-split_1:]
 
         if not raw:
             print("Data (input features) will be standardised.")
@@ -84,7 +85,7 @@ class EventDatasets(object):
         if filtered:
             train_ids = train_ids[filt[train_ids] == 1]
             valid_ids = valid_ids[filt[valid_ids] == 1]
-            test_ids = test_ids[filt[test_ids] == 1]
+            # test_ids = test_ids[filt[test_ids] == 1]
 
         data = np.concatenate([data, filt.reshape([-1, 1])], 1)
 
@@ -94,5 +95,5 @@ class EventDatasets(object):
         self.valid = Dataset(data[valid_ids], weights[valid_ids, :], argmaxs[valid_ids], c012s[valid_ids], 
                              hits_argmaxs[valid_ids], hits_c012s[valid_ids])
         
-        self.test = Dataset(data[test_ids], weights[test_ids, :], argmaxs[test_ids], c012s[test_ids], 
-                            hits_argmaxs[test_ids], hits_c012s[test_ids])
+        # self.test = Dataset(data[test_ids], weights[test_ids, :], argmaxs[test_ids], c012s[test_ids], 
+        #                     hits_argmaxs[test_ids], hits_c012s[test_ids])

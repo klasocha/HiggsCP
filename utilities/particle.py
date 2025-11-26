@@ -85,19 +85,22 @@ class Particle(object):
             sin_theta * self.x + cos_theta * self.y,
             self.z, self.e])
 
-    def boost_along_z(self, p_pz, p_e):
+    def boost_along_z(self, p_pz, p_e, debug=False):
         m = np.sqrt(p_e * p_e - p_pz * p_pz)
+        print("NaN in m:", np.isnan(m).sum()) if debug else None
+        print("Zero in m:", np.sum(m == 0)) if debug else None
+        m = np.where(m == 0, 1e-10, m)  # Avoid division by zero
         return Particle([
             self.x, self.y,
             (p_e * self.z + p_pz * self.e) / m,
             (p_pz * self.z + p_e * self.e) / m])
 
-    def boost(self, p):
+    def boost(self, p, debug=False):
         p_len = np.sqrt(p.x * p.x + p.y * p.y + p.z * p.z)
         phi = p.angle_phi
         theta = p.rotate_xy(-phi).angle_theta
         ret = self.rotate_xy(-phi).rotate_xz(-theta)
-        ret = ret.boost_along_z(-p_len, p.e)
+        ret = ret.boost_along_z(-p_len, p.e, debug=debug)
         return ret.rotate_xz(theta).rotate_xy(phi)
 
 

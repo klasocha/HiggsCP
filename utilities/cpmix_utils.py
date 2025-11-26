@@ -111,7 +111,7 @@ def preprocess_data(args):
     if args.DATA_FORMAT == "v2":
         w = read_np(os.path.join(data_path, suffix + "_raw.w.npy"))
         perm = read_np(os.path.join(data_path, suffix + "_raw.perm.npy"))
-    if args.DATA_FORMAT == "v3":
+    if args.DATA_FORMAT in ["v3", "v4"]:
         w = read_np(os.path.join(data_path, suffix + "_raw.w.npy"))
         perm = prepare_permutations(n_events=w.shape[0], data_path=data_path)
         phistar = read_np(os.path.join(data_path, suffix + "_raw.phistar.npy"))
@@ -133,7 +133,7 @@ def preprocess_data(args):
         # Values of CPmix at which data were generated
         if args.DATA_FORMAT == "v1":
             x = np.array([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0]) * np.pi
-        if args.DATA_FORMAT in ["v2", "v3"]:
+        if args.DATA_FORMAT in ["v2", "v3", "v4"]:
             # alphaCP = 2 * phiCP (aka Theta)
             x = np.array([0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 
                           2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4]) * 100 / 180 * np.pi
@@ -216,27 +216,7 @@ def preprocess_data(args):
             with open(output_path, "wb") as f:
                 np.save(f, unweighted_events)
             print(f"Weights of the unweighted events have been saved in {output_path}")
-        
-    # TODO: Revisit
-    # Comment from ERW:
-    # Here, argmax values are represented as fractions of pi, not as class indices.
-    # We need to determine how to convert from fractions of pi to class indices.
-    # Uncomment the following lines to print the weights and argmax values for preprocessing:
-    # print("Preprocessing: weights", weights)
-    # print("Preprocessing: argmaxs", argmaxs)
 
-    # TODO: Revisit.
-    # Comment from ERW:
-    # I am not sure of the purpose of this code, and whether it makes sense.
-    if args.RESTRICT_MOST_PROBABLE_ANGLE:
-        argmaxs[argmaxs > np.pi] = -1 * argmaxs[argmaxs > np.pi] + 2 * np.pi
-
-    # Comment from ERW:
-    # This optimization process does not provide the expected improvement. 
-    # TODO: Revisit the implementation; it's possible that it has not been correctly implemented.
-    if args.NORMALIZE_WEIGHTS:
-        weights = weights / np.reshape(c012s[:, 0], (-1, 1))
-        
     # Comment from ERW:
     # Here, weights and argmax values are calculated at the value of CPmix representing a given class.
     # In training, the class is expressed as an integer, not as a fraction of pi.

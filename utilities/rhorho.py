@@ -14,16 +14,41 @@ class RhoRhoEvent(object):
         # Therefore we have 6 vectors in the original data per event
 
         if args.DATA_FORMAT == "v1":
+            print("Using DATA_FORMAT = v1", data.shape)
             p = [Particle(data[:, 5*i : 5*i + 4]) for i in range(6)]
 
         if args.DATA_FORMAT == "v2":  
+            print("Using DATA_FORMAT = v2", data.shape)
             p = [Particle(data[:, 4*i : 4*i + 4]) for i in range(6)]  
             phistar = data[:, -2] # phi* values
             m_mlm = data[:, -1]   # tautau invariant mass values (not used)
 
         if args.DATA_FORMAT == "v3":
+            print("Using DATA_FORMAT = v3", data.shape)
             p = [Particle(data[:, 4*i : 4*i + 4]) for i in range(6)]
             phistar = data[:, -1] # phi* values
+
+        if args.DATA_FORMAT == "v4":
+            """
+            0-3:       zeros (neutrinos, template)
+            4-7:       tau_0{matched}_decay_charged_p4 (pi-)
+            8-11:      tau_0{matched}_decay_neutral_p4 (pi0)
+
+            12-15:     zeros (neutrinos, template)
+            16-19:     tau_1{matched}_decay_charged_p4 (pi+)
+            20-23:     tau_1{matched}_decay_neutral_p4 (pi0)
+
+            24-27:     tau_0_track0_p4
+            28-31:     tau_1_track0_p4
+
+            32:        met_sumet
+            33:        ditau_CP_tau0_upsilon
+            34:        ditau_CP_tau1_upsilon
+            """
+            print("Using DATA_FORMAT = v4", data.shape)
+            p = [Particle(data[:, 4*i : 4*i + 4]) for i in range(8)]
+            phistar = data[:, -1] # phi* values
+            float_features = data[:, 32:35]
 
         cols = []
         self.labels_suppl = []
@@ -47,7 +72,7 @@ class RhoRhoEvent(object):
         p_tau2_nu, l_tau2_pi, p_tau2_rho, p_tau2 = get_tau2(p)
 
         # Flag defining whether neutrinos are available or not
-        if args.DATA_FORMAT in ["v2", "v3"]:
+        if args.DATA_FORMAT in ["v2", "v3", "v4"]:
             neutrinos = False
         if args.DATA_FORMAT == "v1":
             neutrinos = True
@@ -61,7 +86,11 @@ class RhoRhoEvent(object):
         beta_noise = args.BETA
 
         # all particles boosted & rotated
-        for i, idx in enumerate([0, 1, 2, 3, 4, 5]):
+        if args.DATA_FORMAT == "v4":
+            particle_list = [0, 1, 2, 3, 4, 5, 6, 7]
+        else:
+            particle_list = [0, 1, 2, 3, 4, 5]
+        for i, idx in enumerate(particle_list):
             part = boost_and_rotate(p[idx], PHI, THETA, rho_rho)
             if args.FEAT in ["Variant-1.0", "Variant-1.1", "Variant-2.0", "Variant-2.1", "Variant-2.2",
                              "Variant-3.0", "Variant-3.1", "Variant-4.0", "Variant-4.1"]:
@@ -69,7 +98,7 @@ class RhoRhoEvent(object):
                     cols.append(part.vec)
             if args.FEAT == "Variant-All":
                 cols.append(part.vec)
-               
+
         if args.FEAT == "Variant-4.0":
             part   = boost_and_rotate(p_tau1, PHI, THETA, rho_rho)
             cols.append(part.vec)
@@ -112,13 +141,21 @@ class RhoRhoEvent(object):
               # y1 and y2 make grouping possible only in case of the phistar values that are
               # computed by us. Run 2 (DATA_FORMAT = v2, v3) data does not have such grouping, 
               # though gives us exact values of phistar itself:
-              phistar = get_acoplanar_angle(p[1], p[2], p[4], p[5], rho_rho)
-              cols += [phistar]
-              y1 = get_y(p[1], p[2], rho_rho)
-              y2 = get_y(p[4], p[5], rho_rho)
-              cols += [y1, y2]
+                phistar = get_acoplanar_angle(p[1], p[2], p[4], p[5], rho_rho)
+                cols += [phistar]
+                y1 = np.full((phistar.shape), 0.1)
+                y2 = np.full((phistar.shape), 0.1)
+                y1 = get_y(p[1], p[2], rho_rho)
+                y2 = get_y(p[4], p[5], rho_rho)
+                cols += [y1, y2]
             else:
-              cols += [phistar]
+                cols += [phistar]
+            
+            # Adding float features if available
+            if args.DATA_FORMAT == "v4":
+                cols += [float_features[:, 0]] # met_sumet
+                cols += [float_features[:, 1]] # ditau_CP_tau0_upsilon
+                cols += [float_features[:, 2]] # ditau_CP_tau1_upsilon
 
         #------------------------------------------------------------
 
@@ -215,7 +252,7 @@ class RhoRhoEvent(object):
 
         if args.FEAT in ["Variant-1.0", "Variant-1.1", "Variant-All", "Variant-4.0", "Variant-4.1"]:
             cols += [filt]
- 
+        
         elif args.FEAT in ["Variant-2.1", "Variant-2.2", "Variant-3.0", "Variant-3.1"]:
             isFilter = np.full(rho_rho.e.shape, True, dtype=bool)
 
@@ -305,20 +342,38 @@ class RhoRhoEvent(object):
             self.valid_cols = [va_tau1_nu_trans * tau1_sin_phi, va_tau2_nu_trans * tau2_sin_phi,
                                 va_tau1_nu_trans * tau1_cos_phi, va_tau2_nu_trans * tau2_cos_phi]
 
+        print("NaNs in the event features:", np.isnan(self.cols).sum())
+        for i in range(self.cols.shape[1]):
+            if np.isnan(self.cols[:, i]).sum() > 0:
+                print(f"Column {i} has NaNs: {self.cols[:, i][np.isnan(self.cols[:, i])]}")
+                print(np.isnan(self.cols[:, i]).sum(), "NaNs in column", i)
+
+        print("Final feature set shape (including the filtering mask):", self.cols.shape)
+
         # The list of labels for monitoring the features
         if args.FEAT   == "Variant-1.0":
             self.labels = ["tau1_pi_px", "tau1_pi_py", "tau1_pi_pz", "tau1_pi_e", "tau1_pi0_px", "tau1_pi0_py", "tau1_pi0_pz", "tau1_pi0_e",
                             "tau2_pi_px", "tau2_pi_py", "tau2_pi_pz", "tau2_pi_e", "tau2_pi0_px", "tau2_pi0_py", "tau2_pi0_pz", "tau2_pi0_e"]
         
         elif args.FEAT == "Variant-1.1":
-            self.labels = ["tau1_pi_px", "tau1_pi_py", "tau1_pi_pz", "tau1_pi_e", "tau1_pi0_px", "tau1_pi0_py", "tau1_pi0_pz", "tau1_pi0_e",
-                        "tau2_pi_px", "tau2_pi_py", "tau2_pi_pz", "tau2_pi_e", "tau2_pi0_px", "tau2_pi0_py", "tau2_pi0_pz", "tau2_pi0_e",
-                        "tau1_rho_px", "tau1_rho_py", "tau1_rho_pz", "tau1_rho_e", "tau1_rho_mass",
-                        "tau2_rho_px", "tau2_rho_py", "tau2_rho_pz", "tau2_rho_e", "tau2_rho_mass",
-                        "aco_angle", "tau1_y", "tau2_y"]
-            # Removing y1, y2 if they were never computed
-            if args.DATA_FORMAT in ["v2", "v3"]:
-                self.labels = self.labels[:-2]
+            if args.DATA_FORMAT in ["v1", "v2", "v3"]:
+                self.labels = ["tau1_pi_px", "tau1_pi_py", "tau1_pi_pz", "tau1_pi_e", "tau1_pi0_px", "tau1_pi0_py", "tau1_pi0_pz", "tau1_pi0_e",
+                            "tau2_pi_px", "tau2_pi_py", "tau2_pi_pz", "tau2_pi_e", "tau2_pi0_px", "tau2_pi0_py", "tau2_pi0_pz", "tau2_pi0_e",
+                            "tau1_rho_px", "tau1_rho_py", "tau1_rho_pz", "tau1_rho_e", "tau1_rho_mass",
+                            "tau2_rho_px", "tau2_rho_py", "tau2_rho_pz", "tau2_rho_e", "tau2_rho_mass",
+                            "aco_angle", "tau1_y", "tau2_y"]
+                # Removing y1, y2 if they were never computed
+                if args.DATA_FORMAT in ["v2", "v3"]:
+                    self.labels = self.labels[:-2]
+            if args.DATA_FORMAT == "v4":
+                self.labels = ["tau1_pi_px", "tau1_pi_py", "tau1_pi_pz", "tau1_pi_e", "tau1_pi0_px", "tau1_pi0_py", "tau1_pi0_pz", "tau1_pi0_e",
+                            "tau2_pi_px", "tau2_pi_py", "tau2_pi_pz", "tau2_pi_e", "tau2_pi0_px", "tau2_pi0_py", "tau2_pi0_pz", "tau2_pi0_e",
+                            "tau_0_track0_p4_x", "tau_0_track0_p4_y", "tau_0_track0_p4_z", "tau_0_track0_p4_e",
+                            "tau_1_track0_p4_x", "tau_1_track0_p4_y", "tau_1_track0_p4_z", "tau_1_track0_p4_e",
+                            "tau1_rho_px", "tau1_rho_py", "tau1_rho_pz", "tau1_rho_e", "tau1_rho_mass",
+                            "tau2_rho_px", "tau2_rho_py", "tau2_rho_pz", "tau2_rho_e", "tau2_rho_mass",
+                            "met_sumet", "ditau_CP_tau0_upsilon", "ditau_CP_tau1_upsilon",
+                            "aco_angle"]
 
         elif args.FEAT ==  "Variant-2.0":
             self.labels = ["tau1_pi_px", "tau1_pi_py", "tau1_pi_pz", "tau1_pi_e", "tau1_pi0_px", "tau1_pi0_py", "tau1_pi0_pz", "tau1_pi0_e",

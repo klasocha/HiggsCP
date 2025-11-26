@@ -333,7 +333,7 @@ def run(args):
         "FtrlOptimizer": keras.optimizers.Ftrl,
         "RMSPropOptimizer": keras.optimizers.RMSprop,
         "ProximalGradientDescentOptimizer": tf.compat.v1.train.ProximalGradientDescentOptimizer
-    }[args.OPT](learning_rate=0.001)
+    }[args.OPT](learning_rate=float(args.LEARNING_RATE))
 
     if args.TRAINING_METHOD in ["soft_weights", "soft_argmaxs", "soft_c012s"]:
         loss = keras.losses.CategoricalCrossentropy(from_logits=False)

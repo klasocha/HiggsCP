@@ -24,7 +24,7 @@ def draw_weights_to_compare(c012s, ccovs, discrete_weights, event_index, args):
     if args.DATA_FORMAT in ["v1", "v2"]:
         # alphaCP ranges from 0 to 360 degrees (0.0 - 2.0 fraction of np.pi)
         x_weights = np.array([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2]) * np.pi
-    if args.DATA_FORMAT == "v3":
+    if args.DATA_FORMAT in ["v3", "v4"]:
         # Theta (aka phiCP) ranges from 0 to 170 degrees (needs to be converted to np.pi therefore)
         x_weights = np.linspace(0, 1.7, num=18, retstep=0.1)[0] * 2 * np.pi / 1.8
     if args.DATA_FORMAT is None:

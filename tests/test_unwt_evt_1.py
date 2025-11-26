@@ -7,23 +7,44 @@ from utilities.tf_model import NeuralNetwork
 import matplotlib.pyplot as plt
 from utilities.cpmix_utils import weight_fun
 import matplotlib.ticker as ticker 
+from matplotlib import font_manager
+import matplotlib as mpl
+
+
+# Setting up the font for the plots
+font_dir = os.path.join(os.path.dirname(__file__), '../plots/fonts')
+font_files = [
+    os.path.join(font_dir, 'PlayfairDisplay-VariableFont_wght.ttf'),
+    os.path.join(font_dir, 'PlayfairDisplay-Italic-VariableFont_wght.ttf')
+]
+for font_file in font_files:
+    font_manager.fontManager.addfont(font_file)
+mpl.rcParams['font.family'] = 'Playfair Display'
+mpl.rcParams['font.sans-serif'] = ['Playfair Display']
 
 
 def draw_distribution(x, y, title, output_path, filename, true_weights=None, color=None, 
-                      info_table=None, multiple=False, data_format="v1"):
-    
+                      info_table=None, multiple=False, data_format="v1", n_events=None,
+                      non_summed_weights=None):
     if not multiple:
         fig, (ax1, ax2) = plt.subplots(2, height_ratios=[1, 4])
         fig.set_size_inches(10, 6)
         
         for i in range(len(y)):
-            ax2.plot(np.arange(len(x)), y[i], color=color[i % len(color)], 
-                     label="Predicted (" + r"${{\alpha^{CP}_{max}}}$" + f"={round(info_table[3][i], 1)})")
-            ax2.plot(np.arange(len(x)), true_weights[i], color=color[i % len(color)], linestyle="dotted", 
-                     label="True (" + r"${{\alpha^{CP}_{max}}}$" + f"={round(info_table[2][i], 1)})")
+            main_color=color[0] if len(y) == 1 else color[i]
+            ax2.errorbar(np.arange(len(x)), y[i], color=main_color, 
+                         elinewidth=0.03, linewidth=0, yerr=(np.sqrt(np.sum(np.square(non_summed_weights[0][i]))) / n_events[i]), 
+                         marker="H", markersize=3, ecolor=np.array(main_color) * np.array([1, 1, 1, 0.4]),
+                         label="Predicted (" + r"${{\alpha^{CP}_{max}}}$" + f"={round(info_table[3][i], 1)})")
+            
+            main_color=color[1] if len(y) == 1 else color[i]
+            ax2.errorbar(np.arange(len(x)), true_weights[i], color=main_color, 
+                         elinewidth=0.03, linewidth=0, yerr=(np.sqrt(np.sum(np.square(non_summed_weights[1][i]))) / n_events[i]), 
+                         marker="x", markersize=3, ecolor=np.array(main_color) * np.array([1, 1, 1, 0.4]),
+                         label="True (" + r"${{\alpha^{CP}_{max}}}$" + f"={round(info_table[2][i], 1)})")
         
         ax2.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
-        if data_format in ["v1", "v3"]:
+        if data_format in ["v1", "v3", "v4"]:
             ax2.set_ylabel(r"$\sum_{i=0}^N Wt_i$", rotation=0, labelpad=20)
         if data_format == "v2":
             ax2.set_ylabel(r"$\sum_{i=0}^N Wt_i * W_i$", rotation=0, labelpad=30)
@@ -33,8 +54,9 @@ def draw_distribution(x, y, title, output_path, filename, true_weights=None, col
             info_table[i] = [round(value, 1) for value in info_table[i]]
         
         info_table[4] = [round(value, 2) for value in info_table[4]]
-
-        table_vals=[["Hypothesis idx: " + ", ".join(f"{num}" for num in info_table[0]) + \
+        
+        table_vals=[["Data set size: " + str(n_events[0]) + " events"],
+                    ["Hypothesis idx: " + ", ".join(f"{num}" for num in info_table[0]) + \
                     " (" + r"${{\alpha^{CP}}_{max}}$" + " = " + \
                         ", ".join(f"{num}" for num in info_table[2]) + " rad)"],
 
@@ -65,6 +87,7 @@ def draw_distribution(x, y, title, output_path, filename, true_weights=None, col
     if len(x) > 31:
         ax2.xaxis.set_major_locator(ticker.MultipleLocator(int(len(x) / 15), 1))
 
+    plt.grid()
     plt.tight_layout()
     for format in ["pdf", "png", "eps"]:
         plt.savefig(os.path.join(os.path.normpath(output_path), f"{filename}.{format}"))
@@ -114,7 +137,10 @@ def test_on_unwt_events(args):
     features = []
     for hyp in hypotheses:
         mask = unwt[:, hyp]
-        features.append(X[mask == 1.0])
+        if args.WITHOUT_UNWEIGHTING:
+            features.append(X)
+        else:
+            features.append(X[mask == 1.0])
 
     # Preparing the model
     model = NeuralNetwork(
@@ -162,7 +188,10 @@ def test_on_unwt_events(args):
     true_c012s = read_np(os.path.join(args.IN, "c012s.npy"))
     true_weights = []
     for hyp in hypotheses:
-        c012s = true_c012s[unwt[:, hyp] == 1.0]
+        if args.WITHOUT_UNWEIGHTING:
+            c012s = true_c012s
+        else:
+            c012s = true_c012s[unwt[:, hyp] == 1.0]
         true_weights.append(calc_weights(discr_level, c012s))
 
     # Creating a directory for storing the plots
@@ -233,7 +262,7 @@ def test_on_unwt_events(args):
 
     for i in range(len(hypotheses)):
         # Defining each entry weight
-        if args.DATA_FORMAT in ["v1", "v3"]:
+        if args.DATA_FORMAT in ["v1", "v3", "v4"]:
             dist_weights = 1.0
         if args.DATA_FORMAT == "v2":
             dist_weights = w_independent[i]
@@ -251,6 +280,12 @@ def test_on_unwt_events(args):
         relative_amplitude.append(2 * (max_summed_wt - min_summed_wt) / (max_summed_wt + min_summed_wt))
     
     summed_wt, summed_true_wt = np.array(summed_wt), np.array(summed_true_wt)
+    if args.WITHOUT_UNWEIGHTING:
+        print("True summed distribution:\n", summed_true_wt)
+        print("True summed distribution argmax:\n", np.argmax(summed_true_wt))
+    else:
+        print("True summed distribution:\n", summed_true_wt)
+        print("True summed distribution argmax:\n", np.argmax(summed_true_wt, axis=1))
 
     # Creating a plot showing the summed distribution of Wt
     draw_distribution(
@@ -260,13 +295,15 @@ def test_on_unwt_events(args):
         output_path=args.OUT,
         filename=f"{args.TRAINING_METHOD}_hyp_{args.HYPOTHESIS.replace('-', '_')}_summed_dist",
         title="Summed distribution",
-        color=["black", "red", "blue"],
+        color=[(0, 0, 0, 1), (1, 0, 0, 1), (0, 0, 1, 1)],
         info_table=[hypotheses, 
                     predicted_argmax,
                     np.array(hypotheses) / (discr_level - 1) * 2 * np.pi, 
                     np.array(predicted_argmax) / (discr_level - 1) * 2 * np.pi,
                     relative_amplitude],
-        data_format=args.DATA_FORMAT)
+        data_format=args.DATA_FORMAT,
+        n_events=[len(events) for events in preds],
+        non_summed_weights=[preds, true_weights])
 
     # Creating a plot showing some sample events predictied by the model
     for i in range(len(hypotheses)):
@@ -285,7 +322,7 @@ def test_on_unwt_events(args):
 
         for i in range(len(hypotheses)):
             # Defining each entry weight
-            if args.DATA_FORMAT in ["v1", "v3"]:
+            if args.DATA_FORMAT in ["v1", "v3", "v4"]:
                 dist_weights = 1.0
             if args.DATA_FORMAT == "v2":
                 dist_weights = w_independent[i]
@@ -310,10 +347,12 @@ def test_on_unwt_events(args):
             output_path=args.OUT,
             filename=f"{args.TRAINING_METHOD}_hyp_{args.HYPOTHESIS.replace('-', '_')}_summed_dist_without_neg",
             title="Summed distribution",
-            color=["black", "red", "blue"],
+            color=[(0, 0, 0, 1), (1, 0, 0, 1), (0, 0, 1, 1)],
             info_table=[hypotheses, 
                         predicted_argmax,
                         np.array(hypotheses) / (discr_level - 1) * 2 * np.pi, 
                         np.array(predicted_argmax) / (discr_level - 1) * 2 * np.pi,
                         relative_amplitude],
-            data_format=args.DATA_FORMAT)
+            data_format=args.DATA_FORMAT,
+            n_events=[len(events) for events in preds_without_neg],
+            non_summed_weights=[preds_without_neg, true_weights])

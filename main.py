@@ -17,6 +17,7 @@ from plots.results_analysis_4 import draw as results_analysis_4
 from plots.results_analysis_5 import draw as results_analysis_5
 from tests.test_parsed_data import test_parsed_data, show_example_records
 from tests.test_unwt_evt_1 import test_on_unwt_events as test_on_unwt_events_1
+from tests.test_sum_dist_1 import test_on_unwt_events as test_on_already_unwt_events_1
 from tests.test_unwt_evt_2 import test_on_unwt_events as test_on_unwt_events_2
 from tests.test_all_evt_1 import test_on_all_events as test_on_all_events_1
 from tests.test_all_evt_2 import test_on_all_events as test_on_all_events_2
@@ -50,13 +51,6 @@ parser.add_argument("--hits_c012s", dest="HITS_C012s",
                     choices=["hits_c0s", "hits_c1s",  "hits_c2s"], 
                     default="hits_c0s", help="which coefficients (C0, C1 or C2)"
                     + " to choose as labels")
-
-# TODO: Those two have been so far unclear to the project team
-parser.add_argument("--restrict_most_probable_angle", 
-                    dest="RESTRICT_MOST_PROBABLE_ANGLE", 
-                    action="store_true", default=False)
-parser.add_argument("--normalize_weights", dest="NORMALIZE_WEIGHTS", 
-                    action="store_true", default=False)
 
 # Arguments used by src_py/data_utils.py
 parser.add_argument("--miniset", dest="MINISET", 
@@ -93,6 +87,8 @@ parser.add_argument("-o", "--optimizer", dest="OPT",
                              "ProximalGradientDescentOptimizer", 
                              "RMSPropOptimizer"], 
                     default="AdamOptimizer", help="TensorFlow optimiser")
+parser.add_argument("--learning_rate", dest="LEARNING_RATE", type=float, default=0.001,
+                    help="learning rate for the optimiser")
 parser.add_argument("-e", "--epochs", dest="EPOCHS", type=int, default=3,
                     help="the number of epochs used during the training process")
 parser.add_argument("--delt_classes", dest="DELT_CLASSES", type=int, default=0, 
@@ -104,20 +100,6 @@ parser.add_argument("--delt_classes", dest="DELT_CLASSES", type=int, default=0,
 parser.add_argument("--download_original_data", dest="DOWNLOAD_ORIGINAL", 
                     help="downloading the original data",
                     action="store_true", default=False)
-
-# Adding other arguments (not used for now)
-# parser.add_argument("-lambda", "--lambda", type=float, dest="LAMBDA", 
-#                     help="value of lambda parameter", default=0.0)
-# parser.add_argument("--z_noise_fraction", dest="Z_NOISE_FRACTION", type=float, 
-#                     default=0.5)
-# parser.add_argument("--pol_b", type=float, dest="pol_b", 
-#                     help="value of b parameter for polynomial smearing", 
-#                     default=0.0)
-# parser.add_argument("--pol_c", type=float, dest="pol_c", 
-#                     help="value of c parameter for polynomial smearing", 
-#                     default=0.0)
-# parser.add_argument("--w1", dest="W1")
-# parser.add_argument("--w2", dest="W2")
 
 parser.add_argument("--use_unweighted_events", dest="USE_UNWEIGHTED_EVENTS", 
                     action="store_true", help="applying the unweighted events" +
@@ -166,9 +148,12 @@ parser.add_argument("--option", dest="OPTION", choices=plot_types.keys(),
                     default="PHISTAR-DISTRIBUTION",
                     help="specify what script for drawing the plots you " + 
                     "want to run")
-parser.add_argument("--hypothesis", dest="HYPOTHESIS", default="None", 
+parser.add_argument("--hypothesis", dest="HYPOTHESIS", default="0-4-46", 
                     help="Hypothesis: the alphaCP class (e.g. 02) or several " +
                     "classes \"#-#-#\"")
+parser.add_argument("--without_unweighting", dest="WITHOUT_UNWEIGHTING",
+                    action="store_true", default=False, 
+                    help="do not unweight the events, use them as they are")
 parser.add_argument("--dataset", dest="DATASET", 
                     help="dataset (train/valid/test)")
 parser.add_argument("--binning", dest="NBINS", 
@@ -189,8 +174,8 @@ parser.add_argument("--exp", dest="EXP", default="RhoRho",
                     help="Z for using Z-background data")
 
 # New data format
-parser.add_argument("--data_format", dest="DATA_FORMAT", default="v1",
-                    choices=["v1", "v2", "v3"], 
+parser.add_argument("--data_format", dest="DATA_FORMAT", default="v4",
+                    choices=["v1", "v2", "v3", "v4"], 
                     help="input data format version (v1, v2 etc.)")
 
 # Main controller
@@ -274,6 +259,7 @@ if args.ACTION == "test_model_on_unwt_events":
         distribution of the predicted weights.
         """)
         test_on_unwt_events_1(args)
+        # test_on_already_unwt_events_1(args)
     else:
         print(""" 
         This part was created to test the trained model by feeding it with

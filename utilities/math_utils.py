@@ -11,7 +11,11 @@ def p_norm_cross_product(v1, v2):
     v1 = v1.vec[:, :3]
     v2 = v2.vec[:, :3]
     x = np.cross(v1, v2)
-    return x / np.linalg.norm(x, axis=1).reshape([-1, 1])
+    norm = np.linalg.norm(x, axis=1, keepdims=True)
+    print(f"Norm: {norm.flatten()}")
+    print((norm.flatten() == 0).sum(), "vectors are parallel")
+    norm_safe = np.where(norm == 0, 1, norm)
+    return x / norm_safe
 
 
 def compute_costheta(v1, v2, v3, v4):
@@ -91,7 +95,7 @@ def rotate_xy(x, y, phi):
 
 
 def calc_angles(part, ref_part):
-    b_part = part.boost(ref_part)
+    b_part = part.boost(ref_part, debug=True)
     phi = b_part.angle_phi
     b_part = b_part.rotate_xy(-phi)
     theta = b_part.angle_theta

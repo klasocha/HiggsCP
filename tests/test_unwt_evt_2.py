@@ -1,4 +1,4 @@
-# Testing model predictions on the events filtered by a specifiv hypothesis
+# Testing model predictions on the events filtered by a specific hypothesis
 # and an unweighted events hits mask (soft/regr_argmaxs)
 
 from utilities.data_utils import read_np
